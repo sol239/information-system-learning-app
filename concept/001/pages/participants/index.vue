@@ -32,7 +32,7 @@
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { useClipboard } from '@vueuse/core'
 import type { Participant } from '~/model/types/Participant'
-import participants from '~/data/participants.json'
+import participants from '~/data/information_system_01/participants.json'
 
 const toast = useToast()
 const { copy } = useClipboard()
