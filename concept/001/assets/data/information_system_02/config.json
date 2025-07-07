@@ -1,0 +1,8 @@
+{
+    "name": "Skautský tábor Šumava",
+    "description": "Skautský tábor v Šumavě, zaměřený na přírodu a skautské dovednosti.",
+    "tableNames": [
+        "participants.json",
+        "meals.json"
+    ]
+}
