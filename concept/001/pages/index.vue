@@ -22,4 +22,8 @@ import { FileHandler } from '~/composables/FileHandler';
 
 const handler = new FileHandler();
 
+handler.printDirectories();
+
+// get config.json files of information systems
+
 </script>
