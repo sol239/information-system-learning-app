@@ -18,4 +18,8 @@
 
 <script setup lang="ts">
 
+import { FileHandler } from '~/composables/FileHandler';
+
+const handler = new FileHandler();
+
 </script>
