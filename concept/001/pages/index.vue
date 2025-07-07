@@ -19,16 +19,18 @@
 <script setup lang="ts">
 
 import { FileHandler } from '~/composables/FileHandler';
+import { InformationSystem } from '~/model/types/InformationSystem';
 
 const handler = new FileHandler();
 
 handler.printDirectories();
 
-// get config.json files of information systems
 
 const configFiles = import.meta.glob('~/assets/data/*/config.json', { eager: true });
 console.log('Config files:', configFiles);
 
+const informationSystems: InformationSystem[] = handler.getInformationSystems();
+console.log('Information Systems:', informationSystems);
 
 
 </script>

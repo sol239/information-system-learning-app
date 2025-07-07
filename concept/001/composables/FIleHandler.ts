@@ -1,3 +1,6 @@
+import { InformationSystem } from '~/model/types/InformationSystem'
+
+
 export class FileHandler {
     public directories: string[];
 
@@ -25,21 +28,22 @@ export class FileHandler {
         console.log('Data directories:', this.directories);
     }
 
-    public getConfigFilesPaths(): Map<string, string> {
-        // Import all config.json files in assets/data/*/config.json
-        const configModules = import.meta.glob('~/assets/data/*/config.json', { eager: false });
-        const configFilePaths = new Map<string, string>();
+    public getInformationSystems(): InformationSystem[] {
+        const configFiles = import.meta.glob('~/assets/data/*/config.json', { eager: true });
+        const informationSystems: InformationSystem[] = [];
 
-        Object.keys(configModules).forEach((path) => {
-            // Extract the directory name from the path
-            const match = path.match(/\/assets\/data\/([^\/]+)\/config\.json$/);
-            if (match) {
-                const directory = match[1];
-                configFilePaths.set(directory, path);
+        for (const [path, module] of Object.entries(configFiles)) {
+            try {
+                const configData = (module as any).default;
+                const infoSystem = InformationSystem.fromJSON(configData);
+                informationSystems.push(infoSystem);
+            } catch (error) {
+                console.error(`Failed to parse config from ${path}:`, error);
+                // Continue processing other files even if one fails
             }
-        });
+        }
 
-        return configFilePaths;
+        return informationSystems;
     }
 
 

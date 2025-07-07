@@ -1,6 +1,6 @@
 import type { Participant } from "./Participant";
 
-class InfomationSystem {
+export class InformationSystem {
   constructor(
     public id: number,
     public name: string,
@@ -8,8 +8,8 @@ class InfomationSystem {
     public tableNames: string[],
   ) {}
 
-  static fromJSON(json: any): InfomationSystem {
-    return new InfomationSystem(
+  static fromJSON(json: any): InformationSystem {
+    return new InformationSystem(
       json.id,
       json.name,
       json.description,
