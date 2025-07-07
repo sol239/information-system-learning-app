@@ -8,4 +8,13 @@ class InfomationSystem {
     public tableNames: string[],
   ) {}
 
+  static fromJSON(json: any): InfomationSystem {
+    return new InfomationSystem(
+      json.id,
+      json.name,
+      json.description,
+      json.tableNames || [],
+    );
+  }
+
 }
