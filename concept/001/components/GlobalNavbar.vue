@@ -11,6 +11,12 @@ const navItems: NavigationMenuItem[] = [
     data_target: 'home',
   },
   {
+    label: 'Systems',
+    icon: 'i-heroicons-computer-desktop',
+    to: '/system',
+    data_target: 'systems',
+  },
+  {
     label: 'Settings',
     icon: 'i-heroicons-cog',
     to: '/settings',
