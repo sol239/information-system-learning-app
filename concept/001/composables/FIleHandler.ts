@@ -36,6 +36,7 @@ export class FileHandler {
             try {
                 const configData = (module as any).default;
                 const infoSystem = InformationSystem.fromJSON(configData);
+                console.log(`Parsed config from ${path}:`);
                 informationSystems.push(infoSystem);
             } catch (error) {
                 console.error(`Failed to parse config from ${path}:`, error);

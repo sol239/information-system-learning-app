@@ -1,5 +1,6 @@
 {
     "id": 1,
+    "directory": "information_system_1",
     "name": "Školní tábor Krkonoše",
     "description": "Školní tábor v Krkonoších, zaměřený na výuku a zábavu pro děti.",
     "tableNames": [
