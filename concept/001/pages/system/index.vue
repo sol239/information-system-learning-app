@@ -8,7 +8,7 @@
       <p class="text-sm text-gray-600">{{ system.description }}</p>
 
       <template #footer>
-        <UButton color="primary" variant="outline">Enter</UButton>
+        <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">Enter</UButton>
       </template>
     </UCard>
   </div>
@@ -19,8 +19,13 @@ import { FileHandler } from '~/composables/FileHandler';
 import { InformationSystem } from '~/model/types/InformationSystem';
 import { useInformationSystemStore } from '~/stores/informationSystems';
 
-const handler = new FileHandler();
+import { navigateTo } from '#app';
 
+function navigateToSystem(systemId: number) {
+  navigateTo(`/system/${systemId}`);
+}
+
+const handler = new FileHandler();
 handler.printDirectories();
 
 
@@ -28,9 +33,11 @@ const configFiles = import.meta.glob('~/assets/data/*/config.json', { eager: tru
 console.log('Config files:', configFiles);
 
 const systems: InformationSystem[] = handler.getInformationSystems();
-console.log('Information Systems:', systems);
+
+
 
 const informationSystemStore = useInformationSystemStore();
+
 informationSystemStore.systems = systems;
 
 
