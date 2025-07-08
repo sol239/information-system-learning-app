@@ -6,6 +6,7 @@ export class InformationSystem {
     public name: string,
     public description: string,
     public tableNames: string[],
+    
   ) {}
 
   static fromJSON(json: any): InformationSystem {
