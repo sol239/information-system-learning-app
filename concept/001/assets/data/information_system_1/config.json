@@ -261,7 +261,7 @@
                     "address": "Hlavní 16, Příbram",
                     "age": 13,
                     "allergens": [],
-                    "sessionId": 3
+                    "sessionId": 2
                 },
                 {
                     "id": 22,
@@ -274,7 +274,7 @@
                     "allergens": [
                         "gluten"
                     ],
-                    "sessionId": 3
+                    "sessionId": 2
                 },
                 {
                     "id": 23,
@@ -638,6 +638,94 @@
                     "when_served": "dinner"
                 }
             ]
+        },
+        {
+            "name": "sessions",
+            "data": [
+                {
+                    "id": 1,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "capacity": 15
+                },
+                {
+                    "id": 2,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "capacity": 15
+                },
+                {
+                    "id": 3,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "capacity": 15
+                }
+            ]
+        },
+        {
+            "name": "supervisors",
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Petr Novotný",
+                    "email": "petr.novotny@example.com",
+                    "personal_number": "750101/1234",
+                    "phone": "+420 601 111 111",
+                    "address": "Hlavní 1, Praha",
+                    "age": 35,
+                    "sessionId": 1
+                },
+                {
+                    "id": 2,
+                    "name": "Jana Svobodová",
+                    "email": "jana.svobodova@example.com",
+                    "personal_number": "820202/2345",
+                    "phone": "+420 602 222 222",
+                    "address": "Masarykova 2, Brno",
+                    "age": 32,
+                    "sessionId": 1
+                },
+                {
+                    "id": 3,
+                    "name": "Martin Dvořák",
+                    "email": "martin.dvorak@example.com",
+                    "personal_number": "790303/3456",
+                    "phone": "+420 603 333 333",
+                    "address": "Komenského 3, Ostrava",
+                    "age": 40,
+                    "sessionId": 2
+                },
+                {
+                    "id": 4,
+                    "name": "Eva Procházková",
+                    "email": "eva.prochazkova@example.com",
+                    "personal_number": "850404/4567",
+                    "phone": "+420 604 444 444",
+                    "address": "Smetanova 4, Plzeň",
+                    "age": 29,
+                    "sessionId": 2
+                },
+                {
+                    "id": 5,
+                    "name": "Tomáš Král",
+                    "email": "tomas.kral.supervisor@example.com",
+                    "personal_number": "780505/5678",
+                    "phone": "+420 605 555 555",
+                    "address": "Jiráskova 5, Liberec",
+                    "age": 38,
+                    "sessionId": 3
+                },
+                {
+                    "id": 6,
+                    "name": "Lucie Bláhová",
+                    "email": "lucie.blahova@example.com",
+                    "personal_number": "830606/6789",
+                    "phone": "+420 606 666 666",
+                    "address": "Palackého 6, Zlín",
+                    "age": 31,
+                    "sessionId": 3
+                }
+            ]
         }
     ],
     "tasks": [
@@ -645,88 +733,6 @@
             "id": 1,
             "title": "Soring in the table by age",
             "description": "There is and issue with sorting the table by age of the person. Fix the issue."
-        }
-    ],
-    "sessions": [
-        {
-            "id": 1,
-            "fromDate": "2025-07-01T00:00:00.000Z",
-            "toDate": "2025-07-10T00:00:00.000Z",
-            "capacity": 15
-        },
-        {
-            "id": 2,
-            "fromDate": "2025-07-11T00:00:00.000Z",
-            "toDate": "2025-07-20T00:00:00.000Z",
-            "capacity": 15
-        },
-        {
-            "id": 3,
-            "fromDate": "2025-07-21T00:00:00.000Z",
-            "toDate": "2025-07-30T00:00:00.000Z",
-            "capacity": 15
-        }
-    ],
-    "supervisors": [
-        {
-            "id": 1,
-            "name": "Petr Novotný",
-            "email": "petr.novotny@example.com",
-            "personal_number": "750101/1234",
-            "phone": "+420 601 111 111",
-            "address": "Hlavní 1, Praha",
-            "age": 35,
-            "sessionId": 1
-        },
-        {
-            "id": 2,
-            "name": "Jana Svobodová",
-            "email": "jana.svobodova@example.com",
-            "personal_number": "820202/2345",
-            "phone": "+420 602 222 222",
-            "address": "Masarykova 2, Brno",
-            "age": 32,
-            "sessionId": 1
-        },
-        {
-            "id": 3,
-            "name": "Martin Dvořák",
-            "email": "martin.dvorak@example.com",
-            "personal_number": "790303/3456",
-            "phone": "+420 603 333 333",
-            "address": "Komenského 3, Ostrava",
-            "age": 40,
-            "sessionId": 2
-        },
-        {
-            "id": 4,
-            "name": "Eva Procházková",
-            "email": "eva.prochazkova@example.com",
-            "personal_number": "850404/4567",
-            "phone": "+420 604 444 444",
-            "address": "Smetanova 4, Plzeň",
-            "age": 29,
-            "sessionId": 2
-        },
-        {
-            "id": 5,
-            "name": "Tomáš Král",
-            "email": "tomas.kral.supervisor@example.com",
-            "personal_number": "780505/5678",
-            "phone": "+420 605 555 555",
-            "address": "Jiráskova 5, Liberec",
-            "age": 38,
-            "sessionId": 3
-        },
-        {
-            "id": 6,
-            "name": "Lucie Bláhová",
-            "email": "lucie.blahova@example.com",
-            "personal_number": "830606/6789",
-            "phone": "+420 606 666 666",
-            "address": "Palackého 6, Zlín",
-            "age": 31,
-            "sessionId": 3
         }
     ]
 }

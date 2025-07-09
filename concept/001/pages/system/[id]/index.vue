@@ -25,7 +25,13 @@ const localItems = ref([
         label: system.value?.name || 'System',
       },
       {
-        label: 'Table',
+        label: 'Dashboard',
+        icon: 'i-heroicons-chart-bar-20-solid',
+        to: `/system/${systemId}/dashboard`,
+        data_target: 'system-dashboard',
+      },
+      {
+        label: 'Tables',
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',

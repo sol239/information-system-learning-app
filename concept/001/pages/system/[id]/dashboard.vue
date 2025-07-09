@@ -1,0 +1,494 @@
+<script lang="ts" setup>
+import { useRoute } from 'vue-router'
+import type { InformationSystem } from '~/model/types/InformationSystem'
+import { ref, computed } from 'vue'
+import { useInformationSystemStore } from '~/stores/informationSystems'
+
+const route = useRoute()
+const systemId = route.params.id
+const store = useInformationSystemStore()
+const systems = store.systems
+const system = ref<InformationSystem | null>(null)
+
+system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
+
+const sessions = computed(() => system.value?.tables.find(t => t.name === 'sessions')?.data || [])
+const participants = computed(() => system.value?.tables.find(t => t.name === 'participants')?.data || [])
+const supervisors = computed(() => system.value?.tables.find(t => t.name === 'supervisors')?.data || [])
+const meals = computed(() => system.value?.tables.find(t => t.name === 'meals')?.data || [])
+
+// Color palette for sessions
+const sessionColors = [
+    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899',
+    '#14B8A6', '#F97316', '#84CC16', '#6366F1', '#06B6D4', '#64748B'
+]
+
+// Create color mapping for sessions
+const sessionColorMap = computed(() => {
+    const map = new Map()
+    sessions.value.forEach((session: any, index: number) => {
+        map.set(session.id, sessionColors[index % sessionColors.length])
+    })
+    return map
+})
+
+// Calculate session fill progress
+const sessionProgress = computed(() => {
+    return sessions.value.map((session: any) => {
+        const count = participants.value.filter((p: any) => p.sessionId === session.id).length
+        const percent = session.capacity ? Math.min(100, Math.round((count / session.capacity) * 100)) : 0
+        return {
+            id: session.id,
+            name: session.name || `Session ${session.id}`,
+            color: sessionColorMap.value.get(session.id),
+            count,
+            capacity: session.capacity,
+            percent
+        }
+    })
+})
+
+// Current date navigation
+const currentDate = ref(new Date())
+const currentYear = computed(() => currentDate.value.getFullYear())
+const currentMonth = computed(() => currentDate.value.getMonth())
+
+// Calendar data
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+]
+
+const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+// Get calendar days for current month
+const calendarDays = computed(() => {
+    const year = currentYear.value
+    const month = currentMonth.value
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const startDate = new Date(firstDay)
+    startDate.setDate(startDate.getDate() - firstDay.getDay())
+
+    const days = []
+    const current = new Date(startDate)
+
+    // Generate 42 days (6 weeks)
+    for (let i = 0; i < 42; i++) {
+        days.push({
+            date: new Date(current),
+            isCurrentMonth: current.getMonth() === month,
+            isToday: current.toDateString() === new Date().toDateString(),
+            day: current.getDate()
+        })
+        current.setDate(current.getDate() + 1)
+    }
+
+    return days
+})
+
+// Get sessions for a specific date
+const getSessionsForDate = (date: Date) => {
+    return sessions.value.filter((session: any) => {
+        const sessionStart = new Date(session.fromDate)
+        const sessionEnd = new Date(session.toDate)
+        return date >= sessionStart && date <= sessionEnd
+    })
+}
+
+// Navigation functions
+const previousMonth = () => {
+    currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1)
+}
+
+const nextMonth = () => {
+    currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1)
+}
+
+const goToToday = () => {
+    currentDate.value = new Date()
+}
+
+const localItems = ref([
+      {
+        label: system.value?.name || 'System',
+      },
+      {
+        label: 'Dashboard',
+        icon: 'i-heroicons-chart-bar-20-solid',
+        to: `/system/${systemId}/dashboard`,
+        data_target: 'system-dashboard',
+      },
+      {
+        label: 'Tables',
+        icon: 'i-heroicons-table-cells',
+        to: `/system/${systemId}/table`,
+        data_target: 'system-table',
+      }
+    
+]);
+</script>
+
+<template>
+    <LocalNavbar :items="localItems" />
+    <div class="dashboard">
+        <h1>{{ system?.name || 'Dashboard' }}</h1>
+
+        <div class="stats">
+            <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
+            <n-card title="Participants" size="small"><b>{{ participants.length }}</b></n-card>
+            <n-card title="Supervisors" size="small"><b>{{ supervisors.length }}</b></n-card>
+            <n-card title="Meals" size="small"><b>{{ meals.length }}</b></n-card>
+        </div>
+
+        <!-- Sessions Progress Pillows -->
+        <div class="sessions-progress" v-if="sessionProgress.length">
+            <h3>Session Fill Progress</h3>
+            <div class="progress-pillows">
+                <div v-for="session in sessionProgress" :key="session.id" class="progress-pillow">
+                    <div class="pillow-header">
+                        <span class="pillow-title">{{ session.name }}</span>
+                        <span class="pillow-count">{{ session.count }}/{{ session.capacity }}</span>
+                    </div>
+                    <div class="pillow-bar-bg">
+                        <div class="pillow-bar"
+                            :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
+                    </div>
+                    <div class="pillow-percent">{{ session.percent }}%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Calendar -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <h2>Sessions Calendar</h2>
+                <div class="calendar-controls">
+                    <button @click="previousMonth" class="nav-button">‹</button>
+                    <span class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</span>
+                    <button @click="nextMonth" class="nav-button">›</button>
+                    <button @click="goToToday" class="today-button">Today</button>
+                </div>
+            </div>
+
+            <div class="calendar">
+                <!-- Week day headers -->
+                <div class="calendar-grid">
+                    <div v-for="day in weekDays" :key="day" class="weekday-header">
+                        {{ day }}
+                    </div>
+
+                    <!-- Calendar days -->
+                    <div v-for="day in calendarDays" :key="day.date.toISOString()" class="calendar-day" :class="{
+                        'other-month': !day.isCurrentMonth,
+                        'today': day.isToday
+                    }">
+                        <div class="day-number">{{ day.day }}</div>
+                        <div class="day-sessions">
+                            <div v-for="session in getSessionsForDate(day.date)" :key="session.id"
+                                class="session-indicator" :style="{ backgroundColor: sessionColorMap.get(session.id) }"
+                                :title="session.name || `Session ${session.id}`">
+                                <span class="session-name">{{ session.name || `S${session.id}` }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.dashboard {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.sessions-legend {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.sessions-legend h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #374151;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sessions-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-pillows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.progress-pillow {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 1rem 1.5rem;
+    min-width: 220px;
+    max-width: 300px;
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1px solid #e5e7eb;
+}
+
+.pillow-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.pillow-title {
+    font-weight: 600;
+    color: #374151;
+}
+
+.pillow-count {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.pillow-bar-bg {
+    width: 100%;
+    height: 18px;
+    background: #f3f4f6;
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.pillow-bar {
+    height: 100%;
+    border-radius: 9px 0 0 9px;
+    transition: width 0.4s cubic-bezier(.4, 0, .2, 1);
+}
+
+.pillow-percent {
+    font-size: 0.95rem;
+    color: #000000;
+    font-weight: 500;
+}
+
+/* Custom Calendar Styles */
+.calendar-section {
+    margin-top: 2rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-button {
+    background: #3B82F6;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+    background: #2563EB;
+}
+
+.current-month {
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 160px;
+    text-align: center;
+}
+
+.today-button {
+    background: #10B981;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.today-button:hover {
+    background: #059669;
+}
+
+.calendar {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.weekday-header {
+    background: #f3f4f6;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.calendar-day {
+    min-height: 100px;
+    padding: 0.5rem;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
+    position: relative;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+.calendar-day.other-month {
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+.calendar-day.today {
+    background: #eff6ff;
+}
+
+.calendar-day.today .day-number {
+    background: #3B82F6;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.day-number {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.day-sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.session-indicator {
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    color: white;
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.session-indicator:hover {
+    opacity: 0.8;
+}
+
+.session-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .calendar-day {
+        min-height: 80px;
+        padding: 0.25rem;
+    }
+
+    .session-indicator {
+        font-size: 0.6rem;
+        padding: 1px 2px;
+    }
+
+    .calendar-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .legend-items {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .progress-pillows {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .progress-pillow {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+</style>
