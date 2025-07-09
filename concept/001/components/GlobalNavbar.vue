@@ -44,7 +44,7 @@ const isOnSystemDetailPage = computed(() => {
       <UButton label="Tasks" color="primary" variant="subtle" />
 
       <template #content>
-        <Placeholder class="size-48 m-4 inline-flex" />
+        <TaskList />
       </template>
     </UPopover>
   </div>
