@@ -4,6 +4,7 @@ import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, computed, watch } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
 import { useHighlightStore } from '~/stores/highlightElements'
+import { useSelectedComponentStore } from '~/stores/selectedComponent' // <-- import store
 import dashboardStats from '~/components/infsys_components/dashboard-stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
@@ -12,6 +13,7 @@ const route = useRoute()
 const systemId = route.params.id
 const store = useInformationSystemStore()
 const highlightStore = useHighlightStore()
+const selectedComponentStore = useSelectedComponentStore() // <-- use store
 const systems = store.systems
 const system = ref<InformationSystem | null>(null)
 
@@ -22,14 +24,18 @@ const selectedElement = ref<string | null>(null)
 watch(() => highlightStore.isHighlightMode, (newValue) => {
     if (!newValue) {
         selectedElement.value = null
+        selectedComponentStore.clear() // clear store when highlight mode off
     }
 })
 
 const selectElement = (elementId: string) => {
     if (selectedElement.value === elementId) {
-        selectedElement.value = null // Deselect if already selected
+        selectedElement.value = null
+        selectedComponentStore.clear() // clear store on deselect
     } else {
         selectedElement.value = elementId
+        selectedComponentStore.select(elementId) // save to store
+        console.log(`Selected element: ${elementId}`)
     }
 }
 
@@ -47,6 +53,7 @@ const sessions = computed(() => system.value?.tables.find(t => t.name === 'sessi
 const participants = computed(() => system.value?.tables.find(t => t.name === 'participants')?.data || [])
 const supervisors = computed(() => system.value?.tables.find(t => t.name === 'supervisors')?.data || [])
 const meals = computed(() => system.value?.tables.find(t => t.name === 'meals')?.data || [])
+
 
 // Color palette for sessions
 const sessionColors = [
@@ -167,19 +174,19 @@ const localItems = ref([
             <TaskList :system-id="system?.id" />
         </aside>
         <main class="dashboard-main">
-            <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
+            <div id="stats" :class="['highlightable', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
                 @click="highlightStore.isHighlightMode && selectElement('stats')">
                 <dashboardStats :system-id="system?.id" />
             </div>
 
             <!-- Sessions Progress Pillows -->
-            <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
+            <div id="dashboard-pillows" :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
                 @click="highlightStore.isHighlightMode && selectElement('pillows')">
                 <dashboardPillows :sessionProgress="sessionProgress" />
             </div>
 
             <!-- Custom Calendar -->
-            <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
+            <div id="calendar" :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
                 @click="highlightStore.isHighlightMode && selectElement('calendar')">
                 <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                     :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"

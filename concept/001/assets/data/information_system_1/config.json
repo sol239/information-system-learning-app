@@ -735,7 +735,7 @@
         "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
         "status": "completed",
         "kind": "select",
-        "elementClass": "dashboard-stats"
+        "elementClass": "stats"
     },
     {
         "id": 2,
