@@ -38,14 +38,20 @@ const isOnSystemDetailPage = computed(() => {
   <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black border-b border-gray-200">
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" />
-    
+
+
     <!-- Tasks Popover - Only visible on /system/[id] pages -->
     <UPopover v-if="isOnSystemDetailPage" arrow>
+
       <UButton label="Tasks" color="primary" variant="subtle" />
 
       <template #content>
         <TaskList />
       </template>
     </UPopover>
-  </div>
+
+        <UButton label="Highlight" color="secondary" variant="subtle" style="margin-left: 10px" />
+
+
+</div>
 </template>

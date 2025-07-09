@@ -110,35 +110,37 @@ const goToToday = () => {
 }
 
 const localItems = ref([
-      {
+    {
         label: system.value?.name || 'System',
-      },
-      {
+    },
+    {
         label: 'Dashboard',
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
-      },
-      {
+    },
+    {
         label: 'Tables',
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',
-      }
-    
+    }
+
 ]);
 </script>
 
 <template>
     <LocalNavbar :items="localItems" />
     <div class="dashboard">
-        <h1>{{ system?.name || 'Dashboard' }}</h1>
+        <div class="highlightable">
+            <h1>{{ system?.name || 'Dashboard' }}</h1>
 
-        <div class="stats">
-            <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
-            <n-card title="Participants" size="small"><b>{{ participants.length }}</b></n-card>
-            <n-card title="Supervisors" size="small"><b>{{ supervisors.length }}</b></n-card>
-            <n-card title="Meals" size="small"><b>{{ meals.length }}</b></n-card>
+            <div class="stats">
+                <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
+                <n-card title="Participants" size="small"><b>{{ participants.length }}</b></n-card>
+                <n-card title="Supervisors" size="small"><b>{{ supervisors.length }}</b></n-card>
+                <n-card title="Meals" size="small"><b>{{ meals.length }}</b></n-card>
+            </div>
         </div>
 
         <!-- Sessions Progress Pillows -->
