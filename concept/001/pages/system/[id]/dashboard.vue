@@ -160,18 +160,47 @@ const localItems = ref([
 <template>
     <LocalNavbar :items="localItems" />
     <div class="dashboard">
-        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]" @click="highlightStore.isHighlightMode && selectElement('stats')">
-            <h1>{{ system?.name || 'Dashboard' }}</h1>
+        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
+            @click="highlightStore.isHighlightMode && selectElement('stats')">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">{{ system?.name || 'Dashboard' }}</h1>
+                <p class="dashboard-subtitle">System overview and statistics</p>
+            </div>
             <div class="stats">
-                <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
-                <n-card title="Participants" size="small"><b>{{ participants.length }}</b></n-card>
-                <n-card title="Supervisors" size="small"><b>{{ supervisors.length }}</b></n-card>
-                <n-card title="Meals" size="small"><b>{{ meals.length }}</b></n-card>
+                <div class="stat-card">
+                    <div class="stat-icon">🏫</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ sessions.length }}</div>
+                        <div class="stat-label">Sessions</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ participants.length }}</div>
+                        <div class="stat-label">Participants</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍🏫</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ supervisors.length }}</div>
+                        <div class="stat-label">Supervisors</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🍽️</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ meals.length }}</div>
+                        <div class="stat-label">Meals</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Sessions Progress Pillows -->
-        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]" @click="highlightStore.isHighlightMode && selectElement('pillows')">
+        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
+            @click="highlightStore.isHighlightMode && selectElement('pillows')">
             <div class="sessions-progress" v-if="sessionProgress.length">
                 <h3>Session Fill Progress</h3>
                 <div class="progress-pillows">
@@ -191,7 +220,8 @@ const localItems = ref([
         </div>
 
         <!-- Custom Calendar -->
-        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]" @click="highlightStore.isHighlightMode && selectElement('calendar')">
+        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
+            @click="highlightStore.isHighlightMode && selectElement('calendar')">
 
             <div class="calendar-section">
                 <div class="calendar-header">
@@ -244,6 +274,94 @@ const localItems = ref([
     display: flex;
     gap: 1.5rem;
     margin-bottom: 2rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin: 0;
+    font-weight: 400;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 160px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+    background-size: 200% 100%;
+    animation: shimmer-top 3s ease-in-out infinite;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.5rem;
+    height: 3.5rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .sessions-legend {
@@ -546,9 +664,9 @@ const localItems = ref([
     background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.2), transparent);
 }
 
-.highlighted-yellow > *,
-.highlighted-selected > *,
-.highlighted-dimmed > * {
+.highlighted-yellow>*,
+.highlighted-selected>*,
+.highlighted-dimmed>* {
     position: relative;
     z-index: 2;
 }
@@ -574,6 +692,16 @@ const localItems = ref([
     100% {
         box-shadow: 0 0 40px rgba(245, 158, 11, 1);
         border-color: #d97706;
+    }
+}
+
+@keyframes shimmer-top {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
     }
 }
 </style>
