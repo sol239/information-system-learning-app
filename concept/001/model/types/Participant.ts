@@ -6,7 +6,9 @@ export class Participant {
         public personal_number: string,
         public phone: string,
         public address: string,
-        public age: number
+        public age: number,
+        public fromDate: Date = new Date(),
+        public toDate: Date = new Date()
     ) {}
 
     static fromJSON(json: any): Participant[] {

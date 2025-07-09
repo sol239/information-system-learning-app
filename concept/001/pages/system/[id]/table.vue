@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ParticipantTable from '~/components/infsys_components/ParticipantTable.vue'
+import Table from '~/components/infsys_components/Table.vue'
 import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, computed } from 'vue'
 
@@ -17,9 +17,9 @@ const tableNames = computed(() => system.value?.tables.map(t => t.name) || [])
 const selectedTableName = ref(tableNames.value[0] || '')
 
 const selectedTableData = computed(() => {
-  if (!system.value) return []
-  const table = system.value.tables.find(t => t.name === selectedTableName.value)
-  return table?.data || []
+    if (!system.value) return []
+    const table = system.value.tables.find(t => t.name === selectedTableName.value)
+    return table?.data || []
 })
 
 const selectedTableKey = computed(() => selectedTableData.value.length ? Object.keys(selectedTableData.value[0]).join(',') : '')
@@ -40,12 +40,8 @@ const localItems = ref([
 <template>
     <LocalNavbar :items="localItems" />
     <div class="flex items-center gap-4 px-4 py-2">
-      <label for="table-select">Select table:</label>
-      <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
+        <label for="table-select">Select table:</label>
+        <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
     </div>
-    <ParticipantTable
-      :items="selectedTableData"
-      :tableName="selectedTableName"
-      :key="selectedTableKey"
-    />
+    <Table :items="selectedTableData" :tableName="selectedTableName" :key="selectedTableKey" />
 </template>
