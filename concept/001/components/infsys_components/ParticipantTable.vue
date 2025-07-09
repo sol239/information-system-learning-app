@@ -11,6 +11,8 @@ const props = defineProps<{
   participants?: Participant[] | Ref<Participant[]>
 }>()
 
+const globalFilter = ref('')
+
 // Default to empty array if no data is passed
 const data = computed(() => {
   if (!props.participants) return []
@@ -53,25 +55,31 @@ function getDropdownActions(user: Participant): DropdownMenuItem[][] {
 </script>
 
 <template>
-  <UTable :data="data" :columns="columns" class="flex-1">
-    <template #name-cell="{ row }">
-      <div class="flex items-center gap-3">
-        <UAvatar :src="`https://i.pravatar.cc/120?img=${row.original.id}`" size="lg"
-          :alt="`${row.original.name} avatar`" />
-        <div>
-          <p class="font-medium text-highlighted">
-            {{ row.original.name }}
-          </p>
-          <p>
-            {{ row.original.age }}
-          </p>
+  <div class="flex flex-col flex-1 w-full">
+    <div class="flex px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter participants..." />
+    </div>
+
+    <UTable v-model:global-filter="globalFilter" :data="data" :columns="columns" class="flex-1">
+      <template #name-cell="{ row }">
+        <div class="flex items-center gap-3">
+          <UAvatar :src="`https://i.pravatar.cc/120?img=${row.original.id}`" size="lg"
+            :alt="`${row.original.name} avatar`" />
+          <div>
+            <p class="font-medium text-highlighted">
+              {{ row.original.name }}
+            </p>
+            <p>
+              {{ row.original.age }}
+            </p>
+          </div>
         </div>
-      </div>
-    </template>
-    <template #action-cell="{ row }">
-      <UDropdownMenu :items="getDropdownActions(row.original)">
-        <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" aria-label="Actions" />
-      </UDropdownMenu>
-    </template>
-  </UTable>
+      </template>
+      <template #action-cell="{ row }">
+        <UDropdownMenu :items="getDropdownActions(row.original)">
+          <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" aria-label="Actions" />
+        </UDropdownMenu>
+      </template>
+    </UTable>
+  </div>
 </template>
