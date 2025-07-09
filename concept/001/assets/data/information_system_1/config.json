@@ -417,6 +417,7 @@
             "name": "meals",
             "data": [
                 {
+                    "id": 1,
                     "name": "Oatmeal with Bananas",
                     "allergens": [
                         "gluten"
@@ -424,6 +425,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 2,
                     "name": "Scrambled Eggs with Toast",
                     "allergens": [
                         "eggs",
@@ -432,6 +434,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 3,
                     "name": "Fruit Yogurt",
                     "allergens": [
                         "milk"
@@ -439,6 +442,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 4,
                     "name": "Pancakes with Syrup",
                     "allergens": [
                         "gluten",
@@ -448,6 +452,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 5,
                     "name": "Ham and Cheese Sandwich",
                     "allergens": [
                         "gluten",
@@ -456,11 +461,13 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 6,
                     "name": "Smoothie Bowl",
                     "allergens": [],
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 7,
                     "name": "Granola with Milk",
                     "allergens": [
                         "milk",
@@ -469,6 +476,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 8,
                     "name": "Boiled Eggs with Crackers",
                     "allergens": [
                         "eggs",
@@ -477,6 +485,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 9,
                     "name": "Cheese Croissant",
                     "allergens": [
                         "gluten",
@@ -485,6 +494,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 10,
                     "name": "Cottage Cheese with Berries",
                     "allergens": [
                         "milk"
@@ -492,6 +502,7 @@
                     "when_served": "breakfast"
                 },
                 {
+                    "id": 11,
                     "name": "Spaghetti Bolognese",
                     "allergens": [
                         "gluten"
@@ -499,11 +510,13 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 12,
                     "name": "Grilled Chicken with Rice",
                     "allergens": [],
                     "when_served": "lunch"
                 },
                 {
+                    "id": 13,
                     "name": "Beef Goulash with Dumplings",
                     "allergens": [
                         "gluten",
@@ -512,6 +525,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 14,
                     "name": "Vegetable Stir Fry with Tofu",
                     "allergens": [
                         "soy"
@@ -519,6 +533,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 15,
                     "name": "Fish Fillet with Mashed Potatoes",
                     "allergens": [
                         "fish",
@@ -527,6 +542,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 16,
                     "name": "Lentil Soup with Bread",
                     "allergens": [
                         "gluten"
@@ -534,11 +550,13 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 17,
                     "name": "Stuffed Peppers with Rice",
                     "allergens": [],
                     "when_served": "lunch"
                 },
                 {
+                    "id": 18,
                     "name": "Chicken Schnitzel with Potatoes",
                     "allergens": [
                         "gluten",
@@ -547,6 +565,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 19,
                     "name": "Risotto with Mushrooms",
                     "allergens": [
                         "milk"
@@ -554,6 +573,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 20,
                     "name": "Baked Zucchini with Cheese",
                     "allergens": [
                         "milk"
@@ -561,6 +581,7 @@
                     "when_served": "lunch"
                 },
                 {
+                    "id": 21,
                     "name": "Tomato Soup with Pasta",
                     "allergens": [
                         "gluten"
@@ -568,6 +589,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 22,
                     "name": "Grilled Cheese Sandwich",
                     "allergens": [
                         "gluten",
@@ -576,6 +598,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 23,
                     "name": "Tuna Salad with Crackers",
                     "allergens": [
                         "fish",
@@ -584,6 +607,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 24,
                     "name": "Vegetable Pizza Slice",
                     "allergens": [
                         "gluten",
@@ -592,6 +616,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 25,
                     "name": "Egg Salad Wrap",
                     "allergens": [
                         "eggs",
@@ -600,6 +625,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 26,
                     "name": "Couscous with Vegetables",
                     "allergens": [
                         "gluten"
@@ -607,6 +633,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 27,
                     "name": "Chicken Caesar Wrap",
                     "allergens": [
                         "gluten",
@@ -616,6 +643,7 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 28,
                     "name": "Spinach Quiche",
                     "allergens": [
                         "milk",
@@ -625,11 +653,13 @@
                     "when_served": "dinner"
                 },
                 {
+                    "id": 29,
                     "name": "Rice and Beans",
                     "allergens": [],
                     "when_served": "dinner"
                 },
                 {
+                    "id": 30,
                     "name": "Bulgur Salad with Feta",
                     "allergens": [
                         "gluten",
