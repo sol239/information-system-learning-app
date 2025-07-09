@@ -3,6 +3,10 @@ export class Task {
       public id: number,
       public title: string,
       public description: string,
+      public completed: boolean = false,
+      public kind: string,
+      public elementClass: string,
+
   
     ) {}
   
@@ -11,6 +15,9 @@ export class Task {
         json.id,
         json.title,
         json.description,
+        json.completed ?? false,
+        json.kind,
+        json.elementClass
       );
     }
 

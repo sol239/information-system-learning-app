@@ -4,6 +4,9 @@ import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, computed, watch } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
 import { useHighlightStore } from '~/stores/highlightElements'
+import dashboardStats from '~/components/infsys_components/dashboard-stats.vue'
+import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
+import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
 
 const route = useRoute()
 const systemId = route.params.id
@@ -162,71 +165,24 @@ const localItems = ref([
     <div class="dashboard">
         <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
             @click="highlightStore.isHighlightMode && selectElement('stats')">
-            <DashboardStats :system-id="system?.id" />
-
+            <dashboardStats :system-id="system?.id" />
         </div>
 
         <!-- Sessions Progress Pillows -->
         <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
             @click="highlightStore.isHighlightMode && selectElement('pillows')">
-            <div class="sessions-progress" v-if="sessionProgress.length">
-                <h3>Session Fill Progress</h3>
-                <div class="progress-pillows">
-                    <div v-for="session in sessionProgress" :key="session.id" class="progress-pillow">
-                        <div class="pillow-header">
-                            <span class="pillow-title">{{ session.name }}</span>
-                            <span class="pillow-count">{{ session.count }}/{{ session.capacity }}</span>
-                        </div>
-                        <div class="pillow-bar-bg">
-                            <div class="pillow-bar"
-                                :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
-                        </div>
-                        <div class="pillow-percent">{{ session.percent }}%</div>
-                    </div>
-                </div>
-            </div>
+            <dashboardPillows :sessionProgress="sessionProgress" />
+
         </div>
 
         <!-- Custom Calendar -->
         <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
             @click="highlightStore.isHighlightMode && selectElement('calendar')">
 
-            <div class="calendar-section">
-                <div class="calendar-header">
-                    <h2>Sessions Calendar</h2>
-                    <div class="calendar-controls">
-                        <button @click="previousMonth" class="nav-button">‹</button>
-                        <span class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</span>
-                        <button @click="nextMonth" class="nav-button">›</button>
-                        <button @click="goToToday" class="today-button">Today</button>
-                    </div>
-                </div>
-
-                <div class="calendar">
-                    <!-- Week day headers -->
-                    <div class="calendar-grid">
-                        <div v-for="day in weekDays" :key="day" class="weekday-header">
-                            {{ day }}
-                        </div>
-
-                        <!-- Calendar days -->
-                        <div v-for="day in calendarDays" :key="day.date.toISOString()" class="calendar-day" :class="{
-                            'other-month': !day.isCurrentMonth,
-                            'today': day.isToday
-                        }">
-                            <div class="day-number">{{ day.day }}</div>
-                            <div class="day-sessions">
-                                <div v-for="session in getSessionsForDate(day.date)" :key="session.id"
-                                    class="session-indicator"
-                                    :style="{ backgroundColor: sessionColorMap.get(session.id) }"
-                                    :title="session.name || `Session ${session.id}`">
-                                    <span class="session-name">{{ session.name || `S${session.id}` }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
+                :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
+                :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
+                :sessionColorMap="sessionColorMap" />
         </div>
     </div>
 </template>
