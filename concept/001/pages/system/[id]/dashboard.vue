@@ -162,40 +162,8 @@ const localItems = ref([
     <div class="dashboard">
         <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
             @click="highlightStore.isHighlightMode && selectElement('stats')">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">{{ system?.name || 'Dashboard' }}</h1>
-                <p class="dashboard-subtitle">System overview and statistics</p>
-            </div>
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-icon">🏫</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ sessions.length }}</div>
-                        <div class="stat-label">Sessions</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ participants.length }}</div>
-                        <div class="stat-label">Participants</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👨‍🏫</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ supervisors.length }}</div>
-                        <div class="stat-label">Supervisors</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🍽️</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ meals.length }}</div>
-                        <div class="stat-label">Meals</div>
-                    </div>
-                </div>
-            </div>
+            <DashboardStats :system-id="system?.id" />
+
         </div>
 
         <!-- Sessions Progress Pillows -->

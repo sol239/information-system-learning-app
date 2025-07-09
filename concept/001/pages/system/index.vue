@@ -18,11 +18,14 @@
 import { FileHandler } from '~/composables/FileHandler';
 import { InformationSystem } from '~/model/types/InformationSystem';
 import { useInformationSystemStore } from '~/stores/informationSystems';
+import { useSelectedSystemStore } from '~/stores/selectedSystemId'
 
 import { navigateTo } from '#app';
 
 function navigateToSystem(systemId: number) {
-  navigateTo(`/system/${systemId}`);
+  const selectedSystemStore = useSelectedSystemStore()
+  selectedSystemStore.select(systemId)
+  navigateTo(`/system/${systemId}/dashboard`);
 }
 
 const handler = new FileHandler();
