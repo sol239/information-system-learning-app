@@ -3,10 +3,12 @@ import { useRoute } from 'vue-router'
 import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, computed } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
+import { useHighlightStore } from '~/stores/highlightElements'
 
 const route = useRoute()
 const systemId = route.params.id
 const store = useInformationSystemStore()
+const highlightStore = useHighlightStore()
 const systems = store.systems
 const system = ref<InformationSystem | null>(null)
 
@@ -132,9 +134,8 @@ const localItems = ref([
 <template>
     <LocalNavbar :items="localItems" />
     <div class="dashboard">
-        <div class="highlightable">
+        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
             <h1>{{ system?.name || 'Dashboard' }}</h1>
-
             <div class="stats">
                 <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
                 <n-card title="Participants" size="small"><b>{{ participants.length }}</b></n-card>
@@ -144,53 +145,59 @@ const localItems = ref([
         </div>
 
         <!-- Sessions Progress Pillows -->
-        <div class="sessions-progress" v-if="sessionProgress.length">
-            <h3>Session Fill Progress</h3>
-            <div class="progress-pillows">
-                <div v-for="session in sessionProgress" :key="session.id" class="progress-pillow">
-                    <div class="pillow-header">
-                        <span class="pillow-title">{{ session.name }}</span>
-                        <span class="pillow-count">{{ session.count }}/{{ session.capacity }}</span>
+        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
+            <div class="sessions-progress" v-if="sessionProgress.length">
+                <h3>Session Fill Progress</h3>
+                <div class="progress-pillows">
+                    <div v-for="session in sessionProgress" :key="session.id" class="progress-pillow">
+                        <div class="pillow-header">
+                            <span class="pillow-title">{{ session.name }}</span>
+                            <span class="pillow-count">{{ session.count }}/{{ session.capacity }}</span>
+                        </div>
+                        <div class="pillow-bar-bg">
+                            <div class="pillow-bar"
+                                :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
+                        </div>
+                        <div class="pillow-percent">{{ session.percent }}%</div>
                     </div>
-                    <div class="pillow-bar-bg">
-                        <div class="pillow-bar"
-                            :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
-                    </div>
-                    <div class="pillow-percent">{{ session.percent }}%</div>
                 </div>
             </div>
         </div>
 
         <!-- Custom Calendar -->
-        <div class="calendar-section">
-            <div class="calendar-header">
-                <h2>Sessions Calendar</h2>
-                <div class="calendar-controls">
-                    <button @click="previousMonth" class="nav-button">‹</button>
-                    <span class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</span>
-                    <button @click="nextMonth" class="nav-button">›</button>
-                    <button @click="goToToday" class="today-button">Today</button>
-                </div>
-            </div>
+        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
 
-            <div class="calendar">
-                <!-- Week day headers -->
-                <div class="calendar-grid">
-                    <div v-for="day in weekDays" :key="day" class="weekday-header">
-                        {{ day }}
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2>Sessions Calendar</h2>
+                    <div class="calendar-controls">
+                        <button @click="previousMonth" class="nav-button">‹</button>
+                        <span class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</span>
+                        <button @click="nextMonth" class="nav-button">›</button>
+                        <button @click="goToToday" class="today-button">Today</button>
                     </div>
+                </div>
 
-                    <!-- Calendar days -->
-                    <div v-for="day in calendarDays" :key="day.date.toISOString()" class="calendar-day" :class="{
-                        'other-month': !day.isCurrentMonth,
-                        'today': day.isToday
-                    }">
-                        <div class="day-number">{{ day.day }}</div>
-                        <div class="day-sessions">
-                            <div v-for="session in getSessionsForDate(day.date)" :key="session.id"
-                                class="session-indicator" :style="{ backgroundColor: sessionColorMap.get(session.id) }"
-                                :title="session.name || `Session ${session.id}`">
-                                <span class="session-name">{{ session.name || `S${session.id}` }}</span>
+                <div class="calendar">
+                    <!-- Week day headers -->
+                    <div class="calendar-grid">
+                        <div v-for="day in weekDays" :key="day" class="weekday-header">
+                            {{ day }}
+                        </div>
+
+                        <!-- Calendar days -->
+                        <div v-for="day in calendarDays" :key="day.date.toISOString()" class="calendar-day" :class="{
+                            'other-month': !day.isCurrentMonth,
+                            'today': day.isToday
+                        }">
+                            <div class="day-number">{{ day.day }}</div>
+                            <div class="day-sessions">
+                                <div v-for="session in getSessionsForDate(day.date)" :key="session.id"
+                                    class="session-indicator"
+                                    :style="{ backgroundColor: sessionColorMap.get(session.id) }"
+                                    :title="session.name || `Session ${session.id}`">
+                                    <span class="session-name">{{ session.name || `S${session.id}` }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -461,36 +468,43 @@ const localItems = ref([
     max-width: 100%;
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .calendar-day {
-        min-height: 80px;
-        padding: 0.25rem;
+.highlighted-yellow {
+    border: 2px solid #facc15;
+    border-radius: 6px;
+    transition: all 0.3s;
+    background: none !important;
+    position: relative;
+    overflow: hidden;
+    animation: illuminate 2s ease-in-out infinite alternate;
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+}
+
+.highlighted-yellow::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(250, 204, 21, 0.1), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.highlighted-yellow>* {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes illuminate {
+    0% {
+        box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+        border-color: #facc15;
     }
 
-    .session-indicator {
-        font-size: 0.6rem;
-        padding: 1px 2px;
-    }
-
-    .calendar-header {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .legend-items {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .progress-pillows {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .progress-pillow {
-        min-width: 0;
-        max-width: 100%;
+    100% {
+        box-shadow: 0 0 25px rgba(250, 204, 21, 0.8);
+        border-color: #fbbf24;
     }
 }
 </style>

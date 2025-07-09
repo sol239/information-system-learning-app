@@ -3,8 +3,10 @@
 
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { ref, computed } from 'vue'
+import { useHighlightStore } from '~/stores/highlightElements'
 
 const route = useRoute()
+const highlightStore = useHighlightStore()
 
 const items = ref<NavigationMenuItem[]>([
   {
@@ -31,7 +33,6 @@ const items = ref<NavigationMenuItem[]>([
 const isOnSystemDetailPage = computed(() => {
   return route.path.startsWith('/system/') && route.params.id
 })
-
 </script>
 
 <template>
@@ -50,8 +51,12 @@ const isOnSystemDetailPage = computed(() => {
       </template>
     </UPopover>
 
-        <UButton label="Highlight" color="secondary" variant="subtle" style="margin-left: 10px" />
-
-
-</div>
+    <UButton
+      :label="highlightStore.isHighlightMode ? 'Disable Highlight' : 'Enable Highlight'"
+      color="secondary"
+      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'"
+      style="margin-left: 10px"
+      @click="highlightStore.toggleHighlight"
+    />
+  </div>
 </template>
