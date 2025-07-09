@@ -7,6 +7,7 @@ export class InformationSystem {
     public name: string,
     public description: string,
     public tableNames: string[],
+    public participants: Participant[] = [],
 
   ) {}
 
