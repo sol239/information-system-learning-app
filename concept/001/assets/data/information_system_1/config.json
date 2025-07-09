@@ -14,7 +14,10 @@
                     "personal_number": "045217/1234",
                     "phone": "+420 601 123 456",
                     "address": "Náměstí Míru 12, Praha",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 2,
@@ -23,7 +26,12 @@
                     "personal_number": "071015/2345",
                     "phone": "+420 721 456 789",
                     "address": "Jiráskova 8, Brno",
-                    "age": 14
+                    "age": 14,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": [
+                        "gluten"
+                    ]
                 },
                 {
                     "id": 3,
@@ -32,7 +40,10 @@
                     "personal_number": "091208/3456",
                     "phone": "+420 737 789 123",
                     "address": "Komenského 22, Ostrava",
-                    "age": 13
+                    "age": 13,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 4,
@@ -41,7 +52,12 @@
                     "personal_number": "100312/4567",
                     "phone": "+420 601 555 789",
                     "address": "Masarykova 11, Plzeň",
-                    "age": 10
+                    "age": 10,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": [
+                        "milk"
+                    ]
                 },
                 {
                     "id": 5,
@@ -50,7 +66,10 @@
                     "personal_number": "120505/5678",
                     "phone": "+420 602 987 654",
                     "address": "Smetanova 3, Liberec",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 6,
@@ -59,7 +78,12 @@
                     "personal_number": "110801/6789",
                     "phone": "+420 775 123 987",
                     "address": "Husova 7, Olomouc",
-                    "age": 11
+                    "age": 11,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": [
+                        "eggs"
+                    ]
                 },
                 {
                     "id": 7,
@@ -68,7 +92,10 @@
                     "personal_number": "131217/7890",
                     "phone": "+420 723 345 678",
                     "address": "Benešova 15, Zlín",
-                    "age": 13
+                    "age": 13,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 8,
@@ -77,7 +104,12 @@
                     "personal_number": "100405/8901",
                     "phone": "+420 777 123 321",
                     "address": "Na Příkopě 4, Praha",
-                    "age": 10
+                    "age": 10,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": [
+                        "nuts"
+                    ]
                 },
                 {
                     "id": 9,
@@ -86,7 +118,10 @@
                     "personal_number": "121106/9012",
                     "phone": "+420 602 555 888",
                     "address": "Dlouhá 9, České Budějovice",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 10,
@@ -95,7 +130,12 @@
                     "personal_number": "080723/0123",
                     "phone": "+420 737 444 321",
                     "address": "Zahradní 20, Karlovy Vary",
-                    "age": 8
+                    "age": 8,
+                    "fromDate": "2025-07-01T00:00:00.000Z",
+                    "toDate": "2025-07-10T00:00:00.000Z",
+                    "allergens": [
+                        "soy"
+                    ]
                 },
                 {
                     "id": 11,
@@ -104,7 +144,12 @@
                     "personal_number": "140219/1324",
                     "phone": "+420 701 212 111",
                     "address": "Palackého 14, Jihlava",
-                    "age": 14
+                    "age": 14,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "gluten"
+                    ]
                 },
                 {
                     "id": 12,
@@ -113,7 +158,12 @@
                     "personal_number": "090402/3456",
                     "phone": "+420 777 654 321",
                     "address": "Riegrova 18, Pardubice",
-                    "age": 9
+                    "age": 9,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "milk"
+                    ]
                 },
                 {
                     "id": 13,
@@ -122,7 +172,12 @@
                     "personal_number": "100707/7788",
                     "phone": "+420 602 333 999",
                     "address": "Tylova 2, Hradec Králové",
-                    "age": 10
+                    "age": 10,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "eggs"
+                    ]
                 },
                 {
                     "id": 14,
@@ -131,7 +186,12 @@
                     "personal_number": "070811/4455",
                     "phone": "+420 775 998 877",
                     "address": "Petrova 5, Ústí nad Labem",
-                    "age": 7
+                    "age": 7,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "nuts"
+                    ]
                 },
                 {
                     "id": 15,
@@ -140,7 +200,10 @@
                     "personal_number": "130405/1234",
                     "phone": "+420 703 456 789",
                     "address": "Kollárova 9, Teplice",
-                    "age": 13
+                    "age": 13,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 16,
@@ -149,7 +212,13 @@
                     "personal_number": "091101/6655",
                     "phone": "+420 605 888 777",
                     "address": "Vrchlického 13, Havířov",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "milk",
+                        "nuts"
+                    ]
                 },
                 {
                     "id": 17,
@@ -158,7 +227,10 @@
                     "personal_number": "121004/2323",
                     "phone": "+420 736 789 001",
                     "address": "Pionýrů 6, Opava",
-                    "age": 11
+                    "age": 11,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 18,
@@ -167,7 +239,12 @@
                     "personal_number": "070501/3344",
                     "phone": "+420 703 333 666",
                     "address": "Mlýnská 3, Karviná",
-                    "age": 7
+                    "age": 7,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "eggs"
+                    ]
                 },
                 {
                     "id": 19,
@@ -176,7 +253,10 @@
                     "personal_number": "101005/1122",
                     "phone": "+420 705 666 444",
                     "address": "Sladkovského 7, Třebíč",
-                    "age": 10
+                    "age": 10,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 20,
@@ -185,7 +265,12 @@
                     "personal_number": "090918/7788",
                     "phone": "+420 776 555 222",
                     "address": "Znojemská 1, Znojmo",
-                    "age": 9
+                    "age": 9,
+                    "fromDate": "2025-07-11T00:00:00.000Z",
+                    "toDate": "2025-07-20T00:00:00.000Z",
+                    "allergens": [
+                        "nuts"
+                    ]
                 },
                 {
                     "id": 21,
@@ -194,7 +279,10 @@
                     "personal_number": "130302/4466",
                     "phone": "+420 702 777 000",
                     "address": "Hlavní 16, Příbram",
-                    "age": 13
+                    "age": 13,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 22,
@@ -203,7 +291,12 @@
                     "personal_number": "071217/5566",
                     "phone": "+420 733 222 555",
                     "address": "Čechova 4, Prostějov",
-                    "age": 14
+                    "age": 14,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "gluten"
+                    ]
                 },
                 {
                     "id": 23,
@@ -212,7 +305,10 @@
                     "personal_number": "080710/6677",
                     "phone": "+420 604 321 654",
                     "address": "Lidická 5, Kladno",
-                    "age": 8
+                    "age": 8,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 24,
@@ -221,7 +317,12 @@
                     "personal_number": "111104/7788",
                     "phone": "+420 739 123 456",
                     "address": "Žižkova 14, Mladá Boleslav",
-                    "age": 11
+                    "age": 11,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "soy"
+                    ]
                 },
                 {
                     "id": 25,
@@ -230,7 +331,10 @@
                     "personal_number": "060809/8899",
                     "phone": "+420 757 111 222",
                     "address": "Kovářská 20, Uherské Hradiště",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": []
                 },
                 {
                     "id": 26,
@@ -239,7 +343,12 @@
                     "personal_number": "041116/9900",
                     "phone": "+420 774 234 567",
                     "address": "Špitálská 12, Třinec",
-                    "age": 10
+                    "age": 10,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "gluten"
+                    ]
                 },
                 {
                     "id": 27,
@@ -248,7 +357,12 @@
                     "personal_number": "150709/2222",
                     "phone": "+420 766 444 333",
                     "address": "Tovární 8, Frýdek-Místek",
-                    "age": 14
+                    "age": 14,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "milk"
+                    ]
                 },
                 {
                     "id": 28,
@@ -257,7 +371,12 @@
                     "personal_number": "080104/4455",
                     "phone": "+420 777 222 888",
                     "address": "Nádražní 3, Kroměříž",
-                    "age": 9
+                    "age": 9,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "eggs"
+                    ]
                 },
                 {
                     "id": 29,
@@ -266,7 +385,12 @@
                     "personal_number": "090903/6677",
                     "phone": "+420 777 333 444",
                     "address": "Tylova 19, Valašské Meziříčí",
-                    "age": 12
+                    "age": 12,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "nuts"
+                    ]
                 },
                 {
                     "id": 30,
@@ -275,7 +399,17 @@
                     "personal_number": "110506/7788",
                     "phone": "+420 602 333 444",
                     "address": "Koliště 16, Opava",
-                    "age": 13
+                    "age": 13,
+                    "fromDate": "2025-07-21T00:00:00.000Z",
+                    "toDate": "2025-07-30T00:00:00.000Z",
+                    "allergens": [
+                        "gluten",
+                        "milk",
+                        "eggs",
+                        "nuts",
+                        "soy",
+                        "fish"
+                    ]
                 }
             ]
         },

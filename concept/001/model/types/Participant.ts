@@ -19,7 +19,9 @@ export class Participant {
             item.personal_number,
             item.phone,
             item.address,
-            item.age
+            item.age,
+            new Date(item.fromDate),
+            new Date(item.toDate)
         ));
     }
 

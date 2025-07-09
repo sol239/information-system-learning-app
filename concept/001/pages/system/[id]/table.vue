@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Table from '~/components/infsys_components/Table.vue'
+import Table from '~/components/infsys_components/TableComponent.vue'
 import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, computed } from 'vue'
 
@@ -43,5 +43,7 @@ const localItems = ref([
         <label for="table-select">Select table:</label>
         <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
     </div>
+    <UButton label="Add" variant="subtle" />
+    <!-- TODO: Create some popup menu for creating new entity -->
     <Table :items="selectedTableData" :tableName="selectedTableName" :key="selectedTableKey" />
 </template>
