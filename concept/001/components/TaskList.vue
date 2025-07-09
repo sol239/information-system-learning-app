@@ -5,7 +5,6 @@
         <h2 class="text-xl font-semibold text-center">Tasks</h2>
       </template>
 
-
       <div v-if="tasks.length === 0" class="text-center text-gray-500 py-4">
         No tasks yet
       </div>
@@ -14,25 +13,12 @@
         <div
           v-for="(task, index) in tasks"
           :key="index"
-          class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+          class="flex items-center gap-3 p-3 rounded-lg"
         >
-          <UCheckbox
-            v-model="task.completed"
-            :ui="{ wrapper: 'flex-shrink-0' }"
-          />
-          <span
-            class="flex-1 text-sm"
-            :class="{ 'line-through text-gray-400': task.completed }"
-          >
-            {{ task.text }}
-          </span>
-          <UButton
-            @click="removeTask(index)"
-            color="red"
-            variant="soft"
-            size="xs"
-            icon="i-heroicons-trash"
-          />
+          <UCard>
+            {{ task.title }}
+            <UButton style="margin-left: 5px;">Vybrat</UButton>
+          </UCard>
         </div>
       </div>
     </UCard>
@@ -40,27 +26,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
+import { useSelectedSystemStore } from '~/stores/selectedSystemId'
+import { useInformationSystemStore } from '~/stores/informationSystems'
+import { Task } from '~/model/types/Task'
 
-interface Task {
-  text: string
-  completed: boolean
-}
+// Selected system id
+const selectedSystemStore = useSelectedSystemStore()
+const systemId = selectedSystemStore.selectedId
 
-const tasks = ref<Task[]>([])
+const store = useInformationSystemStore()
+const system = store.systems.find(sys => sys.id === systemId)
 
-const form = reactive({
-  newTask: ''
-})
+// New task input
+const newTaskText = ref('')
 
-function addTask() {
-  if (form.newTask.trim() !== '') {
-    tasks.value.push({ text: form.newTask, completed: false })
-    form.newTask = ''
-  }
+// Computed property for tasks from the system
+const tasks = computed(() => system?.tasks ?? [])
+
+// Add new task
+const addTask = () => {
+  if (!newTaskText.value.trim() || !system) return
+  
+  const newTask = new Task(
+    Date.now(), // Simple ID generation
+    newTaskText.value.trim(), // title
+    '', // description (empty by default)
+    false, // completed
+    'general', // kind (set a default or adjust as needed)
+    '' // elementClass (empty by default)
+  )
+  
+  system.tasks.push(newTask)
+  newTaskText.value = ''
+  
+  // Update store
+  store.updateSystem(system)
 }
 
 function removeTask(index: number) {
-  tasks.value.splice(index, 1)
+  if (!system || !system.tasks) return
+  system.tasks.splice(index, 1)
+}
+
+// Update task (when checkbox changes)
+const updateTask = (index: number, task: Task) => {
+  if (!system) return
+  
+  // Task is already updated by v-model, just need to update store
+  store.updateSystem(system)
 }
 </script>

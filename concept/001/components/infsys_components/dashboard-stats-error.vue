@@ -17,7 +17,7 @@
         <div class="stat-card">
             <div class="stat-icon">👨‍🏫</div>
             <div class="stat-content">
-                <div class="stat-number">{{ supervisors.length }}</div>
+                <div class="stat-number">{{ participants.length }}</div>
                 <div class="stat-label">Supervisors</div>
             </div>
         </div>

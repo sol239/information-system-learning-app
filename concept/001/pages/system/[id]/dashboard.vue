@@ -161,33 +161,56 @@ const localItems = ref([
 </script>
 
 <template>
-    <LocalNavbar :items="localItems" />
-    <div class="dashboard">
-        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
-            @click="highlightStore.isHighlightMode && selectElement('stats')">
-            <dashboardStats :system-id="system?.id" />
-        </div>
+    <div class="dashboard-layout">
+        <aside class="dashboard-sidebar">
+            <LocalNavbar :items="localItems" />
+            <TaskList :system-id="system?.id" />
+        </aside>
+        <main class="dashboard-main">
+            <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
+                @click="highlightStore.isHighlightMode && selectElement('stats')">
+                <dashboardStats :system-id="system?.id" />
+            </div>
 
-        <!-- Sessions Progress Pillows -->
-        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
-            @click="highlightStore.isHighlightMode && selectElement('pillows')">
-            <dashboardPillows :sessionProgress="sessionProgress" />
+            <!-- Sessions Progress Pillows -->
+            <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
+                @click="highlightStore.isHighlightMode && selectElement('pillows')">
+                <dashboardPillows :sessionProgress="sessionProgress" />
+            </div>
 
-        </div>
-
-        <!-- Custom Calendar -->
-        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
-            @click="highlightStore.isHighlightMode && selectElement('calendar')">
-
-            <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
-                :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
-                :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
-                :sessionColorMap="sessionColorMap" />
-        </div>
+            <!-- Custom Calendar -->
+            <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
+                @click="highlightStore.isHighlightMode && selectElement('calendar')">
+                <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
+                    :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
+                    :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
+                    :sessionColorMap="sessionColorMap" />
+            </div>
+        </main>
     </div>
 </template>
 
 <style scoped>
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-sidebar {
+    width: 40%;
+    border-right: 1px solid #e5e7eb;
+    padding: 2rem 1rem 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.dashboard-main {
+    flex: 1;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
 .dashboard {
     max-width: 1000px;
     margin: 2rem auto;

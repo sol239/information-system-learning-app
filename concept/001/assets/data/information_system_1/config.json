@@ -729,11 +729,53 @@
         }
     ],
     "tasks": [
-        {
-            "id": 1,
-            "title": "Soring in the table by age",
-            "description": "There is and issue with sorting the table by age of the person. Fix the issue."
-            
-        }
-    ]
+    {
+        "id": 1,
+        "title": "Zobrazování statistik v Dashboardu",
+        "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
+        "status": "completed",
+        "kind": "select",
+        "elementClass": "dashboard-stats"
+    },
+    {
+        "id": 2,
+        "title": "Ověření kalendáře",
+        "description": "Zkontrolujte, zda se v kalendáři zobrazují všechny naplánované sessiony a správně se zvýrazňuje dnešní den.",
+        "status": "pending",
+        "kind": "select",
+        "elementClass": "dashboard-calendar"
+    },
+    {
+        "id": 3,
+        "title": "Přidání nového účastníka",
+        "description": "Vyzkoušejte přidat nového účastníka do tabulky a ověřte, že se správně zobrazí v seznamu.",
+        "status": "pending",
+        "kind": "action",
+        "elementClass": "participants-table"
+    },
+    {
+        "id": 4,
+        "title": "Kontrola kapacity sessionů",
+        "description": "Zkontrolujte, zda se správně počítá a zobrazuje naplněnost jednotlivých sessionů v dashboardu.",
+        "status": "pending",
+        "kind": "select",
+        "elementClass": "dashboard-pillows"
+    },
+    {
+        "id": 5,
+        "title": "Zobrazení detailu jídla",
+        "description": "Klikněte na libovolné jídlo v tabulce a ověřte, že se zobrazí detailní informace včetně alergenů.",
+        "status": "pending",
+        "kind": "action",
+        "elementClass": "meals-table"
+    },
+    {
+        "id": 6,
+        "title": "Přepínání mezi tabulkami",
+        "description": "Vyzkoušejte přepínání mezi jednotlivými tabulkami v levém menu a ověřte, že se správně mění obsah.",
+        "status": "pending",
+        "kind": "action",
+        "elementClass": "local-navbar"
+    }
+]
 }
