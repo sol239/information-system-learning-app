@@ -666,5 +666,67 @@
             "toDate": "2025-07-30T00:00:00.000Z",
             "capacity": 15
         }
+    ],
+    "supervisors": [
+        {
+            "id": 1,
+            "name": "Petr Novotný",
+            "email": "petr.novotny@example.com",
+            "personal_number": "750101/1234",
+            "phone": "+420 601 111 111",
+            "address": "Hlavní 1, Praha",
+            "age": 35,
+            "sessionId": 1
+        },
+        {
+            "id": 2,
+            "name": "Jana Svobodová",
+            "email": "jana.svobodova@example.com",
+            "personal_number": "820202/2345",
+            "phone": "+420 602 222 222",
+            "address": "Masarykova 2, Brno",
+            "age": 32,
+            "sessionId": 1
+        },
+        {
+            "id": 3,
+            "name": "Martin Dvořák",
+            "email": "martin.dvorak@example.com",
+            "personal_number": "790303/3456",
+            "phone": "+420 603 333 333",
+            "address": "Komenského 3, Ostrava",
+            "age": 40,
+            "sessionId": 2
+        },
+        {
+            "id": 4,
+            "name": "Eva Procházková",
+            "email": "eva.prochazkova@example.com",
+            "personal_number": "850404/4567",
+            "phone": "+420 604 444 444",
+            "address": "Smetanova 4, Plzeň",
+            "age": 29,
+            "sessionId": 2
+        },
+        {
+            "id": 5,
+            "name": "Tomáš Král",
+            "email": "tomas.kral.supervisor@example.com",
+            "personal_number": "780505/5678",
+            "phone": "+420 605 555 555",
+            "address": "Jiráskova 5, Liberec",
+            "age": 38,
+            "sessionId": 3
+        },
+        {
+            "id": 6,
+            "name": "Lucie Bláhová",
+            "email": "lucie.blahova@example.com",
+            "personal_number": "830606/6789",
+            "phone": "+420 606 666 666",
+            "address": "Palackého 6, Zlín",
+            "age": 31,
+            "sessionId": 3
+        }
     ]
 }
