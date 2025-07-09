@@ -15,9 +15,8 @@
                     "phone": "+420 601 123 456",
                     "address": "Náměstí Míru 12, Praha",
                     "age": 12,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 1
                 },
                 {
                     "id": 2,
@@ -27,11 +26,10 @@
                     "phone": "+420 721 456 789",
                     "address": "Jiráskova 8, Brno",
                     "age": 14,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
                     "allergens": [
                         "gluten"
-                    ]
+                    ],
+                    "sessionId": 1
                 },
                 {
                     "id": 3,
@@ -41,9 +39,8 @@
                     "phone": "+420 737 789 123",
                     "address": "Komenského 22, Ostrava",
                     "age": 13,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 1
                 },
                 {
                     "id": 4,
@@ -53,11 +50,10 @@
                     "phone": "+420 601 555 789",
                     "address": "Masarykova 11, Plzeň",
                     "age": 10,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
                     "allergens": [
                         "milk"
-                    ]
+                    ],
+                    "sessionId": 1
                 },
                 {
                     "id": 5,
@@ -67,9 +63,8 @@
                     "phone": "+420 602 987 654",
                     "address": "Smetanova 3, Liberec",
                     "age": 12,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 1
                 },
                 {
                     "id": 6,
@@ -79,11 +74,10 @@
                     "phone": "+420 775 123 987",
                     "address": "Husova 7, Olomouc",
                     "age": 11,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
                     "allergens": [
                         "eggs"
-                    ]
+                    ],
+                    "sessionId": 1
                 },
                 {
                     "id": 7,
@@ -93,9 +87,8 @@
                     "phone": "+420 723 345 678",
                     "address": "Benešova 15, Zlín",
                     "age": 13,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 1
                 },
                 {
                     "id": 8,
@@ -105,11 +98,10 @@
                     "phone": "+420 777 123 321",
                     "address": "Na Příkopě 4, Praha",
                     "age": 10,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
                     "allergens": [
                         "nuts"
-                    ]
+                    ],
+                    "sessionId": 1
                 },
                 {
                     "id": 9,
@@ -119,9 +111,8 @@
                     "phone": "+420 602 555 888",
                     "address": "Dlouhá 9, České Budějovice",
                     "age": 12,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 1
                 },
                 {
                     "id": 10,
@@ -131,11 +122,10 @@
                     "phone": "+420 737 444 321",
                     "address": "Zahradní 20, Karlovy Vary",
                     "age": 8,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
                     "allergens": [
                         "soy"
-                    ]
+                    ],
+                    "sessionId": 1
                 },
                 {
                     "id": 11,
@@ -145,11 +135,10 @@
                     "phone": "+420 701 212 111",
                     "address": "Palackého 14, Jihlava",
                     "age": 14,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "gluten"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 12,
@@ -159,11 +148,10 @@
                     "phone": "+420 777 654 321",
                     "address": "Riegrova 18, Pardubice",
                     "age": 9,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "milk"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 13,
@@ -173,11 +161,10 @@
                     "phone": "+420 602 333 999",
                     "address": "Tylova 2, Hradec Králové",
                     "age": 10,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "eggs"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 14,
@@ -187,11 +174,10 @@
                     "phone": "+420 775 998 877",
                     "address": "Petrova 5, Ústí nad Labem",
                     "age": 7,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "nuts"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 15,
@@ -201,9 +187,8 @@
                     "phone": "+420 703 456 789",
                     "address": "Kollárova 9, Teplice",
                     "age": 13,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 2
                 },
                 {
                     "id": 16,
@@ -213,12 +198,11 @@
                     "phone": "+420 605 888 777",
                     "address": "Vrchlického 13, Havířov",
                     "age": 12,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "milk",
                         "nuts"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 17,
@@ -228,9 +212,8 @@
                     "phone": "+420 736 789 001",
                     "address": "Pionýrů 6, Opava",
                     "age": 11,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 2
                 },
                 {
                     "id": 18,
@@ -240,11 +223,10 @@
                     "phone": "+420 703 333 666",
                     "address": "Mlýnská 3, Karviná",
                     "age": 7,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "eggs"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 19,
@@ -254,9 +236,8 @@
                     "phone": "+420 705 666 444",
                     "address": "Sladkovského 7, Třebíč",
                     "age": 10,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 2
                 },
                 {
                     "id": 20,
@@ -266,11 +247,10 @@
                     "phone": "+420 776 555 222",
                     "address": "Znojemská 1, Znojmo",
                     "age": 9,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
                     "allergens": [
                         "nuts"
-                    ]
+                    ],
+                    "sessionId": 2
                 },
                 {
                     "id": 21,
@@ -280,9 +260,8 @@
                     "phone": "+420 702 777 000",
                     "address": "Hlavní 16, Příbram",
                     "age": 13,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 3
                 },
                 {
                     "id": 22,
@@ -292,11 +271,10 @@
                     "phone": "+420 733 222 555",
                     "address": "Čechova 4, Prostějov",
                     "age": 14,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "gluten"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 23,
@@ -306,9 +284,8 @@
                     "phone": "+420 604 321 654",
                     "address": "Lidická 5, Kladno",
                     "age": 8,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 3
                 },
                 {
                     "id": 24,
@@ -318,11 +295,10 @@
                     "phone": "+420 739 123 456",
                     "address": "Žižkova 14, Mladá Boleslav",
                     "age": 11,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "soy"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 25,
@@ -332,9 +308,8 @@
                     "phone": "+420 757 111 222",
                     "address": "Kovářská 20, Uherské Hradiště",
                     "age": 12,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
-                    "allergens": []
+                    "allergens": [],
+                    "sessionId": 3
                 },
                 {
                     "id": 26,
@@ -344,11 +319,10 @@
                     "phone": "+420 774 234 567",
                     "address": "Špitálská 12, Třinec",
                     "age": 10,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "gluten"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 27,
@@ -358,11 +332,10 @@
                     "phone": "+420 766 444 333",
                     "address": "Tovární 8, Frýdek-Místek",
                     "age": 14,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "milk"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 28,
@@ -372,11 +345,10 @@
                     "phone": "+420 777 222 888",
                     "address": "Nádražní 3, Kroměříž",
                     "age": 9,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "eggs"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 29,
@@ -386,11 +358,10 @@
                     "phone": "+420 777 333 444",
                     "address": "Tylova 19, Valašské Meziříčí",
                     "age": 12,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "nuts"
-                    ]
+                    ],
+                    "sessionId": 3
                 },
                 {
                     "id": 30,
@@ -400,8 +371,6 @@
                     "phone": "+420 602 333 444",
                     "address": "Koliště 16, Opava",
                     "age": 13,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
                     "allergens": [
                         "gluten",
                         "milk",
@@ -409,7 +378,8 @@
                         "nuts",
                         "soy",
                         "fish"
-                    ]
+                    ],
+                    "sessionId": 3
                 }
             ]
         },
@@ -675,6 +645,26 @@
             "id": 1,
             "title": "Soring in the table by age",
             "description": "There is and issue with sorting the table by age of the person. Fix the issue."
+        }
+    ],
+    "sessions": [
+        {
+            "id": 1,
+            "fromDate": "2025-07-01T00:00:00.000Z",
+            "toDate": "2025-07-10T00:00:00.000Z",
+            "capacity": 15
+        },
+        {
+            "id": 2,
+            "fromDate": "2025-07-11T00:00:00.000Z",
+            "toDate": "2025-07-20T00:00:00.000Z",
+            "capacity": 15
+        },
+        {
+            "id": 3,
+            "fromDate": "2025-07-21T00:00:00.000Z",
+            "toDate": "2025-07-30T00:00:00.000Z",
+            "capacity": 15
         }
     ]
 }

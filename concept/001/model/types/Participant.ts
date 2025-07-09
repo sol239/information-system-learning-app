@@ -9,8 +9,8 @@ export class Participant implements TableEntity {
         public phone: string,
         public address: string,
         public age: number,
-        public fromDate: Date = new Date(),
-        public toDate: Date = new Date()
+        public sessionId: number
+        
     ) {}
 
     static fromJSON(json: any): Participant[] {
@@ -22,8 +22,8 @@ export class Participant implements TableEntity {
             item.phone,
             item.address,
             item.age,
-            new Date(item.fromDate),
-            new Date(item.toDate)
+            item.sessionId || 0
+            
         ));
     }
 }
