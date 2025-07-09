@@ -27,7 +27,7 @@
                     "address": "Jiráskova 8, Brno",
                     "age": 14,
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
                     "sessionId": 1
                 },
@@ -51,7 +51,7 @@
                     "address": "Masarykova 11, Plzeň",
                     "age": 10,
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
                     "sessionId": 1
                 },
@@ -75,7 +75,7 @@
                     "address": "Husova 7, Olomouc",
                     "age": 11,
                     "allergens": [
-                        "eggs"
+                        "vejce"
                     ],
                     "sessionId": 1
                 },
@@ -99,7 +99,7 @@
                     "address": "Na Příkopě 4, Praha",
                     "age": 10,
                     "allergens": [
-                        "nuts"
+                        "ořechy"
                     ],
                     "sessionId": 1
                 },
@@ -123,7 +123,7 @@
                     "address": "Zahradní 20, Karlovy Vary",
                     "age": 8,
                     "allergens": [
-                        "soy"
+                        "sója"
                     ],
                     "sessionId": 1
                 },
@@ -136,7 +136,7 @@
                     "address": "Palackého 14, Jihlava",
                     "age": 14,
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
                     "sessionId": 2
                 },
@@ -149,7 +149,7 @@
                     "address": "Riegrova 18, Pardubice",
                     "age": 9,
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
                     "sessionId": 2
                 },
@@ -162,7 +162,7 @@
                     "address": "Tylova 2, Hradec Králové",
                     "age": 10,
                     "allergens": [
-                        "eggs"
+                        "vejce"
                     ],
                     "sessionId": 2
                 },
@@ -175,7 +175,7 @@
                     "address": "Petrova 5, Ústí nad Labem",
                     "age": 7,
                     "allergens": [
-                        "nuts"
+                        "ořechy"
                     ],
                     "sessionId": 2
                 },
@@ -199,8 +199,8 @@
                     "address": "Vrchlického 13, Havířov",
                     "age": 12,
                     "allergens": [
-                        "milk",
-                        "nuts"
+                        "mléko",
+                        "ořechy"
                     ],
                     "sessionId": 2
                 },
@@ -224,7 +224,7 @@
                     "address": "Mlýnská 3, Karviná",
                     "age": 7,
                     "allergens": [
-                        "eggs"
+                        "vejce"
                     ],
                     "sessionId": 2
                 },
@@ -248,7 +248,7 @@
                     "address": "Znojemská 1, Znojmo",
                     "age": 9,
                     "allergens": [
-                        "nuts"
+                        "ořechy"
                     ],
                     "sessionId": 2
                 },
@@ -272,7 +272,7 @@
                     "address": "Čechova 4, Prostějov",
                     "age": 14,
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
                     "sessionId": 2
                 },
@@ -296,7 +296,7 @@
                     "address": "Žižkova 14, Mladá Boleslav",
                     "age": 11,
                     "allergens": [
-                        "soy"
+                        "sója"
                     ],
                     "sessionId": 3
                 },
@@ -320,7 +320,7 @@
                     "address": "Špitálská 12, Třinec",
                     "age": 10,
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
                     "sessionId": 3
                 },
@@ -333,7 +333,7 @@
                     "address": "Tovární 8, Frýdek-Místek",
                     "age": 14,
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
                     "sessionId": 3
                 },
@@ -346,7 +346,7 @@
                     "address": "Nádražní 3, Kroměříž",
                     "age": 9,
                     "allergens": [
-                        "eggs"
+                        "vejce"
                     ],
                     "sessionId": 3
                 },
@@ -359,7 +359,7 @@
                     "address": "Tylova 19, Valašské Meziříčí",
                     "age": 12,
                     "allergens": [
-                        "nuts"
+                        "ořechy"
                     ],
                     "sessionId": 3
                 },
@@ -372,12 +372,12 @@
                     "address": "Koliště 16, Opava",
                     "age": 13,
                     "allergens": [
-                        "gluten",
-                        "milk",
-                        "eggs",
-                        "nuts",
-                        "soy",
-                        "fish"
+                        "lepek",
+                        "mléko",
+                        "vejce",
+                        "ořechy",
+                        "sója",
+                        "ryby"
                     ],
                     "sessionId": 3
                 }
@@ -388,254 +388,254 @@
             "data": [
                 {
                     "id": 1,
-                    "name": "Oatmeal with Bananas",
+                    "name": "Ovesná kaše s banány",
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 2,
-                    "name": "Scrambled Eggs with Toast",
+                    "name": "Míchaná vejce s toastem",
                     "allergens": [
-                        "eggs",
-                        "gluten"
+                        "vejce",
+                        "lepek"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 3,
-                    "name": "Fruit Yogurt",
+                    "name": "Ovocný jogurt",
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 4,
-                    "name": "Pancakes with Syrup",
+                    "name": "Lívance s sirupem",
                     "allergens": [
-                        "gluten",
-                        "milk",
-                        "eggs"
+                        "lepek",
+                        "mléko",
+                        "vejce"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 5,
-                    "name": "Ham and Cheese Sandwich",
+                    "name": "Sendvič se šunkou a sýrem",
                     "allergens": [
-                        "gluten",
-                        "milk"
+                        "lepek",
+                        "mléko"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 6,
-                    "name": "Smoothie Bowl",
+                    "name": "Smoothie miska",
                     "allergens": [],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 7,
-                    "name": "Granola with Milk",
+                    "name": "Granola s mlékem",
                     "allergens": [
-                        "milk",
-                        "nuts"
+                        "mléko",
+                        "ořechy"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 8,
-                    "name": "Boiled Eggs with Crackers",
+                    "name": "Vařená vejce s krekry",
                     "allergens": [
-                        "eggs",
-                        "gluten"
+                        "vejce",
+                        "lepek"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 9,
-                    "name": "Cheese Croissant",
+                    "name": "Sýrový croissant",
                     "allergens": [
-                        "gluten",
-                        "milk"
+                        "lepek",
+                        "mléko"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 10,
-                    "name": "Cottage Cheese with Berries",
+                    "name": "Tvaroh s bobulemi",
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
-                    "when_served": "breakfast"
+                    "when_served": "snídaně"
                 },
                 {
                     "id": 11,
-                    "name": "Spaghetti Bolognese",
+                    "name": "Špagety Bolognese",
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 12,
-                    "name": "Grilled Chicken with Rice",
+                    "name": "Grilované kuře s rýží",
                     "allergens": [],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 13,
-                    "name": "Beef Goulash with Dumplings",
+                    "name": "Hovězí guláš s knedlíky",
                     "allergens": [
-                        "gluten",
-                        "eggs"
+                        "lepek",
+                        "vejce"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 14,
-                    "name": "Vegetable Stir Fry with Tofu",
+                    "name": "Zeleninové stir fry s tofu",
                     "allergens": [
-                        "soy"
+                        "sója"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 15,
-                    "name": "Fish Fillet with Mashed Potatoes",
+                    "name": "Rybí filet s bramborovou kaší",
                     "allergens": [
-                        "fish",
-                        "milk"
+                        "ryby",
+                        "mléko"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 16,
-                    "name": "Lentil Soup with Bread",
+                    "name": "Čočková polévka s chlebem",
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 17,
-                    "name": "Stuffed Peppers with Rice",
+                    "name": "Plněné papriky s rýží",
                     "allergens": [],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 18,
-                    "name": "Chicken Schnitzel with Potatoes",
+                    "name": "Kuřecí řízek s brambory",
                     "allergens": [
-                        "gluten",
-                        "eggs"
+                        "lepek",
+                        "vejce"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 19,
-                    "name": "Risotto with Mushrooms",
+                    "name": "Rizoto s houbami",
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 20,
-                    "name": "Baked Zucchini with Cheese",
+                    "name": "Pečená cuketa se sýrem",
                     "allergens": [
-                        "milk"
+                        "mléko"
                     ],
-                    "when_served": "lunch"
+                    "when_served": "oběd"
                 },
                 {
                     "id": 21,
-                    "name": "Tomato Soup with Pasta",
+                    "name": "Rajčatová polévka s těstovinami",
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 22,
-                    "name": "Grilled Cheese Sandwich",
+                    "name": "Grilovaný sýrový sendvič",
                     "allergens": [
-                        "gluten",
-                        "milk"
+                        "lepek",
+                        "mléko"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 23,
-                    "name": "Tuna Salad with Crackers",
+                    "name": "Tuňákový salát s krekry",
                     "allergens": [
-                        "fish",
-                        "gluten"
+                        "ryby",
+                        "lepek"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 24,
-                    "name": "Vegetable Pizza Slice",
+                    "name": "Zeleninová pizza",
                     "allergens": [
-                        "gluten",
-                        "milk"
+                        "lepek",
+                        "mléko"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 25,
-                    "name": "Egg Salad Wrap",
+                    "name": "Vaječný salát v tortille",
                     "allergens": [
-                        "eggs",
-                        "gluten"
+                        "vejce",
+                        "lepek"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 26,
-                    "name": "Couscous with Vegetables",
+                    "name": "Kuskus se zeleninou",
                     "allergens": [
-                        "gluten"
+                        "lepek"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 27,
-                    "name": "Chicken Caesar Wrap",
+                    "name": "Kuřecí Caesar wrap",
                     "allergens": [
-                        "gluten",
-                        "milk",
-                        "eggs"
+                        "lepek",
+                        "mléko",
+                        "vejce"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 28,
-                    "name": "Spinach Quiche",
+                    "name": "Špenátový quiche",
                     "allergens": [
-                        "milk",
-                        "eggs",
-                        "gluten"
+                        "mléko",
+                        "vejce",
+                        "lepek"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 29,
-                    "name": "Rice and Beans",
+                    "name": "Rýže s fazolemi",
                     "allergens": [],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 },
                 {
                     "id": 30,
-                    "name": "Bulgur Salad with Feta",
+                    "name": "Bulgur salát s fetou",
                     "allergens": [
-                        "gluten",
-                        "milk"
+                        "lepek",
+                        "mléko"
                     ],
-                    "when_served": "dinner"
+                    "when_served": "večeře"
                 }
             ]
         },
