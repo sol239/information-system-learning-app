@@ -33,6 +33,7 @@ const configFiles = import.meta.glob('~/assets/data/*/config.json', { eager: tru
 console.log('Config files:', configFiles);
 
 const systems: InformationSystem[] = handler.getInformationSystems();
+console.log('Systems:', systems);
 
 
 

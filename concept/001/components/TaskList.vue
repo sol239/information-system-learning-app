@@ -2,7 +2,7 @@
   <div class="max-w-md mx-auto mt-8">
     <UCard>
       <template #header>
-        <h2 class="text-xl font-semibold text-center">Todo List</h2>
+        <h2 class="text-xl font-semibold text-center">Tasks</h2>
       </template>
 
 

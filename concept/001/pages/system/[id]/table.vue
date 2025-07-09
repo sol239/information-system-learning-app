@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript'
 import ParticipantTable from '~/components/infsys_components/ParticipantTable.vue'
 import type { InformationSystem } from '~/model/types/InformationSystem'
-import type { Participant } from '~/model/types/Participant'
-
-//TODO: make participants a type of Participant[]
+import { ref, computed } from 'vue'
 
 const route = useRoute()
 const systemId = route.params.id
@@ -15,15 +12,17 @@ system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) 
 
 const directory = system.value?.directory || ''
 
-const participants = ref<any[]>([])
-participants.value = []
+// Table selection logic
+const tableNames = computed(() => system.value?.tables.map(t => t.name) || [])
+const selectedTableName = ref(tableNames.value[0] || '')
 
-const tablePath = `~/assets/data/${directory}/tables/participants.json`;
-console.log('Table Path:', tablePath);
-const participantsModule = await import(`~/assets/data/${directory}/tables/participants.json`)
-participants.value = participantsModule.default || []
-console.log('Loaded participants:', participants.value)
+const selectedTableData = computed(() => {
+  if (!system.value) return []
+  const table = system.value.tables.find(t => t.name === selectedTableName.value)
+  return table?.data || []
+})
 
+const selectedTableKey = computed(() => selectedTableData.value.length ? Object.keys(selectedTableData.value[0]).join(',') : '')
 
 const localItems = ref([
     {
@@ -35,14 +34,18 @@ const localItems = ref([
         to: `/system/${systemId}/table`,
         data_target: 'system-table',
     }
-
 ]);
-console.log('Participants:', participants.value)
-
-
 </script>
 
 <template>
     <LocalNavbar :items="localItems" />
-    <ParticipantTable :participants="participants" />
+    <div class="flex items-center gap-4 px-4 py-2">
+      <label for="table-select">Select table:</label>
+      <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
+    </div>
+    <ParticipantTable
+      :items="selectedTableData"
+      :tableName="selectedTableName"
+      :key="selectedTableKey"
+    />
 </template>
