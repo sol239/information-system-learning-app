@@ -1,4 +1,6 @@
-export class Participant {
+import type { TableEntity } from './TableEntity';
+
+export class Participant implements TableEntity {
     constructor(
         public id: number,
         public name: string,
@@ -24,5 +26,4 @@ export class Participant {
             new Date(item.toDate)
         ));
     }
-
 }
