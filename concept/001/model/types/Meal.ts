@@ -13,7 +13,7 @@ export class Meal implements TableEntity {
             item.id,
             item.name,
             item.whenServed,
-            item.alergens || []
+            item.alergens || [] 
         ));
     }
 }
