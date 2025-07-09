@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 import type { InformationSystem } from '~/model/types/InformationSystem'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
 import { useHighlightStore } from '~/stores/highlightElements'
 
@@ -11,6 +11,32 @@ const store = useInformationSystemStore()
 const highlightStore = useHighlightStore()
 const systems = store.systems
 const system = ref<InformationSystem | null>(null)
+
+// Add selected element tracking
+const selectedElement = ref<string | null>(null)
+
+// Watch for highlight mode changes and deselect when disabled
+watch(() => highlightStore.isHighlightMode, (newValue) => {
+    if (!newValue) {
+        selectedElement.value = null
+    }
+})
+
+const selectElement = (elementId: string) => {
+    if (selectedElement.value === elementId) {
+        selectedElement.value = null // Deselect if already selected
+    } else {
+        selectedElement.value = elementId
+    }
+}
+
+const isElementSelected = (elementId: string) => {
+    return selectedElement.value === elementId
+}
+
+const isElementDimmed = (elementId: string) => {
+    return highlightStore.isHighlightMode && selectedElement.value && selectedElement.value !== elementId
+}
 
 system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
 
@@ -134,7 +160,7 @@ const localItems = ref([
 <template>
     <LocalNavbar :items="localItems" />
     <div class="dashboard">
-        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
+        <div :class="['highlightable', 'dashboard-stats', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]" @click="highlightStore.isHighlightMode && selectElement('stats')">
             <h1>{{ system?.name || 'Dashboard' }}</h1>
             <div class="stats">
                 <n-card title="Sessions" size="small"><b>{{ sessions.length }}</b></n-card>
@@ -145,7 +171,7 @@ const localItems = ref([
         </div>
 
         <!-- Sessions Progress Pillows -->
-        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
+        <div :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]" @click="highlightStore.isHighlightMode && selectElement('pillows')">
             <div class="sessions-progress" v-if="sessionProgress.length">
                 <h3>Session Fill Progress</h3>
                 <div class="progress-pillows">
@@ -165,7 +191,7 @@ const localItems = ref([
         </div>
 
         <!-- Custom Calendar -->
-        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode }]">
+        <div :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]" @click="highlightStore.isHighlightMode && selectElement('calendar')">
 
             <div class="calendar-section">
                 <div class="calendar-header">
@@ -477,9 +503,34 @@ const localItems = ref([
     overflow: hidden;
     animation: illuminate 2s ease-in-out infinite alternate;
     box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+    cursor: pointer;
 }
 
-.highlighted-yellow::before {
+.highlighted-selected {
+    border: 3px solid #f59e0b;
+    border-radius: 8px;
+    transition: all 0.3s;
+    background: none !important;
+    position: relative;
+    overflow: hidden;
+    animation: illuminate-selected 1.5s ease-in-out infinite alternate;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.highlighted-dimmed {
+    border: 1px solid #facc15;
+    border-radius: 6px;
+    transition: all 0.3s;
+    background: none !important;
+    opacity: 0.4;
+    box-shadow: 0 0 5px rgba(250, 204, 21, 0.2);
+    cursor: pointer;
+}
+
+.highlighted-yellow::before,
+.highlighted-selected::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -491,7 +542,13 @@ const localItems = ref([
     pointer-events: none;
 }
 
-.highlighted-yellow>* {
+.highlighted-selected::before {
+    background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.2), transparent);
+}
+
+.highlighted-yellow > *,
+.highlighted-selected > *,
+.highlighted-dimmed > * {
     position: relative;
     z-index: 2;
 }
@@ -505,6 +562,18 @@ const localItems = ref([
     100% {
         box-shadow: 0 0 25px rgba(250, 204, 21, 0.8);
         border-color: #fbbf24;
+    }
+}
+
+@keyframes illuminate-selected {
+    0% {
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+        border-color: #f59e0b;
+    }
+
+    100% {
+        box-shadow: 0 0 40px rgba(245, 158, 11, 1);
+        border-color: #d97706;
     }
 }
 </style>
