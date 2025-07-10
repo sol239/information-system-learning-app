@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 import type { InformationSystem } from '~/model/types/InformationSystem'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
 import { useHighlightStore } from '~/stores/highlightElements'
 import { useSelectedComponentStore } from '~/stores/selectedComponent' // <-- import store
-import dashboardStats from '~/components/infsys_components/dashboard-stats.vue'
+import dashboardStatsError from '~/components/infsys_components/stats-error.vue'
+import dashboardStats from '~/components/infsys_components/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
 
@@ -19,6 +20,9 @@ const system = ref<InformationSystem | null>(null)
 
 // Add selected element tracking
 const selectedElement = ref<string | null>(null)
+
+// Animation state for repaired effect
+const repairedElement = ref<string | null>(null)
 
 // Watch for highlight mode changes and deselect when disabled
 watch(() => highlightStore.isHighlightMode, (newValue) => {
@@ -165,6 +169,37 @@ const localItems = ref([
     }
 
 ]);
+
+// Generic function to check if a task for a given element id is completed
+function isElementTaskCompleted(elementId: string): boolean {
+    if (!system.value) return false;
+    const task = system.value.tasks.find(task => task.elementClass === elementId);
+    return task ? task.completed : false;
+}
+
+// Watch for task completion and trigger animation/deselect
+watch(
+  () => system.value?.tasks.map(t => ({ id: t.elementClass, completed: t.completed })),
+  (newTasks, oldTasks) => {
+    if (!oldTasks) return;
+    newTasks.forEach((task, idx) => {
+      const oldTask = oldTasks[idx];
+      if (task && oldTask && !oldTask.completed && task.completed) {
+        // Task was just completed
+        repairedElement.value = task.id;
+        // Deselect after animation
+        setTimeout(() => {
+          if (selectedElement.value === task.id) {
+            selectedElement.value = null;
+            selectedComponentStore.clear();
+          }
+          repairedElement.value = null;
+        }, 1200); // Animation duration
+      }
+    });
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -174,9 +209,16 @@ const localItems = ref([
             <TaskList :system-id="system?.id" />
         </aside>
         <main class="dashboard-main">
-            <div id="stats" :class="['highlightable', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'), 'highlighted-selected': isElementSelected('stats'), 'highlighted-dimmed': isElementDimmed('stats') }]"
+            <div id="stats"
+                :class="['highlightable',
+                    { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'),
+                      'highlighted-selected': isElementSelected('stats'),
+                      'highlighted-dimmed': isElementDimmed('stats'),
+                      'repaired-animation': repairedElement === 'stats' }]
+                "
                 @click="highlightStore.isHighlightMode && selectElement('stats')">
-                <dashboardStats :system-id="system?.id" />
+                <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" />
+                <dashboardStats v-else :system-id="system?.id" />
             </div>
 
             <!-- Sessions Progress Pillows -->
@@ -656,6 +698,31 @@ const localItems = ref([
 
     100% {
         background-position: 200% 0;
+    }
+}
+
+.repaired-animation {
+    animation: repairedPulse 2s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+    border-color: #22c55e !important;
+}
+
+@keyframes repairedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34,197,94,0.0);
+        border-color: #facc15;
+    }
+    30% {
+        box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+        border-color: #22c55e;
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+        border-color: #22c55e;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34,197,94,0.0);
+        border-color: #facc15;
     }
 }
 </style>
