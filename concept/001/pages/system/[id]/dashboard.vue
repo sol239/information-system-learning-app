@@ -166,6 +166,11 @@ const localItems = ref([
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',
+    },
+    {
+        label: 'Repair Demo',
+        to: `/system/${systemId}/demo-repair`,
+        data_target: 'demo-repair',
     }
 
 ]);
