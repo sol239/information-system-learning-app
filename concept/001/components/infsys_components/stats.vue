@@ -8,28 +8,28 @@
       <div class="stat-card">
         <div class="stat-icon">🏫</div>
         <div class="stat-content">
-          <div class="stat-number">{{ sessions.length }}</div>
+          <div class="stat-number">{{ sessionsCount }}</div>
           <div class="stat-label">Sessions</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">👥</div>
         <div class="stat-content">
-          <div class="stat-number">{{ participants.length }}</div>
+          <div class="stat-number">{{ participantsCount }}</div>
           <div class="stat-label">Participants</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">👨‍🏫</div>
         <div class="stat-content">
-          <div class="stat-number">{{ supervisors.length }}</div>
+          <div class="stat-number">{{ supervisorsCount }}</div>
           <div class="stat-label">Supervisors</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">🍽️</div>
         <div class="stat-content">
-          <div class="stat-number">{{ meals.length }}</div>
+          <div class="stat-number">{{ mealsCount }}</div>
           <div class="stat-label">Meals</div>
         </div>
       </div>
@@ -54,10 +54,29 @@ const system = computed(() => {
   return informationSystemStore.systems.find(sys => sys.id === id)
 })
 
-const sessions = computed(() => system.value?.tables.find(t => t.name === 'sessions')?.data || [])
-const participants = computed(() => system.value?.tables.find(t => t.name === 'participants')?.data || [])
-const supervisors = computed(() => system.value?.tables.find(t => t.name === 'supervisors')?.data || [])
-const meals = computed(() => system.value?.tables.find(t => t.name === 'meals')?.data || [])
+/*
+const supervisors = computed(() => system.value?.db.query('SELECT * FROM supervisors') || [])
+const participants = computed(() => system.value?.db.query('SELECT * FROM participants') || [])
+const sessions = computed(() => system.value?.db.query('SELECT * FROM sessions') || [])
+const meals = computed(() => system.value?.db.query('SELECT * FROM meals') || [])
+*/
+
+const supervisorsCount = computed(() => {
+  return system.value?.db.query('SELECT COUNT(*) as count FROM supervisors')[0]?.count || 0
+})
+
+const participantsCount = computed(() => {
+  return system.value?.db.query('SELECT COUNT(*) as count FROM participants')[0]?.count || 0
+})
+
+const sessionsCount = computed(() => {
+  return system.value?.db.query('SELECT COUNT(*) as count FROM sessions')[0]?.count || 0
+})
+
+const mealsCount = computed(() => {
+  return system.value?.db.query('SELECT COUNT(*) as count FROM meals')[0]?.count || 0
+})
+
 </script>
 
 <style scoped>

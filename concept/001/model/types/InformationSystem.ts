@@ -10,7 +10,7 @@ export interface Table<T = any> {
 export class InformationSystem {
 
   // TODO: use db attribute for IS
-  private db: DbHandler;
+  public db: DbHandler;
 
   constructor(
     public id: number,
@@ -24,7 +24,9 @@ export class InformationSystem {
   }
 
   public databaseInit(json: any): void {
+    console.log("Initializing database for Information System:", this.name);
     this.db.init(json);
+    console.log("Database initialized for Information System:", this.name);
   }
 
   static fromJSON(json: any): InformationSystem {

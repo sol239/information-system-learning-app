@@ -9,7 +9,12 @@ export class DbHandler {
     }
 
     public async init(json: any): Promise<void> {
-        const SQL = await initSqlJs();
+        // TODO: use wasm file from assets
+        const wasmUrl = new URL('sql.js/dist/sql-wasm.wasm', import.meta.url);
+        
+        const SQL = await initSqlJs({
+            locateFile: () => wasmUrl.href
+        });
         this.db = new SQL.Database();
         
         // Create tables and insert data

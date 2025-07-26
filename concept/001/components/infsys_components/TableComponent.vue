@@ -3,6 +3,14 @@ import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { useClipboard } from '@vueuse/core'
 import { ref, computed, toValue, h, resolveComponent, watch } from 'vue'
 import type { Column } from '@tanstack/vue-table'
+import { useInformationSystemStore } from '~/stores/informationSystems';
+import { useSelectedSystemStore } from '~/stores/selectedSystemId'
+import type { InformationSystem } from '~/model/types/InformationSystem';
+
+const informationSystemStore = useInformationSystemStore();
+const selectedSystemStore = useSelectedSystemStore();
+
+const selectedSystem: InformationSystem | null = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
 
 const UBadge = resolveComponent('UBadge')
 const UButton = resolveComponent('UButton')
@@ -123,34 +131,60 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
   const d = data.value
   if (props.columns && props.columns.length > 0) return props.columns
   if (!d.length) return []
-  return Object.keys(d[0]).map(key => ({
-    accessorKey: key,
-    header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
-  }))
+  const keys = Object.keys(d[0])
+  // Add action column at the end
+  return [
+    ...keys.map(key => ({
+      accessorKey: key,
+      header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
+    })),
+    {
+      id: 'action',
+      header: 'Akce'
+    }
+  ]
 })
 
-function getDropdownActions(row: any): DropdownMenuItem[][] {
+function getDropdownActions(row: any): DropdownMenuItem[] {
   return [
-    [
-      {
-        label: `Copy ID`,
-        icon: 'i-lucide-copy',
-        onSelect: () => {
-          if (row.id !== undefined) {
-            copy(row.id.toString())
-            toast.add({
-              title: 'ID copied to clipboard!',
-              color: 'success',
-              icon: 'i-lucide-circle-check'
-            })
-          }
+    {
+      label: `Copy ID`,
+      icon: 'i-lucide-copy',
+      onSelect: () => {
+        if (row.id !== undefined) {
+          copy(row.id.toString())
+          toast.add({
+            title: 'ID copied to clipboard!',
+            color: 'success',
+            icon: 'i-lucide-circle-check'
+          })
         }
       }
-    ],
-    [
-      { label: 'Edit', icon: 'i-lucide-edit' },
-      { label: 'Delete', icon: 'i-lucide-trash', color: 'error' }
-    ]
+    },
+    {
+      label: 'Edit',
+      icon: 'i-lucide-edit',
+      onSelect: () => {
+        // Log selected system to console
+        console.log('Selected system:', selectedSystemStore.selectedId, informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedSystemId))
+        toast.add({
+          title: 'Edit functionality not implemented yet',
+          color: 'warning',
+          icon: 'i-lucide-info'
+        })
+      }
+    },
+    {
+      label: 'Delete',
+      icon: 'i-lucide-trash',
+      color: 'error',
+
+      onSelect: () => {
+        console.log(selectedSystem?.db.query(`SELECT COUNT(*) FROM ${props.tableName || 'table'}`))
+        selectedSystem?.db.exec(`DELETE FROM ${props.tableName || 'table'} WHERE id = '${row.id}'`)
+        console.log(selectedSystem?.db.query(`SELECT COUNT(*) FROM ${props.tableName || 'table'}`))
+      }
+    }
   ]
 }
 
@@ -175,9 +209,21 @@ const getSqlQuery = (baseQuery: string, columns: string[]) => {
   return query
 }
 
-// Computed property to sort the data array based on currentSort
-const sortedData = computed(() => {
+// Computed property to filter and sort the data
+const filteredAndSortedData = computed(() => {
   let d = [...data.value]
+  
+  // Apply filtering first
+  if (globalFilter.value.trim()) {
+    const filter = globalFilter.value.toLowerCase()
+    d = d.filter(item => {
+      return Object.values(item).some(value => 
+        String(value).toLowerCase().includes(filter)
+      )
+    })
+  }
+  
+  // Then apply sorting
   if (currentSort.value.field && currentSort.value.order) {
     d.sort((a, b) => {
       const field = currentSort.value.field!
@@ -222,7 +268,7 @@ defineExpose({
       </div>
     </div>
     <UTable
-      :data="sortedData"
+      :data="filteredAndSortedData"
       :columns="autoColumns"
       class="flex-1"
       :sort="false"
