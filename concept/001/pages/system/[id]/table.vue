@@ -130,22 +130,28 @@ function getHeader(label: string, field: string) {
 }
 
 const autoColumns = computed<TableColumn<any>[]>(() => {
-    const d = data.value
-    if (props.columns && props.columns.length > 0) return props.columns
-    if (!d.length) return []
-    const keys = Object.keys(d[0])
+
+    const keys = columnNames.value
+
+    console.log("KEYS:", keys)
+
+    const columns: TableColumn<any>[] = keys.map(key => ({
+        accessorKey: key,
+        header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
+    }))
+
+    console.log("COLUMNS:", columns)
+    
     // Add action column at the end
     return [
-        ...keys.map(key => ({
-            accessorKey: key,
-            header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
-        })),
+        ...columns,
         {
             id: 'action',
             header: 'Akce'
         }
     ]
 })
+
 
 const editModalOpen = ref(false)
 
@@ -324,11 +330,16 @@ watch(selectedTableName, async (newTableName) => {
     }
     try {
         const data = system.value.db.query(`SELECT * FROM ${newTableName}`)
+console.log("Auto columns:", autoColumns.value)
+
+        console.log("Selected table: ", newTableName)
 
         tableInfo.value = system.value.db.query(`PRAGMA table_info(${newTableName})`) || []
 
         columnNames.value = []
         columnTypes.value = []
+
+        console.log("Table info:", tableInfo.value  )
 
         tableInfo.value.forEach((col: any) => {
             columnNames.value.push(col.name)
@@ -341,6 +352,8 @@ watch(selectedTableName, async (newTableName) => {
                 return acc
             }, {} as Record<string, any>)
         )
+
+        console.log("Column names:", columnNames.value)
 
         selectedTableData.value = data
     } catch (error) {
@@ -450,7 +463,13 @@ function addMethod() {
 
     </div>
 
-    <UTable :data="filteredAndSortedData" :columns="autoColumns" class="flex-1" :sort="false">
+    <UTable 
+        :data="filteredAndSortedData" 
+        :columns="autoColumns" 
+        :key="selectedTableName"
+        class="flex-1" 
+        :sort="false"
+    >
         <template #name-cell="{ row }" v-if="autoColumns.some(col => (col as any)?.accessorKey === 'name')">
             <div class="flex items-center gap-3">
                 <UAvatar v-if="row.original.id" size="lg" :alt="`${row.original.name || row.original.id} avatar`" />
