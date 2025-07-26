@@ -1,3 +1,4 @@
+import DbHandler from "~/utils/db/DbHandler";
 import { Participant } from "./Participant";
 import { Task } from "./Task";
 
@@ -7,6 +8,10 @@ export interface Table<T = any> {
 }
 
 export class InformationSystem {
+
+  // TODO: use db attribute for IS
+  private db: DbHandler;
+
   constructor(
     public id: number,
     public directory: string,
@@ -14,7 +19,13 @@ export class InformationSystem {
     public description: string,
     public tables: Table[],
     public tasks: Task[] = []
-  ) {}
+  ) {
+    this.db = new DbHandler();
+  }
+
+  public databaseInit(json: any): void {
+    this.db.init(json);
+  }
 
   static fromJSON(json: any): InformationSystem {
     // Parse tables

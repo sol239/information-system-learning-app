@@ -35,7 +35,8 @@ export class FileHandler {
         for (const [path, module] of Object.entries(configFiles)) {
             try {
                 const configData = (module as any).default;
-                const infoSystem = InformationSystem.fromJSON(configData);
+                const infoSystem: InformationSystem = InformationSystem.fromJSON(configData);
+                infoSystem.databaseInit(configData);
                 console.log(`Parsed config from ${path}:`);
                 informationSystems.push(infoSystem);
             } catch (error) {
