@@ -417,29 +417,39 @@ function addMethod() {
     )
     editModalOpen.value = true
 
-    
+
 }
 
 </script>
 
 <template>
-    <div class="flex flex-col flex-1 w-full">
-        <LocalNavbar :items="localItems" />
-        <div class="flex items-center gap-4 px-4 py-2">
+    <LocalNavbar :items="localItems" />
+
+    <div class="flex flex-row items-center gap-4 w-full px-4 py-2">
+
+        <!-- Table Selector -->
+        <div class="flex items-center gap-2">
             <label for="table-select">Select table:</label>
             <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
         </div>
+
+        <!-- Add Button -->
         <UButton label="Add" variant="subtle" @click="addMethod" />
+
+        <!-- Global Filter Input -->
         <UInput v-model="globalFilter" class="max-w-sm" :placeholder="`Filter ${selectedTableName || 'items'}...`" />
-        <!-- SQL Query Display (always visible) -->
+
+        <!-- SQL Query Display -->
         <div class="ml-auto text-sm text-gray-500 font-mono flex items-center">
             <span>SQL Query:</span>
             <span class="ml-2 p-2 bg-gray-100 rounded text-xs">
                 {{getSqlQuery(`SELECT * FROM ${selectedTableName || 'table'}`, autoColumns.map(col => (col as
-                    any)?.accessorKey || '').filter(Boolean))}}
+                    any)?.accessorKey || '').filter(Boolean)) }}
             </span>
         </div>
+
     </div>
+
     <UTable :data="filteredAndSortedData" :columns="autoColumns" class="flex-1" :sort="false">
         <template #name-cell="{ row }" v-if="autoColumns.some(col => (col as any)?.accessorKey === 'name')">
             <div class="flex items-center gap-3">
@@ -469,11 +479,8 @@ function addMethod() {
                 </template>
                 <UForm :state="formState" @submit="onSubmit">
                     <div class="grid grid-cols-2 gap-4">
-                        <div
-                            v-for="(col, index) in columnNames.filter(col => col !== 'id')"
-                            :key="index"
-                            class="flex flex-col"
-                        >
+                        <div v-for="(col, index) in columnNames.filter(col => col !== 'id')" :key="index"
+                            class="flex flex-col">
                             <label class="mb-1 font-medium text-sm text-gray-700">{{ col }}</label>
                             <UInput v-model="formState[col]" :placeholder="`Enter ${col}`" />
                         </div>
