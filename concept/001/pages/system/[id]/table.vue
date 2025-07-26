@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
+import type { TableColumn, DropdownMenuItem, FormSubmitEvent } from '@nuxt/ui'
 import { useClipboard } from '@vueuse/core'
 import { ref, computed, toValue, h, resolveComponent, watch, readonly } from 'vue'
 import type { Column } from '@tanstack/vue-table'
@@ -147,6 +147,10 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
     ]
 })
 
+const editModalOpen = ref(false)
+
+
+
 function getDropdownActions(row: any): DropdownMenuItem[] {
     return [
         {
@@ -169,11 +173,21 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             onSelect: () => {
                 // Log selected system to console
                 console.log('Selected system:', selectedSystemStore.selectedId, informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedSystemId))
-                toast.add({
-                    title: 'Edit functionality not implemented yet',
-                    color: 'warning',
-                    icon: 'i-lucide-info'
-                })
+                console.log("COLUMNS:", selectedSystem?.db.query(`PRAGMA table_info(${selectedTableName.value})`) || [])
+
+                const entity = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value} WHERE id = '${row.id}'`)[0]
+                console.log('Selected row data:', entity)
+
+                formState = reactive(
+                    Object.keys(entity).reduce((acc, key) => {
+                        acc[key] = entity[key]
+                        return acc
+                    }, {} as Record<string, any>)
+                )
+
+
+                editModalOpen.value = true
+
             }
         },
         {
@@ -183,13 +197,20 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             onSelect: () => {
                 if (!selectedTableName.value) return
                 try {
-                    // Optionally: confirm deletion here
-                    console.log(selectedSystem?.db.query(`SELECT COUNT(*) FROM ${selectedTableName.value}`))
+
+                    // Delete data from the selected table
                     selectedSystem?.db.exec(`DELETE FROM ${selectedTableName.value} WHERE id = '${row.id}'`)
-                    console.log(selectedSystem?.db.query(`SELECT COUNT(*) FROM ${selectedTableName.value}`))
+
                     // Reload data after delete
                     const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
                     selectedTableData.value = data
+
+                    // Notify user of success
+                    toast.add({
+                        title: 'Row deleted successfully',
+                        color: 'success',
+                        icon: 'i-lucide-circle-check'
+                    })
                 } catch (error) {
                     console.error(`Error deleting row from table ${selectedTableName.value}:`, error)
                     toast.add({
@@ -269,6 +290,13 @@ const route = useRoute()
 const systemId = route.params.id
 const systems = informationSystemStore.systems
 const system = ref<InformationSystem | null>(null)
+const tableInfo = ref<any[]>([])
+const columnNames = ref<string[]>([])
+const columnTypes = ref<string[]>([])
+
+let formState = reactive<Record<string, any>>({});
+
+
 system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
 
 const tableNames = computed(() => {
@@ -296,6 +324,24 @@ watch(selectedTableName, async (newTableName) => {
     }
     try {
         const data = system.value.db.query(`SELECT * FROM ${newTableName}`)
+
+        tableInfo.value = system.value.db.query(`PRAGMA table_info(${newTableName})`) || []
+
+        columnNames.value = []
+        columnTypes.value = []
+
+        tableInfo.value.forEach((col: any) => {
+            columnNames.value.push(col.name)
+            columnTypes.value.push(col.type)
+        })
+
+        formState = reactive(
+            columnNames.value.reduce((acc, col) => {
+                acc[col] = ''
+                return acc
+            }, {} as Record<string, any>)
+        )
+
         selectedTableData.value = data
     } catch (error) {
         console.error(`Error fetching data from table ${newTableName}:`, error)
@@ -320,6 +366,60 @@ const localItems = ref([
         data_target: 'system-table',
     }
 ])
+
+async function onSubmit() {
+    // Handle form submission logic here
+    console.log('Form submitted with data:', formState)
+
+    const id = formState['id']
+    if (!id) {
+        // Insert new row (skip 'id' column)
+        const insertCols = columnNames.value.filter(col => col !== 'id')
+        const insertVals = insertCols.map(col =>
+            typeof formState[col] === 'string'
+                ? `'${formState[col].replace(/'/g, "''")}'`
+                : formState[col]
+        )
+        const sql = `INSERT INTO ${selectedTableName.value} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
+        selectedSystem?.db.exec(sql)
+        // Reload data after insert
+        const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
+        selectedTableData.value = data
+        toast.add({ title: 'Success', description: 'The row has been inserted.', color: 'success' })
+        return
+    }
+
+    // Update the row if id is present
+    const setClause = columnNames.value
+        .filter(col => col !== 'id')
+        .map(col => `${col} = ${typeof formState[col] === 'string' ? `'${formState[col].replace(/'/g, "''")}'` : formState[col]}`)
+        .join(', ')
+
+    const sql = `UPDATE ${selectedTableName.value} SET ${setClause} WHERE id = '${id}'`
+    selectedSystem?.db.exec(sql)
+
+    // Reload data after update
+    const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
+    selectedTableData.value = data
+
+    toast.add({ title: 'Success', description: 'The row has been updated.', color: 'success' })
+}
+
+function addMethod() {
+    // Reset form state for new row, skip 'id'
+    formState = reactive(
+        columnNames.value
+            .filter(col => col !== 'id')
+            .reduce((acc, col) => {
+                acc[col] = ''
+                return acc
+            }, {} as Record<string, any>)
+    )
+    editModalOpen.value = true
+
+    
+}
+
 </script>
 
 <template>
@@ -329,14 +429,14 @@ const localItems = ref([
             <label for="table-select">Select table:</label>
             <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
         </div>
-        <UButton label="Add" variant="subtle" />
+        <UButton label="Add" variant="subtle" @click="addMethod" />
         <UInput v-model="globalFilter" class="max-w-sm" :placeholder="`Filter ${selectedTableName || 'items'}...`" />
         <!-- SQL Query Display (always visible) -->
         <div class="ml-auto text-sm text-gray-500 font-mono flex items-center">
             <span>SQL Query:</span>
             <span class="ml-2 p-2 bg-gray-100 rounded text-xs">
                 {{getSqlQuery(`SELECT * FROM ${selectedTableName || 'table'}`, autoColumns.map(col => (col as
-                    any)?.accessorKey || '').filter(Boolean)) }}
+                    any)?.accessorKey || '').filter(Boolean))}}
             </span>
         </div>
     </div>
@@ -360,6 +460,32 @@ const localItems = ref([
             </UDropdownMenu>
         </template>
     </UTable>
+
+    <UModal v-model:open="editModalOpen" title="Edit Row">
+        <template #content>
+            <UCard>
+                <template #header>
+                    <h3 class="text-lg font-semibold">Edit Row</h3>
+                </template>
+                <UForm :state="formState" @submit="onSubmit">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div
+                            v-for="(col, index) in columnNames.filter(col => col !== 'id')"
+                            :key="index"
+                            class="flex flex-col"
+                        >
+                            <label class="mb-1 font-medium text-sm text-gray-700">{{ col }}</label>
+                            <UInput v-model="formState[col]" :placeholder="`Enter ${col}`" />
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-6">
+                        <UButton type="submit" color="primary" @click="editModalOpen = false">Save</UButton>
+                        <UButton variant="outline" @click="editModalOpen = false">Cancel</UButton>
+                    </div>
+                </UForm>
+            </UCard>
+        </template>
+    </UModal>
 </template>
 
 <style scoped>
