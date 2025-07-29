@@ -150,19 +150,20 @@ const nextMonth = () => {
 const goToToday = () => {
     currentDate.value = new Date()
 }
+const { t } = useI18n()
 
 const localItems = ref([
     {
         label: system.value?.name || 'System',
     },
     {
-        label: 'Dashboard',
+        label: t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
     },
     {
-        label: 'Tables',
+        label: t('tables'),
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',

@@ -19,14 +19,14 @@
           <p class="mb-2">{{ selectedTask.description }}</p>
             <span class="font-semibold">Kind of task: </span>
             <span>{{ selectedTask.kind }}</span><br>
-          <UButton class="mt-4" @click="selectTask(selectedTask.id)">Back to list</UButton>
+          <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
           <!-- Send selected component button -->
           <UButton
           variant="outline"
             style="margin-left: 5px;"
             :disabled="!selectedComponentStore.selectedId || selectedTask.completed"
             @click="handleSubmit"
-          >Submit</UButton>
+          >{{ t('submit') }}</UButton>
         </div>
       </div>
       <div v-else>
@@ -46,7 +46,7 @@
             />
             <UCard>
               {{ task.title }}
-              <UButton style="margin-left: 5px;" @click="selectTask(task.id)">Select</UButton>
+              <UButton style="margin-left: 5px;" @click="selectTask(task.id)">{{ t('select_task') }}</UButton>
             </UCard>
           </div>
         </div>
@@ -63,6 +63,7 @@ import { useSelectedTaskStore } from '~/stores/selectedTask'
 import { useSelectedComponentStore } from '~/stores/selectedComponent'
 import { Task } from '~/model/types/Task'
 
+const { t } = useI18n()
 const selectedSystemStore = useSelectedSystemStore()
 const systemId = selectedSystemStore.selectedId
 

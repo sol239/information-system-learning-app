@@ -5,373 +5,373 @@
     "description": "Školní tábor v Krkonoších, zaměřený na výuku a zábavu pro děti.",
     "tables": [
         {
-            "name": "participants",
+            "name": "účastníci",
             "data": [
                 {
                     "id": 1,
-                    "name": "Tereza Nováková",
+                    "jméno": "Tereza Nováková",
                     "email": "tereza.novakova@example.com",
-                    "personal_number": "045217/1234",
-                    "phone": "+420 601 123 456",
-                    "address": "Náměstí Míru 12, Praha",
-                    "age": 12,
-                    "allergens": [],
-                    "sessionId": 1
+                    "rodné_číslo": "045217/1234",
+                    "telefon": "+420 601 123 456",
+                    "adresa": "Náměstí Míru 12, Praha",
+                    "věk": 12,
+                    "alergeny": [],
+                    "id_turnusu": 1
                 },
                 {
                     "id": 2,
-                    "name": "Jan Dvořák",
+                    "jméno": "Jan Dvořák",
                     "email": "jan.dvorak@example.com",
-                    "personal_number": "071015/2345",
-                    "phone": "+420 721 456 789",
-                    "address": "Jiráskova 8, Brno",
-                    "age": 14,
-                    "allergens": [
+                    "rodné_číslo": "071015/2345",
+                    "telefon": "+420 721 456 789",
+                    "adresa": "Jiráskova 8, Brno",
+                    "věk": 14,
+                    "alergeny": [
                         "lepek"
                     ],
-                    "sessionId": 1
+                    "id_turnusu": 1
                 },
                 {
                     "id": 3,
-                    "name": "Anna Svobodová",
+                    "jméno": "Anna Svobodová",
                     "email": "anna.svobodova@example.com",
-                    "personal_number": "091208/3456",
-                    "phone": "+420 737 789 123",
-                    "address": "Komenského 22, Ostrava",
-                    "age": 13,
-                    "allergens": [],
-                    "sessionId": 1
+                    "rodné_číslo": "091208/3456",
+                    "telefon": "+420 737 789 123",
+                    "adresa": "Komenského 22, Ostrava",
+                    "věk": 13,
+                    "alergeny": [],
+                    "id_turnusu": 1
                 },
                 {
                     "id": 4,
-                    "name": "Lukáš Černý",
+                    "jméno": "Lukáš Černý",
                     "email": "lukas.cerny@example.com",
-                    "personal_number": "100312/4567",
-                    "phone": "+420 601 555 789",
-                    "address": "Masarykova 11, Plzeň",
-                    "age": 10,
-                    "allergens": [
+                    "rodné_číslo": "100312/4567",
+                    "telefon": "+420 601 555 789",
+                    "adresa": "Masarykova 11, Plzeň",
+                    "věk": 10,
+                    "alergeny": [
                         "mléko"
                     ],
-                    "sessionId": 1
+                    "id_turnusu": 1
                 },
                 {
                     "id": 5,
-                    "name": "Eliška Procházková",
+                    "jméno": "Eliška Procházková",
                     "email": "eliska.prochazkova@example.com",
-                    "personal_number": "120505/5678",
-                    "phone": "+420 602 987 654",
-                    "address": "Smetanova 3, Liberec",
-                    "age": 12,
-                    "allergens": [],
-                    "sessionId": 1
+                    "rodné_číslo": "120505/5678",
+                    "telefon": "+420 602 987 654",
+                    "adresa": "Smetanova 3, Liberec",
+                    "věk": 12,
+                    "alergeny": [],
+                    "id_turnusu": 1
                 },
                 {
                     "id": 6,
-                    "name": "Tomáš Král",
+                    "jméno": "Tomáš Král",
                     "email": "tomas.kral@example.com",
-                    "personal_number": "110801/6789",
-                    "phone": "+420 775 123 987",
-                    "address": "Husova 7, Olomouc",
-                    "age": 11,
-                    "allergens": [
+                    "rodné_číslo": "110801/6789",
+                    "telefon": "+420 775 123 987",
+                    "adresa": "Husova 7, Olomouc",
+                    "věk": 11,
+                    "alergeny": [
                         "vejce"
                     ],
-                    "sessionId": 1
+                    "id_turnusu": 1
                 },
                 {
                     "id": 7,
-                    "name": "Barbora Veselá",
+                    "jméno": "Barbora Veselá",
                     "email": "barbora.vesela@example.com",
-                    "personal_number": "131217/7890",
-                    "phone": "+420 723 345 678",
-                    "address": "Benešova 15, Zlín",
-                    "age": 13,
-                    "allergens": [],
-                    "sessionId": 1
+                    "rodné_číslo": "131217/7890",
+                    "telefon": "+420 723 345 678",
+                    "adresa": "Benešova 15, Zlín",
+                    "věk": 13,
+                    "alergeny": [],
+                    "id_turnusu": 1
                 },
                 {
                     "id": 8,
-                    "name": "Jakub Němec",
+                    "jméno": "Jakub Němec",
                     "email": "jakub.nemec@example.com",
-                    "personal_number": "100405/8901",
-                    "phone": "+420 777 123 321",
-                    "address": "Na Příkopě 4, Praha",
-                    "age": 10,
-                    "allergens": [
+                    "rodné_číslo": "100405/8901",
+                    "telefon": "+420 777 123 321",
+                    "adresa": "Na Příkopě 4, Praha",
+                    "věk": 10,
+                    "alergeny": [
                         "ořechy"
                     ],
-                    "sessionId": 1
+                    "id_turnusu": 1
                 },
                 {
                     "id": 9,
-                    "name": "Adéla Horáková",
+                    "jméno": "Adéla Horáková",
                     "email": "adela.horakova@example.com",
-                    "personal_number": "121106/9012",
-                    "phone": "+420 602 555 888",
-                    "address": "Dlouhá 9, České Budějovice",
-                    "age": 12,
-                    "allergens": [],
-                    "sessionId": 1
+                    "rodné_číslo": "121106/9012",
+                    "telefon": "+420 602 555 888",
+                    "adresa": "Dlouhá 9, České Budějovice",
+                    "věk": 12,
+                    "alergeny": [],
+                    "id_turnusu": 1
                 },
                 {
                     "id": 10,
-                    "name": "David Marek",
+                    "jméno": "David Marek",
                     "email": "david.marek@example.com",
-                    "personal_number": "080723/0123",
-                    "phone": "+420 737 444 321",
-                    "address": "Zahradní 20, Karlovy Vary",
-                    "age": 8,
-                    "allergens": [
+                    "rodné_číslo": "080723/0123",
+                    "telefon": "+420 737 444 321",
+                    "adresa": "Zahradní 20, Karlovy Vary",
+                    "věk": 8,
+                    "alergeny": [
                         "sója"
                     ],
-                    "sessionId": 1
+                    "id_turnusu": 1
                 },
                 {
                     "id": 11,
-                    "name": "Veronika Bláhová",
+                    "jméno": "Veronika Bláhová",
                     "email": "veronika.blahova@example.com",
-                    "personal_number": "140219/1324",
-                    "phone": "+420 701 212 111",
-                    "address": "Palackého 14, Jihlava",
-                    "age": 14,
-                    "allergens": [
+                    "rodné_číslo": "140219/1324",
+                    "telefon": "+420 701 212 111",
+                    "adresa": "Palackého 14, Jihlava",
+                    "věk": 14,
+                    "alergeny": [
                         "lepek"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 12,
-                    "name": "Filip Beneš",
+                    "jméno": "Filip Beneš",
                     "email": "filip.benes@example.com",
-                    "personal_number": "090402/3456",
-                    "phone": "+420 777 654 321",
-                    "address": "Riegrova 18, Pardubice",
-                    "age": 9,
-                    "allergens": [
+                    "rodné_číslo": "090402/3456",
+                    "telefon": "+420 777 654 321",
+                    "adresa": "Riegrova 18, Pardubice",
+                    "věk": 9,
+                    "alergeny": [
                         "mléko"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 13,
-                    "name": "Karolína Fialová",
+                    "jméno": "Karolína Fialová",
                     "email": "karolina.fialova@example.com",
-                    "personal_number": "100707/7788",
-                    "phone": "+420 602 333 999",
-                    "address": "Tylova 2, Hradec Králové",
-                    "age": 10,
-                    "allergens": [
+                    "rodné_číslo": "100707/7788",
+                    "telefon": "+420 602 333 999",
+                    "adresa": "Tylova 2, Hradec Králové",
+                    "věk": 10,
+                    "alergeny": [
                         "vejce"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 14,
-                    "name": "Matěj Malý",
+                    "jméno": "Matěj Malý",
                     "email": "matej.maly@example.com",
-                    "personal_number": "070811/4455",
-                    "phone": "+420 775 998 877",
-                    "address": "Petrova 5, Ústí nad Labem",
-                    "age": 7,
-                    "allergens": [
+                    "rodné_číslo": "070811/4455",
+                    "telefon": "+420 775 998 877",
+                    "adresa": "Petrova 5, Ústí nad Labem",
+                    "věk": 7,
+                    "alergeny": [
                         "ořechy"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 15,
-                    "name": "Lucie Kolářová",
+                    "jméno": "Lucie Kolářová",
                     "email": "lucie.kolarova@example.com",
-                    "personal_number": "130405/1234",
-                    "phone": "+420 703 456 789",
-                    "address": "Kollárova 9, Teplice",
-                    "age": 13,
-                    "allergens": [],
-                    "sessionId": 2
+                    "rodné_číslo": "130405/1234",
+                    "telefon": "+420 703 456 789",
+                    "adresa": "Kollárova 9, Teplice",
+                    "věk": 13,
+                    "alergeny": [],
+                    "id_turnusu": 2
                 },
                 {
                     "id": 16,
-                    "name": "Ondřej Růžička",
+                    "jméno": "Ondřej Růžička",
                     "email": "ondrej.ruzicka@example.com",
-                    "personal_number": "091101/6655",
-                    "phone": "+420 605 888 777",
-                    "address": "Vrchlického 13, Havířov",
-                    "age": 12,
-                    "allergens": [
+                    "rodné_číslo": "091101/6655",
+                    "telefon": "+420 605 888 777",
+                    "adresa": "Vrchlického 13, Havířov",
+                    "věk": 12,
+                    "alergeny": [
                         "mléko",
                         "ořechy"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 17,
-                    "name": "Klára Kovářová",
+                    "jméno": "Klára Kovářová",
                     "email": "klara.kovarova@example.com",
-                    "personal_number": "121004/2323",
-                    "phone": "+420 736 789 001",
-                    "address": "Pionýrů 6, Opava",
-                    "age": 11,
-                    "allergens": [],
-                    "sessionId": 2
+                    "rodné_číslo": "121004/2323",
+                    "telefon": "+420 736 789 001",
+                    "adresa": "Pionýrů 6, Opava",
+                    "věk": 11,
+                    "alergeny": [],
+                    "id_turnusu": 2
                 },
                 {
                     "id": 18,
-                    "name": "Vojtěch Jelínek",
+                    "jméno": "Vojtěch Jelínek",
                     "email": "vojtech.jelinek@example.com",
-                    "personal_number": "070501/3344",
-                    "phone": "+420 703 333 666",
-                    "address": "Mlýnská 3, Karviná",
-                    "age": 7,
-                    "allergens": [
+                    "rodné_číslo": "070501/3344",
+                    "telefon": "+420 703 333 666",
+                    "adresa": "Mlýnská 3, Karviná",
+                    "věk": 7,
+                    "alergeny": [
                         "vejce"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 19,
-                    "name": "Simona Urbanová",
+                    "jméno": "Simona Urbanová",
                     "email": "simona.urbanova@example.com",
-                    "personal_number": "101005/1122",
-                    "phone": "+420 705 666 444",
-                    "address": "Sladkovského 7, Třebíč",
-                    "age": 10,
-                    "allergens": [],
-                    "sessionId": 2
+                    "rodné_číslo": "101005/1122",
+                    "telefon": "+420 705 666 444",
+                    "adresa": "Sladkovského 7, Třebíč",
+                    "věk": 10,
+                    "alergeny": [],
+                    "id_turnusu": 2
                 },
                 {
                     "id": 20,
-                    "name": "Petr Konečný",
+                    "jméno": "Petr Konečný",
                     "email": "petr.konecny@example.com",
-                    "personal_number": "090918/7788",
-                    "phone": "+420 776 555 222",
-                    "address": "Znojemská 1, Znojmo",
-                    "age": 9,
-                    "allergens": [
+                    "rodné_číslo": "090918/7788",
+                    "telefon": "+420 776 555 222",
+                    "adresa": "Znojemská 1, Znojmo",
+                    "věk": 9,
+                    "alergeny": [
                         "ořechy"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 21,
-                    "name": "Kateřina Holubová",
+                    "jméno": "Kateřina Holubová",
                     "email": "katerina.holubova@example.com",
-                    "personal_number": "130302/4466",
-                    "phone": "+420 702 777 000",
-                    "address": "Hlavní 16, Příbram",
-                    "age": 13,
-                    "allergens": [],
-                    "sessionId": 2
+                    "rodné_číslo": "130302/4466",
+                    "telefon": "+420 702 777 000",
+                    "adresa": "Hlavní 16, Příbram",
+                    "věk": 13,
+                    "alergeny": [],
+                    "id_turnusu": 2
                 },
                 {
                     "id": 22,
-                    "name": "Štěpán Polák",
+                    "jméno": "Štěpán Polák",
                     "email": "stepan.polak@example.com",
-                    "personal_number": "071217/5566",
-                    "phone": "+420 733 222 555",
-                    "address": "Čechova 4, Prostějov",
-                    "age": 14,
-                    "allergens": [
+                    "rodné_číslo": "071217/5566",
+                    "telefon": "+420 733 222 555",
+                    "adresa": "Čechova 4, Prostějov",
+                    "věk": 14,
+                    "alergeny": [
                         "lepek"
                     ],
-                    "sessionId": 2
+                    "id_turnusu": 2
                 },
                 {
                     "id": 23,
-                    "name": "Alena Hrušková",
+                    "jméno": "Alena Hrušková",
                     "email": "alena.hruskova@example.com",
-                    "personal_number": "080710/6677",
-                    "phone": "+420 604 321 654",
-                    "address": "Lidická 5, Kladno",
-                    "age": 8,
-                    "allergens": [],
-                    "sessionId": 3
+                    "rodné_číslo": "080710/6677",
+                    "telefon": "+420 604 321 654",
+                    "adresa": "Lidická 5, Kladno",
+                    "věk": 8,
+                    "alergeny": [],
+                    "id_turnusu": 3
                 },
                 {
                     "id": 24,
-                    "name": "Dominik Mach",
+                    "jméno": "Dominik Mach",
                     "email": "dominik.mach@example.com",
-                    "personal_number": "111104/7788",
-                    "phone": "+420 739 123 456",
-                    "address": "Žižkova 14, Mladá Boleslav",
-                    "age": 11,
-                    "allergens": [
+                    "rodné_číslo": "111104/7788",
+                    "telefon": "+420 739 123 456",
+                    "adresa": "Žižkova 14, Mladá Boleslav",
+                    "věk": 11,
+                    "alergeny": [
                         "sója"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 },
                 {
                     "id": 25,
-                    "name": "Kristýna Němcová",
+                    "jméno": "Kristýna Němcová",
                     "email": "kristyna.nemcova@example.com",
-                    "personal_number": "060809/8899",
-                    "phone": "+420 757 111 222",
-                    "address": "Kovářská 20, Uherské Hradiště",
-                    "age": 12,
-                    "allergens": [],
-                    "sessionId": 3
+                    "rodné_číslo": "060809/8899",
+                    "telefon": "+420 757 111 222",
+                    "adresa": "Kovářská 20, Uherské Hradiště",
+                    "věk": 12,
+                    "alergeny": [],
+                    "id_turnusu": 3
                 },
                 {
                     "id": 26,
-                    "name": "Michal Hlaváček",
+                    "jméno": "Michal Hlaváček",
                     "email": "michal.hlavecek@example.com",
-                    "personal_number": "041116/9900",
-                    "phone": "+420 774 234 567",
-                    "address": "Špitálská 12, Třinec",
-                    "age": 10,
-                    "allergens": [
+                    "rodné_číslo": "041116/9900",
+                    "telefon": "+420 774 234 567",
+                    "adresa": "Špitálská 12, Třinec",
+                    "věk": 10,
+                    "alergeny": [
                         "lepek"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 },
                 {
                     "id": 27,
-                    "name": "Denisa Kolmanová",
+                    "jméno": "Denisa Kolmanová",
                     "email": "denisa.kolmanova@example.com",
-                    "personal_number": "150709/2222",
-                    "phone": "+420 766 444 333",
-                    "address": "Tovární 8, Frýdek-Místek",
-                    "age": 14,
-                    "allergens": [
+                    "rodné_číslo": "150709/2222",
+                    "telefon": "+420 766 444 333",
+                    "adresa": "Tovární 8, Frýdek-Místek",
+                    "věk": 14,
+                    "alergeny": [
                         "mléko"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 },
                 {
                     "id": 28,
-                    "name": "Jindřich Kříž",
+                    "jméno": "Jindřich Kříž",
                     "email": "jindrich.kriz@example.com",
-                    "personal_number": "080104/4455",
-                    "phone": "+420 777 222 888",
-                    "address": "Nádražní 3, Kroměříž",
-                    "age": 9,
-                    "allergens": [
+                    "rodné_číslo": "080104/4455",
+                    "telefon": "+420 777 222 888",
+                    "adresa": "Nádražní 3, Kroměříž",
+                    "věk": 9,
+                    "alergeny": [
                         "vejce"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 },
                 {
                     "id": 29,
-                    "name": "Lucie Klímová",
+                    "jméno": "Lucie Klímová",
                     "email": "lucie.klimova@example.com",
-                    "personal_number": "090903/6677",
-                    "phone": "+420 777 333 444",
-                    "address": "Tylova 19, Valašské Meziříčí",
-                    "age": 12,
-                    "allergens": [
+                    "rodné_číslo": "090903/6677",
+                    "telefon": "+420 777 333 444",
+                    "adresa": "Tylova 19, Valašské Meziříčí",
+                    "věk": 12,
+                    "alergeny": [
                         "ořechy"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 },
                 {
                     "id": 30,
-                    "name": "Jakub Mareš",
+                    "jméno": "Jakub Mareš",
                     "email": "jakub.mares@example.com",
-                    "personal_number": "110506/7788",
-                    "phone": "+420 602 333 444",
-                    "address": "Koliště 16, Opava",
-                    "age": 13,
-                    "allergens": [
+                    "rodné_číslo": "110506/7788",
+                    "telefon": "+420 602 333 444",
+                    "adresa": "Koliště 16, Opava",
+                    "věk": 13,
+                    "alergeny": [
                         "lepek",
                         "mléko",
                         "vejce",
@@ -379,351 +379,351 @@
                         "sója",
                         "ryby"
                     ],
-                    "sessionId": 3
+                    "id_turnusu": 3
                 }
             ]
         },
         {
-            "name": "meals",
+            "name": "jídla",
             "data": [
                 {
                     "id": 1,
-                    "name": "Ovesná kaše s banány",
-                    "allergens": [
+                    "jméno": "Ovesná kaše s banány",
+                    "alergeny": [
                         "lepek"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 2,
-                    "name": "Míchaná vejce s toastem",
-                    "allergens": [
+                    "jméno": "Míchaná vejce s toastem",
+                    "alergeny": [
                         "vejce",
                         "lepek"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 3,
-                    "name": "Ovocný jogurt",
-                    "allergens": [
+                    "jméno": "Ovocný jogurt",
+                    "alergeny": [
                         "mléko"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 4,
-                    "name": "Lívance s sirupem",
-                    "allergens": [
+                    "jméno": "Lívance s sirupem",
+                    "alergeny": [
                         "lepek",
                         "mléko",
                         "vejce"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 5,
-                    "name": "Sendvič se šunkou a sýrem",
-                    "allergens": [
+                    "jméno": "Sendvič se šunkou a sýrem",
+                    "alergeny": [
                         "lepek",
                         "mléko"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 6,
-                    "name": "Smoothie miska",
-                    "allergens": [],
-                    "when_served": "snídaně"
+                    "jméno": "Smoothie miska",
+                    "alergeny": [],
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 7,
-                    "name": "Granola s mlékem",
-                    "allergens": [
+                    "jméno": "Granola s mlékem",
+                    "alergeny": [
                         "mléko",
                         "ořechy"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 8,
-                    "name": "Vařená vejce s krekry",
-                    "allergens": [
+                    "jméno": "Vařená vejce s krekry",
+                    "alergeny": [
                         "vejce",
                         "lepek"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 9,
-                    "name": "Sýrový croissant",
-                    "allergens": [
+                    "jméno": "Sýrový croissant",
+                    "alergeny": [
                         "lepek",
                         "mléko"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 10,
-                    "name": "Tvaroh s bobulemi",
-                    "allergens": [
+                    "jméno": "Tvaroh s bobulemi",
+                    "alergeny": [
                         "mléko"
                     ],
-                    "when_served": "snídaně"
+                    "kdy_podáváno": "snídaně"
                 },
                 {
                     "id": 11,
-                    "name": "Špagety Bolognese",
-                    "allergens": [
+                    "jméno": "Špagety Bolognese",
+                    "alergeny": [
                         "lepek"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 12,
-                    "name": "Grilované kuře s rýží",
-                    "allergens": [],
-                    "when_served": "oběd"
+                    "jméno": "Grilované kuře s rýží",
+                    "alergeny": [],
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 13,
-                    "name": "Hovězí guláš s knedlíky",
-                    "allergens": [
+                    "jméno": "Hovězí guláš s knedlíky",
+                    "alergeny": [
                         "lepek",
                         "vejce"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 14,
-                    "name": "Zeleninové stir fry s tofu",
-                    "allergens": [
+                    "jméno": "Zeleninové stir fry s tofu",
+                    "alergeny": [
                         "sója"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 15,
-                    "name": "Rybí filet s bramborovou kaší",
-                    "allergens": [
+                    "jméno": "Rybí filet s bramborovou kaší",
+                    "alergeny": [
                         "ryby",
                         "mléko"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 16,
-                    "name": "Čočková polévka s chlebem",
-                    "allergens": [
+                    "jméno": "Čočková polévka s chlebem",
+                    "alergeny": [
                         "lepek"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 17,
-                    "name": "Plněné papriky s rýží",
-                    "allergens": [],
-                    "when_served": "oběd"
+                    "jméno": "Plněné papriky s rýží",
+                    "alergeny": [],
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 18,
-                    "name": "Kuřecí řízek s brambory",
-                    "allergens": [
+                    "jméno": "Kuřecí řízek s brambory",
+                    "alergeny": [
                         "lepek",
                         "vejce"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 19,
-                    "name": "Rizoto s houbami",
-                    "allergens": [
+                    "jméno": "Rizoto s houbami",
+                    "alergeny": [
                         "mléko"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 20,
-                    "name": "Pečená cuketa se sýrem",
-                    "allergens": [
+                    "jméno": "Pečená cuketa se sýrem",
+                    "alergeny": [
                         "mléko"
                     ],
-                    "when_served": "oběd"
+                    "kdy_podáváno": "oběd"
                 },
                 {
                     "id": 21,
-                    "name": "Rajčatová polévka s těstovinami",
-                    "allergens": [
+                    "jméno": "Rajčatová polévka s těstovinami",
+                    "alergeny": [
                         "lepek"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 22,
-                    "name": "Grilovaný sýrový sendvič",
-                    "allergens": [
+                    "jméno": "Grilovaný sýrový sendvič",
+                    "alergeny": [
                         "lepek",
                         "mléko"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 23,
-                    "name": "Tuňákový salát s krekry",
-                    "allergens": [
+                    "jméno": "Tuňákový salát s krekry",
+                    "alergeny": [
                         "ryby",
                         "lepek"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 24,
-                    "name": "Zeleninová pizza",
-                    "allergens": [
+                    "jméno": "Zeleninová pizza",
+                    "alergeny": [
                         "lepek",
                         "mléko"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 25,
-                    "name": "Vaječný salát v tortille",
-                    "allergens": [
+                    "jméno": "Vaječný salát v tortille",
+                    "alergeny": [
                         "vejce",
                         "lepek"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 26,
-                    "name": "Kuskus se zeleninou",
-                    "allergens": [
+                    "jméno": "Kuskus se zeleninou",
+                    "alergeny": [
                         "lepek"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 27,
-                    "name": "Kuřecí Caesar wrap",
-                    "allergens": [
+                    "jméno": "Kuřecí Caesar wrap",
+                    "alergeny": [
                         "lepek",
                         "mléko",
                         "vejce"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 28,
-                    "name": "Špenátový quiche",
-                    "allergens": [
+                    "jméno": "Špenátový quiche",
+                    "alergeny": [
                         "mléko",
                         "vejce",
                         "lepek"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 29,
-                    "name": "Rýže s fazolemi",
-                    "allergens": [],
-                    "when_served": "večeře"
+                    "jméno": "Rýže s fazolemi",
+                    "alergeny": [],
+                    "kdy_podáváno": "večeře"
                 },
                 {
                     "id": 30,
-                    "name": "Bulgur salát s fetou",
-                    "allergens": [
+                    "jméno": "Bulgur salát s fetou",
+                    "alergeny": [
                         "lepek",
                         "mléko"
                     ],
-                    "when_served": "večeře"
+                    "kdy_podáváno": "večeře"
                 }
             ]
         },
         {
-            "name": "sessions",
+            "name": "turnusy",
             "data": [
                 {
                     "id": 1,
-                    "fromDate": "2025-07-01T00:00:00.000Z",
-                    "toDate": "2025-07-10T00:00:00.000Z",
-                    "capacity": 15
+                    "od": "2025-07-01T00:00:00.000Z",
+                    "do": "2025-07-10T00:00:00.000Z",
+                    "kapacita": 15
                 },
                 {
                     "id": 2,
-                    "fromDate": "2025-07-11T00:00:00.000Z",
-                    "toDate": "2025-07-20T00:00:00.000Z",
-                    "capacity": 15
+                    "od": "2025-07-11T00:00:00.000Z",
+                    "do": "2025-07-20T00:00:00.000Z",
+                    "kapacita": 15
                 },
                 {
                     "id": 3,
-                    "fromDate": "2025-07-21T00:00:00.000Z",
-                    "toDate": "2025-07-30T00:00:00.000Z",
-                    "capacity": 15
+                    "od": "2025-07-21T00:00:00.000Z",
+                    "do": "2025-07-30T00:00:00.000Z",
+                    "kapacita": 15
                 }
             ]
         },
         {
-            "name": "supervisors",
+            "name": "vedoucí",
             "data": [
                 {
                     "id": 1,
-                    "name": "Petr Novotný",
+                    "jméno": "Petr Novotný",
                     "email": "petr.novotny@example.com",
-                    "personal_number": "750101/1234",
-                    "phone": "+420 601 111 111",
-                    "address": "Hlavní 1, Praha",
-                    "age": 35,
-                    "sessionId": 1
+                    "rodné_číslo": "750101/1234",
+                    "telefon": "+420 601 111 111",
+                    "adresa": "Hlavní 1, Praha",
+                    "věk": 35,
+                    "id_turnusu": 1
                 },
                 {
                     "id": 2,
-                    "name": "Jana Svobodová",
+                    "jméno": "Jana Svobodová",
                     "email": "jana.svobodova@example.com",
-                    "personal_number": "820202/2345",
-                    "phone": "+420 602 222 222",
-                    "address": "Masarykova 2, Brno",
-                    "age": 32,
-                    "sessionId": 1
+                    "rodné_číslo": "820202/2345",
+                    "telefon": "+420 602 222 222",
+                    "adresa": "Masarykova 2, Brno",
+                    "věk": 32,
+                    "id_turnusu": 1
                 },
                 {
                     "id": 3,
-                    "name": "Martin Dvořák",
+                    "jméno": "Martin Dvořák",
                     "email": "martin.dvorak@example.com",
-                    "personal_number": "790303/3456",
-                    "phone": "+420 603 333 333",
-                    "address": "Komenského 3, Ostrava",
-                    "age": 40,
-                    "sessionId": 2
+                    "rodné_číslo": "790303/3456",
+                    "telefon": "+420 603 333 333",
+                    "adresa": "Komenského 3, Ostrava",
+                    "věk": 40,
+                    "id_turnusu": 2
                 },
                 {
                     "id": 4,
-                    "name": "Eva Procházková",
+                    "jméno": "Eva Procházková",
                     "email": "eva.prochazkova@example.com",
-                    "personal_number": "850404/4567",
-                    "phone": "+420 604 444 444",
-                    "address": "Smetanova 4, Plzeň",
-                    "age": 29,
-                    "sessionId": 2
+                    "rodné_číslo": "850404/4567",
+                    "telefon": "+420 604 444 444",
+                    "adresa": "Smetanova 4, Plzeň",
+                    "věk": 29,
+                    "id_turnusu": 2
                 },
                 {
                     "id": 5,
-                    "name": "Tomáš Král",
+                    "jméno": "Tomáš Král",
                     "email": "tomas.kral.supervisor@example.com",
-                    "personal_number": "780505/5678",
-                    "phone": "+420 605 555 555",
-                    "address": "Jiráskova 5, Liberec",
-                    "age": 38,
-                    "sessionId": 3
+                    "rodné_číslo": "780505/5678",
+                    "telefon": "+420 605 555 555",
+                    "adresa": "Jiráskova 5, Liberec",
+                    "věk": 38,
+                    "id_turnusu": 3
                 },
                 {
                     "id": 6,
-                    "name": "Lucie Bláhová",
+                    "jméno": "Lucie Bláhová",
                     "email": "lucie.blahova@example.com",
-                    "personal_number": "830606/6789",
-                    "phone": "+420 606 666 666",
-                    "address": "Palackého 6, Zlín",
-                    "age": 31,
-                    "sessionId": 3
+                    "rodné_číslo": "830606/6789",
+                    "telefon": "+420 606 666 666",
+                    "adresa": "Palackého 6, Zlín",
+                    "věk": 31,
+                    "id_turnusu": 3
                 }
             ]
         }

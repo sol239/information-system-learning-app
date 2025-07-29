@@ -8,7 +8,7 @@
       <p class="text-sm text-gray-600">{{ system.description }}</p>
 
       <template #footer>
-        <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">Enter</UButton>
+        <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">{{ t('enter_system') }}</UButton>
       </template>
     </UCard>
   </div>
@@ -21,28 +21,31 @@ import { useInformationSystemStore } from '~/stores/informationSystems';
 import { useSelectedSystemStore } from '~/stores/selectedSystemId'
 
 import { navigateTo } from '#app';
+const { t } = useI18n()
 
 function navigateToSystem(systemId: number) {
   const selectedSystemStore = useSelectedSystemStore()
   selectedSystemStore.select(systemId)
+  console.log("Navigating to system with ID:", systemId);
   navigateTo(`/system/${systemId}/dashboard`);
 }
 
 const handler = new FileHandler();
-handler.printDirectories();
-
-
-const configFiles = import.meta.glob('~/assets/data/*/config.json', { eager: true });
-console.log('Config files:', configFiles);
+const rawSystems = handler.getInformationSystems();
 
 const systems: InformationSystem[] = handler.getInformationSystems();
-console.log('Systems:', systems);
 
+// const systems: InformationSystem[] = rawSystems.map(s => JSON.parse(JSON.stringify(s)));
 
 
 const informationSystemStore = useInformationSystemStore();
 
-informationSystemStore.systems = systems;
+console.log('Loaded systems:', systems);
 
+try {
+  informationSystemStore.systems = systems;
+} catch (error) {
+  console.error('Error setting systems in store:', error);
+}
 
 </script>

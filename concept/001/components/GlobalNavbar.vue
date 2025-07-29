@@ -1,35 +1,33 @@
 <script setup lang="ts">
-// Navigation bar which is used across the application.
-
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useHighlightStore } from '~/stores/highlightElements'
 
 const route = useRoute()
 const highlightStore = useHighlightStore()
+const { t } = useI18n()
 
-const items = ref<NavigationMenuItem[]>([
+const items = computed<NavigationMenuItem[]>(() => [
   {
-    label: 'Home',
+    label: t('home'),
     icon: 'i-heroicons-home',
     to: '/',
     data_target: 'home',
   },
   {
-    label: 'Systems',
+    label: t('systems'),
     icon: 'i-heroicons-computer-desktop',
     to: '/system',
     data_target: 'systems',
   },
   {
-    label: 'Settings',
+    label: t('settings'),
     icon: 'i-heroicons-cog',
     to: '/settings',
     data_target: 'settings',
   },
 ])
 
-// Check if we're on the system/[id] page
 const isOnSystemDetailPage = computed(() => {
   return route.path.startsWith('/system/') && route.params.id
 })
@@ -44,19 +42,16 @@ const isOnSystemDetailPage = computed(() => {
     <!-- Tasks Popover - Only visible on /system/[id] pages -->
     <UPopover v-if="isOnSystemDetailPage" arrow>
 
-      <UButton label="Tasks" color="primary" variant="subtle" />
+      <UButton :label="$t('tasks')" color="primary" variant="subtle" />
 
       <template #content>
         <TaskList />
       </template>
     </UPopover>
 
-    <UButton
-      :label="highlightStore.isHighlightMode ? 'Disable Highlight' : 'Enable Highlight'"
-      color="secondary"
-      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'"
-      style="margin-left: 10px"
-      @click="highlightStore.toggleHighlight"
-    />
+    <UButton v-if="isOnSystemDetailPage"
+      :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" color="secondary"
+      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" style="margin-left: 10px"
+      @click="highlightStore.toggleHighlight" />
   </div>
 </template>

@@ -7,3 +7,15 @@
 
 ---
 
+## Úkoly
+
+V každém úkolu by měl student: 
+1. něco udělat (přidat alergen, přidat jídlo, atd.)
+2. během úkolu by měl student najít chybu (špatné SQL, špatný překlad, atd.)
+3. poté by ji měl opravit. (Úprava SQL, úprava překladu, atd.)
+
+### 1.
+
+
+
+

@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import type { InformationSystem } from '~/model/types/InformationSystem'
 import { ref, onMounted } from 'vue'
 import { sys } from 'typescript'
+const { locales, setLocale } = useI18n()
 
 const route = useRoute()
 const systemId = route.params.id
@@ -20,18 +21,19 @@ console.log('System ID:', systemId);
 console.log('Available Systems:', systems);
 console.log('Current System:', system.value);
 
+// TODO: fix local navbar localization
 const localItems = ref([
       {
         label: system.value?.name || 'System',
       },
       {
-        label: 'Dashboard',
+        label: $t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
       },
       {
-        label: 'Tables',
+        label: $t('tables'),
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',

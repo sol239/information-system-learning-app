@@ -160,13 +160,13 @@ const editModalOpen = ref(false)
 function getDropdownActions(row: any): DropdownMenuItem[] {
     return [
         {
-            label: `Copy ID`,
+            label: t('copy_id'),
             icon: 'i-lucide-copy',
             onSelect: () => {
                 if (row.id !== undefined) {
                     copy(row.id.toString())
                     toast.add({
-                        title: 'ID copied to clipboard!',
+                        title: t('copy_id_toast_success'),
                         color: 'success',
                         icon: 'i-lucide-circle-check'
                     })
@@ -174,7 +174,7 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             }
         },
         {
-            label: 'Edit',
+            label: t('edit'),
             icon: 'i-lucide-edit',
             onSelect: () => {
                 // Log selected system to console
@@ -197,7 +197,7 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             }
         },
         {
-            label: 'Delete',
+            label: t('delete'),
             icon: 'i-lucide-trash',
             color: 'error',
             onSelect: () => {
@@ -213,14 +213,14 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
 
                     // Notify user of success
                     toast.add({
-                        title: 'Row deleted successfully',
+                        title: t('delete_toast_success'),
                         color: 'success',
                         icon: 'i-lucide-circle-check'
                     })
                 } catch (error) {
                     console.error(`Error deleting row from table ${selectedTableName.value}:`, error)
                     toast.add({
-                        title: 'Delete failed',
+                        title: t('delete_toast_error'),
                         color: 'error',
                         icon: 'i-lucide-alert-triangle'
                     })
@@ -306,7 +306,7 @@ let formState = reactive<Record<string, any>>({});
 system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
 
 const tableNames = computed(() => {
-    if (!system.value?.db) return []
+    if (!system.value?.db || typeof system.value.db.query !== 'function') return []
     try {
         const tables = system.value.db.query(`SELECT name FROM sqlite_master WHERE type='table'`)
         return tables.map((table: any) => table.name)
@@ -361,19 +361,20 @@ console.log("Auto columns:", autoColumns.value)
         selectedTableData.value = []
     }
 }, { immediate: true })
+const { t } = useI18n()
 
 const localItems = ref([
     {
         label: system.value?.name || 'System',
     },
     {
-        label: 'Dashboard',
+        label: t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
     },
     {
-        label: 'Table',
+        label: t('tables'),
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',
@@ -398,7 +399,7 @@ async function onSubmit() {
         // Reload data after insert
         const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
         selectedTableData.value = data
-        toast.add({ title: 'Success', description: 'The row has been inserted.', color: 'success' })
+        toast.add({ title: t('add_toast_success'), color: 'success' })
         return
     }
 
@@ -415,7 +416,7 @@ async function onSubmit() {
     const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
     selectedTableData.value = data
 
-    toast.add({ title: 'Success', description: 'The row has been updated.', color: 'success' })
+    toast.add({ title: t('edit_entity_toast_success'), color: 'success' })
 }
 
 function addMethod() {
@@ -442,19 +443,19 @@ function addMethod() {
 
         <!-- Table Selector -->
         <div class="flex items-center gap-2">
-            <label for="table-select">Select table:</label>
+            <label for="table-select">{{ t('select_table') }}:</label>
             <USelect v-model="selectedTableName" :items="tableNames" class="w-48" />
         </div>
 
         <!-- Add Button -->
-        <UButton label="Add" variant="subtle" @click="addMethod" />
+        <UButton variant="subtle" @click="addMethod">{{ t('add') }}</UButton>
 
         <!-- Global Filter Input -->
-        <UInput v-model="globalFilter" class="max-w-sm" :placeholder="`Filter ${selectedTableName || 'items'}...`" />
+        <UInput v-model="globalFilter" class="max-w-sm" :placeholder="`${t('filter')} ${selectedTableName || 'items'}...`" />
 
         <!-- SQL Query Display -->
         <div class="ml-auto text-sm text-gray-500 font-mono flex items-center">
-            <span>SQL Query:</span>
+            <span>{{ t('sql_query') }}:</span>
             <span class="ml-2 p-2 bg-gray-100 rounded text-xs">
                 {{getSqlQuery(`SELECT * FROM ${selectedTableName || 'table'}`, autoColumns.map(col => (col as
                     any)?.accessorKey || '').filter(Boolean)) }}
@@ -490,11 +491,11 @@ function addMethod() {
         </template>
     </UTable>
 
-    <UModal v-model:open="editModalOpen" title="Edit Row">
+    <UModal v-model:open="editModalOpen" :title="formState.id ? t('edit_entity') : t('add_entity')">
         <template #content>
             <UCard>
                 <template #header>
-                    <h3 class="text-lg font-semibold">Edit Row</h3>
+                    <h3 class="text-lg font-semibold">{{ formState.id ? t('edit_entity') : t('add_entity') }}</h3>
                 </template>
                 <UForm :state="formState" @submit="onSubmit">
                     <div class="grid grid-cols-2 gap-4">
@@ -505,8 +506,8 @@ function addMethod() {
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 mt-6">
-                        <UButton type="submit" color="primary" @click="editModalOpen = false">Save</UButton>
-                        <UButton variant="outline" @click="editModalOpen = false">Cancel</UButton>
+                        <UButton type="submit" color="primary" @click="editModalOpen = false">{{ t('save') }}</UButton>
+                        <UButton variant="outline" @click="editModalOpen = false">{{ t('cancel') }}</UButton>
                     </div>
                 </UForm>
             </UCard>
