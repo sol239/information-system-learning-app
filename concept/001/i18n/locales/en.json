@@ -18,6 +18,7 @@
     "meals": "Meals",
     "session": "Session",
     "session_calendar": "Session Calendar",
+    "dashboard_subtitle": "Information System Dashboard",
 
     "select_table": "Select Table",
     "filter": "Filter",
@@ -34,5 +35,6 @@
     "cancel": "Cancel",
     "edit_entity_toast_success": "Record updated successfully",
     "edit_entity": "Edit record",
-    "add_entity": "Add record"
+    "add_entity": "Add record",
+    "score": "Score"
 }

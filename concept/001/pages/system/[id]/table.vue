@@ -7,6 +7,7 @@ import { useInformationSystemStore } from '~/stores/informationSystems';
 import { useSelectedSystemStore } from '~/stores/selectedSystemId'
 import type { InformationSystem } from '~/model/types/InformationSystem';
 import LocalNavbar from '~/components/LocalNavbar.vue'
+import { EditComponentModal } from '#components';
 
 const informationSystemStore = useInformationSystemStore();
 const selectedSystemStore = useSelectedSystemStore();
@@ -141,10 +142,14 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
     }))
 
     console.log("COLUMNS:", columns)
-    
+
+    // remove columns: id, turnus_id, rodné_číslo
+    const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
+
+
     // Add action column at the end
     return [
-        ...columns,
+        ...filteredColumns,
         {
             id: 'action',
             header: 'Akce'
@@ -177,12 +182,27 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             label: t('edit'),
             icon: 'i-lucide-edit',
             onSelect: () => {
-                // Log selected system to console
-                console.log('Selected system:', selectedSystemStore.selectedId, informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedSystemId))
-                console.log("COLUMNS:", selectedSystem?.db.query(`PRAGMA table_info(${selectedTableName.value})`) || [])
+                // Use system.value for DB operations (unify with table display)
+                if (!system.value?.db || !selectedTableName.value || row.id === undefined) return;
 
-                const entity = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value} WHERE id = '${row.id}'`)[0]
-                console.log('Selected row data:', entity)
+                // Get table info (columns)
+                const pragmaRes = system.value.db.query(`PRAGMA table_info(${selectedTableName.value})`)
+                tableInfo.value = pragmaRes?.results || []
+
+                // Build column list for SELECT
+                const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+                const entityRes = system.value.db.query(
+                    `SELECT ${columnList} FROM ${selectedTableName.value} WHERE id = '${row.id}'`
+                )
+                const entity = entityRes?.results?.[0]
+                if (!entity) {
+                    toast.add({
+                        title: t('edit_entity_toast_error') || 'Entity not found',
+                        color: 'error',
+                        icon: 'i-lucide-alert-triangle'
+                    })
+                    return
+                }
 
                 formState = reactive(
                     Object.keys(entity).reduce((acc, key) => {
@@ -191,9 +211,7 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
                     }, {} as Record<string, any>)
                 )
 
-
                 editModalOpen.value = true
-
             }
         },
         {
@@ -201,15 +219,16 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
             icon: 'i-lucide-trash',
             color: 'error',
             onSelect: () => {
-                if (!selectedTableName.value) return
+                if (!selectedTableName.value || !system.value?.db) return
                 try {
-
                     // Delete data from the selected table
-                    selectedSystem?.db.exec(`DELETE FROM ${selectedTableName.value} WHERE id = '${row.id}'`)
+                    system.value.db.exec(`DELETE FROM ${selectedTableName.value} WHERE id = '${row.id}'`)
 
+                    // Build explicit column list for SELECT
+                    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
                     // Reload data after delete
-                    const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
-                    selectedTableData.value = data
+                    const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
+                    selectedTableData.value = dataRes?.results || []
 
                     // Notify user of success
                     toast.add({
@@ -308,8 +327,8 @@ system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) 
 const tableNames = computed(() => {
     if (!system.value?.db || typeof system.value.db.query !== 'function') return []
     try {
-        const tables = system.value.db.query(`SELECT name FROM sqlite_master WHERE type='table'`)
-        return tables.map((table: any) => table.name)
+        const tablesRes = system.value.db.query(`SELECT name FROM sqlite_master WHERE type='table'`)
+        return tablesRes?.results?.map((table: any) => table.name) || []
     } catch (error) {
         console.error('Error fetching table names:', error)
         return []
@@ -329,22 +348,21 @@ watch(selectedTableName, async (newTableName) => {
         return
     }
     try {
-        const data = system.value.db.query(`SELECT * FROM ${newTableName}`)
-console.log("Auto columns:", autoColumns.value)
-
-        console.log("Selected table: ", newTableName)
-
-        tableInfo.value = system.value.db.query(`PRAGMA table_info(${newTableName})`) || []
+        // Get column names first
+        const tableInfoRes = system.value.db.query(`PRAGMA table_info(${newTableName})`)
+        tableInfo.value = tableInfoRes?.results || []
 
         columnNames.value = []
         columnTypes.value = []
-
-        console.log("Table info:", tableInfo.value  )
 
         tableInfo.value.forEach((col: any) => {
             columnNames.value.push(col.name)
             columnTypes.value.push(col.type)
         })
+
+        // Build explicit column list for SELECT
+        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+        const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${newTableName}`)
 
         formState = reactive(
             columnNames.value.reduce((acc, col) => {
@@ -353,9 +371,7 @@ console.log("Auto columns:", autoColumns.value)
             }, {} as Record<string, any>)
         )
 
-        console.log("Column names:", columnNames.value)
-
-        selectedTableData.value = data
+        selectedTableData.value = dataRes?.results || []
     } catch (error) {
         console.error(`Error fetching data from table ${newTableName}:`, error)
         selectedTableData.value = []
@@ -396,9 +412,11 @@ async function onSubmit() {
         )
         const sql = `INSERT INTO ${selectedTableName.value} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
         selectedSystem?.db.exec(sql)
+        // Build explicit column list for SELECT
+        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
         // Reload data after insert
-        const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
-        selectedTableData.value = data
+        const dataRes = selectedSystem?.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
+        selectedTableData.value = dataRes?.results || []
         toast.add({ title: t('add_toast_success'), color: 'success' })
         return
     }
@@ -412,9 +430,11 @@ async function onSubmit() {
     const sql = `UPDATE ${selectedTableName.value} SET ${setClause} WHERE id = '${id}'`
     selectedSystem?.db.exec(sql)
 
+    // Build explicit column list for SELECT
+    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
     // Reload data after update
-    const data = selectedSystem?.db.query(`SELECT * FROM ${selectedTableName.value}`) || []
-    selectedTableData.value = data
+    const dataRes = selectedSystem?.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
+    selectedTableData.value = dataRes?.results || []
 
     toast.add({ title: t('edit_entity_toast_success'), color: 'success' })
 }
@@ -434,6 +454,64 @@ function addMethod() {
 
 }
 
+// Přidej computed pro aktuální SQL dotaz se sloupci
+const currentSqlQuery = computed(() => {
+    if (!selectedTableName.value || columnNames.value.length === 0) return ''
+    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+    return `SELECT ${columnList} FROM ${selectedTableName.value}`
+})
+
+const sqlQuery = ref(`SELECT COUNT(*) as count FROM jídla`)
+const htmlTemplate = ref("")
+const showEditor = ref(false)
+
+const draftSqlQuery = ref(sqlQuery.value)
+const draftHtmlTemplate = ref(htmlTemplate.value)
+
+// watch showEditor value
+watch(showEditor, (newValue) => {
+console.log('Editor visibility changed:', newValue)
+})
+
+function openEditor() {
+  showEditor.value = true
+  console.log("Show editor:", showEditor.value)
+}
+
+function applyChanges() {
+  // Použije SQL a HTML z modalu do hlavních reaktivních proměnných
+  sqlQuery.value = draftSqlQuery.value
+  htmlTemplate.value = draftHtmlTemplate.value
+  showEditor.value = false
+  console.log('Changes applied:', {
+    sqlQuery: sqlQuery.value,
+    htmlTemplate: htmlTemplate.value,
+    show: showEditor.value
+  })
+}
+
+// Remove old EditComponentModal logic and use per-column modal state
+const editingColumn = ref<string | null>(null)
+
+function openEditorForColumn(col: any) {
+    editingColumn.value = col.accessorKey || col.id
+    draftHtmlTemplate.value = ''
+    if (selectedTableName.value && editingColumn.value) {
+        // Add ORDER BY if this column is currently sorted
+        let orderClause = ''
+        if (
+            currentSort.value.field === editingColumn.value &&
+            currentSort.value.order
+        ) {
+            orderClause = ` ORDER BY "${editingColumn.value}" ${currentSort.value.order.toUpperCase()}`
+        }
+        draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${selectedTableName.value}${orderClause}`
+    } else {
+        draftSqlQuery.value = ''
+    }
+    showEditor.value = true
+}
+
 </script>
 
 <template>
@@ -451,45 +529,85 @@ function addMethod() {
         <UButton variant="subtle" @click="addMethod">{{ t('add') }}</UButton>
 
         <!-- Global Filter Input -->
-        <UInput v-model="globalFilter" class="max-w-sm" :placeholder="`${t('filter')} ${selectedTableName || 'items'}...`" />
+        <UInput v-model="globalFilter" class="max-w-sm"
+            :placeholder="`${t('filter')} ${selectedTableName || 'items'}...`" />
 
         <!-- SQL Query Display -->
         <div class="ml-auto text-sm text-gray-500 font-mono flex items-center">
             <span>{{ t('sql_query') }}:</span>
             <span class="ml-2 p-2 bg-gray-100 rounded text-xs">
                 {{getSqlQuery(`SELECT * FROM ${selectedTableName || 'table'}`, autoColumns.map(col => (col as
-                    any)?.accessorKey || '').filter(Boolean)) }}
+                    any)?.accessorKey || '').filter(Boolean))}}
             </span>
         </div>
 
     </div>
 
-    <UTable 
-        :data="filteredAndSortedData" 
-        :columns="autoColumns" 
-        :key="selectedTableName"
-        class="flex-1" 
-        :sort="false"
-    >
-        <template #name-cell="{ row }" v-if="autoColumns.some(col => (col as any)?.accessorKey === 'name')">
-            <div class="flex items-center gap-3">
-                <UAvatar v-if="row.original.id" size="lg" :alt="`${row.original.name || row.original.id} avatar`" />
-                <div>
-                    <p class="font-medium text-highlighted">
-                        {{ row.original.name }}
-                    </p>
-                    <p v-if="row.original.age">
-                        {{ row.original.age }}
-                    </p>
-                </div>
-            </div>
-        </template>
-        <template #action-cell="{ row }">
-            <UDropdownMenu :items="getDropdownActions(row.original)">
-                <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" aria-label="Actions" />
-            </UDropdownMenu>
-        </template>
-    </UTable>
+    <!-- Replace UTable with native HTML table -->
+    <table class="min-w-full divide-y divide-gray-200 my-4 rounded shadow custom-table-bg">
+        <thead>
+            <tr>
+                <th v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.id"
+                    class="px-4 py-2 text-left font-semibold relative">
+                    <span v-if="typeof col.header === 'function'">
+                        <component :is="col.header()" />
+                    </span>
+                    <span v-else>
+                        {{ col.header }}
+                    </span>
+                    <!-- Edit icon for column -->
+                    <EditComponentModalOpenButton @click="openEditorForColumn(col)" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(row, rowIndex) in filteredAndSortedData" :key="row.id || rowIndex"
+                class="hover:border hover:border-gray-400 border-collapse">
+
+                <td v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
+                    class="px-4 py-2">
+                    <!-- Special rendering for 'name' column with avatar -->
+                    <template v-if="col.accessorKey === 'name'">
+                        <div class="flex items-center gap-3">
+                            <UAvatar v-if="row.id" size="lg" :alt="`${row.name || row.id} avatar`" />
+                            <div>
+                                <p class="font-medium text-highlighted">
+                                    {{ row.name }}
+                                </p>
+                                <p v-if="row.age">
+                                    {{ row.age }}
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        {{ row[col.accessorKey] }}
+                    </template>
+                </td>
+                <td v-if="autoColumns.some(col => col.id === 'action')" class="px-4 py-2">
+                    <UDropdownMenu :items="getDropdownActions(row)">
+                        <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost"
+                            aria-label="Actions" />
+                    </UDropdownMenu>
+                </td>
+            </tr>
+            <tr v-if="filteredAndSortedData.length === 0">
+                <td :colspan="autoColumns.length" class="text-center text-gray-400 py-4">
+                    {{ t('no_data') }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <EditComponentModal
+        :showEditor="showEditor"
+        :draftHtmlTemplate="draftHtmlTemplate"
+        :draftSqlQuery="draftSqlQuery"
+        @update:showEditor="showEditor = $event"
+        @update:draftHtmlTemplate="draftHtmlTemplate = $event"
+        @update:draftSqlQuery="draftSqlQuery = $event"
+        @applyChanges="applyChanges"
+    />
 
     <UModal v-model:open="editModalOpen" :title="formState.id ? t('edit_entity') : t('add_entity')">
         <template #content>
@@ -535,5 +653,10 @@ function addMethod() {
 
 .sort-header.desc:after {
     content: ' \25BC';
+}
+
+/* Add custom table background color */
+.custom-table-bg {
+    background-color: #0f172b !important;
 }
 </style>

@@ -34,10 +34,10 @@ export class DbHandler {
                 adresa TEXT NOT NULL,
                 věk INTEGER NOT NULL,
                 alergeny TEXT, -- JSON array as string
-                id_turnusu INTEGER NOT NULL
+                turnus_id INTEGER NOT NULL
             )
         `);
-        console.log("Participants table created successfully. ✅");
+            console.log("Participants table created successfully. ✅");
         } catch (error) {
             console.error('Error creating participants table: ⛔', error);
         }
@@ -52,7 +52,7 @@ export class DbHandler {
                 kdy_podáváno TEXT NOT NULL
             )
         `);
-        console.log("Meals table created successfully. ✅");
+            console.log("Meals table created successfully. ✅");
         } catch (error) {
             console.error('Error creating meals table: ⛔', error);
         }
@@ -67,7 +67,7 @@ export class DbHandler {
                 kapacita INTEGER NOT NULL
             )
         `);
-        console.log("Sessions table created successfully. ✅");
+            console.log("Sessions table created successfully. ✅");
         } catch (error) {
             console.error('Error creating sessions table: ⛔', error);
         }
@@ -83,10 +83,10 @@ export class DbHandler {
                 telefon TEXT NOT NULL,
                 adresa TEXT NOT NULL,
                 věk INTEGER NOT NULL,
-                id_turnusu INTEGER NOT NULL
+                turnus_id INTEGER NOT NULL
             )
         `);
-        console.log("Supervisors table created successfully. ✅");
+            console.log("Supervisors table created successfully. ✅");
         } catch (error) {
             console.error('Error creating supervisors table ⛔:', error);
         }
@@ -113,7 +113,7 @@ export class DbHandler {
 
     private insertParticipants(data: any[]): void {
         const stmt = this.db.prepare(`
-            INSERT INTO účastníci (id, jméno, email, rodné_číslo, telefon, adresa, věk, alergeny, id_turnusu)
+            INSERT INTO účastníci (id, jméno, email, rodné_číslo, telefon, adresa, věk, alergeny, turnus_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
@@ -127,7 +127,7 @@ export class DbHandler {
                 participant.adresa,
                 participant.věk,
                 JSON.stringify(participant.alergeny),
-                participant.id_turnusu
+                participant.turnus_id
             ]);
         });
 
@@ -170,9 +170,22 @@ export class DbHandler {
         stmt.free();
     }
 
+    public validateSql(sql: string): boolean {
+        if (!this.db) {
+            throw new Error('Database not initialized');
+        }
+        try {
+            this.db.prepare(sql);
+            return true;
+        } catch (error) {
+            console.error('SQL Error:', error);
+            return false;
+        }
+    }
+
     private insertSupervisors(data: any[]): void {
         const stmt = this.db.prepare(`
-            INSERT INTO vedoucí (id, jméno, email, rodné_číslo, telefon, adresa, věk, id_turnusu)
+            INSERT INTO vedoucí (id, jméno, email, rodné_číslo, telefon, adresa, věk, turnus_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
@@ -185,32 +198,46 @@ export class DbHandler {
                 supervisor.telefon,
                 supervisor.adresa,
                 supervisor.věk,
-                supervisor.id_turnusu
+                supervisor.turnus_id
             ]);
         });
 
         stmt.free();
     }
 
-    public query(sql: string, params?: any[]): any[] {
+    public query(sql: string, params?: any[]): { success: boolean; results: any[] } {
         if (!this.db) {
             throw new Error('Database not initialized');
         }
 
-        const stmt = this.db.prepare(sql);
         const results: any[] = [];
 
-        if (params) {
-            stmt.bind(params);
-        }
+        try {
+            const stmt = this.db.prepare(sql);
 
-        while (stmt.step()) {
-            results.push(stmt.getAsObject());
-        }
+            if (params) {
+                stmt.bind(params);
+            }
 
-        stmt.free();
-        return results;
+            while (stmt.step()) {
+                results.push(stmt.getAsObject());
+            }
+
+            stmt.free();
+
+            return {
+                success: true,
+                results
+            };
+        } catch (error) {
+            console.error('SQL Error:', error);
+            return {
+                success: false,
+                results: []
+            };
+        }
     }
+
 
     public exec(sql: string): void {
         if (!this.db) {

@@ -7,6 +7,9 @@ const route = useRoute()
 const highlightStore = useHighlightStore()
 const { t } = useI18n()
 
+import { useScoreStore } from '#imports'
+const scoreStore = useScoreStore()
+
 const items = computed<NavigationMenuItem[]>(() => [
   {
     label: t('home'),
@@ -38,6 +41,8 @@ const isOnSystemDetailPage = computed(() => {
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" />
 
+
+    <UBadge color="error" variant="outline" size="xl" style="margin-right: 10px;">{{ $t('score') }}: {{ scoreStore.score }}</UBadge>
 
     <!-- Tasks Popover - Only visible on /system/[id] pages -->
     <UPopover v-if="isOnSystemDetailPage" arrow>

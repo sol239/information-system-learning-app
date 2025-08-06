@@ -5,8 +5,8 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useInformationSystemStore } from '~/stores/informationSystems'
 import { useHighlightStore } from '~/stores/highlightElements'
 import { useSelectedComponentStore } from '~/stores/selectedComponent' // <-- import store
-import dashboardStatsError from '~/components/infsys_components/stats-error.vue'
-import dashboardStats from '~/components/infsys_components/stats.vue'
+//import dashboardStatsError from '~/components/infsys_components/stats/stats-error.vue'
+import dashboardStats from '~/components/infsys_components/stats/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
 
@@ -223,8 +223,8 @@ watch(
                       'repaired-animation': repairedElement === 'stats' }]
                 "
                 @click="highlightStore.isHighlightMode && selectElement('stats')">
-                <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" />
-                <dashboardStats v-else :system-id="system?.id" />
+                <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
+                <dashboardStats :system-id="system?.id" />
             </div>
 
             <!-- Sessions Progress Pillows -->
@@ -233,14 +233,14 @@ watch(
                 <dashboardPillows :sessionProgress="sessionProgress" />
             </div>
 
-            <!-- Custom Calendar -->
+            <!-- Custom Calendar
             <div id="calendar" :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
                 @click="highlightStore.isHighlightMode && selectElement('calendar')">
                 <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                     :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
                     :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
                     :sessionColorMap="sessionColorMap" />
-            </div>
+            </div>-->
         </main>
     </div>
 </template>

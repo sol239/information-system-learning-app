@@ -6,6 +6,7 @@ export class Task {
       public completed: boolean = false,
       public kind: string,
       public elementClass: string,
+      public answer: string = ''
 
   
     ) {}
@@ -17,7 +18,8 @@ export class Task {
         json.description,
         json.completed ?? false,
         json.kind,
-        json.elementClass
+        json.elementClass,
+        json.answer ?? ''
       );
     }
 
