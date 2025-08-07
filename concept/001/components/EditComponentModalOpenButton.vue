@@ -1,7 +1,3 @@
-<script setup lang="ts">
-const emit = defineEmits(['open'])
-</script>
-
 <template>
   <button class="edit-icon-btn" @click="emit('open')" title="Edit">
     <span class="edit-icon-bg yellow-bg">
@@ -15,8 +11,48 @@ const emit = defineEmits(['open'])
   </button>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+/* 1. Imports */
+// none
 
+/* 2. Stores */
+// none
+
+/* 3. Context hooks */
+// none
+
+/* 4. Constants (non-reactive) */
+// none
+
+/* 5. Props */
+// none
+
+/* 6. Emits */
+const emit = defineEmits(['open'])
+
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+// none
+
+/* 9. Computed */
+// none
+
+/* 10. Watchers */
+// none
+
+/* 11. Methods */
+// none
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose */
+// none
+</script>
+
+<style scoped>
 .edit-icon-btn {
   position: absolute;
   top: 10px;
@@ -47,7 +83,6 @@ const emit = defineEmits(['open'])
   border-radius: 50%;
   box-shadow: 0 1px 4px #0002;
   border: 1px solid black;
-
 }
 
 .yellow-bg {

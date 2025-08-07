@@ -3,7 +3,6 @@
     "systems": "Systems",
     "settings": "Settings",
     "enter_system": "Enter System",
-
     "dashboard": "Dashboard",
     "tables": "Tables",
     "tasks": "Tasks",
@@ -19,7 +18,6 @@
     "session": "Session",
     "session_calendar": "Session Calendar",
     "dashboard_subtitle": "Information System Dashboard",
-
     "select_table": "Select Table",
     "filter": "Filter",
     "add": "Add",

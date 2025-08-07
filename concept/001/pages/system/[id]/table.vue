@@ -1,34 +1,50 @@
 <script setup lang="ts">
-import type { TableColumn, DropdownMenuItem, FormSubmitEvent } from '@nuxt/ui'
+/* 1. Imports */
+import { ref, computed, reactive, watch, h, resolveComponent, readonly, onMounted, toValue, type Ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useClipboard } from '@vueuse/core'
-import { ref, computed, toValue, h, resolveComponent, watch, readonly } from 'vue'
+import type { TableColumn, DropdownMenuItem, FormSubmitEvent } from '@nuxt/ui'
 import type { Column } from '@tanstack/vue-table'
-import { useInformationSystemStore } from '~/stores/informationSystems';
-import { useSelectedSystemStore } from '~/stores/selectedSystemId'
-import type { InformationSystem } from '~/model/types/InformationSystem';
+import type { InformationSystem } from '~/model/InformationSystem'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import LocalNavbar from '~/components/LocalNavbar.vue'
-import { EditComponentModal } from '#components';
+import { EditComponentModal } from '#components'
 
-const informationSystemStore = useInformationSystemStore();
-const selectedSystemStore = useSelectedSystemStore();
+/* 2. Stores */
+const informationSystemStore = useInformationSystemStore()
+const selectedSystemStore = useSelectedSystemStore()
 
+/* 3. Context hooks */
+const route = useRoute()
+const { t } = useI18n()
+const toast = useToast()
+const { copy } = useClipboard()
+
+/* 4. Constants (non-reactive) */
+const systemId = route.params.id
+const systems = informationSystemStore.systems
 const selectedSystem: InformationSystem | null = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
-
 const UBadge = resolveComponent('UBadge')
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
-const toast = useToast()
-const { copy } = useClipboard()
-
+/* 5. Props */
 const props = defineProps<{
     items?: any[] | Ref<any[]>,
-
     tableName?: string
     onSortChange?: (sortField: string, sortOrder: 'asc' | 'desc' | null) => void
     onFilterChange?: (filter: string) => void
 }>()
 
+/* 6. Emits */
+// none
+
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+const system = ref<InformationSystem | null>(null)
 const globalFilter = ref('')
 const currentSort = ref<{
     field: string | null
@@ -37,28 +53,182 @@ const currentSort = ref<{
     field: null,
     order: null
 })
-
 const selectedTableData = ref<any[]>([])
+const tableInfo = ref<any[]>([])
+const columnNames = ref<string[]>([])
+const columnTypes = ref<string[]>([])
+const selectedTableName = ref('')
+const editModalOpen = ref(false)
+const editingColumn = ref<string | null>(null)
+const sqlQuery = ref(`SELECT COUNT(*) as count FROM jídla`)
+const htmlTemplate = ref("")
+const showEditor = ref(false)
+const draftSqlQuery = ref(sqlQuery.value)
+const draftHtmlTemplate = ref(htmlTemplate.value)
 
+let formState = reactive<Record<string, any>>({})
+
+const localItems = ref([
+    {
+        label: system.value?.name || 'System',
+    },
+    {
+        label: t('dashboard'),
+        icon: 'i-heroicons-chart-bar-20-solid',
+        to: `/system/${systemId}/dashboard`,
+        data_target: 'system-dashboard',
+    },
+    {
+        label: t('tables'),
+        icon: 'i-heroicons-table-cells',
+        to: `/system/${systemId}/table`,
+        data_target: 'system-table',
+    }
+])
+
+/* 9. Computed */
 const data = computed(() => {
     return selectedTableData.value
 })
 
-// Watch for filter changes and emit to parent
+const tableNames = computed(() => {
+    if (!system.value?.db || typeof system.value.db.query !== 'function') return []
+    try {
+        const tablesRes = system.value.db.query(`SELECT name FROM sqlite_master WHERE type='table'`)
+        return tablesRes?.results?.map((table: any) => table.name) || []
+    } catch (error) {
+        console.error('Error fetching table names:', error)
+        return []
+    }
+})
+
+const autoColumns = computed<TableColumn<any>[]>(() => {
+    const keys = columnNames.value
+    console.log("KEYS:", keys)
+
+    const columns: TableColumn<any>[] = keys.map(key => ({
+        accessorKey: key,
+        header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
+    }))
+
+    console.log("COLUMNS:", columns)
+
+    // remove columns: id, turnus_id, rodné_číslo
+    const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
+
+    // Add action column at the end
+    return [
+        ...filteredColumns,
+        {
+            id: 'action',
+            header: 'Akce'
+        }
+    ]
+})
+
+const filteredAndSortedData = computed(() => {
+    let d = [...data.value]
+
+    // Apply filtering first
+    if (globalFilter.value.trim()) {
+        const filter = globalFilter.value.toLowerCase()
+        d = d.filter(item => {
+            return Object.values(item).some(value =>
+                String(value).toLowerCase().includes(filter)
+            )
+        })
+    }
+
+    // Then apply sorting
+    if (currentSort.value.field && currentSort.value.order) {
+        d.sort((a, b) => {
+            const field = currentSort.value.field!
+            const aValue = a[field]
+            const bValue = b[field]
+            if (aValue == null && bValue == null) return 0
+            if (aValue == null) return 1
+            if (bValue == null) return -1
+            if (typeof aValue === 'number' && typeof bValue === 'number') {
+                return currentSort.value.order === 'asc' ? aValue - bValue : bValue - aValue
+            }
+            return currentSort.value.order === 'asc'
+                ? String(aValue).localeCompare(String(bValue))
+                : String(bValue).localeCompare(String(aValue))
+        })
+    }
+    return d
+})
+
+const currentSqlQuery = computed(() => {
+    if (!selectedTableName.value || columnNames.value.length === 0) return ''
+    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+    return `SELECT ${columnList} FROM ${selectedTableName.value}`
+})
+
+/* 10. Watchers */
 watch(globalFilter, (newFilter) => {
     if (props.onFilterChange) {
         props.onFilterChange(newFilter)
     }
 }, { debounce: 300 })
 
-// Generate SQL ORDER BY clause
-const generateSqlOrderBy = (field: string, order: 'asc' | 'desc') => {
+watch(tableNames, (newTableNames) => {
+    if (newTableNames.length > 0 && !selectedTableName.value) {
+        selectedTableName.value = newTableNames[0]
+    }
+}, { immediate: true })
+
+watch(selectedTableName, async (newTableName) => {
+    if (!newTableName || !system.value?.db) {
+        selectedTableData.value = []
+        return
+    }
+    try {
+        // Get column names first
+        const tableInfoRes = system.value.db.query(`PRAGMA table_info(${newTableName})`)
+        tableInfo.value = tableInfoRes?.results || []
+
+        columnNames.value = []
+        columnTypes.value = []
+
+        tableInfo.value.forEach((col: any) => {
+            columnNames.value.push(col.name)
+            columnTypes.value.push(col.type)
+        })
+
+        // Build explicit column list for SELECT
+        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+        const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${newTableName}`)
+
+        formState = reactive(
+            columnNames.value.reduce((acc, col) => {
+                acc[col] = ''
+                return acc
+            }, {} as Record<string, any>)
+        )
+
+        selectedTableData.value = dataRes?.results || []
+    } catch (error) {
+        console.error(`Error fetching data from table ${newTableName}:`, error)
+        selectedTableData.value = []
+    }
+}, { immediate: true })
+
+watch(showEditor, (newValue) => {
+    console.log('Editor visibility changed:', newValue)
+})
+
+/* 11. Methods */
+function initializeSystem() {
+    system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
+}
+
+function generateSqlOrderBy(field: string, order: 'asc' | 'desc') {
     const sanitizedField = field.replace(/[^a-zA-Z0-9_]/g, '')
     return `ORDER BY ${sanitizedField} ${order.toUpperCase()}`
 }
 
-// Generate SQL WHERE clause for filtering
-const generateSqlWhere = (filter: string, columns: string[]) => {
+function generateSqlWhere(filter: string, columns: string[]) {
     if (!filter.trim()) return ''
 
     const sanitizedFilter = filter.replace(/'/g, "''") // Escape single quotes
@@ -70,8 +240,7 @@ const generateSqlWhere = (filter: string, columns: string[]) => {
     return `WHERE (${conditions})`
 }
 
-// Handle sorting
-const handleSort = (field: string) => {
+function handleSort(field: string) {
     let newOrder: 'asc' | 'desc' | null = 'asc'
 
     if (currentSort.value.field === field) {
@@ -99,7 +268,6 @@ const handleSort = (field: string) => {
     }
 }
 
-// Generate columns with clickable sorting header for each key if not provided
 function getHeader(label: string, field: string) {
     const isCurrentField = currentSort.value.field === field
     const currentOrder = isCurrentField ? currentSort.value.order : null
@@ -129,38 +297,6 @@ function getHeader(label: string, field: string) {
         ]
     )
 }
-
-const autoColumns = computed<TableColumn<any>[]>(() => {
-
-    const keys = columnNames.value
-
-    console.log("KEYS:", keys)
-
-    const columns: TableColumn<any>[] = keys.map(key => ({
-        accessorKey: key,
-        header: () => getHeader(key.charAt(0).toUpperCase() + key.slice(1), key)
-    }))
-
-    console.log("COLUMNS:", columns)
-
-    // remove columns: id, turnus_id, rodné_číslo
-    const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
-
-
-    // Add action column at the end
-    return [
-        ...filteredColumns,
-        {
-            id: 'action',
-            header: 'Akce'
-        }
-    ]
-})
-
-
-const editModalOpen = ref(false)
-
-
 
 function getDropdownActions(row: any): DropdownMenuItem[] {
     return [
@@ -249,8 +385,7 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
     ]
 }
 
-// Utility functions for parent components
-const getSqlQuery = (baseQuery: string, columns: string[]) => {
+function getSqlQuery(baseQuery: string, columns: string[]) {
     let query = baseQuery
 
     // Add WHERE clause for filtering
@@ -269,133 +404,6 @@ const getSqlQuery = (baseQuery: string, columns: string[]) => {
 
     return query
 }
-
-// Computed property to filter and sort the data
-const filteredAndSortedData = computed(() => {
-    let d = [...data.value]
-
-    // Apply filtering first
-    if (globalFilter.value.trim()) {
-        const filter = globalFilter.value.toLowerCase()
-        d = d.filter(item => {
-            return Object.values(item).some(value =>
-                String(value).toLowerCase().includes(filter)
-            )
-        })
-    }
-
-    // Then apply sorting
-    if (currentSort.value.field && currentSort.value.order) {
-        d.sort((a, b) => {
-            const field = currentSort.value.field!
-            const aValue = a[field]
-            const bValue = b[field]
-            if (aValue == null && bValue == null) return 0
-            if (aValue == null) return 1
-            if (bValue == null) return -1
-            if (typeof aValue === 'number' && typeof bValue === 'number') {
-                return currentSort.value.order === 'asc' ? aValue - bValue : bValue - aValue
-            }
-            return currentSort.value.order === 'asc'
-                ? String(aValue).localeCompare(String(bValue))
-                : String(bValue).localeCompare(String(aValue))
-        })
-    }
-    return d
-})
-
-// Expose utility functions
-defineExpose({
-    getSqlQuery,
-    currentSort: readonly(currentSort),
-    globalFilter: readonly(globalFilter)
-})
-
-const route = useRoute()
-const systemId = route.params.id
-const systems = informationSystemStore.systems
-const system = ref<InformationSystem | null>(null)
-const tableInfo = ref<any[]>([])
-const columnNames = ref<string[]>([])
-const columnTypes = ref<string[]>([])
-
-let formState = reactive<Record<string, any>>({});
-
-
-system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
-
-const tableNames = computed(() => {
-    if (!system.value?.db || typeof system.value.db.query !== 'function') return []
-    try {
-        const tablesRes = system.value.db.query(`SELECT name FROM sqlite_master WHERE type='table'`)
-        return tablesRes?.results?.map((table: any) => table.name) || []
-    } catch (error) {
-        console.error('Error fetching table names:', error)
-        return []
-    }
-})
-
-const selectedTableName = ref('')
-watch(tableNames, (newTableNames) => {
-    if (newTableNames.length > 0 && !selectedTableName.value) {
-        selectedTableName.value = newTableNames[0]
-    }
-}, { immediate: true })
-
-watch(selectedTableName, async (newTableName) => {
-    if (!newTableName || !system.value?.db) {
-        selectedTableData.value = []
-        return
-    }
-    try {
-        // Get column names first
-        const tableInfoRes = system.value.db.query(`PRAGMA table_info(${newTableName})`)
-        tableInfo.value = tableInfoRes?.results || []
-
-        columnNames.value = []
-        columnTypes.value = []
-
-        tableInfo.value.forEach((col: any) => {
-            columnNames.value.push(col.name)
-            columnTypes.value.push(col.type)
-        })
-
-        // Build explicit column list for SELECT
-        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
-        const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${newTableName}`)
-
-        formState = reactive(
-            columnNames.value.reduce((acc, col) => {
-                acc[col] = ''
-                return acc
-            }, {} as Record<string, any>)
-        )
-
-        selectedTableData.value = dataRes?.results || []
-    } catch (error) {
-        console.error(`Error fetching data from table ${newTableName}:`, error)
-        selectedTableData.value = []
-    }
-}, { immediate: true })
-const { t } = useI18n()
-
-const localItems = ref([
-    {
-        label: system.value?.name || 'System',
-    },
-    {
-        label: t('dashboard'),
-        icon: 'i-heroicons-chart-bar-20-solid',
-        to: `/system/${systemId}/dashboard`,
-        data_target: 'system-dashboard',
-    },
-    {
-        label: t('tables'),
-        icon: 'i-heroicons-table-cells',
-        to: `/system/${systemId}/table`,
-        data_target: 'system-table',
-    }
-])
 
 async function onSubmit() {
     // Handle form submission logic here
@@ -450,48 +458,24 @@ function addMethod() {
             }, {} as Record<string, any>)
     )
     editModalOpen.value = true
-
-
 }
 
-// Přidej computed pro aktuální SQL dotaz se sloupci
-const currentSqlQuery = computed(() => {
-    if (!selectedTableName.value || columnNames.value.length === 0) return ''
-    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
-    return `SELECT ${columnList} FROM ${selectedTableName.value}`
-})
-
-const sqlQuery = ref(`SELECT COUNT(*) as count FROM jídla`)
-const htmlTemplate = ref("")
-const showEditor = ref(false)
-
-const draftSqlQuery = ref(sqlQuery.value)
-const draftHtmlTemplate = ref(htmlTemplate.value)
-
-// watch showEditor value
-watch(showEditor, (newValue) => {
-console.log('Editor visibility changed:', newValue)
-})
-
 function openEditor() {
-  showEditor.value = true
-  console.log("Show editor:", showEditor.value)
+    showEditor.value = true
+    console.log("Show editor:", showEditor.value)
 }
 
 function applyChanges() {
-  // Použije SQL a HTML z modalu do hlavních reaktivních proměnných
-  sqlQuery.value = draftSqlQuery.value
-  htmlTemplate.value = draftHtmlTemplate.value
-  showEditor.value = false
-  console.log('Changes applied:', {
-    sqlQuery: sqlQuery.value,
-    htmlTemplate: htmlTemplate.value,
-    show: showEditor.value
-  })
+    // Použije SQL a HTML z modalu do hlavních reaktivních proměnných
+    sqlQuery.value = draftSqlQuery.value
+    htmlTemplate.value = draftHtmlTemplate.value
+    showEditor.value = false
+    console.log('Changes applied:', {
+        sqlQuery: sqlQuery.value,
+        htmlTemplate: htmlTemplate.value,
+        show: showEditor.value
+    })
 }
-
-// Remove old EditComponentModal logic and use per-column modal state
-const editingColumn = ref<string | null>(null)
 
 function openEditorForColumn(col: any) {
     editingColumn.value = col.accessorKey || col.id
@@ -512,6 +496,17 @@ function openEditorForColumn(col: any) {
     showEditor.value = true
 }
 
+/* 12. Lifecycle */
+onMounted(() => {
+    initializeSystem()
+})
+
+/* 13. defineExpose */
+defineExpose({
+    getSqlQuery,
+    currentSort: readonly(currentSort),
+    globalFilter: readonly(globalFilter)
+})
 </script>
 
 <template>
@@ -648,11 +643,11 @@ function openEditorForColumn(col: any) {
 }
 
 .sort-header.asc:after {
-    content: ' \25B2';
+    content: ' \u25B2';
 }
 
 .sort-header.desc:after {
-    content: ' \25BC';
+    content: ' \u25BC';
 }
 
 /* Add custom table background color */

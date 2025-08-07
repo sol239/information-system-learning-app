@@ -1,213 +1,3 @@
-<script lang="ts" setup>
-import { useRoute } from 'vue-router'
-import type { InformationSystem } from '~/model/types/InformationSystem'
-import { ref, computed, watch, nextTick } from 'vue'
-import { useInformationSystemStore } from '~/stores/informationSystems'
-import { useHighlightStore } from '~/stores/highlightElements'
-import { useSelectedComponentStore } from '~/stores/selectedComponent' // <-- import store
-//import dashboardStatsError from '~/components/infsys_components/stats/stats-error.vue'
-import dashboardStats from '~/components/infsys_components/stats/stats.vue'
-import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
-import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
-
-const route = useRoute()
-const systemId = route.params.id
-const store = useInformationSystemStore()
-const highlightStore = useHighlightStore()
-const selectedComponentStore = useSelectedComponentStore() // <-- use store
-const systems = store.systems
-const system = ref<InformationSystem | null>(null)
-
-// Add selected element tracking
-const selectedElement = ref<string | null>(null)
-
-// Animation state for repaired effect
-const repairedElement = ref<string | null>(null)
-
-// Watch for highlight mode changes and deselect when disabled
-watch(() => highlightStore.isHighlightMode, (newValue) => {
-    if (!newValue) {
-        selectedElement.value = null
-        selectedComponentStore.clear() // clear store when highlight mode off
-    }
-})
-
-const selectElement = (elementId: string) => {
-    if (selectedElement.value === elementId) {
-        selectedElement.value = null
-        selectedComponentStore.clear() // clear store on deselect
-    } else {
-        selectedElement.value = elementId
-        selectedComponentStore.select(elementId) // save to store
-        console.log(`Selected element: ${elementId}`)
-    }
-}
-
-const isElementSelected = (elementId: string) => {
-    return selectedElement.value === elementId
-}
-
-const isElementDimmed = (elementId: string) => {
-    return highlightStore.isHighlightMode && selectedElement.value && selectedElement.value !== elementId
-}
-
-system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
-
-const sessions = computed(() => system.value?.tables.find(t => t.name === 'sessions')?.data || [])
-const participants = computed(() => system.value?.tables.find(t => t.name === 'participants')?.data || [])
-const supervisors = computed(() => system.value?.tables.find(t => t.name === 'supervisors')?.data || [])
-const meals = computed(() => system.value?.tables.find(t => t.name === 'meals')?.data || [])
-
-
-// Color palette for sessions
-const sessionColors = [
-    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899',
-    '#14B8A6', '#F97316', '#84CC16', '#6366F1', '#06B6D4', '#64748B'
-]
-
-// Create color mapping for sessions
-const sessionColorMap = computed(() => {
-    const map = new Map()
-    sessions.value.forEach((session: any, index: number) => {
-        map.set(session.id, sessionColors[index % sessionColors.length])
-    })
-    return map
-})
-
-// Calculate session fill progress
-const sessionProgress = computed(() => {
-    return sessions.value.map((session: any) => {
-        const count = participants.value.filter((p: any) => p.sessionId === session.id).length
-        const percent = session.capacity ? Math.min(100, Math.round((count / session.capacity) * 100)) : 0
-        return {
-            id: session.id,
-            name: session.name || `Session ${session.id}`,
-            color: sessionColorMap.value.get(session.id),
-            count,
-            capacity: session.capacity,
-            percent
-        }
-    })
-})
-
-// Current date navigation
-const currentDate = ref(new Date())
-const currentYear = computed(() => currentDate.value.getFullYear())
-const currentMonth = computed(() => currentDate.value.getMonth())
-
-// Calendar data
-const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-]
-
-const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-// Get calendar days for current month
-const calendarDays = computed(() => {
-    const year = currentYear.value
-    const month = currentMonth.value
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - firstDay.getDay())
-
-    const days = []
-    const current = new Date(startDate)
-
-    // Generate 42 days (6 weeks)
-    for (let i = 0; i < 42; i++) {
-        days.push({
-            date: new Date(current),
-            isCurrentMonth: current.getMonth() === month,
-            isToday: current.toDateString() === new Date().toDateString(),
-            day: current.getDate()
-        })
-        current.setDate(current.getDate() + 1)
-    }
-
-    return days
-})
-
-// Get sessions for a specific date
-const getSessionsForDate = (date: Date) => {
-    return sessions.value.filter((session: any) => {
-        const sessionStart = new Date(session.fromDate)
-        const sessionEnd = new Date(session.toDate)
-        return date >= sessionStart && date <= sessionEnd
-    })
-}
-
-// Navigation functions
-const previousMonth = () => {
-    currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1)
-}
-
-const nextMonth = () => {
-    currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1)
-}
-
-const goToToday = () => {
-    currentDate.value = new Date()
-}
-const { t } = useI18n()
-
-const localItems = ref([
-    {
-        label: system.value?.name || 'System',
-    },
-    {
-        label: t('dashboard'),
-        icon: 'i-heroicons-chart-bar-20-solid',
-        to: `/system/${systemId}/dashboard`,
-        data_target: 'system-dashboard',
-    },
-    {
-        label: t('tables'),
-        icon: 'i-heroicons-table-cells',
-        to: `/system/${systemId}/table`,
-        data_target: 'system-table',
-    },
-    {
-        label: 'Repair Demo',
-        to: `/system/${systemId}/demo-repair`,
-        data_target: 'demo-repair',
-    }
-
-]);
-
-// Generic function to check if a task for a given element id is completed
-function isElementTaskCompleted(elementId: string): boolean {
-    if (!system.value) return false;
-    const task = system.value.tasks.find(task => task.elementClass === elementId);
-    return task ? task.completed : false;
-}
-
-// Watch for task completion and trigger animation/deselect
-watch(
-  () => system.value?.tasks.map(t => ({ id: t.elementClass, completed: t.completed })),
-  (newTasks, oldTasks) => {
-    if (!oldTasks) return;
-    newTasks.forEach((task, idx) => {
-      const oldTask = oldTasks[idx];
-      if (task && oldTask && !oldTask.completed && task.completed) {
-        // Task was just completed
-        repairedElement.value = task.id;
-        // Deselect after animation
-        setTimeout(() => {
-          if (selectedElement.value === task.id) {
-            selectedElement.value = null;
-            selectedComponentStore.clear();
-          }
-          repairedElement.value = null;
-        }, 1200); // Animation duration
-      }
-    });
-  },
-  { deep: true }
-)
-</script>
-
 <template>
     <div class="dashboard-layout">
         <aside class="dashboard-sidebar">
@@ -244,6 +34,204 @@ watch(
         </main>
     </div>
 </template>
+
+<script lang="ts" setup>
+/* 1. Importy */
+import { ref, computed, reactive, onMounted, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useHighlightStore } from '~/stores/useHighlightStore'
+import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
+import dashboardStats from '~/components/infsys_components/stats/stats.vue'
+import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
+import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
+
+/* 2. Stores */
+const store = useInformationSystemStore()
+const highlightStore = useHighlightStore()
+const selectedComponentStore = useSelectedComponentStore()
+
+/* 3. Kontextové hooky */
+const route = useRoute()
+
+/* 4. Konstanty (nereaktivní) */
+const systemId = route.params.id
+const sessionColors = [
+    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899',
+    '#14B8A6', '#F97316', '#84CC16', '#6366F1', '#06B6D4', '#64748B'
+]
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+]
+const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+/* 5. Props */
+// none
+
+/* 6. Emits */
+// none
+
+/* 7. Template refs */
+// none
+
+/* 8. Lokální stav (ref, reactive) */
+const systems = store.systems
+const system = ref<InformationSystem | null>(null)
+const selectedElement = ref<string | null>(null)
+const repairedElement = ref<string | null>(null)
+const currentDate = ref(new Date())
+
+/* 9. Computed */
+system.value = systems.find(function(sys) { return sys.id === parseInt(systemId as string, 10) }) || null
+const sessions = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'sessions' })?.data || [] })
+const participants = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'participants' })?.data || [] })
+const supervisors = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'supervisors' })?.data || [] })
+const meals = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'meals' })?.data || [] })
+const sessionColorMap = computed(function() {
+    const map = new Map()
+    sessions.value.forEach(function(session, index) {
+        map.set(session.id, sessionColors[index % sessionColors.length])
+    })
+    return map
+})
+const sessionProgress = computed(function() {
+    return sessions.value.map(function(session) {
+        const count = participants.value.filter(function(p) { return p.sessionId === session.id }).length
+        const percent = session.capacity ? Math.min(100, Math.round((count / session.capacity) * 100)) : 0
+        return {
+            id: session.id,
+            name: session.name || `Session ${session.id}`,
+            color: sessionColorMap.value.get(session.id),
+            count: count,
+            capacity: session.capacity,
+            percent: percent
+        }
+    })
+})
+const currentYear = computed(function() { return currentDate.value.getFullYear() })
+const currentMonth = computed(function() { return currentDate.value.getMonth() })
+const calendarDays = computed(function() {
+    const year = currentYear.value
+    const month = currentMonth.value
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const startDate = new Date(firstDay)
+    startDate.setDate(startDate.getDate() - firstDay.getDay())
+
+    const days = []
+    const current = new Date(startDate)
+
+    // Generate 42 days (6 weeks)
+    for (let i = 0; i < 42; i++) {
+        days.push({
+            date: new Date(current),
+            isCurrentMonth: current.getMonth() === month,
+            isToday: current.toDateString() === new Date().toDateString(),
+            day: current.getDate()
+        })
+        current.setDate(current.getDate() + 1)
+    }
+
+    return days
+})
+
+/* 10. Watchers */
+watch(function() { return highlightStore.isHighlightMode }, function(newValue) {
+    if (!newValue) {
+        selectedElement.value = null
+        selectedComponentStore.clear()
+    }
+})
+watch(
+  function() { return system.value?.tasks.map(function(t) { return { id: t.elementClass, completed: t.completed } }) },
+  function(newTasks, oldTasks) {
+    if (!oldTasks) return;
+    newTasks.forEach(function(task, idx) {
+      const oldTask = oldTasks[idx];
+      if (task && oldTask && !oldTask.completed && task.completed) {
+        repairedElement.value = task.id;
+        setTimeout(function() {
+          if (selectedElement.value === task.id) {
+            selectedElement.value = null;
+            selectedComponentStore.clear();
+          }
+          repairedElement.value = null;
+        }, 1200);
+      }
+    });
+  },
+  { deep: true }
+)
+
+/* 11. Methods */
+function selectElement(elementId: string) {
+    if (selectedElement.value === elementId) {
+        selectedElement.value = null
+        selectedComponentStore.clear()
+    } else {
+        selectedElement.value = elementId
+        selectedComponentStore.select(elementId)
+        console.log('Selected element: ' + elementId)
+    }
+}
+function isElementSelected(elementId: string) {
+    return selectedElement.value === elementId
+}
+function isElementDimmed(elementId: string) {
+    return highlightStore.isHighlightMode && selectedElement.value && selectedElement.value !== elementId
+}
+function getSessionsForDate(date: Date) {
+    return sessions.value.filter(function(session) {
+        const sessionStart = new Date(session.fromDate)
+        const sessionEnd = new Date(session.toDate)
+        return date >= sessionStart && date <= sessionEnd
+    })
+}
+function previousMonth() {
+    currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1)
+}
+function nextMonth() {
+    currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1)
+}
+function goToToday() {
+    currentDate.value = new Date()
+}
+const { t } = useI18n()
+const localItems = ref([
+    {
+        label: system.value?.name || 'System',
+    },
+    {
+        label: t('dashboard'),
+        icon: 'i-heroicons-chart-bar-20-solid',
+        to: `/system/${systemId}/dashboard`,
+        data_target: 'system-dashboard',
+    },
+    {
+        label: t('tables'),
+        icon: 'i-heroicons-table-cells',
+        to: `/system/${systemId}/table`,
+        data_target: 'system-table',
+    },
+    {
+        label: 'Repair Demo',
+        to: `/system/${systemId}/demo-repair`,
+        data_target: 'demo-repair',
+    }
+])
+function isElementTaskCompleted(elementId: string): boolean {
+    if (!system.value) return false;
+    const task = system.value.tasks.find(function(task) { return task.elementClass === elementId })
+    return task ? task.completed : false;
+}
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose */
+// none
+</script>
 
 <style scoped>
 .dashboard-layout {

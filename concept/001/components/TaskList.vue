@@ -1,3 +1,4 @@
+
 <template>
   <div class="max-w-md mx-auto mt-8">
     <UCard>
@@ -46,8 +47,6 @@
           </div>
 
           <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
-
-
         </div>
       </div>
 
@@ -70,41 +69,57 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { ref, computed } from 'vue'
-import { useSelectedSystemStore } from '~/stores/selectedSystemId'
-import { useInformationSystemStore } from '~/stores/informationSystems'
-import { useSelectedTaskStore } from '~/stores/selectedTask'
-import { useSelectedComponentStore } from '~/stores/selectedComponent'
-import { Task } from '~/model/types/Task'
-import { id } from '@nuxt/ui/runtime/locale/index.js'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedTaskStore } from '~/stores/useSelectedTaskStore'
+import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import { useScoreStore } from '#imports'
+import { Task } from '~/model/Task'
 
-const { t } = useI18n()
+/* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
-const scoreStore = useScoreStore()
-
-
-const systemId = selectedSystemStore.selectedId
-
 const store = useInformationSystemStore()
-const system = store.systems.find(sys => sys.id === systemId)
-
-const newTaskText = ref('')
-
-const tasks = computed(() => system?.tasks ?? [])
-
 const selectedTaskStore = useSelectedTaskStore()
 const selectedComponentStore = useSelectedComponentStore()
+const scoreStore = useScoreStore()
 
-console.log(selectedComponentStore.selectedId)
+/* 3. Context hooks */
+const { t } = useI18n()
 
+/* 4. Constants (non-reactive) */
+const systemId = selectedSystemStore.selectedId
+const system = store.systems.find(sys => sys.id === systemId)
+
+/* 5. Props */
+// none
+
+/* 6. Emits */
+// none
+
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+const newTaskText = ref('')
 const form = ref({
   answer: ''
 })
-
 const taskCompleted = ref(false)
 
-const addTask = () => {
+/* 9. Computed */
+const tasks = computed(() => system?.tasks ?? [])
+
+const selectedTask = computed(() =>
+  tasks.value.find((t: Task) => t.id === selectedTaskStore.selectedId) ?? null
+)
+
+/* 10. Watchers */
+// none
+
+/* 11. Methods */
+function addTask() {
   if (!newTaskText.value.trim() || !system) return
 
   const newTask = new Task(
@@ -125,11 +140,11 @@ function removeTask(index: number) {
   system.tasks.splice(index, 1)
 }
 
-const updateTask = (index: number, task: Task) => {
+function updateTask(index: number, task: Task) {
   if (!system) return
 }
 
-const selectTask = (id: number) => {
+function selectTask(id: number) {
   if (selectedTaskStore.selectedId === id) {
     selectedTaskStore.clear()
   } else {
@@ -138,30 +153,24 @@ const selectTask = (id: number) => {
   }
 }
 
-const selectedTask = computed(() =>
-  tasks.value.find((t: Task) => t.id === selectedTaskStore.selectedId) ?? null
-)
-
-const handleSubmit = () => {
+function handleSubmit() {
   if (!selectedTask.value) return
+  
   const selectedComponentId = selectedComponentStore.selectedId
   const taskElementClass = selectedTask.value.elementClass
-  let isMatch: boolean = false;
+  let isMatch: boolean = false
 
   // Task completion logic
-
-  // task kind: select
   if (selectedTask.value.kind === 'select') {
-    isMatch = selectedComponentId === taskElementClass;
-    console.log("Task kind: select, isMatch:", isMatch);
-  // task kind: type-correct
+    isMatch = selectedComponentId === taskElementClass
+    console.log("Task kind: select, isMatch:", isMatch)
   } else if (selectedTask.value.kind === 'type-correct') {
-    const expected = selectedTask.value.answer.trim();
-    const actual = form.value.answer.trim();
-    isMatch = expected === actual;
-    console.log("Expected:", expected);
-    console.log("Actual:", actual);
-    console.log("Task kind: type-correct, isMatch:", isMatch);
+    const expected = selectedTask.value.answer.trim()
+    const actual = form.value.answer.trim()
+    isMatch = expected === actual
+    console.log("Expected:", expected)
+    console.log("Actual:", actual)
+    console.log("Task kind: type-correct, isMatch:", isMatch)
   }
 
   // If the task matches the selected component or answer, mark it as completed
@@ -183,7 +192,6 @@ const handleSubmit = () => {
         isCorrect: true,
         timestamp: new Date()
       })
-
     }
   } else if (!isMatch) {
     scoreStore.incrementWrongAnswers()
@@ -196,10 +204,16 @@ const handleSubmit = () => {
     })
   }
 
-  scoreStore.updateScore();
-  console.log("Current score:", scoreStore.score);
-  console.log("User records:", scoreStore.getUserRecords());
+  scoreStore.updateScore()
+  console.log("Current score:", scoreStore.score)
+  console.log("User records:", scoreStore.getUserRecords())
 }
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose */
+// none
 </script>
 
 <style scoped>

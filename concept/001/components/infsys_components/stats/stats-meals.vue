@@ -12,22 +12,35 @@
         @update:draftSqlQuery="draftSqlQuery = $event" @applyChanges="applyChanges" />
 
     </div>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { computed, ref } from 'vue'
-import EditComponentModal from '../../EditComponentModal.vue';
+import EditComponentModal from '../../EditComponentModal.vue'
 
+/* 2. Stores */
+// none
+
+/* 3. Context hooks */
 const { t } = useI18n()
-const props = defineProps<{ system: any }>()
 
+/* 4. Constants (non-reactive) */
+// none
 
+/* 5. Props */
+const props = defineProps<{ 
+  system: any 
+}>()
 
+/* 6. Emits */
+// none
 
-// Default SQL and HTML template
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
 const sqlQuery = ref(`SELECT COUNT(*) as count FROM jídla`)
 const htmlTemplate = ref(`
   <div class="stat-card">
@@ -39,11 +52,25 @@ const htmlTemplate = ref(`
   </div>
 `)
 const showEditor = ref(false)
-
-// Drafts for editing
 const draftSqlQuery = ref(sqlQuery.value)
 const draftHtmlTemplate = ref(htmlTemplate.value)
 
+/* 9. Computed */
+const mealsCount = computed(() => {
+  const result = props.system?.db.query(sqlQuery.value).results
+  return result?.[0]?.count || 0
+})
+
+const renderedHtml = computed(() => {
+  return htmlTemplate.value
+    .replace('{{ mealsCount }}', String(mealsCount.value))
+    .replace('{{ label }}', t('meals'))
+})
+
+/* 10. Watchers */
+// none
+
+/* 11. Methods */
 function applyChanges() {
   sqlQuery.value = draftSqlQuery.value
   htmlTemplate.value = draftHtmlTemplate.value
@@ -55,19 +82,11 @@ function applyChanges() {
   })
 }
 
-// Re-evaluate meals count based on current query
-const mealsCount = computed(() => {
-  const result = props.system?.db.query(sqlQuery.value).results
-  return result?.[0]?.count || 0
-})
+/* 12. Lifecycle */
+// none
 
-// Rendered HTML with injected values
-const renderedHtml = computed(() => {
-  return htmlTemplate.value
-    .replace('{{ mealsCount }}', String(mealsCount.value))
-    .replace('{{ label }}', t('meals'))
-})
-
+/* 13. defineExpose (if needed) */
+// none
 </script>
 
 <style scoped>

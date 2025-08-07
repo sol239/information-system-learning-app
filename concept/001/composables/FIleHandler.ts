@@ -1,4 +1,4 @@
-import { InformationSystem } from '~/model/types/InformationSystem'
+import { InformationSystem } from '~/model/InformationSystem'
 
 
 export class FileHandler {

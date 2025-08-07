@@ -1,15 +1,64 @@
+<template>
+  <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black border-b border-gray-200">
+    <!-- Navigation Menu on the left/center -->
+    <UNavigationMenu :items="items" class="flex-grow justify-start" />
+
+    <UBadge color="error" variant="outline" size="xl" style="margin-right: 10px;">
+      {{ $t('score') }}: {{ scoreStore.score }}
+    </UBadge>
+
+    <!-- Tasks Popover - Only visible on /system/[id] pages -->
+    <UPopover v-if="isOnSystemDetailPage" arrow>
+      <UButton :label="$t('tasks')" color="primary" variant="subtle" />
+
+      <template #content>
+        <TaskList />
+      </template>
+    </UPopover>
+
+    <UButton 
+      v-if="isOnSystemDetailPage"
+      :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" 
+      color="secondary"
+      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
+      style="margin-left: 10px"
+      @click="highlightStore.toggleHighlight" 
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+/* 1. Imports */
 import { computed } from 'vue'
-import { useHighlightStore } from '~/stores/highlightElements'
-
-const route = useRoute()
-const highlightStore = useHighlightStore()
-const { t } = useI18n()
-
+import { useRoute } from 'vue-router'
+import type { NavigationMenuItem } from '@nuxt/ui'
+import { useHighlightStore } from '~/stores/useHighlightStore'
 import { useScoreStore } from '#imports'
+
+/* 2. Stores */
+const highlightStore = useHighlightStore()
 const scoreStore = useScoreStore()
 
+/* 3. Context hooks */
+const route = useRoute()
+const { t } = useI18n()
+
+/* 4. Constants (non-reactive) */
+// none
+
+/* 5. Props */
+// none
+
+/* 6. Emits */
+// none
+
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+// none
+
+/* 9. Computed */
 const items = computed<NavigationMenuItem[]>(() => [
   {
     label: t('home'),
@@ -34,29 +83,16 @@ const items = computed<NavigationMenuItem[]>(() => [
 const isOnSystemDetailPage = computed(() => {
   return route.path.startsWith('/system/') && route.params.id
 })
+
+/* 10. Watchers */
+// none
+
+/* 11. Methods */
+// none
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose */
+// none
 </script>
-
-<template>
-  <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black border-b border-gray-200">
-    <!-- Navigation Menu on the left/center -->
-    <UNavigationMenu :items="items" class="flex-grow justify-start" />
-
-
-    <UBadge color="error" variant="outline" size="xl" style="margin-right: 10px;">{{ $t('score') }}: {{ scoreStore.score }}</UBadge>
-
-    <!-- Tasks Popover - Only visible on /system/[id] pages -->
-    <UPopover v-if="isOnSystemDetailPage" arrow>
-
-      <UButton :label="$t('tasks')" color="primary" variant="subtle" />
-
-      <template #content>
-        <TaskList />
-      </template>
-    </UPopover>
-
-    <UButton v-if="isOnSystemDetailPage"
-      :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" color="secondary"
-      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" style="margin-left: 10px"
-      @click="highlightStore.toggleHighlight" />
-  </div>
-</template>

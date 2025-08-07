@@ -1,102 +1,3 @@
-<!-- ModalEditor.vue -->
-<script setup lang="ts">
-import type { InformationSystem } from '~/model/types/InformationSystem';
-import { useInformationSystemStore } from '~/stores/informationSystems';
-import { useSelectedSystemStore } from '~/stores/selectedSystemId'
-import { ref, watch } from 'vue'
-
-const informationSystemStore = useInformationSystemStore();
-const selectedSystemStore = useSelectedSystemStore();
-const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
-
-const props = defineProps<{
-  showEditor: boolean
-  draftHtmlTemplate: string
-  draftSqlQuery: string
-}>()
-
-const emit = defineEmits<{
-  (e: 'update:showEditor', value: boolean): void
-  (e: 'update:draftHtmlTemplate', value: string): void
-  (e: 'update:draftSqlQuery', value: string): void
-  (e: 'applyChanges'): void
-}>()
-
-const sqlValid = ref(true)
-
-const originalHtmlTemplate = ref(props.draftHtmlTemplate)
-const originalSqlQuery = ref(props.draftSqlQuery)
-
-watch(() => props.showEditor, (val) => {
-  if (val) {
-    // Save originals when opening
-    originalHtmlTemplate.value = props.draftHtmlTemplate
-    originalSqlQuery.value = props.draftSqlQuery
-  }
-})
-
-const printCurrentHtml = () => {
-  console.log('Current HTML Template:', props.draftHtmlTemplate)
-}
-
-const printCurrentSql = () => {
-  console.log('Current SQL Query:', props.draftSqlQuery)
-}
-
-const onSqlInput = (event: Event) => {
-  const value = (event.target as HTMLTextAreaElement)?.value || ''
-  emit('update:draftSqlQuery', value);
-  console.log('Current SQL Query:', value);
-
-  try {
-    if (selectedSystem && typeof selectedSystem.db?.validateSql === 'function') {
-      console.log('Validating SQL: >', value, "<");
-      const isSqlValid = selectedSystem.db.validateSql(value);
-      sqlValid.value = isSqlValid
-      console.log('SQL Valid:', isSqlValid);
-    } else {
-      sqlValid.value = true
-      console.warn('selectedSystem or validateSql is not available');
-    }
-  } catch (err) {
-    sqlValid.value = true
-    console.error('Error validating SQL:', err);
-  }
-}
-
-const onHtmlInput = (event: Event) => {
-  const value = (event.target as HTMLTextAreaElement)?.value || ''
-  emit('update:draftHtmlTemplate', value)
-  printCurrentHtml()
-}
-
-async function validateHtml(html: string): Promise<boolean> {
-  const options = {
-    data: html,
-    format: 'json'
-  };
-
-  try {
-    const result = await validator(options);
-    if (result.errors.length > 0) {
-      console.error('HTML Validation Errors:', result.errors);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('Validation failed:', err);
-    return false;
-  }
-}
-
-const onClose = () => {
-  emit('update:draftHtmlTemplate', originalHtmlTemplate.value)
-  emit('update:draftSqlQuery', originalSqlQuery.value)
-  emit('update:showEditor', false)
-}
-
-</script>
-
 <template>
   <div v-if="showEditor" class="modal-overlay">
     <div class="modal">
@@ -126,18 +27,141 @@ const onClose = () => {
           @click="emit('applyChanges')"
           :disabled="!sqlValid"
           :style="{ backgroundColor: !sqlValid ? '#ef4444' : '#3b82f6', color: 'white' }"
-        >Apply</UButton>
+        >
+          Apply
+        </UButton>
         <UButton
           @click="onClose"
           class="bg-gray-500 text-white px-4 py-2 rounded"
-        >Close</UButton>
+        >
+          Close
+        </UButton>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+/* 1. Imports */
+import { ref, watch } from 'vue'
+import type { InformationSystem } from '~/model/InformationSystem'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 
+/* 2. Stores */
+const informationSystemStore = useInformationSystemStore()
+const selectedSystemStore = useSelectedSystemStore()
+
+/* 3. Context hooks */
+// none
+
+/* 4. Constants (non-reactive) */
+const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
+
+/* 5. Props */
+const props = defineProps<{
+  showEditor: boolean
+  draftHtmlTemplate: string
+  draftSqlQuery: string
+}>()
+
+/* 6. Emits */
+const emit = defineEmits<{
+  (e: 'update:showEditor', value: boolean): void
+  (e: 'update:draftHtmlTemplate', value: string): void
+  (e: 'update:draftSqlQuery', value: string): void
+  (e: 'applyChanges'): void
+}>()
+
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+const sqlValid = ref(true)
+const originalHtmlTemplate = ref(props.draftHtmlTemplate)
+const originalSqlQuery = ref(props.draftSqlQuery)
+
+/* 9. Computed */
+// none
+
+/* 10. Watchers */
+watch(() => props.showEditor, (val) => {
+  if (val) {
+    // Save originals when opening
+    originalHtmlTemplate.value = props.draftHtmlTemplate
+    originalSqlQuery.value = props.draftSqlQuery
+  }
+})
+
+/* 11. Methods */
+function printCurrentHtml() {
+  console.log('Current HTML Template:', props.draftHtmlTemplate)
+}
+
+function printCurrentSql() {
+  console.log('Current SQL Query:', props.draftSqlQuery)
+}
+
+function onSqlInput(event: Event) {
+  const value = (event.target as HTMLTextAreaElement)?.value || ''
+  emit('update:draftSqlQuery', value)
+  console.log('Current SQL Query:', value)
+
+  try {
+    if (selectedSystem && typeof selectedSystem.db?.validateSql === 'function') {
+      console.log('Validating SQL: >', value, "<")
+      const isSqlValid = selectedSystem.db.validateSql(value)
+      sqlValid.value = isSqlValid
+      console.log('SQL Valid:', isSqlValid)
+    } else {
+      sqlValid.value = true
+      console.warn('selectedSystem or validateSql is not available')
+    }
+  } catch (err) {
+    sqlValid.value = true
+    console.error('Error validating SQL:', err)
+  }
+}
+
+function onHtmlInput(event: Event) {
+  const value = (event.target as HTMLTextAreaElement)?.value || ''
+  emit('update:draftHtmlTemplate', value)
+  printCurrentHtml()
+}
+
+async function validateHtml(html: string): Promise<boolean> {
+  const options = {
+    data: html,
+    format: 'json'
+  }
+
+  try {
+    const result = await validator(options)
+    if (result.errors.length > 0) {
+      console.error('HTML Validation Errors:', result.errors)
+      return false
+    }
+    return true
+  } catch (err) {
+    console.error('Validation failed:', err)
+    return false
+  }
+}
+
+function onClose() {
+  emit('update:draftHtmlTemplate', originalHtmlTemplate.value)
+  emit('update:draftSqlQuery', originalSqlQuery.value)
+  emit('update:showEditor', false)
+}
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose */
+// none
+</script>
+
+<style scoped>
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -239,5 +263,4 @@ textarea {
   cursor: not-allowed;
   opacity: 0.7;
 }
-
 </style>

@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { UserRecord } from '~/model/types/UserRecord'
+import { UserRecord } from '~/model/UserRecord'
 
 export const useScoreStore = defineStore('score', () => {
+  // State
   const score = ref(0);
   const correctAnswers = ref(0);
   const wrongAnswers = ref(0);
   const userRecords = ref<UserRecord[]>([]);
 
+  // Actions
   function addUserRecord(record: UserRecord) {
     userRecords.value.push(record);
   }

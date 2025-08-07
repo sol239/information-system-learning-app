@@ -14,29 +14,57 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { computed } from 'vue'
-import { useInformationSystemStore } from '~/stores/informationSystems'
-import { useSelectedSystemStore } from '~/stores/selectedSystemId'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import StatsSessions from '~/components/infsys_components/stats/stats-sessions.vue'
 import StatsParticipants from '~/components/infsys_components/stats/stats-participants.vue'
 import StatsSupervisors from '~/components/infsys_components/stats/stats-supervisors.vue'
 import StatsMeals from '~/components/infsys_components/stats/stats-meals.vue'
+import '@/assets/css/stats.css'
+
+/* 2. Stores */
+const selectedSystemStore = useSelectedSystemStore()
+const informationSystemStore = useInformationSystemStore()
+
+/* 3. Context hooks */
 const { t } = useI18n()
 
+/* 4. Constants (non-reactive) */
+// none
+
+/* 5. Props */
 const props = defineProps<{
   systemId?: number
 }>()
 
-const selectedSystemStore = useSelectedSystemStore()
-const informationSystemStore = useInformationSystemStore()
-import '@/assets/css/stats.css'
+/* 6. Emits */
+// none
 
+/* 7. Template refs */
+// none
+
+/* 8. Local state (ref, reactive) */
+// none
+
+/* 9. Computed */
 const system = computed(() => {
   const id = props.systemId ?? selectedSystemStore.selectedId
   return informationSystemStore.systems.find(sys => sys.id === id)
 })
 
+/* 10. Watchers */
+// none
 
+/* 11. Methods */
+// none
+
+/* 12. Lifecycle */
+// none
+
+/* 13. defineExpose (if needed) */
+// none
 </script>
 
 <style scoped>
@@ -70,6 +98,4 @@ const system = computed(() => {
   justify-content: center;
   flex-wrap: wrap;
 }
-
-
 </style>
