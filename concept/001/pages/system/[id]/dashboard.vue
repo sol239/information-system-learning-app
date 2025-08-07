@@ -5,43 +5,30 @@
             <TaskList :system-id="system?.id" />
         </aside>
         <main class="dashboard-main">
-            <div id="stats" class="highlightable" :class="{
-                'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'),
-                'highlighted-selected': isElementSelected('stats'),
-                'highlighted-dimmed': isElementDimmed('stats'),
-                'repaired-animation': repairedElement === 'stats'
-            }" @click="highlightStore.isHighlightMode && selectElement('stats')">
+            <div id="stats" class="highlightable"  @click="highlightStore.isHighlightMode && highlightHandler.selectElement('stats', $event)">
                 <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
                 <dashboardStats :system-id="system?.id" />
             </div>
 
-            <br></br>
-
             <!-- Sessions Progress Pillows -->
-            <div id="dashboard-pillows" class="highlightable">
+            <div id="dashboard-pillows" class="highlightable" @click="highlightStore.isHighlightMode && highlightHandler.selectElement('dashboard-pillows', $event)">
                 <dashboardPillows :sessionProgress="sessionProgress" />
             </div>
 
-            <!-- Custom Calendar
+            <!-- Custom Calendar -->
             <div id="calendar"
-                class="highlightable"
-                :class="{
-                    'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'),
-                    'highlighted-selected': isElementSelected('calendar'),
-                    'highlighted-dimmed': isElementDimmed('calendar')
-                }"
-                @click="highlightStore.isHighlightMode && selectElement('calendar')">
+                class="highlightable" @click="highlightStore.isHighlightMode && highlightHandler.selectElement('calendar', $event)">
                 <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                     :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
                     :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
                     :sessionColorMap="sessionColorMap" />
-            </div>-->
+            </div>
         </main>
     </div>
 </template>
 
 <script lang="ts" setup>
-/* 1. Importy */
+/* 1. Imports */
 import { ref, computed, reactive, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
@@ -50,6 +37,7 @@ import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
 
 /* 2. Stores */
 const store = useInformationSystemStore()
@@ -80,12 +68,16 @@ const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 /* 7. Template refs */
 // none
 
-/* 8. Lokální stav (ref, reactive) */
+/* 8. State */
 const systems = store.systems
 const system = ref<InformationSystem | null>(null)
-const selectedElement = ref<string | null>(null)
+const selectedElements = ref<string[]>([])
 const repairedElement = ref<string | null>(null)
 const currentDate = ref(new Date())
+
+// highlight state
+const highlightHandler = reactive(new HighlightHandler());
+
 
 /* 9. Computed */
 system.value = systems.find(function (sys) { return sys.id === parseInt(systemId as string, 10) }) || null
@@ -106,7 +98,6 @@ const sessionProgress = computed(() => {
         const count = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`).results[0]?.count || 0
         const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
         
-        console.log("COUNT:", count, "CAPACITY:", turnus.kapacita, "PERCENT:", percent)
         
         return {
             id: turnus.id,
@@ -147,12 +138,6 @@ const calendarDays = computed(function () {
 })
 
 /* 10. Watchers */
-watch(function () { return highlightStore.isHighlightMode }, function (newValue) {
-    if (!newValue) {
-        selectedElement.value = null
-        selectedComponentStore.clear()
-    }
-})
 watch(
     function () { return system.value?.tasks.map(function (t) { return { id: t.elementClass, completed: t.completed } }) },
     function (newTasks, oldTasks) {
@@ -162,8 +147,8 @@ watch(
             if (task && oldTask && !oldTask.completed && task.completed) {
                 repairedElement.value = task.id;
                 setTimeout(function () {
-                    if (selectedElement.value === task.id) {
-                        selectedElement.value = null;
+                    if (selectedElements.value.includes(task.id)) {
+                        selectedElements.value = []
                         selectedComponentStore.clear();
                     }
                     repairedElement.value = null;
@@ -174,23 +159,11 @@ watch(
     { deep: true }
 )
 
+// Highlight watchers
+useHighlightWatchers(highlightHandler, highlightStore, selectedElements, selectedComponentStore, repairedElement);
+
 /* 11. Methods */
-function selectElement(elementId: string) {
-    if (selectedElement.value === elementId) {
-        selectedElement.value = null
-        selectedComponentStore.clear()
-    } else {
-        selectedElement.value = elementId
-        selectedComponentStore.select(elementId)
-        console.log('Selected element: ' + elementId)
-    }
-}
-function isElementSelected(elementId: string) {
-    return selectedElement.value === elementId
-}
-function isElementDimmed(elementId: string) {
-    return highlightStore.isHighlightMode && selectedElement.value && selectedElement.value !== elementId
-}
+
 function getSessionsForDate(date: Date) {
     return sessions.value.filter(function (session) {
         const sessionStart = new Date(session.fromDate)
@@ -237,14 +210,7 @@ function isElementTaskCompleted(elementId: string): boolean {
 }
 
 /* 12. Lifecycle */
-onMounted(() => {
-    const highlightableElements = document.querySelectorAll('.highlightable');
-    console.log('Highlightable Elements:', highlightableElements);
-
-    if (highlightStore.isHighlightMode) {
-        console.log('Highlight mode is active');
-    }
-})
+// none
 
 /* 13. defineExpose */
 // none
