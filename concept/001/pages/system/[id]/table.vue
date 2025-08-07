@@ -8,12 +8,16 @@ import type { Column } from '@tanstack/vue-table'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
+import { useSelectedTableStore } from '~/stores/useSelectedTableStore'
 import LocalNavbar from '~/components/LocalNavbar.vue'
 import { EditComponentModal } from '#components'
+import { usePropertyStore } from '#imports'
 
 /* 2. Stores */
 const informationSystemStore = useInformationSystemStore()
 const selectedSystemStore = useSelectedSystemStore()
+const selectedTableStore = useSelectedTableStore()
+const propertyStore = usePropertyStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -35,6 +39,7 @@ const props = defineProps<{
     tableName?: string
     onSortChange?: (sortField: string, sortOrder: 'asc' | 'desc' | null) => void
     onFilterChange?: (filter: string) => void
+    selectedTable?: string | null
 }>()
 
 /* 6. Emits */
@@ -65,6 +70,7 @@ const htmlTemplate = ref("")
 const showEditor = ref(false)
 const draftSqlQuery = ref(sqlQuery.value)
 const draftHtmlTemplate = ref(htmlTemplate.value)
+const menuType = ref(true);
 
 let formState = reactive<Record<string, any>>({})
 
@@ -178,8 +184,9 @@ watch(globalFilter, (newFilter) => {
 }, { debounce: 300 })
 
 watch(tableNames, (newTableNames) => {
+    // Prefer store.selectedTableName, then props.selectedTable, otherwise fallback to first table
     if (newTableNames.length > 0 && !selectedTableName.value) {
-        selectedTableName.value = newTableNames[0]
+        selectedTableName.value = selectedTableStore.selectedTableName || newTableNames[0]
     }
 }, { immediate: true })
 
@@ -344,6 +351,7 @@ function getHeader(label: string, field: string) {
 
 function getDropdownActions(row: any): DropdownMenuItem[] {
     return [
+        /*
         {
             label: t('copy_id'),
             icon: 'i-lucide-copy',
@@ -358,6 +366,7 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
                 }
             }
         },
+        */
         {
             label: t('edit'),
             icon: 'i-lucide-edit',
@@ -452,6 +461,14 @@ function getSqlQuery(baseQuery: string, columns: string[]) {
 async function onSubmit() {
     // Handle form submission logic here
     console.log('Form submitted with data:', formState)
+
+    // Transform array fields to JSON string before saving
+    columnNames.value.forEach(col => {
+        if (isArrayType(propertyStore.propertiesNameTypeMap[col]) && Array.isArray(formState[col])) {
+            formState[col] = JSON.stringify(formState[col])
+        }
+    })
+
 
     const id = formState['id']
     if (!id) {
@@ -550,6 +567,59 @@ defineExpose({
     getSqlQuery,
     currentSort: readonly(currentSort),
     globalFilter: readonly(globalFilter)
+})
+
+/* 14. Map for column values for select menu */
+const columnValuesMap = ref<Record<string, string[]>>({})
+
+// Helper to detect array type
+function isArrayType(type: string) {
+    return type === 'array'
+}
+
+// Fetch possible values for array columns
+async function fetchColumnValues(tableName: string, columns: string[]) {
+    if (!system.value?.db) return
+    columns.forEach(col => {
+        let sourceTable = tableName
+        let valueField = col
+        // If column is 'alergeny', use table 'alergeny' and field 'název'
+        if (col === 'alergeny') {
+            sourceTable = 'alergeny'
+            valueField = 'název'
+        }
+        try {
+            const res = system.value.db.query(`SELECT DISTINCT "${valueField}" FROM "${sourceTable}"`)
+            let values: string[] = []
+            res.results.forEach(row => {
+                const val = row[valueField]
+                if (Array.isArray(val)) {
+                    values.push(...val)
+                } else if (typeof val === 'string') {
+                    try {
+                        const arr = JSON.parse(val)
+                        if (Array.isArray(arr)) values.push(...arr)
+                        else if (val) values.push(val)
+                    } catch {
+                        if (val) values.push(val)
+                    }
+                } else if (val) {
+                    values.push(val)
+                }
+            })
+            columnValuesMap.value[col] = Array.from(new Set(values.filter(v => v)))
+        } catch (e) {
+            columnValuesMap.value[col] = []
+        }
+    })
+}
+
+// Watch selectedTableName and columnNames to fetch values for array columns
+watch([selectedTableName, columnNames], ([tableName, cols]) => {
+    const arrayCols = cols.filter(col => isArrayType(propertyStore.propertiesNameTypeMap[col]))
+    if (tableName && arrayCols.length) {
+        fetchColumnValues(tableName, arrayCols)
+    }
 })
 </script>
 
@@ -671,8 +741,23 @@ defineExpose({
                     <div class="grid grid-cols-2 gap-4">
                         <div v-for="(col, index) in columnNames.filter(col => col !== 'id')" :key="index"
                             class="flex flex-col">
-                            <label class="mb-1 font-medium text-sm text-gray-700">{{ col }}</label>
-                            <UInput v-model="formState[col]" :placeholder="`Enter ${col}`" />
+                            <label class="mb-1 font-medium text-sm text-gray-700">
+                                {{ col }}
+                                <span v-if="propertyStore.propertiesNameTypeMap[col]" class="text-xs text-gray-400 ml-2">
+                                    ({{ propertyStore.propertiesNameTypeMap[col] }})
+                                </span>
+                            </label>
+                            <template v-if="isArrayType(propertyStore.propertiesNameTypeMap[col])">
+                                <USelectMenu
+                                    v-model="formState[col]"
+                                    :items="columnValuesMap[col]"
+                                    class="w-48"
+                                    :multiple="menuType"
+                                />
+                            </template>
+                            <template v-else>
+                                <UInput v-model="formState[col]" :placeholder="`Enter ${col}`" />
+                            </template>
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 mt-6">

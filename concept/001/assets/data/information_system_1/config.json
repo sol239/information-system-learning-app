@@ -663,6 +663,67 @@
             ]
         },
         {
+            "name": "alergeny",
+            "data": [
+                {
+                    "id": 1,
+                    "název": "Lepek"
+                },
+                {
+                    "id": 2,
+                    "název": "Korýši"
+                },
+                {
+                    "id": 3,
+                    "název": "Vejce"
+                },
+                {
+                    "id": 4,
+                    "název": "Ryby"
+                },
+                {
+                    "id": 5,
+                    "název": "Arašídy"
+                },
+                {
+                    "id": 6,
+                    "název": "Sója"
+                },
+                {
+                    "id": 7,
+                    "název": "Mléko"
+                },
+                {
+                    "id": 8,
+                    "název": "Skořápkové plody"
+                },
+                {
+                    "id": 9,
+                    "název": "Celer"
+                },
+                {
+                    "id": 10,
+                    "název": "Hořčice"
+                },
+                {
+                    "id": 11,
+                    "název": "Sezam"
+                },
+                {
+                    "id": 12,
+                    "název": "Oxid siřičitý a siřičitany"
+                },
+                {
+                    "id": 13,
+                    "název": "Vlčí bob"
+                },
+                {
+                    "id": 14,
+                    "název": "Měkkýši"
+                }
+            ]
+        },
+        {
             "name": "vedoucí",
             "data": [
                 {
@@ -729,32 +790,70 @@
         }
     ],
     "tasks": [
-    {
-        "id": 1,
-        "title": "Zobrazování statistik v Dashboardu",
-        "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
-        "status": "completed",
-        "kind": "select",
-        "answer": "",
-        "elementClass": "stats"
-    },
-    {
-        "id": 2,
-        "title": "Smazání uživatele",
-        "description": "Smažte jednoho uživatele z tabulky a napište aktuální počet uživatelů v tabulce.",
-        "status": "pending",
-        "kind": "type-correct",
-        "answer": "29",
-        "elementClass": ""
-    },
-    {
-        "id": 3,
-        "title": "Přidání nového účastníka",
-        "description": "Vyzkoušejte přidat nového účastníka do tabulky a ověřte, že se správně zobrazí v seznamu.",
-        "status": "pending",
-        "kind": "action",
-        "answer": "",
-        "elementClass": "participants-table"
-    }
-]
+        {
+            "id": 1,
+            "title": "Zobrazování statistik v Dashboardu",
+            "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
+            "status": "pending",
+            "kind": "select",
+            "answer": "",
+            "elementClass": ["stats-meals", "stats-participants"],
+            "round" : 1,
+            "error-components": [
+                {
+                    "name": "stats-participants.vue",
+                    "variables": {
+                            "html" : "",
+                            "sql" : "SELECT COUNT(*) as count FROM vedoucí"
+                        }
+                },
+                {
+                    "name": "stats-meals.vue",
+                    "variables": {
+                        "html" : "",
+                        "sql" : "SELECT COUNT(*) as count FROM vedoucí"
+                    }
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "Zobrazování statistik v Dashboardu",
+            "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
+            "status": "pending",
+            "kind": "select",
+            "answer": "",
+            "elementClass": "stats",
+            "round" : 1,
+            "error-components": [
+                {
+                    "name": "stats-supervisors.vue",
+                    "variables": {
+                        "html" : "",
+                        "sql" : "SELECT COUNT(*) as count FROM jídla"
+                    }
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Smazání uživatele",
+            "description": "Smažte jednoho uživatele z tabulky a napište aktuální počet uživatelů v tabulce.",
+            "status": "pending",
+            "kind": "type-correct",
+            "answer": "29",
+            "elementClass": "",
+            "round" : 1
+        },
+        {
+            "id": 4,
+            "title": "Smazání uživatele",
+            "description": "Smažte jednoho uživatele z tabulky a napište aktuální počet uživatelů v tabulce.",
+            "status": "pending",
+            "kind": "type-correct",
+            "answer": "29",
+            "elementClass": "",
+            "round" : 1
+        }
+    ]
 }

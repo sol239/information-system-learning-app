@@ -44,7 +44,8 @@
               "účastníci",
               "jídla",
               "turnusy",
-              "vedoucí"
+              "vedoucí",
+              "alergeny"
             ],
             "description": "Název tabulky"
           },
@@ -125,6 +126,25 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/supervisor"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "alergeny"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/allergen"
                   }
                 }
               }
@@ -377,7 +397,8 @@
         "status",
         "kind",
         "answer",
-        "elementClass"
+        "elementClass",
+        "round"
       ],
       "properties": {
         "id": {
@@ -420,6 +441,46 @@
         "elementClass": {
           "type": "string",
           "description": "CSS třída elementu souvisejícího s úkolem"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Kolo, ve kterém je úkol zařazen"
+        }
+      }
+    },
+    "allergen": {
+      "type": "object",
+      "title": "Alergen",
+      "required": [
+        "id",
+        "název"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor alergenu"
+        },
+        "název": {
+          "type": "string",
+          "enum": [
+            "Lepek",
+            "Korýši",
+            "Vejce",
+            "Ryby",
+            "Arašídy",
+            "Sója",
+            "Mléko",
+            "Skořápkové plody",
+            "Celer",
+            "Hořčice",
+            "Sezam",
+            "Oxid siřičitý a siřičitany",
+            "Vlčí bob",
+            "Měkkýši"
+          ],
+          "description": "Název alergenu"
         }
       }
     }

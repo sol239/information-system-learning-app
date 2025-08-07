@@ -90,6 +90,19 @@ export class DbHandler {
         } catch (error) {
             console.error('Error creating supervisors table ⛔:', error);
         }
+
+        try {
+            // Create alergeny table
+            this.db.exec(`
+            CREATE TABLE alergeny (
+                id INTEGER PRIMARY KEY,
+                název TEXT NOT NULL
+            )
+        `);
+            console.log("Alergeny table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating alergeny table: ⛔', error);
+        }
     }
 
     private insertData(tables: any[]): void {
@@ -106,6 +119,9 @@ export class DbHandler {
                     break;
                 case 'vedoucí':
                     this.insertSupervisors(table.data);
+                    break;
+                case 'alergeny':
+                    this.insertAlergeny(table.data);
                     break;
             }
         });
@@ -199,6 +215,22 @@ export class DbHandler {
                 supervisor.adresa,
                 supervisor.věk,
                 supervisor.turnus_id
+            ]);
+        });
+
+        stmt.free();
+    }
+
+    private insertAlergeny(data: any[]): void {
+        const stmt = this.db.prepare(`
+            INSERT INTO alergeny (id, název)
+            VALUES (?, ?)
+        `);
+
+        data.forEach(alergen => {
+            stmt.run([
+                alergen.id,
+                alergen.název
             ]);
         });
 

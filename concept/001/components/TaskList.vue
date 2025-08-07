@@ -75,7 +75,8 @@ import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedTaskStore } from '~/stores/useSelectedTaskStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
-import { useScoreStore } from '#imports'
+import { ComponentHandler, TaskQueue, useScoreStore } from '#imports'
+import { useErrorComponentStore } from '#imports'
 import { Task } from '~/model/Task'
 
 /* 2. Stores */
@@ -84,6 +85,7 @@ const store = useInformationSystemStore()
 const selectedTaskStore = useSelectedTaskStore()
 const selectedComponentStore = useSelectedComponentStore()
 const scoreStore = useScoreStore()
+const errorComponentStore = useErrorComponentStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -109,14 +111,21 @@ const form = ref({
 const taskCompleted = ref(false)
 
 /* 9. Computed */
-const tasks = computed(() => system?.tasks ?? [])
+const tasks = computed(() => {
+  if (systemId == null) return [];
+  ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
+  return TaskQueue.getTasks(systemId);
+})
 
 const selectedTask = computed(() =>
   tasks.value.find((t: Task) => t.id === selectedTaskStore.selectedId) ?? null
 )
 
 /* 10. Watchers */
-// none
+watch(() => selectedTaskStore.currentRound, (newRound) => {
+  console.log('Current round changed:', newRound)
+  
+})
 
 /* 11. Methods */
 function addTask() {
@@ -192,6 +201,8 @@ function handleSubmit() {
         isCorrect: true,
         timestamp: new Date()
       })
+
+      selectedTaskStore.currentRound += 1
     }
   } else if (!isMatch) {
     scoreStore.incrementWrongAnswers()

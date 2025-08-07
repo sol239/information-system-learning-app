@@ -4,19 +4,31 @@ import { ref } from 'vue'
 export const useSelectedTaskStore = defineStore('selectedTask', () => {
   // State
   const selectedId = ref<number | null>(null)
+  const currentRound = ref<number>(1)
 
   // Actions
-  function select(id: number) {
+  function setSelectedTaskId(id: number) {
     selectedId.value = id
   }
 
-  function clear() {
+  function clearSelectedTaskId() {
     selectedId.value = null
+  }
+
+  function setCurrentRound(round: number) {
+    currentRound.value = round
+  }
+
+  function clearCurrentRound() {
+    currentRound.value = 1
   }
 
   return {
     selectedId,
-    select,
-    clear
+    select: setSelectedTaskId,
+    clear: clearSelectedTaskId,
+    currentRound,
+    setCurrentRound,
+    clearCurrentRound
   }
 })

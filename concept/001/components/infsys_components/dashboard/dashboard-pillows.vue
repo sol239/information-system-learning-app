@@ -39,7 +39,7 @@ const props = defineProps<{
     capacity: number
     percent: number
   }>
-}>()
+}>();
 
 /* 6. Emits */
 // none
@@ -60,7 +60,10 @@ const props = defineProps<{
 // none
 
 /* 12. Lifecycle */
-// none
+onMounted(() => {
+  // This is where you can perform any setup after the component is mounted
+  console.log('Dashboard Pillows component mounted with session progress:', props.sessionProgress)
+})
 
 /* 13. defineExpose (if needed) */
 // none

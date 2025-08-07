@@ -5,12 +5,13 @@ export class Task {
       public description: string,
       public completed: boolean = false,
       public kind: string,
-      public elementClass: string,
-      public answer: string = ''
-
-  
+      public elementClass: string[] = [],
+      public answer: string = '',
+      public round: number = 1,
+      public status: string = '',
+      public errorComponents: any[] = []
     ) {}
-  
+
     static fromJSON(json: any): Task {
       return new Task(
         json.id,
@@ -18,8 +19,11 @@ export class Task {
         json.description,
         json.completed ?? false,
         json.kind,
-        json.elementClass,
-        json.answer ?? ''
+        json.elementClass ?? [],
+        json.answer ?? '',
+        json.round ?? 1,
+        json.status ?? '',
+        json['error-components'] ?? json.errorComponents ?? []
       );
     }
 

@@ -5,26 +5,31 @@
             <TaskList :system-id="system?.id" />
         </aside>
         <main class="dashboard-main">
-            <div id="stats"
-                :class="['highlightable',
-                    { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'),
-                      'highlighted-selected': isElementSelected('stats'),
-                      'highlighted-dimmed': isElementDimmed('stats'),
-                      'repaired-animation': repairedElement === 'stats' }]
-                "
-                @click="highlightStore.isHighlightMode && selectElement('stats')">
+            <div id="stats" class="highlightable" :class="{
+                'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('stats'),
+                'highlighted-selected': isElementSelected('stats'),
+                'highlighted-dimmed': isElementDimmed('stats'),
+                'repaired-animation': repairedElement === 'stats'
+            }" @click="highlightStore.isHighlightMode && selectElement('stats')">
                 <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
                 <dashboardStats :system-id="system?.id" />
             </div>
 
+            <br></br>
+
             <!-- Sessions Progress Pillows -->
-            <div id="dashboard-pillows" :class="['highlightable', 'dashboard-pillows', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('pillows'), 'highlighted-selected': isElementSelected('pillows'), 'highlighted-dimmed': isElementDimmed('pillows') }]"
-                @click="highlightStore.isHighlightMode && selectElement('pillows')">
+            <div id="dashboard-pillows" class="highlightable">
                 <dashboardPillows :sessionProgress="sessionProgress" />
             </div>
 
             <!-- Custom Calendar
-            <div id="calendar" :class="['highlightable', 'dashboard-calendar', { 'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'), 'highlighted-selected': isElementSelected('calendar'), 'highlighted-dimmed': isElementDimmed('calendar') }]"
+            <div id="calendar"
+                class="highlightable"
+                :class="{
+                    'highlighted-yellow': highlightStore.isHighlightMode && !isElementDimmed('calendar'),
+                    'highlighted-selected': isElementSelected('calendar'),
+                    'highlighted-dimmed': isElementDimmed('calendar')
+                }"
                 @click="highlightStore.isHighlightMode && selectElement('calendar')">
                 <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                     :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
@@ -42,9 +47,9 @@ import { useRoute } from 'vue-router'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useHighlightStore } from '~/stores/useHighlightStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
-import dashboardStats from '~/components/infsys_components/stats/stats.vue'
-import dashboardCalendar from '~/components/infsys_components/dashboard-calendar.vue'
-import dashboardPillows from '~/components/infsys_components/dashboard-pillows.vue'
+import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
+import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
+import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
 
 /* 2. Stores */
 const store = useInformationSystemStore()
@@ -83,35 +88,40 @@ const repairedElement = ref<string | null>(null)
 const currentDate = ref(new Date())
 
 /* 9. Computed */
-system.value = systems.find(function(sys) { return sys.id === parseInt(systemId as string, 10) }) || null
-const sessions = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'sessions' })?.data || [] })
-const participants = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'participants' })?.data || [] })
-const supervisors = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'supervisors' })?.data || [] })
-const meals = computed(function() { return system.value?.tables.find(function(t) { return t.name === 'meals' })?.data || [] })
-const sessionColorMap = computed(function() {
+system.value = systems.find(function (sys) { return sys.id === parseInt(systemId as string, 10) }) || null
+const sessions = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'sessions' })?.data || [] })
+const participants = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'participants' })?.data || [] })
+const supervisors = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'supervisors' })?.data || [] })
+const meals = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'meals' })?.data || [] })
+const sessionColorMap = computed(function () {
     const map = new Map()
-    sessions.value.forEach(function(session, index) {
+    sessions.value.forEach(function (session, index) {
         map.set(session.id, sessionColors[index % sessionColors.length])
     })
     return map
 })
-const sessionProgress = computed(function() {
-    return sessions.value.map(function(session) {
-        const count = participants.value.filter(function(p) { return p.sessionId === session.id }).length
-        const percent = session.capacity ? Math.min(100, Math.round((count / session.capacity) * 100)) : 0
+const sessionProgress = computed(() => {
+    const result = system.value?.db.query(`SELECT * FROM turnusy`).results || []
+    return result.map((turnus, idx) => {
+        const count = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`).results[0]?.count || 0
+        const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
+        
+        console.log("COUNT:", count, "CAPACITY:", turnus.kapacita, "PERCENT:", percent)
+        
         return {
-            id: session.id,
-            name: session.name || `Session ${session.id}`,
-            color: sessionColorMap.value.get(session.id),
+            id: turnus.id,
+            name: `Turnus ${turnus.id}`,
+            color: sessionColors[idx % sessionColors.length],
             count: count,
-            capacity: session.capacity,
+            capacity: turnus.kapacita,
             percent: percent
         }
     })
 })
-const currentYear = computed(function() { return currentDate.value.getFullYear() })
-const currentMonth = computed(function() { return currentDate.value.getMonth() })
-const calendarDays = computed(function() {
+
+const currentYear = computed(function () { return currentDate.value.getFullYear() })
+const currentMonth = computed(function () { return currentDate.value.getMonth() })
+const calendarDays = computed(function () {
     const year = currentYear.value
     const month = currentMonth.value
     const firstDay = new Date(year, month, 1)
@@ -137,31 +147,31 @@ const calendarDays = computed(function() {
 })
 
 /* 10. Watchers */
-watch(function() { return highlightStore.isHighlightMode }, function(newValue) {
+watch(function () { return highlightStore.isHighlightMode }, function (newValue) {
     if (!newValue) {
         selectedElement.value = null
         selectedComponentStore.clear()
     }
 })
 watch(
-  function() { return system.value?.tasks.map(function(t) { return { id: t.elementClass, completed: t.completed } }) },
-  function(newTasks, oldTasks) {
-    if (!oldTasks) return;
-    newTasks.forEach(function(task, idx) {
-      const oldTask = oldTasks[idx];
-      if (task && oldTask && !oldTask.completed && task.completed) {
-        repairedElement.value = task.id;
-        setTimeout(function() {
-          if (selectedElement.value === task.id) {
-            selectedElement.value = null;
-            selectedComponentStore.clear();
-          }
-          repairedElement.value = null;
-        }, 1200);
-      }
-    });
-  },
-  { deep: true }
+    function () { return system.value?.tasks.map(function (t) { return { id: t.elementClass, completed: t.completed } }) },
+    function (newTasks, oldTasks) {
+        if (!oldTasks) return;
+        newTasks.forEach(function (task, idx) {
+            const oldTask = oldTasks[idx];
+            if (task && oldTask && !oldTask.completed && task.completed) {
+                repairedElement.value = task.id;
+                setTimeout(function () {
+                    if (selectedElement.value === task.id) {
+                        selectedElement.value = null;
+                        selectedComponentStore.clear();
+                    }
+                    repairedElement.value = null;
+                }, 1200);
+            }
+        });
+    },
+    { deep: true }
 )
 
 /* 11. Methods */
@@ -182,7 +192,7 @@ function isElementDimmed(elementId: string) {
     return highlightStore.isHighlightMode && selectedElement.value && selectedElement.value !== elementId
 }
 function getSessionsForDate(date: Date) {
-    return sessions.value.filter(function(session) {
+    return sessions.value.filter(function (session) {
         const sessionStart = new Date(session.fromDate)
         const sessionEnd = new Date(session.toDate)
         return date >= sessionStart && date <= sessionEnd
@@ -222,12 +232,19 @@ const localItems = ref([
 ])
 function isElementTaskCompleted(elementId: string): boolean {
     if (!system.value) return false;
-    const task = system.value.tasks.find(function(task) { return task.elementClass === elementId })
+    const task = system.value.tasks.find(function (task) { return task.elementClass === elementId })
     return task ? task.completed : false;
 }
 
 /* 12. Lifecycle */
-// none
+onMounted(() => {
+    const highlightableElements = document.querySelectorAll('.highlightable');
+    console.log('Highlightable Elements:', highlightableElements);
+
+    if (highlightStore.isHighlightMode) {
+        console.log('Highlight mode is active');
+    }
+})
 
 /* 13. defineExpose */
 // none
@@ -254,6 +271,7 @@ function isElementTaskCompleted(elementId: string): boolean {
     margin: 2rem auto;
     padding: 2rem;
 }
+
 .dashboard {
     max-width: 1000px;
     margin: 2rem auto;
@@ -696,26 +714,29 @@ function isElementTaskCompleted(elementId: string): boolean {
 }
 
 .repaired-animation {
-    animation: repairedPulse 2s cubic-bezier(.4,0,.2,1);
-    box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+    animation: repairedPulse 2s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
     border-color: #22c55e !important;
 }
 
 @keyframes repairedPulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(34,197,94,0.0);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
         border-color: #facc15;
     }
+
     30% {
-        box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
         border-color: #22c55e;
     }
+
     70% {
-        box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 0 30px 8px rgba(34,197,94,0.15);
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
         border-color: #22c55e;
     }
+
     100% {
-        box-shadow: 0 0 0 0 rgba(34,197,94,0.0);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
         border-color: #facc15;
     }
 }

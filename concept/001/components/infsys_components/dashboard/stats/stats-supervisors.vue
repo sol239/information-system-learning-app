@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="stat-card-wrapper">
-      <div class="stat-card" v-html="renderedHtml"></div>
+      <div id="stats-supervisors" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
       <EditComponentModalOpenButton @open="showEditor = true" />
       <EditComponentModal :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate" :draftSqlQuery="draftSqlQuery"
         @update:showEditor="showEditor = $event" @update:draftHtmlTemplate="draftHtmlTemplate = $event"
@@ -13,10 +13,13 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { computed, ref } from 'vue'
-import EditComponentModal from '../../EditComponentModal.vue'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
+import { useSelectedTableStore } from '#imports'
+import { ComponentHandler } from '~/composables/ComponentHandler'
 
 /* 2. Stores */
-// none
+const selectedSystemStore = useSelectedSystemStore()
+const selectedTableStore = useSelectedTableStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -36,13 +39,13 @@ const props = defineProps<{
 // none
 
 /* 8. Local state (ref, reactive) */
-const sqlQuery = ref(`SELECT COUNT(*) as count FROM vedoucí`)
-const htmlTemplate = ref(`
-  <div class=\"stat-card\">
-    <div class=\"stat-icon\">👨‍🏫</div>
-    <div class=\"stat-content\">
-      <div class=\"stat-number\">{{ supervisorsCount }}</div>
-      <div class=\"stat-label\">{{ label }}</div>
+const sqlQuery = ref(ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || `SELECT COUNT(*) as count FROM vedoucí`)
+const htmlTemplate = ref(ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || `
+  <div class="stat-card">
+    <div class="stat-icon">👨‍🏫</div>
+    <div class="stat-content">
+      <div class="stat-number">{{ supervisorsCount }}</div>
+      <div class="stat-label">{{ label }}</div>
     </div>
   </div>
 `)
@@ -74,6 +77,14 @@ function applyChanges() {
     sqlQuery: sqlQuery.value,
     htmlTemplate: htmlTemplate.value,
     show: showEditor.value
+  })
+}
+
+function navigate() {
+  const systemId = selectedSystemStore.selectedId;
+  selectedTableStore.select('vedoucí')
+  navigateTo({
+    path: `/system/${systemId}/table`,
   })
 }
 

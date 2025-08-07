@@ -3,6 +3,8 @@
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" />
 
+    <UButton label="Helper" @click="handleHelperClick"></UButton>
+
     <UBadge v-if="isOnSystemDetailPage" color="error" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
     </UBadge>
@@ -33,11 +35,13 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useHighlightStore } from '~/stores/useHighlightStore'
-import { useScoreStore } from '#imports'
+import { ComponentHandler, useScoreStore } from '#imports'
+import { useErrorComponentStore } from '#imports'
 
 /* 2. Stores */
 const highlightStore = useHighlightStore()
 const scoreStore = useScoreStore()
+const errorComponentStore = useErrorComponentStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -88,7 +92,10 @@ const isOnSystemDetailPage = computed(() => {
 // none
 
 /* 11. Methods */
-// none
+function handleHelperClick() {
+  // Placeholder for helper click logic
+  console.log(errorComponentStore.errorComponents)
+}
 
 /* 12. Lifecycle */
 // none
