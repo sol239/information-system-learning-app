@@ -1,6 +1,16 @@
+<template>
+  <UCard class="mt-4">
+    <label for="locale-select" class="block mb-2">Jazyk / Language</label>
+    <USelect v-model="locale" :items="availableLocales" class="w-48" @update:model-value="onLocaleChange" />
+  </UCard>
+  <AddSystemForm class="mt-4" />
+</template>
+
 <script setup lang="ts">
 /* 1. Imports */
 import { useI18n } from 'vue-i18n'
+
+
 
 /* 2. Stores */
 // none
@@ -40,18 +50,3 @@ function onLocaleChange(newLocale: typeof availableLocales[number]) {
 /* 13. defineExpose */
 // none
 </script>
-
-<template>
-  <UCard>
-    <h1>Settings Page</h1>
-    <div class="mt-4">
-      <label for="locale-select" class="block mb-2">Jazyk / Language</label>
-      <USelect
-        v-model="locale"
-        :items="availableLocales"
-        class="w-48"
-        @update:model-value="onLocaleChange"
-      />
-    </div>
-  </UCard>
-</template>

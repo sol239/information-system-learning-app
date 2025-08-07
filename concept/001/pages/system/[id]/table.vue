@@ -116,6 +116,11 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
     // remove columns: id, turnus_id, rodné_číslo
     const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
 
+    // print data for column=Alergeny
+    if (columnNames.value.includes('alergeny')) {
+        console.log("Data for Alergeny:", data.value.map(row => row.Alergeny))
+    }
+
     // Add action column at the end
     return [
         ...filteredColumns,
@@ -221,6 +226,45 @@ watch(showEditor, (newValue) => {
 /* 11. Methods */
 function initializeSystem() {
     system.value = systems.find(sys => sys.id === parseInt(systemId as string, 10)) || null
+}
+
+// Add these new helper methods
+function isArrayColumn(value: any): boolean {
+    if (!value) return false
+    
+    // Check if it's already an array
+    if (Array.isArray(value)) return true
+    
+    // Check if it's a string that looks like an array
+    if (typeof value === 'string') {
+        const trimmed = value.trim()
+        return trimmed.startsWith('[') && trimmed.endsWith(']')
+    }
+    
+    return false
+}
+
+function parseArrayData(value: any): string[] {
+    if (!value) return []
+    
+    // If it's already an array, return it
+    if (Array.isArray(value)) return value
+    
+    // If it's a string representation of an array, parse it
+    if (typeof value === 'string') {
+        try {
+            const parsed = JSON.parse(value)
+            return Array.isArray(parsed) ? parsed : []
+        } catch (error) {
+            // If JSON parsing fails, try to split by comma (fallback)
+            const trimmed = value.replace(/^\[|\]$/g, '').trim()
+            if (trimmed) {
+                return trimmed.split(',').map(item => item.trim().replace(/^"|"$/g, ''))
+            }
+        }
+    }
+    
+    return []
 }
 
 function generateSqlOrderBy(field: string, order: 'asc' | 'desc') {
@@ -559,7 +603,7 @@ defineExpose({
             <tr v-for="(row, rowIndex) in filteredAndSortedData" :key="row.id || rowIndex"
                 class="hover:border hover:border-gray-400 border-collapse">
 
-                <td v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
+                              <td v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
                     class="px-4 py-2">
                     <!-- Special rendering for 'name' column with avatar -->
                     <template v-if="col.accessorKey === 'name'">
@@ -575,6 +619,19 @@ defineExpose({
                             </div>
                         </div>
                     </template>
+                    <!-- Special rendering for array data columns (like roles, alergeny, etc.) -->
+                    <template v-else-if="isArrayColumn(row[col.accessorKey])">
+                        <div class="flex flex-wrap gap-1">
+                            <UBadge 
+                                v-for="(item, index) in parseArrayData(row[col.accessorKey])" 
+                                :key="index"
+                                size="md"
+                            >
+                                {{ item }}
+                            </UBadge>
+                        </div>
+                    </template>
+                    <!-- Default rendering for other columns -->
                     <template v-else>
                         {{ row[col.accessorKey] }}
                     </template>

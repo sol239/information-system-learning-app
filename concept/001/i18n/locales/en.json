@@ -34,5 +34,11 @@
     "edit_entity_toast_success": "Record updated successfully",
     "edit_entity": "Edit record",
     "add_entity": "Add record",
-    "score": "Score"
+    "score": "Score",
+    "add_system": "Add System",
+    "enter_json_path": "Enter JSON Path",
+
+    "homepage_welcome_message": "Welcome to the error-finding application for information systems",
+    "homepage_description": "This application allows you to browse various systems, manage shifts and participants, and perform other operations related to the information system. The application is intended for students in the 2nd stage of primary school and secondary school.",
+    "view_on_github": "View on GitHub"
 }

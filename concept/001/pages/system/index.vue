@@ -16,6 +16,7 @@ const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
 const handler = new FileHandler()
+const systems: InformationSystem[] = handler.getInformationSystems()
 
 /* 5. Props */
 // none
@@ -27,7 +28,7 @@ const handler = new FileHandler()
 // none
 
 /* 8. Local state (ref, reactive) */
-const systems: InformationSystem[] = handler.getInformationSystems()
+// none
 
 /* 9. Computed */
 // none

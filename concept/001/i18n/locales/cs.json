@@ -34,5 +34,11 @@
     "edit_entity_toast_success": "Záznam úspěšně upraven",
     "edit_entity": "Upravit záznam",
     "add_entity": "Přidat záznam",
-    "score": "Skóre"
+    "score": "Skóre",
+    "add_system": "Přidat systém",
+    "enter_json_path": "Zadejte cestu k JSON",
+
+    "homepage_welcome_message": "Vítejte v aplikaci pro hledání chyb v informačním systému",
+    "homepage_description": "Tato aplikace vám umožní procházet různé systémy, spravovat turnusy a účastníky, a provádět další operace související s informačním systémem. Aplikace je určena pro studenty 2. stupně ZŠ a SŠ.",
+    "view_on_github": "Zobrazit na GitHubu"
 }

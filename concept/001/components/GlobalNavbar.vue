@@ -3,7 +3,7 @@
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" />
 
-    <UBadge color="error" variant="outline" size="xl" style="margin-right: 10px;">
+    <UBadge v-if="isOnSystemDetailPage" color="error" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
     </UBadge>
 

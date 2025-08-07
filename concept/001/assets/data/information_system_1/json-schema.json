@@ -105,7 +105,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/shift"
+                    "$ref": "#/definitions/session"
                   }
                 }
               }
@@ -279,7 +279,7 @@
         }
       }
     },
-    "shift": {
+    "session": {
       "type": "object",
       "title": "Turnus",
       "required": [
