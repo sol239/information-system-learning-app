@@ -27,11 +27,13 @@
             <h3 class="text-lg font-bold">{{ selectedTask.title }}</h3>
           </div>
           <p class="mb-2">{{ selectedTask.description }}</p>
+
+          <UStepper ref="stepper" class="mt-6" :items="stepperItems" :disabled="true" :model-value="currentStepIndex" />
+
+          <!--
           <span class="font-semibold">Kind of task: </span>
-
-          <!-- Kind of task: select, type-correct, ... -->
           <span>{{ selectedTask.kind }}</span><br>
-
+-->
           <!-- Kind of task: select -->
           <div v-if="selectedTask.kind === 'select'">
             <UButton variant="outline" style="margin-left: 5px;"
@@ -84,6 +86,7 @@ import { useErrorComponentStore } from '#imports'
 import { useHighlightStore } from '#imports'
 import { Task } from '~/model/Task'
 import { sys } from 'typescript'
+import type { StepperItem } from '@nuxt/ui'
 
 
 /* 2. Stores */
@@ -98,10 +101,35 @@ const highlightStore = useHighlightStore()
 /* 3. Context hooks */
 const { t } = useI18n()
 
+const currentStepIndex = ref(0)
+
+function onStepChange(newIndex: string | number | undefined) {
+  if (typeof newIndex === 'number') {
+    currentStepIndex.value = newIndex
+    console.log('Current stepper item:', stepperItems.value[newIndex])
+  }
+}
+
 /* 4. Constants (non-reactive) */
+let stepperIndex = 0;
 const systemId = selectedSystemStore.selectedId
 const system = store.systems.find(sys => sys.id === systemId)
 const toast = useToast()
+//TODO: locale
+const stepperItems = ref<StepperItem[]>([
+  {
+    title: 'Zvolení úkolu',
+    icon: 'i-lucide-house'
+  },
+  {
+    title: 'Oprava komponent',
+    icon: 'i-lucide-house'
+  },
+  {
+    title: 'Dokončení úkolu',
+    icon: 'i-lucide-truck'
+  }
+])
 
 /* 5. Props */
 // none
@@ -119,6 +147,7 @@ const form = ref({
 })
 const taskCompleted = ref(false)
 const taskIncorrect = ref(false)
+const stepper = ref()
 
 /* 9. Computed */
 const tasks = computed(() => {
@@ -164,6 +193,12 @@ watch(() => selectedTaskStore.currentRound, (newRound) => {
     })
   }
 
+})
+
+watch(selectedTask, (task) => {
+  if (task?.completed) {
+    currentStepIndex.value = 2
+  }
 })
 
 /* 11. Methods */
@@ -238,6 +273,13 @@ function handleSubmit() {
           break;
         }
       }
+
+      if (match) {
+        for (const id of actual) {
+          errorComponentStore.removeErrorComponent(id)
+        }
+      }
+
     }
 
     isMatch = match
@@ -254,25 +296,37 @@ function handleSubmit() {
   if (isMatch && system && selectedTask.value) {
     const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
     if (idx !== -1) {
-      system.tasks[idx].completed = true
-      console.log('Task completed:', selectedTask.value)
-      taskCompleted.value = true
-      setTimeout(() => {
-        taskCompleted.value = false
-      }, 1200)
-      scoreStore.incrementCorrectAnswers()
-      console.log("Correct answers count:", scoreStore.correctAnswers)
 
-      scoreStore.addUserRecord({
-        taskId: selectedTask.value.id,
-        answer: form.value.answer,
-        isCorrect: true,
-        timestamp: new Date()
-      })
+    console.log(selectedSystemStore.selectedSystem)
+
+
+      system.tasks[idx].componentsRepaired = true
 
       highlightStore.isHighlightMode = false
       highlightStore.highlightHandler.clearSelection()
-      selectedTaskStore.completedTasksCount += 1;
+      stepper.value.next()
+      stepperIndex += 1;
+
+      if (selectedTaskStore.selectedTask?.answer === "none") {
+        system.tasks[idx].completed = true
+        taskCompleted.value = true
+        setTimeout(() => {
+          taskCompleted.value = false
+        }, 1200)
+        scoreStore.incrementCorrectAnswers()
+        stepperIndex += 1;
+        stepper.value.next()
+        selectedTaskStore.completedTasksCount += 1;
+        scoreStore.addUserRecord({
+          taskId: selectedTask.value.id,
+          answer: form.value.answer,
+          isCorrect: true,
+          timestamp: new Date()
+        })
+
+
+      }
+
       // TODO: increment row after all tasks with current row are finished
       if (TaskQueue.getTasks(selectedTaskStore.currentRound).every(t => t.completed)) {
         selectedTaskStore.currentRound += 1

@@ -10,6 +10,13 @@ export const useErrorComponentStore = defineStore('errorComponent', () => {
     errorComponents.value.push(component)
   }
 
+  function removeErrorComponent(componentName: string) {
+    console.log('Removing error component:', componentName)
+    console.log("BEFORE:",errorComponents.value)
+    errorComponents.value = errorComponents.value.filter(component => component.componentFilename !== componentName)
+    console.log('Updated error components:', errorComponents.value)
+  }
+
   function setErrorComponents(components: ComponentErrorDefinition[]) {
     errorComponents.value = components
   }
@@ -23,6 +30,7 @@ export const useErrorComponentStore = defineStore('errorComponent', () => {
     errorComponents,
     addErrorComponent,
     setErrorComponents,
-    clearErrorComponents
+    clearErrorComponents,
+    removeErrorComponent
   }
 })

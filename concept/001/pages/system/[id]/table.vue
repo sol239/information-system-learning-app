@@ -251,6 +251,7 @@ function isArrayColumn(value: any): boolean {
 }
 
 function parseArrayData(value: any): string[] {
+
     if (!value) return []
     
     // If it's already an array, return it
@@ -571,7 +572,7 @@ watch([selectedTableName, columnNames], ([tableName, cols]) => {
 onMounted(() => {
     const highlightStore = useHighlightStore()
     console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
-    console.log(highlightStore.highlightHandler.getHighlightedElements())
+    console.log(highlightStore.highlightHandler.getHighlightedElements)
 })
 
 </script>

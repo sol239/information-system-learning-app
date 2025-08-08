@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
+import type { InformationSystem } from '~/model/InformationSystem'
 
 export const useSelectedSystemStore = defineStore('selectedSystem', () => {
   // State
   const selectedId = ref<number | null>(null)
+  const selectedSystem = ref<InformationSystem | null>(null)
 
   // Actions
   function select(id: number) {
@@ -13,9 +15,15 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     selectedId.value = null
   }
 
+  function setSelectedSystem(system: InformationSystem) {
+    selectedSystem.value = system
+  }
+
   return {
     selectedId,
     select,
-    clear
+    clear,
+    setSelectedSystem,
+    selectedSystem
   }
 })

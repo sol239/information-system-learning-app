@@ -35,7 +35,7 @@ export class ComponentHandler {
     public static getVariableValue(componentFilename: string, variableName: string): string | undefined {
         const errorComponentStore = useErrorComponentStore();
         const componentErrors = errorComponentStore.errorComponents;
-
+        console.log("getVariableValue called.")
         for (const component of componentErrors) {
             if (component.componentFilename === componentFilename) {
                 const variableError = component.variableError.find(v => v.variableName === variableName);
@@ -44,6 +44,8 @@ export class ComponentHandler {
                 }
             }
         }
+
+    
 
         return undefined; 
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black border-b border-gray-200">
     <!-- Navigation Menu on the left/center -->
-    <UNavigationMenu :items="items" class="flex-grow justify-start" />
+    <UNavigationMenu :items="items" class="flex-grow justify-start" style="z-index: 10000;"/>
 
     <UButton label="Helper" @click="handleHelperClick"></UButton>
 
@@ -99,9 +99,16 @@ function handleHelperClick() {
   // Placeholder for helper click logic
 
 
-  const selectedTaskId = selectedTaskStore.selectedId;
-  const systemId = selectedSystemStore.selectedId;
-  console.log(TaskQueue.getSelectedTaskErrorComponentFilenames(selectedTaskId, systemId))
+  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
+
+  const _isInErrorComponents = getNotCompletedTasks.some(task => {
+    return Array.isArray(task.errorComponents) &&
+      task.errorComponents.some(ec => ec.name === "table-form-účastníci-alergeny")
+  })
+
+  console.log("IS IN ERROR COMPONENTS:", _isInErrorComponents)
+
+  return _isInErrorComponents
 }
 
 /* 12. Lifecycle */

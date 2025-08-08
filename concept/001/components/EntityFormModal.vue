@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePropertyStore } from '#imports'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
-import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
+import { useSelectedTaskStore } from '#imports'
 
-// TODO: Restructure
-
+const selectedTaskStore = useSelectedTaskStore()
 
 /* Props */
 const props = defineProps<{
@@ -34,10 +33,48 @@ const toast = useToast()
 const propertyStore = usePropertyStore()
 const highlightStore = useHighlightStore()
 
-/* Local state */
-const menuType = ref(true)
+/* Local state for error mode */
+const isMultiple = ref(true)
 
-/* Computed */
+/**
+ * Checks if a component is in error components for the current round.
+ */
+function isInErrorComponents(componentFilename: string): boolean {
+  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
+  return getNotCompletedTasks.some(task => {
+    return Array.isArray(task.errorComponents) &&
+      task.errorComponents.some(ec => ec.name === componentFilename)
+  })
+}
+
+/**
+ * Watch current round to update isMultiple when in error mode.
+ */
+watch(
+  () => selectedTaskStore.currentRound,
+  () => {
+    const isError = isInErrorComponents("table-form-účastníci-alergeny")
+    if (isError) {
+      isMultiple.value = ComponentHandler.getVariableValue("table-form-účastníci-alergeny", "isMultiple") || true
+    } else {
+      isMultiple.value = true
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+/**
+ * Computed for :multiple binding.
+ * - If NOT in error → force true
+ * - If in error → follow isMultiple.value
+ */
+const multiplePropValue = computed(() => {
+  return isInErrorComponents("table-form-účastníci-alergeny")
+    ? false
+    : true
+})
+
+/* Computed props */
 const modalOpen = computed({
   get: () => props.open,
   set: (value) => emit('update:open', value)
@@ -48,7 +85,7 @@ const localFormState = computed({
   set: (value) => emit('update:formState', value)
 })
 
-useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
 /* Methods */
 function isArrayType(type: string) {
@@ -58,10 +95,21 @@ function isArrayType(type: string) {
 async function onSubmit() {
   console.log('Form submitted with data:', localFormState.value)
 
-  // Transform array fields to JSON string before saving
   props.columnNames.forEach(col => {
-    if (isArrayType(propertyStore.propertiesNameTypeMap[col]) && Array.isArray(localFormState.value[col])) {
-      localFormState.value[col] = JSON.stringify(localFormState.value[col])
+    if (isArrayType(propertyStore.propertiesNameTypeMap[col])) {
+      const isError = isInErrorComponents("table-form-účastníci-alergeny")
+      
+      if (isError && !multiplePropValue.value) {
+        // Non-multiple mode: convert single value to array string
+        if (typeof localFormState.value[col] === 'string' && localFormState.value[col]) {
+          localFormState.value[col] = JSON.stringify([localFormState.value[col]])
+        } else if (!localFormState.value[col]) {
+          localFormState.value[col] = JSON.stringify([])
+        }
+      } else if (Array.isArray(localFormState.value[col])) {
+        // Multiple mode: convert array to JSON string
+        localFormState.value[col] = JSON.stringify(localFormState.value[col])
+      }
     }
   })
 
@@ -69,7 +117,6 @@ async function onSubmit() {
 
   try {
     if (!id) {
-      // Insert new row (skip 'id' column)
       const insertCols = props.columnNames.filter(col => col !== 'id')
       const insertVals = insertCols.map(col =>
         typeof localFormState.value[col] === 'string'
@@ -80,12 +127,10 @@ async function onSubmit() {
       props.selectedSystem?.db.exec(sql)
       toast.add({ title: t('add_toast_success'), color: 'success' })
     } else {
-      // Update the row if id is present
       const setClause = props.columnNames
         .filter(col => col !== 'id')
         .map(col => `${col} = ${typeof localFormState.value[col] === 'string' ? `'${localFormState.value[col].replace(/'/g, "''")}'` : localFormState.value[col]}`)
         .join(', ')
-
       const sql = `UPDATE ${props.selectedTableName} SET ${setClause} WHERE id = '${id}'`
       props.selectedSystem?.db.exec(sql)
       toast.add({ title: t('edit_entity_toast_success'), color: 'success' })
@@ -102,10 +147,11 @@ async function onSubmit() {
     })
   }
 }
+
 </script>
 
 <template>
-  <UModal v-model:open="modalOpen" :title="localFormState.id ? t('edit_entity') : t('add_entity')">
+  <UModal :overlay="false" v-model:open="modalOpen" :title="localFormState.id ? t('edit_entity') : t('add_entity')">
     <template #content>
       <UCard>
         <template #header>
@@ -113,25 +159,44 @@ async function onSubmit() {
         </template>
         <UForm :state="localFormState" @submit="onSubmit">
           <div class="grid grid-cols-2 gap-4">
-            <div v-for="(col, index) in columnNames.filter(col => col !== 'id')" :key="index"
-               class="flex flex-col">
-              <UCard :id="`table-form-${selectedTableName}-${col}`" class="highlightable"  @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-form-${selectedTableName}-${col}`, $event)">
+            <div
+              v-for="(col, index) in columnNames.filter(col => col !== 'id')"
+              :key="index"
+              class="flex flex-col"
+            >
+              <UCard
+                :id="`table-form-${selectedTableName}-${col}`"
+                class="highlightable"
+                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-form-${selectedTableName}-${col}`, $event)"
+              >
                 <label class="mb-1 font-medium text-sm text-gray-700">
                   {{ col }}
                   <span v-if="propertyStore.propertiesNameTypeMap[col]" class="text-xs text-gray-400 ml-2">
                     ({{ propertyStore.propertiesNameTypeMap[col] }})
                   </span>
                 </label>
+
                 <template v-if="isArrayType(propertyStore.propertiesNameTypeMap[col])">
-                  <USelectMenu v-model="localFormState[col]" :items="columnValuesMap[col]" class="w-48" :disabled="highlightStore.isHighlightMode"
-                    :multiple="menuType" />
+                  <USelectMenu
+                    v-model="localFormState[col]"
+                    :items="columnValuesMap[col]"
+                    class="w-48"
+                    :disabled="highlightStore.isHighlightMode"
+                    :multiple="multiplePropValue"
+                  />
                 </template>
+
                 <template v-else>
-                  <UInput v-model="localFormState[col]" :placeholder="`Enter ${col}`" :disabled="highlightStore.isHighlightMode"/>
+                  <UInput
+                    v-model="localFormState[col]"
+                    :placeholder="`Enter ${col}`"
+                    :disabled="highlightStore.isHighlightMode"
+                  />
                 </template>
               </UCard>
             </div>
           </div>
+
           <div class="flex justify-end gap-2 mt-6">
             <UButton type="submit" color="primary" :disabled="highlightStore.isHighlightMode">{{ t('save') }}</UButton>
             <UButton variant="outline" @click="modalOpen = false" :disabled="highlightStore.isHighlightMode">{{ t('cancel') }}</UButton>
@@ -143,5 +208,4 @@ async function onSubmit() {
 </template>
 
 <style scoped>
-
 </style>

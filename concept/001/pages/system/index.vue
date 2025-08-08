@@ -39,6 +39,12 @@ const systems: InformationSystem[] = handler.getInformationSystems()
 /* 11. Methods */
 function navigateToSystem(systemId: number) {
   selectedSystemStore.select(systemId)
+  const selectedSystem = systems.find(sys => sys.id === systemId)
+  if (selectedSystem) {
+    selectedSystemStore.setSelectedSystem(selectedSystem)
+  } else {
+    console.warn(`System with ID ${systemId} not found.`)
+  }
   console.log("Navigating to system with ID:", systemId)
   navigateTo(`/system/${systemId}/dashboard`)
 }

@@ -21,7 +21,7 @@ export class TaskQueue {
 
     public static getNotCompletedTasks(id: number): Task[] {
         const allTasks = this.getTasks(id);
-        const notCompletedTasks = allTasks.filter(task => !task.completed);
+        const notCompletedTasks = allTasks.filter(task => !task.componentsRepaired);
         return notCompletedTasks;
     }
 

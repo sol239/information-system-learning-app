@@ -40,6 +40,9 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     }
   }
 
+  const componentsToFind = computed(() => selectedTask.value?.componentsIdsToFind || [])
+
+
   return {
     selectedId,
     select: setSelectedTaskId,
@@ -51,6 +54,7 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     selectedTask,
     setSelectedTask,
     clearSelectedTask,
-    setSelectedTaskComponentsToFind
+    setSelectedTaskComponentsToFind,
+    componentsToFind
   }
 })
