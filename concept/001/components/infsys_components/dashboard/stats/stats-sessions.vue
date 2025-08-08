@@ -2,10 +2,7 @@
   <div>
     <div class="stat-card-wrapper">
       <div id="stats-sessions" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
-      <EditComponentModalOpenButton @open="showEditor = true" />
-      <EditComponentModal :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate" :draftSqlQuery="draftSqlQuery"
-        @update:showEditor="showEditor = $event" @update:draftHtmlTemplate="draftHtmlTemplate = $event"
-        @update:draftSqlQuery="draftSqlQuery = $event" @applyChanges="applyChanges" />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
     </div>
   </div>
 </template>
@@ -14,12 +11,16 @@
 /* 1. Imports */
 import { computed, ref } from 'vue'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
-import { useSelectedTableStore } from '#imports'
+import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useHighlightStore } from '#imports'
+import { useSelectedTaskStore } from '#imports'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
+const highlightStore = useHighlightStore()
+const selectedTaskStore = useSelectedTaskStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -28,19 +29,46 @@ const { t } = useI18n()
 // none
 
 /* 5. Props */
-const props = defineProps<{ 
-  system: any 
+const props = defineProps<{
+  system: any
 }>()
 
 /* 6. Emits */
-// none
-
-/* 7. Template refs */
-// none
+const emit = defineEmits<{
+  (e: 'openModal', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
+  (e: 'applyChanges', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
+}>()
 
 /* 8. Local state (ref, reactive) */
-const sqlQuery = ref(ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || `SELECT COUNT(*) as count FROM turnusy`)
-const htmlTemplate = ref(ComponentHandler.getVariableValue("stats-sessions.vue", "html") || `
+const showEditor = ref(false)
+const draftSqlQuery = ref('')
+const draftHtmlTemplate = ref('')
+
+/* 9. Computed */
+function isInErrorComponents(componentFilename: string): boolean {
+  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
+  const isInErrorComponents = getNotCompletedTasks.some(task => {
+    return Array.isArray(task.errorComponents) &&
+      task.errorComponents.some(ec => ec.name === componentFilename)
+  })
+  return isInErrorComponents
+}
+
+const sqlQuery = computed(() => 
+  isInErrorComponents("stats-sessions.vue")
+    ? ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || `SELECT COUNT(*) as count FROM turnusy` : "SELECT COUNT(*) as count FROM turnusy"
+)
+
+const htmlTemplate = computed(() => 
+  isInErrorComponents("stats-sessions.vue")
+    ? ComponentHandler.getVariableValue("stats-sessions.vue", "html") || `
+  <div class="stat-card">
+    <div class="stat-icon">🏫</div>
+    <div class="stat-content">
+      <div class="stat-number">{{ sessionsCount }}</div>
+      <div class="stat-label">{{ label }}</div>
+    </div>
+  </div> ` : `
   <div class="stat-card">
     <div class="stat-icon">🏫</div>
     <div class="stat-content">
@@ -48,12 +76,9 @@ const htmlTemplate = ref(ComponentHandler.getVariableValue("stats-sessions.vue",
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
-const showEditor = ref(false)
-const draftSqlQuery = ref(sqlQuery.value)
-const draftHtmlTemplate = ref(htmlTemplate.value)
+`
+)
 
-/* 9. Computed */
 const sessionsCount = computed(() => {
   const result = props.system?.db.query(sqlQuery.value).results
   return result?.[0]?.count || 0
@@ -65,23 +90,28 @@ const renderedHtml = computed(() => {
     .replace('{{ label }}', t('sessions'))
 })
 
-/* 10. Watchers */
-// none
-
 /* 11. Methods */
-function applyChanges() {
-  sqlQuery.value = draftSqlQuery.value
-  htmlTemplate.value = draftHtmlTemplate.value
-  showEditor.value = false
-  console.log('Changes applied:', {
-    sqlQuery: sqlQuery.value,
-    htmlTemplate: htmlTemplate.value,
-    show: showEditor.value
+function openEditor() {
+  draftSqlQuery.value = sqlQuery.value
+  draftHtmlTemplate.value = htmlTemplate.value
+  emit('openModal', {
+    componentId: 'stats-sessions',
+    htmlTemplate: draftHtmlTemplate.value,
+    sqlQuery: draftSqlQuery.value
   })
 }
 
+function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
+  draftSqlQuery.value = data.sqlQuery
+  draftHtmlTemplate.value = data.htmlTemplate
+  // Optionally, update ComponentHandler here if needed
+}
 
 function navigate() {
+  if (highlightStore.isHighlightMode) {
+    return
+  }
+
   const systemId = selectedSystemStore.selectedId;
   selectedTableStore.select('turnusy')
   navigateTo({
@@ -93,7 +123,9 @@ function navigate() {
 // none
 
 /* 13. defineExpose (if needed) */
-// none
+defineExpose({
+  applyChanges
+})
 </script>
 
 <style scoped>

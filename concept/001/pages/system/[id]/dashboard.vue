@@ -5,19 +5,19 @@
             <TaskList :system-id="system?.id" />
         </aside>
         <main class="dashboard-main">
-            <div id="stats" class="highlightable"  @click="highlightStore.isHighlightMode && highlightHandler.selectElement('stats', $event)">
+            <div id="stats">
                 <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
                 <dashboardStats :system-id="system?.id" />
             </div>
 
             <!-- Sessions Progress Pillows -->
-            <div id="dashboard-pillows" class="highlightable" @click="highlightStore.isHighlightMode && highlightHandler.selectElement('dashboard-pillows', $event)">
+            <div id="dashboard-pillows" class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
                 <dashboardPillows :sessionProgress="sessionProgress" />
             </div>
 
             <!-- Custom Calendar -->
             <div id="calendar"
-                class="highlightable" @click="highlightStore.isHighlightMode && highlightHandler.selectElement('calendar', $event)">
+                class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
                 <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                     :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
                     :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
@@ -37,7 +37,9 @@ import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
+
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import '~/assets/css/highlight.css'
 
 /* 2. Stores */
 const store = useInformationSystemStore()
@@ -71,13 +73,8 @@ const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 /* 8. State */
 const systems = store.systems
 const system = ref<InformationSystem | null>(null)
-const selectedElements = ref<string[]>([])
 const repairedElement = ref<string | null>(null)
 const currentDate = ref(new Date())
-
-// highlight state
-const highlightHandler = reactive(new HighlightHandler());
-
 
 /* 9. Computed */
 system.value = systems.find(function (sys) { return sys.id === parseInt(systemId as string, 10) }) || null
@@ -138,6 +135,7 @@ const calendarDays = computed(function () {
 })
 
 /* 10. Watchers */
+/*
 watch(
     function () { return system.value?.tasks.map(function (t) { return { id: t.elementClass, completed: t.completed } }) },
     function (newTasks, oldTasks) {
@@ -158,9 +156,10 @@ watch(
     },
     { deep: true }
 )
+    */
 
 // Highlight watchers
-useHighlightWatchers(highlightHandler, highlightStore, selectedElements, selectedComponentStore, repairedElement);
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
 /* 11. Methods */
 
@@ -586,124 +585,4 @@ function isElementTaskCompleted(elementId: string): boolean {
     max-width: 100%;
 }
 
-.highlighted-yellow {
-    border: 2px solid #facc15;
-    border-radius: 6px;
-    transition: all 0.3s;
-    background: none !important;
-    position: relative;
-    overflow: hidden;
-    animation: illuminate 2s ease-in-out infinite alternate;
-    box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
-    cursor: pointer;
-}
-
-.highlighted-selected {
-    border: 3px solid #f59e0b;
-    border-radius: 8px;
-    transition: all 0.3s;
-    background: none !important;
-    position: relative;
-    overflow: hidden;
-    animation: illuminate-selected 1.5s ease-in-out infinite alternate;
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
-    cursor: pointer;
-    z-index: 10;
-}
-
-.highlighted-dimmed {
-    border: 1px solid #facc15;
-    border-radius: 6px;
-    transition: all 0.3s;
-    background: none !important;
-    opacity: 0.4;
-    box-shadow: 0 0 5px rgba(250, 204, 21, 0.2);
-    cursor: pointer;
-}
-
-.highlighted-yellow::before,
-.highlighted-selected::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(250, 204, 21, 0.1), transparent);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.highlighted-selected::before {
-    background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.2), transparent);
-}
-
-.highlighted-yellow>*,
-.highlighted-selected>*,
-.highlighted-dimmed>* {
-    position: relative;
-    z-index: 2;
-}
-
-@keyframes illuminate {
-    0% {
-        box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
-        border-color: #facc15;
-    }
-
-    100% {
-        box-shadow: 0 0 25px rgba(250, 204, 21, 0.8);
-        border-color: #fbbf24;
-    }
-}
-
-@keyframes illuminate-selected {
-    0% {
-        box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
-        border-color: #f59e0b;
-    }
-
-    100% {
-        box-shadow: 0 0 40px rgba(245, 158, 11, 1);
-        border-color: #d97706;
-    }
-}
-
-@keyframes shimmer-top {
-    0% {
-        background-position: -200% 0;
-    }
-
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-.repaired-animation {
-    animation: repairedPulse 2s cubic-bezier(.4, 0, .2, 1);
-    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
-    border-color: #22c55e !important;
-}
-
-@keyframes repairedPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
-        border-color: #facc15;
-    }
-
-    30% {
-        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
-        border-color: #22c55e;
-    }
-
-    70% {
-        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25), 0 0 30px 8px rgba(34, 197, 94, 0.15);
-        border-color: #22c55e;
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
-        border-color: #facc15;
-    }
-}
 </style>

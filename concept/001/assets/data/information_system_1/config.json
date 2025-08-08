@@ -796,9 +796,10 @@
             "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
             "status": "pending",
             "kind": "select",
-            "answer": "",
+            "answer": "none",
             "elementClass": ["stats-meals", "stats-participants"],
             "round" : 1,
+            "is_editable": false,
             "error-components": [
                 {
                     "name": "stats-participants.vue",
@@ -822,9 +823,10 @@
             "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
             "status": "pending",
             "kind": "select",
-            "answer": "",
-            "elementClass": "stats",
-            "round" : 1,
+            "answer": "none",
+            "elementClass": ["stats-supervisors"],
+            "round" : 4,
+            "is_editable": false,
             "error-components": [
                 {
                     "name": "stats-supervisors.vue",
@@ -837,13 +839,23 @@
         },
         {
             "id": 3,
-            "title": "Smazání uživatele",
-            "description": "Smažte jednoho uživatele z tabulky a napište aktuální počet uživatelů v tabulce.",
+            "title": "Úprava uživatele",
+            "description": "Upravte uživatele: Kristýna Němcová, tak že ji přidáte alergeny na Lepek a Korýši.",
             "status": "pending",
-            "kind": "type-correct",
-            "answer": "29",
-            "elementClass": "",
-            "round" : 1
+            "kind": "select",
+            "answer": "type:entity_update;table:účastníci;jméno:Kristýna Němcová;alergeny:Lepek,Korýši",
+            "elementClass": ["table-form-účastníci-alergeny"],
+            "is_editable": false,
+            "round" : 3,
+            "error-components": [
+                {
+                    "name": "stats-supervisors.vue",
+                    "variables": {
+                        "html" : "",
+                        "sql" : "SELECT COUNT(*) as count FROM jídla"
+                    }
+                }
+            ]
         },
         {
             "id": 4,
@@ -853,7 +865,8 @@
             "kind": "type-correct",
             "answer": "29",
             "elementClass": "",
-            "round" : 1
+            "is_editable": true,
+            "round" : 3
         }
     ]
 }

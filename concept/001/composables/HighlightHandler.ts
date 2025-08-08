@@ -1,7 +1,10 @@
+import { useHighlightStore } from "#imports";
+
 export class HighlightHandler {
     public isHighlightOn: boolean = false;
     public selectedElementIds: string[] = [];
     public highlightedElements: WeakMap<HTMLElement, boolean> = new WeakMap();
+    public highlightStore = useHighlightStore();
 
     constructor() {
         this.isHighlightOn = false;
@@ -20,9 +23,10 @@ export class HighlightHandler {
                 this.highlightedElements.set(element, false);
             }
             console.log("Selected Ids:", this.selectedElementIds)
+            this.highlightStore.selectedIds = new Set(this.selectedElementIds);
         }
     }
-
+    
     public loadHighlightableElements(): void {
         this.highlightedElements = new WeakMap();
         const elements = Array.from(document.querySelectorAll('.highlightable'));
@@ -35,5 +39,6 @@ export class HighlightHandler {
 
     public clearSelection(): void {
         this.selectedElementIds = [];
+        this.highlightStore.selectedIds = new Set();
     }
 }

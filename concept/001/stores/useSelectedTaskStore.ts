@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { Task } from '~/model/Task'
 
 export const useSelectedTaskStore = defineStore('selectedTask', () => {
   // State
   const selectedId = ref<number | null>(null)
+  const selectedTask = ref<Task | null>(null)
   const currentRound = ref<number>(1)
+  const completedTasksCount = ref<number>(0)
 
   // Actions
   function setSelectedTaskId(id: number) {
@@ -15,6 +18,14 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     selectedId.value = null
   }
 
+  function setSelectedTask(task: Task | null) {
+    selectedTask.value = task
+  }
+
+  function clearSelectedTask() {
+    selectedTask.value = null
+  }
+
   function setCurrentRound(round: number) {
     currentRound.value = round
   }
@@ -23,12 +34,23 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     currentRound.value = 1
   }
 
+  function setSelectedTaskComponentsToFind(components: string[]): void {
+    if (selectedTask.value) {
+      selectedTask.value.componentsIdsToFind = components
+    }
+  }
+
   return {
     selectedId,
     select: setSelectedTaskId,
     clear: clearSelectedTaskId,
     currentRound,
     setCurrentRound,
-    clearCurrentRound
+    clearCurrentRound,
+    completedTasksCount,
+    selectedTask,
+    setSelectedTask,
+    clearSelectedTask,
+    setSelectedTaskComponentsToFind
   }
 })

@@ -2,10 +2,7 @@
   <div>
     <div class="stat-card-wrapper">
       <div id="stats-supervisors" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
-      <EditComponentModalOpenButton @open="showEditor = true" />
-      <EditComponentModal :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate" :draftSqlQuery="draftSqlQuery"
-        @update:showEditor="showEditor = $event" @update:draftHtmlTemplate="draftHtmlTemplate = $event"
-        @update:draftSqlQuery="draftSqlQuery = $event" @applyChanges="applyChanges" />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
     </div>
   </div>
 </template>
@@ -14,12 +11,16 @@
 /* 1. Imports */
 import { computed, ref } from 'vue'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
-import { useSelectedTableStore } from '#imports'
+import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useHighlightStore } from '#imports'
+import { useSelectedTaskStore } from '#imports'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
+const highlightStore = useHighlightStore()
+const selectedTaskStore = useSelectedTaskStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -28,19 +29,37 @@ const { t } = useI18n()
 // none
 
 /* 5. Props */
-const props = defineProps<{ 
-  system: any 
+const props = defineProps<{
+  system: any
 }>()
 
 /* 6. Emits */
-// none
+const emit = defineEmits<{
+  (e: 'openModal', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
+  (e: 'applyChanges', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
+}>()
 
-/* 7. Template refs */
-// none
+
 
 /* 8. Local state (ref, reactive) */
-const sqlQuery = ref(ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || `SELECT COUNT(*) as count FROM vedoucí`)
-const htmlTemplate = ref(ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || `
+const showEditor = ref(false)
+
+/* 9. Computed */
+const sqlQuery = computed(() => 
+  isInErrorComponents("stats-supervisors.vue")
+    ? ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || `SELECT COUNT(*) as count FROM vedoucí` : "SELECT COUNT(*) as count FROM vedoucí"
+)
+
+const htmlTemplate = computed(() => 
+  isInErrorComponents("stats-supervisors.vue")
+    ? ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || `
+  <div class="stat-card">
+    <div class="stat-icon">👨‍🏫</div>
+    <div class="stat-content">
+      <div class="stat-number">{{ supervisorsCount }}</div>
+      <div class="stat-label">{{ label }}</div>
+    </div>
+  </div> ` : `
   <div class="stat-card">
     <div class="stat-icon">👨‍🏫</div>
     <div class="stat-content">
@@ -48,14 +67,15 @@ const htmlTemplate = ref(ComponentHandler.getVariableValue("stats-supervisors.vu
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
-const showEditor = ref(false)
-const draftSqlQuery = ref(sqlQuery.value)
-const draftHtmlTemplate = ref(htmlTemplate.value)
+`
+)
 
-/* 9. Computed */
+const draftSqlQuery = ref('')
+const draftHtmlTemplate = ref('')
+
 const supervisorsCount = computed(() => {
   const result = props.system?.db.query(sqlQuery.value).results
+  console.log("SQL Query:", sqlQuery.value) 
   return result?.[0]?.count || 0
 })
 
@@ -65,22 +85,38 @@ const renderedHtml = computed(() => {
     .replace('{{ label }}', t('supervisors'))
 })
 
-/* 10. Watchers */
-// none
-
 /* 11. Methods */
-function applyChanges() {
-  sqlQuery.value = draftSqlQuery.value
-  htmlTemplate.value = draftHtmlTemplate.value
-  showEditor.value = false
-  console.log('Changes applied:', {
-    sqlQuery: sqlQuery.value,
-    htmlTemplate: htmlTemplate.value,
-    show: showEditor.value
+function isInErrorComponents(componentFilename: string): boolean {
+  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
+  const isInErrorComponents = getNotCompletedTasks.some(task => {
+    return Array.isArray(task.errorComponents) &&
+      task.errorComponents.some(ec => ec.name === componentFilename)
+  })
+  return isInErrorComponents
+}
+
+function openEditor() {
+  draftSqlQuery.value = sqlQuery.value
+  draftHtmlTemplate.value = htmlTemplate.value
+  emit('openModal', {
+    componentId: 'stats-supervisors',
+    htmlTemplate: draftHtmlTemplate.value,
+    sqlQuery: draftSqlQuery.value
   })
 }
 
+function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
+  // If you want to allow editing, you need to update the source (ComponentHandler or other state)
+  draftSqlQuery.value = data.sqlQuery
+  draftHtmlTemplate.value = data.htmlTemplate
+  // Optionally, update ComponentHandler here if needed
+}
+
 function navigate() {
+  if (highlightStore.isHighlightMode) {
+    return
+  }
+
   const systemId = selectedSystemStore.selectedId;
   selectedTableStore.select('vedoucí')
   navigateTo({
@@ -89,10 +125,7 @@ function navigate() {
 }
 
 /* 12. Lifecycle */
-// none
-
-/* 13. defineExpose (if needed) */
-// none
+// none 
 </script>
 
 <style scoped>

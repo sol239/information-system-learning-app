@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 
 export const useHighlightStore = defineStore('highlight', () => {
   const isHighlightMode = ref(false)
+  const selectedIds = ref<Set<string>>(new Set())
+  const highlightHandler = new HighlightHandler()
+  const isEditModeActive = ref(false)
 
   function toggleHighlight() {
     isHighlightMode.value = !isHighlightMode.value
@@ -9,6 +12,9 @@ export const useHighlightStore = defineStore('highlight', () => {
 
   return {
     isHighlightMode,
-    toggleHighlight
+    toggleHighlight,
+    selectedIds,
+    highlightHandler,
+    isEditModeActive  
   }
 })

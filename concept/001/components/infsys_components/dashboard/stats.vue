@@ -5,17 +5,59 @@
       <p class="dashboard-subtitle">{{ t('dashboard_subtitle') }}</p>
     </div>
     <div class="stats">
-      <StatsSessions :system="system" />
-      <StatsParticipants :system="system" />
-      <StatsSupervisors :system="system" />
-      <StatsMeals :system="system" />
+      <StatsSessions 
+        ref="statsSessionsRef"
+        id="stats-sessions" 
+        class="highlightable"  
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-sessions', $event)" 
+        @openModal="handleOpenModal"
+        :system="system" 
+      />
+      <StatsParticipants 
+        ref="statsParticipantsRef"
+        id="stats-participants" 
+        class="highlightable"  
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-participants', $event)" 
+        @openModal="handleOpenModal"
+        :system="system" 
+      />
+      <StatsSupervisors 
+        ref="statsSupervisorsRef"
+        id="stats-supervisors" 
+        class="highlightable"  
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-supervisors', $event)" 
+        @openModal="handleOpenModal"
+        :system="system" 
+      />
+      <StatsMeals 
+        ref="statsMealsRef"
+        id="stats-meals" 
+        class="highlightable"  
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-meals', $event)" 
+        @openModal="handleOpenModal"
+        :system="system" 
+      />
     </div>
+
+    <!-- Modal rendered outside of stats container using Teleport -->
+    <Teleport to="body">
+      <EditComponentModal 
+        v-if="showEditor"
+        :showEditor="showEditor" 
+        :draftHtmlTemplate="draftHtmlTemplate" 
+        :draftSqlQuery="draftSqlQuery"
+        @update:showEditor="showEditor = $event" 
+        @update:draftHtmlTemplate="draftHtmlTemplate = $event"
+        @update:draftSqlQuery="draftSqlQuery = $event" 
+        @applyChanges="applyChanges" 
+      />
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import StatsSessions from '~/components/infsys_components/dashboard/stats/stats-sessions.vue'
@@ -23,10 +65,15 @@ import StatsParticipants from '~/components/infsys_components/dashboard/stats/st
 import StatsSupervisors from '~/components/infsys_components/dashboard/stats/stats-supervisors.vue'
 import StatsMeals from '~/components/infsys_components/dashboard/stats/stats-meals.vue'
 import '@/assets/css/stats.css'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import '~/assets/css/highlight.css'
+import { useHighlightStore } from '#imports'
+
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const informationSystemStore = useInformationSystemStore()
+const highlightStore = useHighlightStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -43,10 +90,16 @@ const props = defineProps<{
 // none
 
 /* 7. Template refs */
-// none
+const statsSessionsRef = ref()
+const statsParticipantsRef = ref()
+const statsSupervisorsRef = ref()
+const statsMealsRef = ref()
 
 /* 8. Local state (ref, reactive) */
-// none
+const showEditor = ref(false)
+const draftHtmlTemplate = ref('')
+const draftSqlQuery = ref('')
+const currentComponentId = ref('')
 
 /* 9. Computed */
 const system = computed(() => {
@@ -55,13 +108,50 @@ const system = computed(() => {
 })
 
 /* 10. Watchers */
-// none
+
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
 /* 11. Methods */
-// none
+function handleOpenModal(data: { componentId: string, htmlTemplate: string, sqlQuery: string }) {
+  currentComponentId.value = data.componentId
+  draftHtmlTemplate.value = data.htmlTemplate
+  draftSqlQuery.value = data.sqlQuery
+  showEditor.value = true
+}
+
+function applyChanges() {
+  const componentRef = getComponentRef(currentComponentId.value)
+  if (componentRef) {
+    componentRef.applyChanges({
+      htmlTemplate: draftHtmlTemplate.value,
+      sqlQuery: draftSqlQuery.value
+    })
+  }
+  showEditor.value = false
+}
+
+function getComponentRef(componentId: string) {
+  switch (componentId) {
+    case 'stats-sessions':
+      return statsSessionsRef.value
+    case 'stats-participants':
+      return statsParticipantsRef.value
+    case 'stats-supervisors':
+      return statsSupervisorsRef.value
+    case 'stats-meals':
+      return statsMealsRef.value
+    default:
+      return null
+  }
+}
 
 /* 12. Lifecycle */
-// none
+onMounted(() => {
+    const highlightStore = useHighlightStore()
+    console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
+    console.log(highlightStore.highlightHandler.getHighlightedElements())
+})
+
 
 /* 13. defineExpose (if needed) */
 // none

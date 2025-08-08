@@ -37,8 +37,9 @@
     "score": "Skóre",
     "add_system": "Přidat systém",
     "enter_json_path": "Zadejte cestu k JSON",
-
     "homepage_welcome_message": "Vítejte v aplikaci pro hledání chyb v informačním systému",
     "homepage_description": "Tato aplikace vám umožní procházet různé systémy, spravovat turnusy a účastníky, a provádět další operace související s informačním systémem. Aplikace je určena pro studenty 2. stupně ZŠ a SŠ.",
-    "view_on_github": "Zobrazit na GitHubu"
+    "view_on_github": "Zobrazit na GitHubu",
+    "new_tasks_added": "Byly přidány nové úkoly ({count})",
+    "all_tasks_completed": "Všechny úkoly byly úspěšně dokončeny"
 }

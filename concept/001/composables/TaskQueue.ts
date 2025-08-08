@@ -19,4 +19,21 @@ export class TaskQueue {
         return tasks;
     }
 
+    public static getNotCompletedTasks(id: number): Task[] {
+        const allTasks = this.getTasks(id);
+        const notCompletedTasks = allTasks.filter(task => !task.completed);
+        return notCompletedTasks;
+    }
+
+    public static getSelectedTaskErrorComponentFilenames(selectedTaskId: number, systemId: number): string[] {
+        const allTasks = this.getTasks(systemId);
+        const selectedTask = allTasks.find(task => task.id === selectedTaskId);
+
+        if (!selectedTask) {
+            console.error('No task found with the selected ID:', selectedTaskId);
+            return [];
+        }
+        const errorComponents = selectedTask.errorComponents ?? [];
+        return errorComponents.map(comp => comp.name);
+    }
 }

@@ -17,7 +17,6 @@
         <TaskList />
       </template>
     </UPopover>
-
     <UButton 
       v-if="isOnSystemDetailPage"
       :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" 
@@ -35,13 +34,17 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useHighlightStore } from '~/stores/useHighlightStore'
-import { ComponentHandler, useScoreStore } from '#imports'
+import { ComponentHandler, TaskQueue, useScoreStore } from '#imports'
 import { useErrorComponentStore } from '#imports'
-
+import { Task } from '~/model/Task'
+import { useSelectedTaskStore } from '#imports'
+import { useSelectedSystemStore } from '#imports'
 /* 2. Stores */
 const highlightStore = useHighlightStore()
 const scoreStore = useScoreStore()
 const errorComponentStore = useErrorComponentStore()
+const selectedTaskStore = useSelectedTaskStore()
+const selectedSystemStore = useSelectedSystemStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -94,7 +97,11 @@ const isOnSystemDetailPage = computed(() => {
 /* 11. Methods */
 function handleHelperClick() {
   // Placeholder for helper click logic
-  console.log(errorComponentStore.errorComponents)
+
+
+  const selectedTaskId = selectedTaskStore.selectedId;
+  const systemId = selectedSystemStore.selectedId;
+  console.log(TaskQueue.getSelectedTaskErrorComponentFilenames(selectedTaskId, systemId))
 }
 
 /* 12. Lifecycle */

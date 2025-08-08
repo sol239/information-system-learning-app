@@ -40,5 +40,8 @@
 
     "homepage_welcome_message": "Welcome to the error-finding application for information systems",
     "homepage_description": "This application allows you to browse various systems, manage shifts and participants, and perform other operations related to the information system. The application is intended for students in the 2nd stage of primary school and secondary school.",
-    "view_on_github": "View on GitHub"
+    "view_on_github": "View on GitHub",
+
+    "new_tasks_added": "New tasks added ({count})",
+    "all_tasks_completed": "All tasks have been successfully completed"
 }

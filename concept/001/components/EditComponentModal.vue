@@ -172,7 +172,7 @@ function onClose() {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 3000;
 }
 
 .modal {
@@ -182,6 +182,7 @@ function onClose() {
   width: 50%;
   border-radius: 8px;
   box-shadow: 0 0 10px black;
+  z-index: 3001;
 }
 
 .editor-label {

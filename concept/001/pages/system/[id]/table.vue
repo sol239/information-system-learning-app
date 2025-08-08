@@ -70,7 +70,6 @@ const htmlTemplate = ref("")
 const showEditor = ref(false)
 const draftSqlQuery = ref(sqlQuery.value)
 const draftHtmlTemplate = ref(htmlTemplate.value)
-const menuType = ref(true);
 
 let formState = reactive<Record<string, any>>({})
 
@@ -351,22 +350,6 @@ function getHeader(label: string, field: string) {
 
 function getDropdownActions(row: any): DropdownMenuItem[] {
     return [
-        /*
-        {
-            label: t('copy_id'),
-            icon: 'i-lucide-copy',
-            onSelect: () => {
-                if (row.id !== undefined) {
-                    copy(row.id.toString())
-                    toast.add({
-                        title: t('copy_id_toast_success'),
-                        color: 'success',
-                        icon: 'i-lucide-circle-check'
-                    })
-                }
-            }
-        },
-        */
         {
             label: t('edit'),
             icon: 'i-lucide-edit',
@@ -413,11 +396,8 @@ function getDropdownActions(row: any): DropdownMenuItem[] {
                     // Delete data from the selected table
                     system.value.db.exec(`DELETE FROM ${selectedTableName.value} WHERE id = '${row.id}'`)
 
-                    // Build explicit column list for SELECT
-                    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
                     // Reload data after delete
-                    const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
-                    selectedTableData.value = dataRes?.results || []
+                    reloadTableData()
 
                     // Notify user of success
                     toast.add({
@@ -456,56 +436,6 @@ function getSqlQuery(baseQuery: string, columns: string[]) {
     }
 
     return query
-}
-
-async function onSubmit() {
-    // Handle form submission logic here
-    console.log('Form submitted with data:', formState)
-
-    // Transform array fields to JSON string before saving
-    columnNames.value.forEach(col => {
-        if (isArrayType(propertyStore.propertiesNameTypeMap[col]) && Array.isArray(formState[col])) {
-            formState[col] = JSON.stringify(formState[col])
-        }
-    })
-
-
-    const id = formState['id']
-    if (!id) {
-        // Insert new row (skip 'id' column)
-        const insertCols = columnNames.value.filter(col => col !== 'id')
-        const insertVals = insertCols.map(col =>
-            typeof formState[col] === 'string'
-                ? `'${formState[col].replace(/'/g, "''")}'`
-                : formState[col]
-        )
-        const sql = `INSERT INTO ${selectedTableName.value} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
-        selectedSystem?.db.exec(sql)
-        // Build explicit column list for SELECT
-        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
-        // Reload data after insert
-        const dataRes = selectedSystem?.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
-        selectedTableData.value = dataRes?.results || []
-        toast.add({ title: t('add_toast_success'), color: 'success' })
-        return
-    }
-
-    // Update the row if id is present
-    const setClause = columnNames.value
-        .filter(col => col !== 'id')
-        .map(col => `${col} = ${typeof formState[col] === 'string' ? `'${formState[col].replace(/'/g, "''")}'` : formState[col]}`)
-        .join(', ')
-
-    const sql = `UPDATE ${selectedTableName.value} SET ${setClause} WHERE id = '${id}'`
-    selectedSystem?.db.exec(sql)
-
-    // Build explicit column list for SELECT
-    const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
-    // Reload data after update
-    const dataRes = selectedSystem?.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
-    selectedTableData.value = dataRes?.results || []
-
-    toast.add({ title: t('edit_entity_toast_success'), color: 'success' })
 }
 
 function addMethod() {
@@ -555,6 +485,22 @@ function openEditorForColumn(col: any) {
         draftSqlQuery.value = ''
     }
     showEditor.value = true
+}
+
+function reloadTableData() {
+    if (!selectedTableName.value || !system.value?.db) return
+    
+    try {
+        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+        const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value}`)
+        selectedTableData.value = dataRes?.results || []
+    } catch (error) {
+        console.error(`Error reloading data from table ${selectedTableName.value}:`, error)
+    }
+}
+
+function handleEntitySaved() {
+    reloadTableData()
 }
 
 /* 12. Lifecycle */
@@ -621,6 +567,13 @@ watch([selectedTableName, columnNames], ([tableName, cols]) => {
         fetchColumnValues(tableName, arrayCols)
     }
 })
+
+onMounted(() => {
+    const highlightStore = useHighlightStore()
+    console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
+    console.log(highlightStore.highlightHandler.getHighlightedElements())
+})
+
 </script>
 
 <template>
@@ -673,7 +626,7 @@ watch([selectedTableName, columnNames], ([tableName, cols]) => {
             <tr v-for="(row, rowIndex) in filteredAndSortedData" :key="row.id || rowIndex"
                 class="hover:border hover:border-gray-400 border-collapse">
 
-                              <td v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
+                <td v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
                     class="px-4 py-2">
                     <!-- Special rendering for 'name' column with avatar -->
                     <template v-if="col.accessorKey === 'name'">
@@ -731,43 +684,17 @@ watch([selectedTableName, columnNames], ([tableName, cols]) => {
         @applyChanges="applyChanges"
     />
 
-    <UModal v-model:open="editModalOpen" :title="formState.id ? t('edit_entity') : t('add_entity')">
-        <template #content>
-            <UCard>
-                <template #header>
-                    <h3 class="text-lg font-semibold">{{ formState.id ? t('edit_entity') : t('add_entity') }}</h3>
-                </template>
-                <UForm :state="formState" @submit="onSubmit">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div v-for="(col, index) in columnNames.filter(col => col !== 'id')" :key="index"
-                            class="flex flex-col">
-                            <label class="mb-1 font-medium text-sm text-gray-700">
-                                {{ col }}
-                                <span v-if="propertyStore.propertiesNameTypeMap[col]" class="text-xs text-gray-400 ml-2">
-                                    ({{ propertyStore.propertiesNameTypeMap[col] }})
-                                </span>
-                            </label>
-                            <template v-if="isArrayType(propertyStore.propertiesNameTypeMap[col])">
-                                <USelectMenu
-                                    v-model="formState[col]"
-                                    :items="columnValuesMap[col]"
-                                    class="w-48"
-                                    :multiple="menuType"
-                                />
-                            </template>
-                            <template v-else>
-                                <UInput v-model="formState[col]" :placeholder="`Enter ${col}`" />
-                            </template>
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-2 mt-6">
-                        <UButton type="submit" color="primary" @click="editModalOpen = false">{{ t('save') }}</UButton>
-                        <UButton variant="outline" @click="editModalOpen = false">{{ t('cancel') }}</UButton>
-                    </div>
-                </UForm>
-            </UCard>
-        </template>
-    </UModal>
+    <EntityFormModal
+        :open="editModalOpen"
+        :selectedSystem="system"
+        :selectedTableName="selectedTableName"
+        :columnNames="columnNames"
+        :formState="formState"
+        :columnValuesMap="columnValuesMap"
+        @update:open="editModalOpen = $event"
+        @update:formState="formState = $event"
+        @entitySaved="handleEntitySaved"
+    />
 </template>
 
 <style scoped>

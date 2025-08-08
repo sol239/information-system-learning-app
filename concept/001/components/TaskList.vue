@@ -1,4 +1,3 @@
-
 <template>
   <div class="max-w-md mx-auto mt-8">
     <UCard>
@@ -8,11 +7,15 @@
 
       <!-- Green animation overlay -->
       <transition name="task-completed-fade">
-        <div
-          v-if="taskCompleted"
-          class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
-        >
+        <div v-if="taskCompleted" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div class="task-completed-animation"></div>
+        </div>
+      </transition>
+
+      <!-- Red animation overlay for incorrect answers -->
+      <transition name="task-incorrect-fade">
+        <div v-if="taskIncorrect" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div class="task-incorrect-animation"></div>
         </div>
       </transition>
 
@@ -31,9 +34,10 @@
 
           <!-- Kind of task: select -->
           <div v-if="selectedTask.kind === 'select'">
-            <UButton variant="outline" style="margin-left: 5px;" :disabled="selectedTask.completed"
-              @click="handleSubmit">{{
-                t('submit') }}
+            <UButton variant="outline" style="margin-left: 5px;"
+              :disabled="selectedTask.completed || !highlightStore.selectedIds || highlightStore.selectedIds.length === 0"
+              @click="handleSubmit">
+              {{ t('submit') }}
             </UButton>
           </div>
 
@@ -77,7 +81,10 @@ import { useSelectedTaskStore } from '~/stores/useSelectedTaskStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import { ComponentHandler, TaskQueue, useScoreStore } from '#imports'
 import { useErrorComponentStore } from '#imports'
+import { useHighlightStore } from '#imports'
 import { Task } from '~/model/Task'
+import { sys } from 'typescript'
+
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -86,6 +93,7 @@ const selectedTaskStore = useSelectedTaskStore()
 const selectedComponentStore = useSelectedComponentStore()
 const scoreStore = useScoreStore()
 const errorComponentStore = useErrorComponentStore()
+const highlightStore = useHighlightStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -93,6 +101,7 @@ const { t } = useI18n()
 /* 4. Constants (non-reactive) */
 const systemId = selectedSystemStore.selectedId
 const system = store.systems.find(sys => sys.id === systemId)
+const toast = useToast()
 
 /* 5. Props */
 // none
@@ -109,12 +118,25 @@ const form = ref({
   answer: ''
 })
 const taskCompleted = ref(false)
+const taskIncorrect = ref(false)
 
 /* 9. Computed */
 const tasks = computed(() => {
   if (systemId == null) return [];
   ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
-  return TaskQueue.getTasks(systemId);
+
+  const _tasks = TaskQueue.getTasks(systemId);
+
+  // look at completed:false tasks with isEditable:true are  and if there is some print 1
+  const editableTasks = _tasks.filter(task => !task.completed && task.isEditable);
+  if (editableTasks.length > 0) {
+    highlightStore.isEditModeActive = true;
+  } else {
+    highlightStore.isEditModeActive = false;
+  }
+
+
+  return _tasks;
 })
 
 const selectedTask = computed(() =>
@@ -123,8 +145,25 @@ const selectedTask = computed(() =>
 
 /* 10. Watchers */
 watch(() => selectedTaskStore.currentRound, (newRound) => {
-  console.log('Current round changed:', newRound)
-  
+  const newTasksCount = ComponentHandler.getComponentMap(newRound).length - selectedTaskStore.completedTasksCount;
+
+  // někdy blbnou počty --> zobrazí se záporné číslo
+  if (newTasksCount !== 0) {
+    toast.add({
+      title: t('new_tasks_added', { count: newTasksCount }),
+      color: 'success',
+      icon: 'i-lucide-circle-check'
+    })
+
+  } else {
+    // TODO: trochu zabugované ještě, někdy se zobrazlo jen po dokončení roundu
+    toast.add({
+      title: t('all_tasks_completed'),
+      color: 'secondary',
+      icon: 'i-lucide-circle-check'
+    })
+  }
+
 })
 
 /* 11. Methods */
@@ -156,23 +195,52 @@ function updateTask(index: number, task: Task) {
 function selectTask(id: number) {
   if (selectedTaskStore.selectedId === id) {
     selectedTaskStore.clear()
+    selectedTaskStore.clearSelectedTask()
   } else {
     selectedTaskStore.select(id)
-    console.log('Selected task:', selectedTaskStore.selectedId)
+
+    // set selected Task using filter
+    const currentTask: Task | undefined = tasks.value.find(t => t.id === id)
+    console.log("CURRENT TASK:", currentTask)
+
+    selectedTaskStore.setSelectedTask(currentTask || null)
+    console.log("Selected task:", selectedTaskStore.selectedTask)
+    const selectedTaskId = selectedTaskStore.selectedId;
+    const systemId = selectedSystemStore.selectedId;
+    const componentsToFind: string[] = TaskQueue.getSelectedTaskErrorComponentFilenames(selectedTaskId, systemId);
+    selectedTaskStore.setSelectedTaskComponentsToFind(componentsToFind);
+    console.log("Selected task:", selectedTaskStore.selectedTask)
   }
 }
 
 function handleSubmit() {
   if (!selectedTask.value) return
-  
+
   const selectedComponentId = selectedComponentStore.selectedId
-  const taskElementClass = selectedTask.value.elementClass
+  const taskElementClass: Set<string> = selectedTask.value.elementClass
   let isMatch: boolean = false
 
-  // Task completion logic
   if (selectedTask.value.kind === 'select') {
-    isMatch = selectedComponentId === taskElementClass
-    console.log("Task kind: select, isMatch:", isMatch)
+    const actual: Set<string> = highlightStore.selectedIds
+    const expected = new Set(taskElementClass) // TODO: this is not a good way to do it!!! :(
+    let match: boolean = false;
+    console.log("EXPECTED:", expected)
+    console.log("ACTUAL:", actual)
+
+    if ((actual.size === 0 && expected.size === 0) || (actual.size !== expected.size)) {
+      match = false;
+      console.log("Mismatch in size or empty selection")
+    } else {
+      match = true;
+      for (const id of actual) {
+        if (!expected.has(id)) {
+          match = false;
+          break;
+        }
+      }
+    }
+
+    isMatch = match
   } else if (selectedTask.value.kind === 'type-correct') {
     const expected = selectedTask.value.answer.trim()
     const actual = form.value.answer.trim()
@@ -191,10 +259,10 @@ function handleSubmit() {
       taskCompleted.value = true
       setTimeout(() => {
         taskCompleted.value = false
-      }, 1200) 
+      }, 1200)
       scoreStore.incrementCorrectAnswers()
       console.log("Correct answers count:", scoreStore.correctAnswers)
-      
+
       scoreStore.addUserRecord({
         taskId: selectedTask.value.id,
         answer: form.value.answer,
@@ -202,9 +270,19 @@ function handleSubmit() {
         timestamp: new Date()
       })
 
-      selectedTaskStore.currentRound += 1
+      highlightStore.isHighlightMode = false
+      highlightStore.highlightHandler.clearSelection()
+      selectedTaskStore.completedTasksCount += 1;
+      // TODO: increment row after all tasks with current row are finished
+      if (TaskQueue.getTasks(selectedTaskStore.currentRound).every(t => t.completed)) {
+        selectedTaskStore.currentRound += 1
+      }
     }
   } else if (!isMatch) {
+    taskIncorrect.value = true
+    setTimeout(() => {
+      taskIncorrect.value = false
+    }, 1200)
     scoreStore.incrementWrongAnswers()
     console.log("Wrong answers count:", scoreStore.wrongAnswers)
     scoreStore.addUserRecord({
@@ -265,15 +343,54 @@ function handleSubmit() {
   z-index: -1;
 }
 
+.task-incorrect-animation {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pop-fade 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  box-shadow: 0 0 40px 10px rgba(239, 68, 68, 0.5);
+  position: relative;
+}
+
+.task-incorrect-animation::before {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 6px;
+  background: white;
+  border-radius: 3px;
+  transform: rotate(45deg);
+  animation: draw-cross-line1 0.4s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.task-incorrect-animation::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 6px;
+  background: white;
+  border-radius: 3px;
+  transform: rotate(-45deg);
+  animation: draw-cross-line2 0.4s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
 @keyframes pop-fade {
   0% {
     transform: scale(0.5);
     opacity: 0.7;
   }
+
   60% {
     transform: scale(1.2);
     opacity: 1;
   }
+
   100% {
     transform: scale(1);
     opacity: 0;
@@ -285,6 +402,7 @@ function handleSubmit() {
     opacity: 0;
     transform: rotate(-45deg) scale(0.5);
   }
+
   100% {
     opacity: 1;
     transform: rotate(-45deg) scale(1);
@@ -296,9 +414,34 @@ function handleSubmit() {
     transform: scale(1);
     opacity: 0.6;
   }
+
   100% {
     transform: scale(2);
     opacity: 0;
+  }
+}
+
+@keyframes draw-cross-line1 {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+@keyframes draw-cross-line2 {
+  0% {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotate(-45deg) scale(1);
   }
 }
 
@@ -314,6 +457,21 @@ function handleSubmit() {
 
 .task-completed-fade-enter-to,
 .task-completed-fade-leave-from {
+  opacity: 1;
+}
+
+.task-incorrect-fade-enter-active,
+.task-incorrect-fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.task-incorrect-fade-enter-from,
+.task-incorrect-fade-leave-to {
+  opacity: 0;
+}
+
+.task-incorrect-fade-enter-to,
+.task-incorrect-fade-leave-from {
   opacity: 1;
 }
 </style>
