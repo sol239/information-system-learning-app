@@ -69,13 +69,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <UCard v-for="system in systems" :key="system.id">
+  <div class="flex  justify-center gap-4" style="margin-top: 20px;">
+    <UCard v-for="system in systems" :key="system.id" style="width: 90%;">
       <template #header>
         <h2 class="text-lg font-semibold">{{ system.name }}</h2>
       </template>
 
-      <p class="text-sm text-gray-600">{{ system.description }}</p>
+      <p class="text-sm text-white-600/25">{{ system.description }}</p>
 
       <template #footer>
         <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">

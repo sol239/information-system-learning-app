@@ -1,14 +1,22 @@
 <template>
-  <UCard class="mt-4">
+  <div class="flex justify-center py-16">
+  <UCard  style="width: 90%;">
     <label for="locale-select" class="block mb-2">Jazyk / Language</label>
-    <USelect v-model="locale" :items="availableLocales" class="w-48" @update:model-value="onLocaleChange" />
+    <USelect 
+      v-model="locale" 
+      :items="localeOptions" 
+      class="w-48" 
+      @update:model-value="onLocaleChange" 
+    />
   </UCard>
-  <AddSystemForm class="mt-4" />
+</div>
+  <!--<AddSystemForm class="mt-4" /> -->
 </template>
 
 <script setup lang="ts">
 /* 1. Imports */
 import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 
 
@@ -34,13 +42,19 @@ const { locale, availableLocales, setLocale } = useI18n()
 // none
 
 /* 9. Computed */
-// none
+const localeOptions = computed(() => 
+  availableLocales.map(locale => ({
+    value: locale,
+    label: locale === 'cs' ? 'Čeština' : 'English',
+    icon: locale === 'cs' ? 'i-flag-cz-4x3' : 'i-flag-us-4x3'
+  }))
+)
 
 /* 10. Watchers */
 // none
 
 /* 11. Methods */
-function onLocaleChange(newLocale: typeof availableLocales[number]) {
+function onLocaleChange(newLocale: 'cs' | 'en') {
   setLocale(newLocale)
 }
 

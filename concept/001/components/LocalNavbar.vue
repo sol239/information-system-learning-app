@@ -42,5 +42,5 @@ const props = defineProps<{
 </script>
 
 <template>
-  <UNavigationMenu orientation="vertical" :items="props.items" class="data-[orientation=vertical]:w-48" />
+  <UNavigationMenu orientation="horizontal" :items="props.items" class="data-[orientation=vertical]:w-48" />
 </template>

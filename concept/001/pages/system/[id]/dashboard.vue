@@ -1,27 +1,32 @@
 <template>
     <div class="dashboard-layout">
-        <aside class="dashboard-sidebar">
+        <!--<aside class="dashboard-sidebar">
             <LocalNavbar :items="localItems" />
             <TaskList :system-id="system?.id" />
-        </aside>
+        </aside>-->
+        <LocalNavbar :items="localItems" class />
         <main class="dashboard-main">
-            <div id="stats">
-                <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
-                <dashboardStats :system-id="system?.id" />
-            </div>
+            <div class="dashboard-content-row">
+                <div class="dashboard-content-main">
+                    <div id="stats">
+                        <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
+                        <dashboardStats :system-id="system?.id" />
+                    </div>
 
-            <!-- Sessions Progress Pillows -->
-            <div id="dashboard-pillows" class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
-                <dashboardPillows :sessionProgress="sessionProgress" />
-            </div>
-
-            <!-- Custom Calendar -->
-            <div id="calendar"
-                class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
-                <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
-                    :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
-                    :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
-                    :sessionColorMap="sessionColorMap" />
+                    <!-- Sessions Progress Pillows -->
+                    <div id="dashboard-pillows" class="highlightable"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
+                        <dashboardPillows :sessionProgress="sessionProgress" />
+                    </div>
+                </div>
+                <!-- Custom Calendar -->
+                <div id="calendar" class="highlightable dashboard-calendar-side"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
+                    <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
+                        :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
+                        :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
+                        :sessionColorMap="sessionColorMap" />
+                </div>
             </div>
         </main>
     </div>
@@ -94,8 +99,8 @@ const sessionProgress = computed(() => {
     return result.map((turnus, idx) => {
         const count = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`).results[0]?.count || 0
         const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
-        
-        
+
+
         return {
             id: turnus.id,
             name: `Turnus ${turnus.id}`,
@@ -182,9 +187,6 @@ function goToToday() {
 const { t } = useI18n()
 const localItems = ref([
     {
-        label: system.value?.name || 'System',
-    },
-    {
         label: t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
@@ -195,11 +197,6 @@ const localItems = ref([
         icon: 'i-heroicons-table-cells',
         to: `/system/${systemId}/table`,
         data_target: 'system-table',
-    },
-    {
-        label: 'Repair Demo',
-        to: `/system/${systemId}/demo-repair`,
-        data_target: 'demo-repair',
     }
 ])
 function isElementTaskCompleted(elementId: string): boolean {
@@ -217,7 +214,6 @@ function isElementTaskCompleted(elementId: string): boolean {
 
 <style scoped>
 .dashboard-layout {
-    display: flex;
     min-height: 100vh;
 }
 
@@ -235,6 +231,26 @@ function isElementTaskCompleted(elementId: string): boolean {
     max-width: 1000px;
     margin: 2rem auto;
     padding: 2rem;
+}
+
+/* Nový flex řádek pro obsah */
+.dashboard-content-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Hlavní část (stats + pillows) */
+.dashboard-content-main {
+    flex: 2 1 0;
+    min-width: 0;
+}
+
+/* Kalendář vedle */
+.dashboard-calendar-side {
+    flex: 1 1 320px;
+    min-width: 320px;
+    max-width: 400px;
 }
 
 .dashboard {
@@ -584,5 +600,4 @@ function isElementTaskCompleted(elementId: string): boolean {
     text-overflow: ellipsis;
     max-width: 100%;
 }
-
 </style>

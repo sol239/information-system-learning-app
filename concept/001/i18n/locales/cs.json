@@ -41,5 +41,12 @@
     "homepage_description": "Tato aplikace vám umožní procházet různé systémy, spravovat turnusy a účastníky, a provádět další operace související s informačním systémem. Aplikace je určena pro studenty 2. stupně ZŠ a SŠ.",
     "view_on_github": "Zobrazit na GitHubu",
     "new_tasks_added": "Byly přidány nové úkoly ({count})",
-    "all_tasks_completed": "Všechny úkoly byly úspěšně dokončeny"
+    "all_tasks_completed": "Všechny úkoly byly úspěšně dokončeny",
+
+    "task_selected": "Úkol vybrán",
+    "components_repaired": "Komponenty opraveny",
+    "task_completed": "Úkol dokončen",
+    "check_repair_task": "Vyhodnotit",
+    "im_teacher": "Jsem učitel",
+    "im_student": "Jsem student"
 }

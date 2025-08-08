@@ -792,28 +792,29 @@
     "tasks": [
         {
             "id": 1,
-            "title": "Zobrazování statistik v Dashboardu",
-            "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
+            "title": "Jídla a účastníci v nástěnce",
+            "description": "Zkontrolujte, zda se v nástěnce správně zobrazují jídla a účastníci. Pokud najdete nějakou chybu, tak chybu opravte.",
             "status": "pending",
-            "kind": "select",
+            "kind": "repair",
             "answer": "none",
-            "elementClass": ["stats-meals", "stats-participants"],
-            "round" : 2,
-            "is_editable": false,
+            "elementClass": [],
+            "round": 3,
+            "is_editable": true,
             "error-components": [
                 {
                     "name": "stats-participants.vue",
                     "variables": {
-                            "html" : "",
-                            "sql" : "SELECT COUNT(*) as count FROM vedoucí"
-                        }
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM vedoucí"
+                    }
                 },
                 {
                     "name": "stats-meals.vue",
                     "variables": {
-                        "html" : "",
-                        "sql" : "SELECT COUNT(*) as count FROM vedoucí"
-                    }
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM turnusy"
+                    },
+                    "error-component-name": ""
                 }
             ]
         },
@@ -824,16 +825,19 @@
             "status": "pending",
             "kind": "select",
             "answer": "none",
-            "elementClass": ["stats-supervisors"],
-            "round" : 2,
+            "elementClass": [
+                "stats-supervisors"
+            ],
+            "round": 1,
             "is_editable": false,
             "error-components": [
                 {
                     "name": "stats-supervisors.vue",
                     "variables": {
-                        "html" : "",
-                        "sql" : "SELECT COUNT(*) as count FROM jídla"
-                    }
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM jídla"
+                    },
+                    "error-component-name": ""
                 }
             ]
         },
@@ -844,28 +848,43 @@
             "status": "pending",
             "kind": "select",
             "answer": "type:entity_update;table:účastníci;jméno:Kristýna Němcová;alergeny:Lepek,Vejce",
-            "elementClass": ["table-form-účastníci-alergeny"],
+            "elementClass": [
+                "table-form-účastníci-alergeny"
+            ],
             "is_editable": false,
-            "round" : 1,
+            "round": 2,
             "error-components": [
                 {
                     "name": "table-form-účastníci-alergeny",
                     "variables": {
-                        "isMultiple" : false
-                    }
+                        "isMultiple": false
+                    },
+                    "error-component-name": ""
                 }
             ]
         },
         {
             "id": 4,
-            "title": "Smazání uživatele",
-            "description": "Smažte jednoho uživatele z tabulky a napište aktuální počet uživatelů v tabulce.",
+            "title": "Zobrazování alergenů v tabulce",
+            "description": "Proč se nezobrazují alergeny v tabulce správně.",
             "status": "pending",
-            "kind": "type-correct",
-            "answer": "29",
-            "elementClass": "",
-            "is_editable": true,
-            "round" : 3
+            "kind": "select-options",
+            "answer": "",
+            "elementClass": "table-alergeny",
+            "is_editable": false,
+            "round": 3,
+            "options": {
+                "correct_option": "Tabulka špatně zobrazuje data.",
+                "wrong_option_1": "Formulář špatně ukládá data.",
+                "wrong_option_2": "Obě ostatní možnosti jsou správné"
+            },
+            "error-components": [
+                {
+                    "name": "table-alergeny",
+                    "variables": {},
+                    "error-component-name": ""
+                }
+            ]
         }
     ]
 }

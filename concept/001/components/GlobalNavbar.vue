@@ -1,17 +1,17 @@
 <template>
-  <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black border-b border-gray-200">
+  <div class="flex items-center w-full justify-between text-lg py-4 px-4 text-black" style="border-bottom: 1px; border-color: #05df72; border-bottom-style: solid;">
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" style="z-index: 10000;"/>
 
-    <UButton label="Helper" @click="handleHelperClick"></UButton>
+    <!--<UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>-->
 
     <UBadge v-if="isOnSystemDetailPage" color="error" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
     </UBadge>
 
     <!-- Tasks Popover - Only visible on /system/[id] pages -->
-    <UPopover v-if="isOnSystemDetailPage" arrow>
-      <UButton :label="$t('tasks')" color="primary" variant="subtle" />
+    <UPopover v-if="isOnSystemDetailPage" v-model:open="tasksPopoverOpen" arrow>
+      <UButton :label="selectedTaskStore.selectedTask?.title || $t('tasks')" color="primary" variant="subtle" />
 
       <template #content>
         <TaskList />
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useHighlightStore } from '~/stores/useHighlightStore'
@@ -45,6 +45,9 @@ const scoreStore = useScoreStore()
 const errorComponentStore = useErrorComponentStore()
 const selectedTaskStore = useSelectedTaskStore()
 const selectedSystemStore = useSelectedSystemStore()
+import { useValuatorStore } from '#imports';
+
+useValuatorStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -63,7 +66,7 @@ const { t } = useI18n()
 // none
 
 /* 8. Local state (ref, reactive) */
-// none
+const tasksPopoverOpen = ref(false)
 
 /* 9. Computed */
 const items = computed<NavigationMenuItem[]>(() => [
@@ -92,23 +95,28 @@ const isOnSystemDetailPage = computed(() => {
 })
 
 /* 10. Watchers */
-// none
+// Keyboard shortcut for highlight toggle
+onMounted(() => {
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'h' && isOnSystemDetailPage.value) {
+      highlightStore.toggleHighlight()
+    }
+    if (event.key === 't' && isOnSystemDetailPage.value) {
+      tasksPopoverOpen.value = !tasksPopoverOpen.value
+    }
+  }
+  
+  document.addEventListener('keydown', handleKeydown)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown)
+  })
+})
 
 /* 11. Methods */
 function handleHelperClick() {
   // Placeholder for helper click logic
-
-
-  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-
-  const _isInErrorComponents = getNotCompletedTasks.some(task => {
-    return Array.isArray(task.errorComponents) &&
-      task.errorComponents.some(ec => ec.name === "table-form-účastníci-alergeny")
-  })
-
-  console.log("IS IN ERROR COMPONENTS:", _isInErrorComponents)
-
-  return _isInErrorComponents
+  console.log(ValuatorActual.getInfo("účastníci", "jméno", "Kristýna Němcová", ["alergeny"]))
 }
 
 /* 12. Lifecycle */

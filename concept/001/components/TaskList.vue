@@ -28,28 +28,87 @@
           </div>
           <p class="mb-2">{{ selectedTask.description }}</p>
 
-          <UStepper ref="stepper" class="mt-6" :items="stepperItems" :disabled="true" :model-value="currentStepIndex" />
+          <!-- Custom Progress Steps -->
+          <div class="flex items-center justify-between mb-6 mt-6">
+            <!-- Step 1: Task Selected -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center mb-2">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <span class="text-xs text-center text-green-600 font-medium">{{ t('task_selected') }}</span>
+            </div>
+
+            <!-- Connector Line -->
+            <div class="flex-1 h-0.5 mx-2" :class="selectedTask.componentsRepaired ? 'bg-green-500' : 'bg-gray-300'">
+            </div>
+
+            <!-- Step 2: Components Repaired -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center mb-2"
+                :class="selectedTask.componentsRepaired ? 'bg-green-500' : 'bg-gray-300'">
+                <svg v-if="selectedTask.componentsRepaired" class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span v-else class="w-3 h-3 bg-white rounded-full"></span>
+              </div>
+              <span class="text-xs text-center font-medium"
+                :class="selectedTask.componentsRepaired ? 'text-green-600' : 'text-gray-500'">
+                {{ t('components_repaired') }}
+              </span>
+            </div>
+
+            <!-- Connector Line -->
+            <div class="flex-1 h-0.5 mx-2" :class="selectedTask.completed ? 'bg-green-500' : 'bg-gray-300'"></div>
+
+            <!-- Step 3: Task Completed -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center mb-2"
+                :class="selectedTask.completed ? 'bg-green-500' : 'bg-gray-300'">
+                <svg v-if="selectedTask.completed" class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span v-else class="w-3 h-3 bg-white rounded-full"></span>
+              </div>
+              <span class="text-xs text-center font-medium"
+                :class="selectedTask.completed ? 'text-green-600' : 'text-gray-500'">
+                {{ t('task_completed') }}
+              </span>
+            </div>
+          </div>
 
           <!--
           <span class="font-semibold">Kind of task: </span>
           <span>{{ selectedTask.kind }}</span><br>
 -->
-          <!-- Kind of task: select -->
-          <div v-if="selectedTask.kind === 'select'">
-            <UButton variant="outline" style="margin-left: 5px;"
-              :disabled="selectedTask.completed || !highlightStore.selectedIds || highlightStore.selectedIds.length === 0"
-              @click="handleSubmit">
-              {{ t('submit') }}
-            </UButton>
-          </div>
+          <div>
+            <!-- Kind of task: select -->
+            <div v-if="selectedTask.kind === 'select'">
+              <UButton variant="outline" style="margin-left: 5px;"
+                :disabled="selectedTask.completed || selectedTask.componentsRepaired || !highlightStore.selectedIds || highlightStore.selectedIds.length === 0"
+                @click="handleSubmit">
+                {{ t('submit') }}
+              </UButton>
+            </div>
 
-          <!-- Kind of task: type-correct -->
-          <div v-if="selectedTask.kind === 'type-correct'">
-            <UInput v-model="form.answer" placeholder="Enter your answer" class="mt-2" />
-            <UButton variant="outline" style="margin-left: 5px;" :disabled="selectedTask.completed"
-              @click="handleSubmit">{{
-                t('submit') }}
-            </UButton>
+            <!-- Kind of task: type-correct -->
+            <div v-if="selectedTask.kind === 'type-correct'">
+              <UInput v-model="form.answer" placeholder="Enter your answer" class="mt-2" />
+              <UButton variant="outline" style="margin-left: 5px;" :disabled="selectedTask.completed"
+                @click="handleSubmit">{{
+                  t('submit') }}
+              </UButton>
+            </div>
+
+            <!-- Kind of task: repair -->
+            <div v-if="selectedTask.kind === 'repair'">
+              <UButton variant="outline" style="margin-left: 5px;" @click="handleRepair">
+                 {{ t('check_repair_task')}}
+              </UButton>
+            </div>
           </div>
 
           <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
@@ -76,12 +135,12 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedTaskStore } from '~/stores/useSelectedTaskStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
-import { ComponentHandler, TaskQueue, useScoreStore } from '#imports'
+import { ComponentHandler, TaskQueue, useScoreStore, ValuatorActual } from '#imports'
 import { useErrorComponentStore } from '#imports'
 import { useHighlightStore } from '#imports'
 import { Task } from '~/model/Task'
@@ -111,25 +170,10 @@ function onStepChange(newIndex: string | number | undefined) {
 }
 
 /* 4. Constants (non-reactive) */
-let stepperIndex = 0;
 const systemId = selectedSystemStore.selectedId
 const system = store.systems.find(sys => sys.id === systemId)
 const toast = useToast()
 //TODO: locale
-const stepperItems = ref<StepperItem[]>([
-  {
-    title: 'Zvolení úkolu',
-    icon: 'i-lucide-house'
-  },
-  {
-    title: 'Oprava komponent',
-    icon: 'i-lucide-house'
-  },
-  {
-    title: 'Dokončení úkolu',
-    icon: 'i-lucide-truck'
-  }
-])
 
 /* 5. Props */
 // none
@@ -147,7 +191,6 @@ const form = ref({
 })
 const taskCompleted = ref(false)
 const taskIncorrect = ref(false)
-const stepper = ref()
 
 /* 9. Computed */
 const tasks = computed(() => {
@@ -199,6 +242,21 @@ watch(selectedTask, (task) => {
   if (task?.completed) {
     currentStepIndex.value = 2
   }
+})
+
+// Keyboard shortcut for submit button
+onMounted(() => {
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 's' && selectedTask.value && !selectedTask.value.completed) {
+      handleSubmit()
+    }
+  }
+
+  document.addEventListener('keydown', handleKeydown)
+
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown)
+  })
 })
 
 /* 11. Methods */
@@ -290,22 +348,22 @@ function handleSubmit() {
     console.log("Expected:", expected)
     console.log("Actual:", actual)
     console.log("Task kind: type-correct, isMatch:", isMatch)
+  } else if (selectedTask.value.kind === 'repair') {
+
+  } else if (selectedTask.value.kind === 'select-options') {
+
   }
 
   // If the task matches the selected component or answer, mark it as completed
   if (isMatch && system && selectedTask.value) {
     const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
     if (idx !== -1) {
-
-    console.log(selectedSystemStore.selectedSystem)
-
+      console.log(selectedSystemStore.selectedSystem)
 
       system.tasks[idx].componentsRepaired = true
 
       highlightStore.isHighlightMode = false
       highlightStore.highlightHandler.clearSelection()
-      stepper.value.next()
-      stepperIndex += 1;
 
       if (selectedTaskStore.selectedTask?.answer === "none") {
         system.tasks[idx].completed = true
@@ -314,8 +372,6 @@ function handleSubmit() {
           taskCompleted.value = false
         }, 1200)
         scoreStore.incrementCorrectAnswers()
-        stepperIndex += 1;
-        stepper.value.next()
         selectedTaskStore.completedTasksCount += 1;
         scoreStore.addUserRecord({
           taskId: selectedTask.value.id,
@@ -323,8 +379,10 @@ function handleSubmit() {
           isCorrect: true,
           timestamp: new Date()
         })
-
-
+      } else {
+        // TODO: THIS IS BAD --- hardwired :(
+        if (JSON.stringify(ValuatorActual.getInfo("účastníci", "jméno", "Kristýna Němcová", ["alergeny"])) === JSON.stringify(["Lepek", "Vejce"])) {
+        }
       }
 
       // TODO: increment row after all tasks with current row are finished
