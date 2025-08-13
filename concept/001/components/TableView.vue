@@ -317,7 +317,7 @@ function openEditorForColumn(col: any) {
         ) {
             orderClause = ` ORDER BY "${editingColumn.value}" ${currentSort.value.order.toUpperCase()}`
         }
-        draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${props.selectedTableName}${orderClause}`
+    draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${props.selectedTableName}${orderClause}`
     } else {
         draftSqlQuery.value = ''
     }

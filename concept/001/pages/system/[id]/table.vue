@@ -225,6 +225,9 @@ function handleEdit(row: any) {
 }
 
 function handleDelete(row: any) {
+
+    console.log('Delete row:', row)
+
     if (!selectedTableName.value || !system.value?.db) return
     try {
         // Delete data from the selected table
