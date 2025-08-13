@@ -798,7 +798,7 @@
             "kind": "repair",
             "answer": "none",
             "elementClass": [],
-            "round": 3,
+            "round": 2,
             "is_editable": true,
             "error-components": [
                 {
@@ -852,7 +852,7 @@
                 "table-form-účastníci-alergeny"
             ],
             "is_editable": false,
-            "round": 2,
+            "round": 3,
             "error-components": [
                 {
                     "name": "table-form-účastníci-alergeny",
