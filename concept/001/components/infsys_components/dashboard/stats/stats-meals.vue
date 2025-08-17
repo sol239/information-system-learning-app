@@ -53,6 +53,7 @@ const draftHtmlTemplate = ref('')
 
 const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-meals-sql.vue"))
 const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-meals-html.vue"))
+const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-meals-js.vue"))
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
@@ -70,6 +71,15 @@ const htmlTemplate = computed(() => {
     return errorHtml
   }
   return correctHtmlTemplate.value
+})
+
+const navigateJs = computed(() => {
+  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
+    const errorJs = ComponentHandler.getVariableValue("stats-meals.vue", "js") || correctNavigateJs.value
+    componentCodeStore.updateComponentCode("stats-meals-js.vue", errorJs)
+    return errorJs
+  }
+  return correctNavigateJs.value
 })
 
 const mealsCount = computed(() => {
@@ -106,11 +116,8 @@ function navigate() {
     return
   }
 
-  const systemId = selectedSystemStore.selectedId;
-  selectedTableStore.select('jídla')
-  navigateTo({
-    path: `/system/${systemId}/table`,
-  })
+  console.log(navigateJs.value)
+  eval(navigateJs.value)
 }
 
 /* 12. Lifecycle */

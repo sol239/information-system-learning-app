@@ -22,6 +22,16 @@
         />
       </template>
 
+      <template v-if="draftJsCode">
+        <h3 class="editor-label js-label">JavaScript Code</h3>
+        <textarea
+          :value="draftJsCode"
+          @input="onJsInput"
+          class="code-editor js-editor"
+          spellcheck="false"
+        />
+      </template>
+
       <div class="modal-actions">
         <UButton
           @click="onApplyChanges"
@@ -65,6 +75,7 @@ const props = defineProps<{
   showEditor: boolean
   draftHtmlTemplate: string
   draftSqlQuery: string
+  draftJsCode: string
   componentId: string
 }>()
 
@@ -83,6 +94,7 @@ const emit = defineEmits<{
 const sqlValid = ref(true)
 const originalHtmlTemplate = ref(props.draftHtmlTemplate)
 const originalSqlQuery = ref(props.draftSqlQuery)
+const originalJsCode = ref(props.draftJsCode)
 
 /* 9. Computed */
 // none
@@ -93,6 +105,7 @@ watch(() => props.showEditor, (val) => {
     // Save originals when opening
     originalHtmlTemplate.value = props.draftHtmlTemplate
     originalSqlQuery.value = props.draftSqlQuery
+    originalJsCode.value = props.draftJsCode
   }
 })
 
@@ -132,6 +145,12 @@ function onHtmlInput(event: Event) {
   printCurrentHtml()
 }
 
+function onJsInput(event: Event) {
+  const value = (event.target as HTMLTextAreaElement)?.value || ''
+  emit('update:draftJsCode', value)
+  console.log('Current JavaScript Code:', value)
+}
+
 async function validateHtml(html: string): Promise<boolean> {
   const options = {
     data: html,
@@ -155,17 +174,21 @@ function onApplyChanges(event: MouseEvent) {
   console.log("Applying changes to: ", props.componentId)
   componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, props.draftHtmlTemplate)
   componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, props.draftSqlQuery)
+  componentCodeStore.updateComponentCode(`${props.componentId}-js.js`, props.draftJsCode)
   console.log("====== Changes applied ======")
   console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
   console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
+  console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.js`))
   ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', props.draftHtmlTemplate)
   ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', props.draftSqlQuery)
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'js', props.draftJsCode)
   emit('update:showEditor', false)
 }
 
 function onClose() {
   emit('update:draftHtmlTemplate', originalHtmlTemplate.value)
   emit('update:draftSqlQuery', originalSqlQuery.value)
+  emit('update:draftJsCode', originalJsCode.value)
   emit('update:showEditor', false)
 }
 
@@ -218,6 +241,10 @@ function onClose() {
   color: #facc15;
 }
 
+.js-label {
+  color: #10b981; /* Tailwind green-500 */
+}
+
 .code-editor {
   width: 100%;
   height: 300px;
@@ -246,6 +273,10 @@ function onClose() {
 
 .sql-editor:focus {
   border-color: #facc15;
+}
+
+.js-editor:focus {
+  border-color: #10b981;
 }
 
 textarea {

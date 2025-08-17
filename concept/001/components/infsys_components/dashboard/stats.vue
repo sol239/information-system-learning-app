@@ -46,6 +46,7 @@
         :showEditor="showEditor" 
         :draftHtmlTemplate="draftHtmlTemplate" 
         :draftSqlQuery="draftSqlQuery"
+        :draftJsCode="componentCodeStore.getComponentCode(currentComponentId + '-js.sql')"
         :componentId="currentComponentId"
         @update:showEditor="showEditor = $event" 
         @update:draftHtmlTemplate="draftHtmlTemplate = $event"
@@ -69,6 +70,7 @@ import '@/assets/css/stats.css'
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
+import { useComponentCodeStore } from '#imports'
 
 
 /* 2. Stores */
@@ -80,7 +82,7 @@ const highlightStore = useHighlightStore()
 const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
-// none
+const componentCodeStore = useComponentCodeStore()
 
 /* 5. Props */
 const props = defineProps<{

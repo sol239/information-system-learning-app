@@ -21,6 +21,13 @@ const statsMealsHtml = `
 `
 const statsMealsSql = `SELECT COUNT(*) as count FROM jídla`
 
+const statsMealsNavigateJs = `
+selectedTableStore.select('jídla');
+navigateTo({
+  path: \`/system/\${systemId}/table\`,
+});
+`
+
 const statsParticipantsHtml = `
   <div class="stat-card">
     <div class="stat-icon">👥</div>
@@ -56,6 +63,7 @@ const statsSupervisorsSql = `SELECT COUNT(*) as count FROM vedoucí`
 
 componentCodeStore.updateDefaultComponentCode("stats-meals-html.vue", statsMealsHtml)
 componentCodeStore.updateDefaultComponentCode("stats-meals-sql.vue", statsMealsSql)
+componentCodeStore.updateDefaultComponentCode("stats-meals-js.vue", statsMealsNavigateJs)
 
 componentCodeStore.updateDefaultComponentCode("stats-participants-html.vue", statsParticipantsHtml)
 componentCodeStore.updateDefaultComponentCode("stats-participants-sql.vue", statsParticipantsSql)
@@ -65,7 +73,6 @@ componentCodeStore.updateDefaultComponentCode("stats-sessions-sql.vue", statsSes
 
 componentCodeStore.updateDefaultComponentCode("stats-supervisors-html.vue", statsSupervisorsHtml)
 componentCodeStore.updateDefaultComponentCode("stats-supervisors-sql.vue", statsSupervisorsSql)
-
 
 
 componentCodeStore.resetComponentCode("stats-meals-html.vue")

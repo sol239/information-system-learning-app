@@ -14,13 +14,16 @@
                     </div>
 
                     <!-- Sessions Progress Pillows -->
-                    <div id="dashboard-pillows" class="highlightable"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
-                        <dashboardPillows :sessionProgress="sessionProgress" />
-                    </div>
+                    <UCard style="border: 2px solid; border-color: #05df72;">
+                        <h1 class="dashboard-section-title">{{ t('dashboard_session_progress_title') }}</h1>
+                        <div id="dashboard-pillows" class="highlightable"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
+                            <dashboardPillows :sessionProgress="sessionProgress" />
+                        </div>
+                    </UCard>
                 </div>
                 <!-- Custom Calendar -->
-                 <!--
+                <!--
                 <div id="calendar" class="highlightable dashboard-calendar-side"
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
                     <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
@@ -54,6 +57,7 @@ const selectedComponentStore = useSelectedComponentStore()
 
 /* 3. Kontextové hooky */
 const route = useRoute()
+const { t } = useI18n()
 
 /* 4. Konstanty (nereaktivní) */
 const systemId = route.params.id
@@ -185,13 +189,18 @@ function nextMonth() {
 function goToToday() {
     currentDate.value = new Date()
 }
-const { t } = useI18n()
 const localItems = ref([
     {
         label: t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
+    }, 
+    {
+        label: t('sessions'),
+        icon: 'i-heroicons-calendar-date-range',
+        to: `/system/${systemId}/session`,
+        data_target: 'system-sessions',
     },
     {
         label: t('tables'),
@@ -600,5 +609,18 @@ function isElementTaskCompleted(elementId: string): boolean {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+}
+
+.dashboard-section-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    background: linear-gradient(90deg, #05df72 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    letter-spacing: 0.03em;
+    text-align: left;
 }
 </style>
