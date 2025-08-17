@@ -33,7 +33,17 @@
       style="margin-left: 10px"
       @click="highlightStore.toggleEdit" 
     />
+    <UButton 
+      v-if="isOnSystemDetailPage"
+      icon="i-heroicons-arrow-path"
+      :label="$t('refresh_system')" 
+      color="sky"
+      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
+      style="margin-left: 10px"
+      @click="refreshSystem" 
+    />
   </div>
+  
 </template>
 
 <script setup lang="ts">
@@ -133,6 +143,36 @@ async function handleHelperClick() {
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sql.vue"));
   console.log(componentCodeStore.actualComponentCodeMap);
   console.log(ComponentHandler.isInErrorComponents("stats-supervisors.vue"));
+}
+
+async function refreshSystem() {
+  // This could involve reloading the current system data, resetting states, etc.
+  console.log("Refreshing system...");
+  // Example: Resetting component codes
+  componentCodeStore.resetAllComponentCodes();
+  const handler = new FileHandler();
+  const systems: InformationSystem[] = handler.getInformationSystems();
+  console.log(selectedSystemStore.selectedId);
+  console.log(systems);
+
+  // from systems find system with current id as selectedSystemId and use its table
+
+  for (const system of systems) {
+    console.log("SYSTEM ID:", system.id);
+    console.log("SELECTED ID:", selectedSystemStore.selectedId);
+    if (system.id === selectedSystemStore.selectedId) {
+      if (selectedSystemStore.selectedSystem) {
+        selectedSystemStore.selectedSystem.tables = system.tables;
+      }
+      console.log("UPDATED");
+      break;
+    }
+  }
+
+  if (selectedSystemStore.selectedSystem) {
+    selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData);
+  }
+
 }
 
 /* 12. Lifecycle */

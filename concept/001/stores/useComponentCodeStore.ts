@@ -25,10 +25,18 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
   }
 
   function resetAllComponentCodes() {
+
+    // TODO make modal to reset individual parts of the system
+
+    // Component code reset
     for (const componentName in actualComponentCodeMap) {
-      console.log("Resetting component code for:", componentName)
       resetComponentCode(componentName)
     }
+
+    // DB reset
+    const tasks = TaskQueue.getTasks();
+    
+
   }
 
   return {

@@ -58,5 +58,6 @@
     "field_invalid_format": "Invalid format",
     "field_invalid_value": "Invalid value",
     "field_unique_items": "All items must be unique",
-    "go_to_help": "Go to Help"
+    "go_to_help": "Go to Help",
+    "refresh_system": "Refresh System"
 }

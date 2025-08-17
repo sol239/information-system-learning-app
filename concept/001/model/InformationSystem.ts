@@ -18,7 +18,8 @@ export class InformationSystem {
     public name: string,
     public description: string,
     public tables: Table[],
-    public tasks: Task[] = []
+    public tasks: Task[] = [],
+    public configData: any
   ) {
     this.db = new DbHandler();
   }
@@ -47,7 +48,8 @@ export class InformationSystem {
       json.name,
       json.description,
       tables,
-      tasks
+      tasks,
+      json
     );
   }
 }

@@ -59,5 +59,6 @@
     "field_invalid_format": "Neplatný formát",
     "field_invalid_value": "Neplatná hodnota",
     "field_unique_items": "Všechny položky musí být unikátní",
-    "go_to_help": "Přejít na nápovědu"
+    "go_to_help": "Přejít na nápovědu",
+    "refresh_system": "Obnovit systém"
 }

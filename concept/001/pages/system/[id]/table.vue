@@ -63,6 +63,28 @@ const tableNames = computed(() => {
     }
 })
 
+// Computed to detect data changes and trigger reload
+const tableDataHash = computed(() => {
+    if (!selectedTableName.value || !system.value?.db) return ''
+    
+    try {
+        // Get row count and basic structure to detect changes
+        const countRes = system.value.db.query(`SELECT COUNT(*) as count FROM ${selectedTableName.value}`)
+        const count = countRes?.results?.[0]?.count || 0
+        
+        // Get a simple hash of the data to detect changes
+        const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
+        if (columnList) {
+            const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value} ORDER BY id LIMIT 5`)
+            const sample = JSON.stringify(dataRes?.results || [])
+            return `${count}-${sample.length}-${Date.now()}`
+        }
+        return `${count}-${Date.now()}`
+    } catch (error) {
+        return `error-${Date.now()}`
+    }
+})
+
 /* 7. Watchers */
 watch(tableNames, (newTableNames) => {
     // Prefer store.selectedTableName, then props.selectedTable, otherwise fallback to first table
@@ -114,6 +136,11 @@ watch([selectedTableName, columnNames], ([tableName, cols]) => {
         fetchColumnValues(tableName, arrayCols)
     }
 })
+
+// Watch for table data changes and reload when detected
+watch(tableDataHash, () => {
+    reloadTableData()
+}, { flush: 'post' })
 
 /* 8. Methods */
 function initializeSystem() {
