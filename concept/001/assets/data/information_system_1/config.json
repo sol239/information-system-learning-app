@@ -798,7 +798,7 @@
             "kind": "repair",
             "answer": "stats-participants-sql.vue == SELECT COUNT(*) as count FROM účastníci && stats-meals-sql.vue == SELECT COUNT(*) as count FROM jídla",
             "elementClass": [],
-            "round": 1,
+            "round": 3,
             "is_editable": true,
             "error-components": [
                 {
@@ -829,7 +829,7 @@
             "elementClass": [
                 "stats-supervisors"
             ],
-            "round": 2,
+            "round": 1,
             "is_editable": false,
             "error-components": [
                 {
@@ -848,7 +848,7 @@
             "description": "Upravte uživatele: Kristýna Němcová, tak že ji přidáte alergeny na Lepek a Vejce.",
             "status": "pending",
             "kind": "select",
-            "answer": "type:entity_update;table:účastníci;jméno:Kristýna Němcová;alergeny:Lepek,Vejce",
+            "answer": "tbl-účastníci == jméno:Kristýna Němcová;alergeny:Lepek,Vejce",
             "elementClass": [
                 "table-form-účastníci-alergeny"
             ],
@@ -856,7 +856,7 @@
             "round": 3,
             "error-components": [
                 {
-                    "name": "table-form-účastníci-alergeny",
+                    "name": "table-form-účastníci-alergeny.vue",
                     "variables": {
                         "isMultiple": false
                     },

@@ -47,22 +47,25 @@ const emit = defineEmits<{
 const showEditor = ref(false)
 
 /* 9. Computed */
+const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-supervisors-sql.vue"))
+const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-supervisors-html.vue"))
+
 const sqlQuery = computed(() => {
-  if (isInErrorComponents("stats-supervisors.vue")) {
-    const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || componentCodeStore.getComponentCode("stats-supervisors-sql.vue")
+  if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || correctSqlQuery.value
     componentCodeStore.updateComponentCode("stats-supervisors-sql.vue", errorSql)
     return errorSql
   }
-  return componentCodeStore.getComponentCode("stats-supervisors-sql.vue")
+  return correctSqlQuery.value
 })
 
 const htmlTemplate = computed(() => {
-  if (isInErrorComponents("stats-supervisors.vue")) {
-    const errorHtml = ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || componentCodeStore.getComponentCode("stats-supervisors-html.vue")
+  if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
+    const errorHtml = ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || correctHtmlTemplate.value
     componentCodeStore.updateComponentCode("stats-supervisors-html.vue", errorHtml)
     return errorHtml
   }
-  return componentCodeStore.getComponentCode("stats-supervisors-html.vue")
+  return correctHtmlTemplate.value
 })
 
 const draftSqlQuery = ref('')

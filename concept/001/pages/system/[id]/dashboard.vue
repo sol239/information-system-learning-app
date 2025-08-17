@@ -20,13 +20,14 @@
                     </div>
                 </div>
                 <!-- Custom Calendar -->
+                 <!--
                 <div id="calendar" class="highlightable dashboard-calendar-side"
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
                     <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
                         :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
                         :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
                         :sessionColorMap="sessionColorMap" />
-                </div>
+                </div>-->
             </div>
         </main>
     </div>

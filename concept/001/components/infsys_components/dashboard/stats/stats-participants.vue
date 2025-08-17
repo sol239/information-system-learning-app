@@ -56,22 +56,25 @@ function isInErrorComponents(componentFilename: string): boolean {
   return isInErrorComponents
 }
 
+const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-participants-sql.vue"))
+const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-participants-html.vue"))
+
 const sqlQuery = computed(() => {
-  if (isInErrorComponents("stats-participants.vue")) {
-    const errorSql = ComponentHandler.getVariableValue("stats-participants.vue", "sql") || componentCodeStore.getComponentCode("stats-participants-sql.vue")
+  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("stats-participants.vue", "sql") || correctSqlQuery.value
     componentCodeStore.updateComponentCode("stats-participants-sql.vue", errorSql)
     return errorSql
   }
-  return componentCodeStore.getComponentCode("stats-participants-sql.vue")
+  return correctSqlQuery.value
 })
 
 const htmlTemplate = computed(() => {
-  if (isInErrorComponents("stats-participants.vue")) {
-    const errorHtml = ComponentHandler.getVariableValue("stats-participants.vue", "html") || componentCodeStore.getComponentCode("stats-participants-html.vue")
+  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
+    const errorHtml = ComponentHandler.getVariableValue("stats-participants.vue", "html") || correctHtmlTemplate.value
     componentCodeStore.updateComponentCode("stats-participants-html.vue", errorHtml)
     return errorHtml
   }
-  return componentCodeStore.getComponentCode("stats-participants-html.vue")
+  return correctHtmlTemplate.value
 })
 
 const participantsCount = computed(() => {

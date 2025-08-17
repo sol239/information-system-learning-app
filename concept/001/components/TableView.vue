@@ -85,7 +85,7 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
     console.log("COLUMNS:", columns)
 
     // remove columns: id, turnus_id, rodné_číslo
-    const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
+    // const filteredColumns = columns.filter(col => !['id', 'turnus_id', 'rodné_číslo'].includes(col.accessorKey || ''))
 
     // print data for column=Alergeny
     if (props.columnNames.includes('alergeny')) {
@@ -94,7 +94,7 @@ const autoColumns = computed<TableColumn<any>[]>(() => {
 
     // Add action column at the end
     return [
-        ...filteredColumns,
+        ...columns,
         {
             id: 'action',
             header: 'Akce'
@@ -528,5 +528,16 @@ defineExpose({
 /* Add custom table background color */
 .custom-table-bg {
     background-color: #0f172b !important;
+}
+
+/* Add white column borders */
+.custom-table-bg th,
+.custom-table-bg td {
+    border-right: 1px solid white;
+}
+
+.custom-table-bg th:last-child,
+.custom-table-bg td:last-child {
+    border-right: none;
 }
 </style>

@@ -92,6 +92,11 @@
                 @click="handleSubmit">
                 {{ t('submit') }}
               </UButton>
+
+              <UButton v-if="selectedTask.answer !== 'none'" variant="outline" style="margin-left: 5px;" :disabled="!selectedTask.componentsRepaired"
+                @click="evaluate()">
+                {{ t('check_repair_task') }}
+              </UButton>
             </div>
 
             <!-- Kind of task: type-correct -->
@@ -148,6 +153,7 @@ import { useHighlightStore } from '#imports'
 import { Task } from '~/model/Task'
 import { sys } from 'typescript'
 import type { StepperItem } from '@nuxt/ui'
+import { useComponentCodeStore } from '#imports'
 
 
 /* 2. Stores */
@@ -158,6 +164,7 @@ const selectedComponentStore = useSelectedComponentStore()
 const scoreStore = useScoreStore()
 const errorComponentStore = useErrorComponentStore()
 const highlightStore = useHighlightStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -341,14 +348,24 @@ async function handleSubmit() {
       }
 
       if (match) {
-        for (const id of actual) {
+        for (let id of actual) {
           errorComponentStore.removeErrorComponent(id)
+
+          const toRepair: string[] = ["sql", "html", "js"]
+
+          for (const section of toRepair) {
+            componentCodeStore.resetComponentCode(id + "-" + section + ".vue")
+          }
         }
       }
 
     }
 
     isMatch = match
+    if (isMatch) {
+      await evaluate();
+      return;
+    }
   } else if (selectedTask.value.kind === 'type-correct') {
     const expected = selectedTask.value.answer.trim()
     const actual = form.value.answer.trim()
@@ -360,47 +377,19 @@ async function handleSubmit() {
     isMatch = await TaskAnswerEval.evaluateTaskAnswer(selectedTask.value?.answer || '')
     const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
     system.tasks[idx].completed = isMatch
+    if (isMatch) {
+      await evaluate();
+      return;
+    }
   } else if (selectedTask.value.kind === 'select-options') {
-
+    if (isMatch) {
+      await evaluate();
+      return;
+    }
   }
 
-  // If the task matches the selected component or answer, mark it as completed
-  if (isMatch && system && selectedTask.value) {
-    const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
-    if (idx !== -1) {
-      console.log(selectedSystemStore.selectedSystem)
 
-      system.tasks[idx].componentsRepaired = true
-
-      highlightStore.isHighlightMode = false
-      highlightStore.highlightHandler.clearSelection()
-
-      if (selectedTaskStore.selectedTask?.answer === "none" || system.tasks[idx].completed) {
-        system.tasks[idx].completed = true
-        taskCompleted.value = true
-        setTimeout(() => {
-          taskCompleted.value = false
-        }, 1200)
-        scoreStore.incrementCorrectAnswers()
-        selectedTaskStore.completedTasksCount += 1;
-        scoreStore.addUserRecord({
-          taskId: selectedTask.value.id,
-          answer: form.value.answer,
-          isCorrect: true,
-          timestamp: new Date()
-        })
-      } else {
-        // TODO: THIS IS BAD --- hardwired :(
-        if (JSON.stringify(ValuatorActual.getInfo("účastníci", "jméno", "Kristýna Němcová", ["alergeny"])) === JSON.stringify(["Lepek", "Vejce"])) {
-        }
-      }
-
-      // TODO: increment row after all tasks with current row are finished
-      if (TaskQueue.getTasks(selectedTaskStore.currentRound).every(t => t.completed)) {
-        selectedTaskStore.currentRound += 1
-      }
-    }
-  } else if (!isMatch) {
+  if (!isMatch) {
     taskIncorrect.value = true
     setTimeout(() => {
       taskIncorrect.value = false
@@ -418,6 +407,59 @@ async function handleSubmit() {
   scoreStore.updateScore()
   console.log("Current score:", scoreStore.score)
   console.log("User records:", scoreStore.getUserRecords())
+}
+
+async function evaluate() {
+  const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
+  if (idx !== -1) {
+    console.log(selectedSystemStore.selectedSystem)
+
+    system.tasks[idx].componentsRepaired = true
+
+    highlightStore.isHighlightMode = false
+    highlightStore.highlightHandler.clearSelection()
+
+    if (selectedTaskStore.selectedTask?.answer === "none" || system.tasks[idx].completed) {
+      system.tasks[idx].completed = true
+      taskCompleted.value = true
+      setTimeout(() => {
+        taskCompleted.value = false
+      }, 1200)
+      scoreStore.incrementCorrectAnswers()
+      selectedTaskStore.completedTasksCount += 1;
+      scoreStore.addUserRecord({
+        taskId: selectedTask.value.id,
+        answer: form.value.answer,
+        isCorrect: true,
+        timestamp: new Date()
+      })
+    } else {
+      console.log("Evaluating task answer:", selectedTask.value.answer)
+      const response = await TaskAnswerEval.evaluateTaskAnswer(selectedTask.value?.answer || '')
+      console.log("Task answer evaluation result:", response)
+      if (response) {
+        system.tasks[idx].completed = true
+        taskCompleted.value = true
+        setTimeout(() => {
+          taskCompleted.value = false
+        }, 1200)
+        scoreStore.incrementCorrectAnswers()
+        selectedTaskStore.completedTasksCount += 1;
+        scoreStore.addUserRecord({
+          taskId: selectedTask.value.id,
+          answer: form.value.answer,
+          isCorrect: true,
+          timestamp: new Date()
+        })
+      }
+    }
+
+    // TODO: increment row after all tasks with current row are finished
+    if (TaskQueue.getTasks(selectedTaskStore.currentRound).every(t => t.completed)) {
+      selectedTaskStore.currentRound += 1
+    }
+  }
+
 }
 
 /* 12. Lifecycle */

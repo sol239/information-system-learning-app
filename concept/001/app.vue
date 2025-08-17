@@ -10,7 +10,7 @@
 import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
 const componentCodeStore = useComponentCodeStore()
 
-componentCodeStore.updateComponentCode("stats-meals-html.vue", `
+const statsMealsHtml = `
   <div class="stat-card">
     <div class="stat-icon">🍽️</div>
     <div class="stat-content">
@@ -18,10 +18,10 @@ componentCodeStore.updateComponentCode("stats-meals-html.vue", `
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
-componentCodeStore.updateComponentCode("stats-meals-sql.vue", `SELECT COUNT(*) as count FROM jídla`)
+`
+const statsMealsSql = `SELECT COUNT(*) as count FROM jídla`
 
-componentCodeStore.updateComponentCode("stats-participants-html.vue", `
+const statsParticipantsHtml = `
   <div class="stat-card">
     <div class="stat-icon">👥</div>
     <div class="stat-content">
@@ -29,11 +29,10 @@ componentCodeStore.updateComponentCode("stats-participants-html.vue", `
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
+`
+const statsParticipantsSql = `SELECT COUNT(*) as count FROM účastníci`
 
-componentCodeStore.updateComponentCode("stats-participants-sql.vue", `SELECT COUNT(*) as count FROM účastníci`)
-
-componentCodeStore.updateComponentCode("stats-sessions-html.vue", `
+const statsSessionsHtml = `
   <div class="stat-card">
     <div class="stat-icon">📅</div>
     <div class="stat-content">
@@ -41,11 +40,10 @@ componentCodeStore.updateComponentCode("stats-sessions-html.vue", `
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
+`
+const statsSessionsSql = `SELECT COUNT(*) as count FROM turnusy`
 
-componentCodeStore.updateComponentCode("stats-sessions-sql.vue", `SELECT COUNT(*) as count FROM turnusy`)
-
-componentCodeStore.updateComponentCode("stats-supervisors-html.vue", `
+const statsSupervisorsHtml = `
   <div class="stat-card">
     <div class="stat-icon">👨‍🏫</div>
     <div class="stat-content">
@@ -53,8 +51,33 @@ componentCodeStore.updateComponentCode("stats-supervisors-html.vue", `
       <div class="stat-label">{{ label }}</div>
     </div>
   </div>
-`)
+`
+const statsSupervisorsSql = `SELECT COUNT(*) as count FROM vedoucí`
 
-componentCodeStore.updateComponentCode("stats-supervisors-sql.vue", `SELECT COUNT(*) as count FROM vedoucí`)
+componentCodeStore.updateDefaultComponentCode("stats-meals-html.vue", statsMealsHtml)
+componentCodeStore.updateDefaultComponentCode("stats-meals-sql.vue", statsMealsSql)
 
-  </script>
+componentCodeStore.updateDefaultComponentCode("stats-participants-html.vue", statsParticipantsHtml)
+componentCodeStore.updateDefaultComponentCode("stats-participants-sql.vue", statsParticipantsSql)
+
+componentCodeStore.updateDefaultComponentCode("stats-sessions-html.vue", statsSessionsHtml)
+componentCodeStore.updateDefaultComponentCode("stats-sessions-sql.vue", statsSessionsSql)
+
+componentCodeStore.updateDefaultComponentCode("stats-supervisors-html.vue", statsSupervisorsHtml)
+componentCodeStore.updateDefaultComponentCode("stats-supervisors-sql.vue", statsSupervisorsSql)
+
+
+
+componentCodeStore.resetComponentCode("stats-meals-html.vue")
+componentCodeStore.resetComponentCode("stats-meals-sql.vue")
+
+componentCodeStore.resetComponentCode("stats-participants-html.vue")
+componentCodeStore.resetComponentCode("stats-participants-sql.vue")
+
+componentCodeStore.resetComponentCode("stats-sessions-html.vue")
+componentCodeStore.resetComponentCode("stats-sessions-sql.vue")
+
+componentCodeStore.resetComponentCode("stats-supervisors-html.vue")
+componentCodeStore.resetComponentCode("stats-supervisors-sql.vue")
+
+</script>

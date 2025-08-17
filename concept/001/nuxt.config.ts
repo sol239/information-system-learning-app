@@ -27,7 +27,12 @@ export default defineNuxtConfig({
     theme: {
       colors: [
         'teacher',
-        'student'
+        'student',
+        'red',
+        'yellow',
+        'lime',
+        'green',
+        'sky'
       ]
     }
   }

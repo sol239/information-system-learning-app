@@ -7,6 +7,7 @@ import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
 import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
+import { useComponentCodeStore } from '#imports'
 
 // TODO: Restructure
 
@@ -33,14 +34,22 @@ const { t } = useI18n()
 const toast = useToast()
 const propertyStore = usePropertyStore()
 const highlightStore = useHighlightStore()
-
+const componentCodeStore = useComponentCodeStore()
 /* Local state */
-const menuType = ref(true)
 
 /* Computed */
 const modalOpen = computed({
   get: () => props.open,
   set: (value) => emit('update:open', value)
+})
+
+
+const menuType = computed(() => {
+  if (ComponentHandler.isInErrorComponents("table-form-účastníci-alergeny.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("table-form-účastníci-alergeny.vue", "isMultiple")
+    return typeof errorSql === 'boolean' ? errorSql : true
+  }
+  return true
 })
 
 const localFormState = computed({

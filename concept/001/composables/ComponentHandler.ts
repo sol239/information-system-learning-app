@@ -42,13 +42,15 @@ export class ComponentHandler {
         console.log("Filename: ", componentFilename, "| Variable: ", variableName)
         for (const component of componentErrors) {
             if (component.componentFilename === componentFilename) {
+                console.log("Found component: ", component.componentFilename)
                 const variableError = component.variableError.find(v => v.variableName === variableName);
                 if (variableError) {
+                    console.log("Found variable: ", variableError.variableName, "| Value: ", variableError.variableValue);
                     return variableError.variableValue;
                 }
             }
         }
-        return undefined; 
+        return undefined;
     }
 
     public static setVariableValue(componentFilename: string, variableName: string, variableValue: string) {
@@ -66,5 +68,15 @@ export class ComponentHandler {
                 }
             }
         }
+    }
+
+    public static isInErrorComponents(componentFilename: string): boolean {
+        const selectedTaskStore = useSelectedTaskStore();
+        const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
+        const isInErrorComponents = getNotCompletedTasks.some(task => {
+            return Array.isArray(task.errorComponents) &&
+                task.errorComponents.some(ec => ec.name === componentFilename)
+        })
+        return isInErrorComponents
     }
 }

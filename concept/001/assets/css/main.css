@@ -2,5 +2,5 @@
 @import "@nuxt/ui";
 
 @theme {
-  --color-avocado: oklch(0.91 2 0);
+  --color-red: oklch(0.91 2 0);
 }

@@ -50,20 +50,12 @@ const draftSqlQuery = ref('')
 const draftHtmlTemplate = ref('')
 
 /* 9. Computed */
-function isInErrorComponents(componentFilename: string): boolean {
-  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-  const isInErrorComponents = getNotCompletedTasks.some(task => {
-    return Array.isArray(task.errorComponents) &&
-      task.errorComponents.some(ec => ec.name === componentFilename)
-  })
-  return isInErrorComponents
-}
 
 const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-meals-sql.vue"))
 const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-meals-html.vue"))
 
 const sqlQuery = computed(() => {
-  if (isInErrorComponents("stats-meals.vue")) {
+  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-meals.vue", "sql") || correctSqlQuery.value
     componentCodeStore.updateComponentCode("stats-meals-sql.vue", errorSql)
     return errorSql
@@ -72,7 +64,7 @@ const sqlQuery = computed(() => {
 })
 
 const htmlTemplate = computed(() => {
-  if (isInErrorComponents("stats-meals.vue")) {
+  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-meals.vue", "html") || correctHtmlTemplate.value
     componentCodeStore.updateComponentCode("stats-meals-html.vue", errorHtml)
     return errorHtml

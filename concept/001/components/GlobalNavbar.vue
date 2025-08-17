@@ -5,7 +5,7 @@
 
     <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
 
-    <UBadge v-if="isOnSystemDetailPage" color="error" variant="outline" size="xl" style="margin-right: 10px;">
+    <UBadge v-if="isOnSystemDetailPage" color="red" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
     </UBadge>
 
@@ -20,16 +20,16 @@
     <UButton 
       v-if="isOnSystemDetailPage"
       :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" 
-      color="secondary"
+      color="lime"
       :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
       style="margin-left: 10px"
       @click="highlightStore.toggleHighlight" 
     />
     <UButton 
       v-if="isOnSystemDetailPage"
-      :label="highlightStore.isHighlightMode ? $t('disable_edit') : $t('enable_edit')" 
-      color="secondary"
-      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
+      :label="highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit')" 
+      color="yellow"
+      :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" 
       style="margin-left: 10px"
       @click="highlightStore.toggleEdit" 
     />
@@ -111,6 +111,9 @@ onMounted(() => {
     if (event.key === 'h' && isOnSystemDetailPage.value) {
       highlightStore.toggleHighlight()
     }
+    if (event.key === 'e' && isOnSystemDetailPage.value) {
+      highlightStore.toggleEdit()
+    }
     if (event.key === 't' && event.altKey && isOnSystemDetailPage.value) {
       event.preventDefault()
       tasksPopoverOpen.value = !tasksPopoverOpen.value
@@ -125,9 +128,11 @@ onMounted(() => {
 })
 
 /* 11. Methods */
-function handleHelperClick() {
+async function handleHelperClick() {
   // Placeholder for helper click logic
-  console.log(componentCodeStore.componentCodeMap);
+  //console.log(componentCodeStore.getComponentCode("stats-supervisors-sql.vue"));
+  console.log(componentCodeStore.actualComponentCodeMap);
+  console.log(ComponentHandler.isInErrorComponents("stats-supervisors.vue"));
 }
 
 /* 12. Lifecycle */
