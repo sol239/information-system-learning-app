@@ -1,10 +1,12 @@
 import { useErrorComponentStore } from "#imports";
 import { ComponentErrorDefinition } from "~/model/ComponentErrorDefinition";
 import { VariableError } from "~/model/VariableError";
+import { useComponentCodeStore } from "#imports";
 
 export class ComponentHandler {
     public static getComponentMap(round: number): ComponentErrorDefinition[] {
         const errorComponentStore = useErrorComponentStore();
+        const componentCodeStore = useComponentCodeStore();
 
         const tasks = TaskQueue.getTasks(round);
         const notCompletedTasks = tasks.filter(task => !task.completed && task.round === round);
@@ -22,12 +24,14 @@ export class ComponentHandler {
                     }
                     const def = new ComponentErrorDefinition(comp.name, variableErrors);
                     errorDefinitions.push(def);
+
+                    // if store does not already contain the definition add it
+                    if (!errorComponentStore.errorComponents.some(existingComp => existingComp.componentFilename === def.componentFilename)) {
+                        errorComponentStore.addErrorComponent(def);
+                    }
                 }
             }
         }
-
-
-        errorComponentStore.setErrorComponents(errorDefinitions);
 
         return errorDefinitions;
     }
@@ -35,7 +39,7 @@ export class ComponentHandler {
     public static getVariableValue(componentFilename: string, variableName: string): string | undefined {
         const errorComponentStore = useErrorComponentStore();
         const componentErrors = errorComponentStore.errorComponents;
-        console.log("getVariableValue called.")
+        console.log("Filename: ", componentFilename, "| Variable: ", variableName)
         for (const component of componentErrors) {
             if (component.componentFilename === componentFilename) {
                 const variableError = component.variableError.find(v => v.variableName === variableName);
@@ -44,9 +48,23 @@ export class ComponentHandler {
                 }
             }
         }
-
-    
-
         return undefined; 
+    }
+
+    public static setVariableValue(componentFilename: string, variableName: string, variableValue: string) {
+        const errorComponentStore = useErrorComponentStore();
+        const componentErrors = errorComponentStore.errorComponents;
+        console.log("Setting new value. Filename: ", componentFilename, "| Variable: ", variableName)
+
+        for (const component of componentErrors) {
+            console.log("Checking component: ", component.componentFilename);
+            if (component.componentFilename === componentFilename) {
+                console.log("Found component: ", component.componentFilename);
+                const variableError = component.variableError.find(v => v.variableName === variableName);
+                if (variableError) {
+                    variableError.variableValue = variableValue;
+                }
+            }
+        }
     }
 }

@@ -11,6 +11,8 @@
     "submit": "Submit",
     "enable_highlight": "Enable Highlight",
     "disable_highlight": "Disable Highlight",
+    "enable_edit": "Enable Edit",
+    "disable_edit": "Disable Edit",
     "sessions": "Sessions",
     "participants": "Participants",
     "supervisors": "Supervisors",
@@ -47,5 +49,14 @@
     "task_completed": "Task completed",
     "check_repair_task": "Evaluate",
     "im_teacher": "I'm a teacher",
-    "im_student": "I'm a student"
+    "im_student": "I'm a student",
+    "field_must_be_integer": "Field must be an integer",
+    "field_minimum": "Minimum value is {min}",
+    "field_maximum": "Maximum value is {max}",
+    "field_min_length": "Minimum length is {min}",
+    "field_invalid_email": "Invalid email address",
+    "field_invalid_format": "Invalid format",
+    "field_invalid_value": "Invalid value",
+    "field_unique_items": "All items must be unique",
+    "go_to_help": "Go to Help"
 }

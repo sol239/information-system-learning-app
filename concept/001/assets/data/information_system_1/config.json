@@ -796,9 +796,9 @@
             "description": "Zkontrolujte, zda se v nástěnce správně zobrazují jídla a účastníci. Pokud najdete nějakou chybu, tak chybu opravte.",
             "status": "pending",
             "kind": "repair",
-            "answer": "none",
+            "answer": "stats-participants-sql.vue == SELECT COUNT(*) as count FROM účastníci && stats-meals-sql.vue == SELECT COUNT(*) as count FROM jídla",
             "elementClass": [],
-            "round": 2,
+            "round": 1,
             "is_editable": true,
             "error-components": [
                 {
@@ -806,7 +806,8 @@
                     "variables": {
                         "html": "",
                         "sql": "SELECT COUNT(*) as count FROM vedoucí"
-                    }
+                    },
+                    "error-component-name": ""
                 },
                 {
                     "name": "stats-meals.vue",
@@ -828,7 +829,7 @@
             "elementClass": [
                 "stats-supervisors"
             ],
-            "round": 1,
+            "round": 2,
             "is_editable": false,
             "error-components": [
                 {

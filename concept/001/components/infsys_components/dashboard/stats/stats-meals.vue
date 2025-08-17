@@ -2,7 +2,7 @@
   <div>
     <!-- Rendered Stat Card -->
     <div class="stat-card-wrapper" >
-      <div id="stats-meals" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
+      <div id="stats-meals" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
 
       <!-- Edit Icon Button -->
       <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
@@ -19,12 +19,13 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
-
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
 const highlightStore = useHighlightStore()
 const selectedTaskStore = useSelectedTaskStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -58,30 +59,26 @@ function isInErrorComponents(componentFilename: string): boolean {
   return isInErrorComponents
 }
 
-const sqlQuery = computed(() => 
-  isInErrorComponents("stats-meals.vue")
-    ? ComponentHandler.getVariableValue("stats-meals.vue", "sql") || `SELECT COUNT(*) as count FROM jídla` : "SELECT COUNT(*) as count FROM jídla"
-)
+const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-meals-sql.vue"))
+const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-meals-html.vue"))
 
-const htmlTemplate = computed(() => 
-  isInErrorComponents("stats-meals.vue")
-    ? ComponentHandler.getVariableValue("stats-meals.vue", "html") || `
-  <div class="stat-card">
-    <div class="stat-icon">🍽️</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ mealsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div> ` : `
-  <div class="stat-card">
-    <div class="stat-icon">🍽️</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ mealsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div>
-`
-)
+const sqlQuery = computed(() => {
+  if (isInErrorComponents("stats-meals.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("stats-meals.vue", "sql") || correctSqlQuery.value
+    componentCodeStore.updateComponentCode("stats-meals-sql.vue", errorSql)
+    return errorSql
+  }
+  return correctSqlQuery.value
+})
+
+const htmlTemplate = computed(() => {
+  if (isInErrorComponents("stats-meals.vue")) {
+    const errorHtml = ComponentHandler.getVariableValue("stats-meals.vue", "html") || correctHtmlTemplate.value
+    componentCodeStore.updateComponentCode("stats-meals-html.vue", errorHtml)
+    return errorHtml
+  }
+  return correctHtmlTemplate.value
+})
 
 const mealsCount = computed(() => {
   const result = props.system?.db.query(sqlQuery.value).results

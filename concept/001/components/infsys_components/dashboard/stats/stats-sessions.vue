@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="stat-card-wrapper">
-      <div id="stats-sessions" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
+      <div id="stats-sessions" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
       <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
     </div>
   </div>
@@ -15,12 +15,14 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
+import { useComponentCodeStore } from '#imports'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
 const highlightStore = useHighlightStore()
 const selectedTaskStore = useSelectedTaskStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -54,30 +56,26 @@ function isInErrorComponents(componentFilename: string): boolean {
   return isInErrorComponents
 }
 
-const sqlQuery = computed(() => 
-  isInErrorComponents("stats-sessions.vue")
-    ? ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || `SELECT COUNT(*) as count FROM turnusy` : "SELECT COUNT(*) as count FROM turnusy"
-)
+const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-sessions-sql.vue"))
+const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-sessions-html.vue"))
 
-const htmlTemplate = computed(() => 
-  isInErrorComponents("stats-sessions.vue")
-    ? ComponentHandler.getVariableValue("stats-sessions.vue", "html") || `
-  <div class="stat-card">
-    <div class="stat-icon">🏫</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ sessionsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div> ` : `
-  <div class="stat-card">
-    <div class="stat-icon">🏫</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ sessionsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div>
-`
-)
+const sqlQuery = computed(() => {
+  if (isInErrorComponents("stats-sessions.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || correctSqlQuery.value
+    componentCodeStore.updateComponentCode("stats-sessions-sql.vue", errorSql)
+    return errorSql
+  }
+  return correctSqlQuery.value
+})
+
+const htmlTemplate = computed(() => {
+  if (isInErrorComponents("stats-sessions.vue")) {
+    const errorHtml = ComponentHandler.getVariableValue("stats-sessions.vue", "html") || correctHtmlTemplate.value
+    componentCodeStore.updateComponentCode("stats-sessions-html.vue", errorHtml)
+    return errorHtml
+  }
+  return correctHtmlTemplate.value
+})
 
 const sessionsCount = computed(() => {
   const result = props.system?.db.query(sqlQuery.value).results

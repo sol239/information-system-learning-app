@@ -3,7 +3,7 @@
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" style="z-index: 10000;"/>
 
-    <!--<UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>-->
+    <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
 
     <UBadge v-if="isOnSystemDetailPage" color="error" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
@@ -24,6 +24,14 @@
       :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
       style="margin-left: 10px"
       @click="highlightStore.toggleHighlight" 
+    />
+    <UButton 
+      v-if="isOnSystemDetailPage"
+      :label="highlightStore.isHighlightMode ? $t('disable_edit') : $t('enable_edit')" 
+      color="secondary"
+      :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" 
+      style="margin-left: 10px"
+      @click="highlightStore.toggleEdit" 
     />
   </div>
 </template>
@@ -46,8 +54,10 @@ const errorComponentStore = useErrorComponentStore()
 const selectedTaskStore = useSelectedTaskStore()
 const selectedSystemStore = useSelectedSystemStore()
 import { useValuatorStore } from '#imports';
+import { useComponentCodeStore } from '#imports';
 
 useValuatorStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -101,7 +111,8 @@ onMounted(() => {
     if (event.key === 'h' && isOnSystemDetailPage.value) {
       highlightStore.toggleHighlight()
     }
-    if (event.key === 't' && isOnSystemDetailPage.value) {
+    if (event.key === 't' && event.altKey && isOnSystemDetailPage.value) {
+      event.preventDefault()
       tasksPopoverOpen.value = !tasksPopoverOpen.value
     }
   }
@@ -116,7 +127,7 @@ onMounted(() => {
 /* 11. Methods */
 function handleHelperClick() {
   // Placeholder for helper click logic
-  console.log(ValuatorActual.getInfo("účastníci", "jméno", "Kristýna Němcová", ["alergeny"]))
+  console.log(componentCodeStore.componentCodeMap);
 }
 
 /* 12. Lifecycle */

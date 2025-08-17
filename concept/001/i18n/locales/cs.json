@@ -11,6 +11,8 @@
     "submit": "Odeslat",
     "enable_highlight": "Zapnout zvýraznění",
     "disable_highlight": "Vypnout zvýraznění",
+    "enable_edit": "Zapnout úpravy",
+    "disable_edit": "Vypnout úpravy",
     "sessions": "Turnusy",
     "participants": "Účastníci",
     "supervisors": "Vedoucí",
@@ -48,5 +50,14 @@
     "task_completed": "Úkol dokončen",
     "check_repair_task": "Vyhodnotit",
     "im_teacher": "Jsem učitel",
-    "im_student": "Jsem student"
+    "im_student": "Jsem student",
+    "field_must_be_integer": "Pole musí být celé číslo",
+    "field_minimum": "Minimální hodnota je {min}",
+    "field_maximum": "Maximální hodnota je {max}",
+    "field_min_length": "Minimální délka je {min}",
+    "field_invalid_email": "Neplatná e-mailová adresa",
+    "field_invalid_format": "Neplatný formát",
+    "field_invalid_value": "Neplatná hodnota",
+    "field_unique_items": "Všechny položky musí být unikátní",
+    "go_to_help": "Přejít na nápovědu"
 }

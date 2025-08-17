@@ -22,5 +22,13 @@ export default defineNuxtConfig({
     defaultLocale: 'cs',
     langDir: 'locales/',
     strategy: 'no_prefix', // nebo 'no_prefix', 'prefix_except_default'
+  },
+  ui: {
+    theme: {
+      colors: [
+        'teacher',
+        'student'
+      ]
+    }
   }
 })

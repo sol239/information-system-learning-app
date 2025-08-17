@@ -24,7 +24,7 @@
 
       <div class="modal-actions">
         <UButton
-          @click="emit('applyChanges')"
+          @click="onApplyChanges"
           :disabled="!sqlValid"
           :style="{ backgroundColor: !sqlValid ? '#ef4444' : '#3b82f6', color: 'white' }"
         >
@@ -47,10 +47,12 @@ import { ref, watch } from 'vue'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
+import { useComponentCodeStore } from '#imports'
 
 /* 2. Stores */
 const informationSystemStore = useInformationSystemStore()
 const selectedSystemStore = useSelectedSystemStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 // none
@@ -63,14 +65,15 @@ const props = defineProps<{
   showEditor: boolean
   draftHtmlTemplate: string
   draftSqlQuery: string
+  componentId: string
 }>()
 
 /* 6. Emits */
 const emit = defineEmits<{
   (e: 'update:showEditor', value: boolean): void
-  (e: 'update:draftHtmlTemplate', value: string): void
-  (e: 'update:draftSqlQuery', value: string): void
-  (e: 'applyChanges'): void
+  //(e: 'update:draftHtmlTemplate', value: string): void
+  //(e: 'update:draftSqlQuery', value: string): void
+  //(e: 'applyChanges'): void
 }>()
 
 /* 7. Template refs */
@@ -146,6 +149,18 @@ async function validateHtml(html: string): Promise<boolean> {
     console.error('Validation failed:', err)
     return false
   }
+}
+
+function onApplyChanges(event: MouseEvent) {
+  console.log("Applying changes to: ", props.componentId)
+  componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, props.draftHtmlTemplate)
+  componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, props.draftSqlQuery)
+  console.log("====== Changes applied ======")
+  console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
+  console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', props.draftHtmlTemplate)
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', props.draftSqlQuery)
+  emit('update:showEditor', false)
 }
 
 function onClose() {

@@ -46,6 +46,7 @@
         :showEditor="showEditor" 
         :draftHtmlTemplate="draftHtmlTemplate" 
         :draftSqlQuery="draftSqlQuery"
+        :componentId="currentComponentId"
         @update:showEditor="showEditor = $event" 
         @update:draftHtmlTemplate="draftHtmlTemplate = $event"
         @update:draftSqlQuery="draftSqlQuery = $event" 

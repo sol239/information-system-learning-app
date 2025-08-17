@@ -105,8 +105,10 @@
 
             <!-- Kind of task: repair -->
             <div v-if="selectedTask.kind === 'repair'">
-              <UButton variant="outline" style="margin-left: 5px;" @click="handleRepair">
-                 {{ t('check_repair_task')}}
+              <UButton
+                :disabled="selectedTask.completed || selectedTask.componentsRepaired || !highlightStore.selectedIds || highlightStore.selectedIds.length === 0"
+                variant="outline" style="margin-left: 5px;" @click="handleSubmit">
+                {{ t('check_repair_task') }}
               </UButton>
             </div>
           </div>
@@ -140,7 +142,7 @@ import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedTaskStore } from '~/stores/useSelectedTaskStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
-import { ComponentHandler, TaskQueue, useScoreStore, ValuatorActual } from '#imports'
+import { ComponentHandler, TaskAnswerEval, TaskQueue, useScoreStore, ValuatorActual } from '#imports'
 import { useErrorComponentStore } from '#imports'
 import { useHighlightStore } from '#imports'
 import { Task } from '~/model/Task'
@@ -276,6 +278,12 @@ function addTask() {
   newTaskText.value = ''
 }
 
+async function handleRepair(event: MouseEvent) {
+  // print selected task answer
+  const evalResult: boolean = await TaskAnswerEval.evaluateTaskAnswer(selectedTask.value?.answer || '')
+  console.log("Task answer evaluation result:", evalResult)
+}
+
 function removeTask(index: number) {
   if (!system || !system.tasks) return
   system.tasks.splice(index, 1)
@@ -306,7 +314,7 @@ function selectTask(id: number) {
   }
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!selectedTask.value) return
 
   const selectedComponentId = selectedComponentStore.selectedId
@@ -349,7 +357,9 @@ function handleSubmit() {
     console.log("Actual:", actual)
     console.log("Task kind: type-correct, isMatch:", isMatch)
   } else if (selectedTask.value.kind === 'repair') {
-
+    isMatch = await TaskAnswerEval.evaluateTaskAnswer(selectedTask.value?.answer || '')
+    const idx = system.tasks.findIndex(t => t.id === selectedTask.value!.id)
+    system.tasks[idx].completed = isMatch
   } else if (selectedTask.value.kind === 'select-options') {
 
   }
@@ -365,7 +375,7 @@ function handleSubmit() {
       highlightStore.isHighlightMode = false
       highlightStore.highlightHandler.clearSelection()
 
-      if (selectedTaskStore.selectedTask?.answer === "none") {
+      if (selectedTaskStore.selectedTask?.answer === "none" || system.tasks[idx].completed) {
         system.tasks[idx].completed = true
         taskCompleted.value = true
         setTimeout(() => {

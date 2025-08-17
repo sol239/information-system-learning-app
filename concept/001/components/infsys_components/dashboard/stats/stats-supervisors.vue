@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="stat-card-wrapper">
-      <div id="stats-supervisors" @click="navigate" class="cursor-pointer stat-card" v-html="renderedHtml"></div>
+      <div id="stats-supervisors" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
       <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
     </div>
   </div>
@@ -15,12 +15,14 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
+import { useComponentCodeStore } from '#imports'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
 const highlightStore = useHighlightStore()
 const selectedTaskStore = useSelectedTaskStore()
+const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -45,30 +47,23 @@ const emit = defineEmits<{
 const showEditor = ref(false)
 
 /* 9. Computed */
-const sqlQuery = computed(() => 
-  isInErrorComponents("stats-supervisors.vue")
-    ? ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || `SELECT COUNT(*) as count FROM vedoucí` : "SELECT COUNT(*) as count FROM vedoucí"
-)
+const sqlQuery = computed(() => {
+  if (isInErrorComponents("stats-supervisors.vue")) {
+    const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || componentCodeStore.getComponentCode("stats-supervisors-sql.vue")
+    componentCodeStore.updateComponentCode("stats-supervisors-sql.vue", errorSql)
+    return errorSql
+  }
+  return componentCodeStore.getComponentCode("stats-supervisors-sql.vue")
+})
 
-const htmlTemplate = computed(() => 
-  isInErrorComponents("stats-supervisors.vue")
-    ? ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || `
-  <div class="stat-card">
-    <div class="stat-icon">👨‍🏫</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ supervisorsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div> ` : `
-  <div class="stat-card">
-    <div class="stat-icon">👨‍🏫</div>
-    <div class="stat-content">
-      <div class="stat-number">{{ supervisorsCount }}</div>
-      <div class="stat-label">{{ label }}</div>
-    </div>
-  </div>
-`
-)
+const htmlTemplate = computed(() => {
+  if (isInErrorComponents("stats-supervisors.vue")) {
+    const errorHtml = ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || componentCodeStore.getComponentCode("stats-supervisors-html.vue")
+    componentCodeStore.updateComponentCode("stats-supervisors-html.vue", errorHtml)
+    return errorHtml
+  }
+  return componentCodeStore.getComponentCode("stats-supervisors-html.vue")
+})
 
 const draftSqlQuery = ref('')
 const draftHtmlTemplate = ref('')

@@ -10,11 +10,16 @@ export const useHighlightStore = defineStore('highlight', () => {
     isHighlightMode.value = !isHighlightMode.value
   }
 
+  function toggleEdit() {
+    isEditModeActive.value = !isEditModeActive.value
+  }
+
   return {
     isHighlightMode,
     toggleHighlight,
     selectedIds,
     highlightHandler,
-    isEditModeActive  
+    isEditModeActive,
+    toggleEdit
   }
 })
