@@ -5,54 +5,28 @@
       <p class="dashboard-subtitle">{{ t('dashboard_subtitle') }}</p>
     </div>
     <div class="stats">
-      <StatsSessions 
-        ref="statsSessionsRef"
-        id="stats-sessions" 
-        class="highlightable"  
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-sessions', $event)" 
-        @openModal="handleOpenModal"
-        :system="system" 
-      />
-      <StatsParticipants 
-        ref="statsParticipantsRef"
-        id="stats-participants" 
-        class="highlightable"  
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-participants', $event)" 
-        @openModal="handleOpenModal"
-        :system="system" 
-      />
-      <StatsSupervisors 
-        ref="statsSupervisorsRef"
-        id="stats-supervisors" 
-        class="highlightable"  
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-supervisors', $event)" 
-        @openModal="handleOpenModal"
-        :system="system" 
-      />
-      <StatsMeals 
-        ref="statsMealsRef"
-        id="stats-meals" 
-        class="highlightable"  
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-meals', $event)" 
-        @openModal="handleOpenModal"
-        :system="system" 
-      />
+      <StatsSessions ref="statsSessionsRef" id="stats-sessions" class="highlightable"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-sessions', $event)"
+        @openModal="handleOpenModal" :system="system" />
+      <StatsParticipants ref="statsParticipantsRef" id="stats-participants" class="highlightable"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-participants', $event)"
+        @openModal="handleOpenModal" :system="system" />
+      <StatsSupervisors ref="statsSupervisorsRef" id="stats-supervisors" class="highlightable"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-supervisors', $event)"
+        @openModal="handleOpenModal" :system="system" />
+      <StatsMeals ref="statsMealsRef" id="stats-meals" class="highlightable"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-meals', $event)"
+        @openModal="handleOpenModal" :system="system" />
     </div>
 
     <!-- Modal rendered outside of stats container using Teleport -->
     <Teleport to="body">
-      <EditComponentModal 
-        v-if="showEditor"
-        :showEditor="showEditor" 
-        :draftHtmlTemplate="draftHtmlTemplate" 
+      <EditComponentModal v-if="showEditor" :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate"
         :draftSqlQuery="draftSqlQuery"
         :draftJsCode="componentCodeStore.getComponentCode(currentComponentId + '-js.vue')"
-        :componentId="currentComponentId"
-        @update:showEditor="showEditor = $event" 
-        @update:draftHtmlTemplate="draftHtmlTemplate = $event"
-        @update:draftSqlQuery="draftSqlQuery = $event" 
-        @applyChanges="applyChanges" 
-      />
+        :componentId="currentComponentId" @update:showEditor="showEditor = $event"
+        @update:draftHtmlTemplate="draftHtmlTemplate = $event" @update:draftSqlQuery="draftSqlQuery = $event"
+        @applyChanges="applyChanges" />
     </Teleport>
   </div>
 </template>
@@ -151,9 +125,9 @@ function getComponentRef(componentId: string) {
 
 /* 12. Lifecycle */
 onMounted(() => {
-    const highlightStore = useHighlightStore()
-    console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
-    console.log(highlightStore.highlightHandler.getHighlightedElements())
+  const highlightStore = useHighlightStore()
+  console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
+  console.log(highlightStore.highlightHandler.getHighlightedElements())
 })
 
 

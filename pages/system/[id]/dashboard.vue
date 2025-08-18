@@ -17,8 +17,7 @@
                     <!-- Sessions Progress Pillows -->
                     <UCard style="border: 2px solid; border-color: #05df72;">
                         <h1 class="dashboard-section-title">{{ t('dashboard_session_progress_title') }}</h1>
-                        <div id="dashboard-pillows" class="highlightable"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('dashboard-pillows', $event)">
+                        <div id="dashboard-pillows">
                             <dashboardPillows :sessionProgress="sessionProgress" />
                         </div>
                     </UCard>

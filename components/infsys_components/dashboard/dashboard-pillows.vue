@@ -1,14 +1,21 @@
 <template>
   <div class="sessions-progress" v-if="sessionProgress.length">
     <div class="progress-pillows">
-      <div v-for="session in sessionProgress" :key="session.id" class="progress-pillow">
+      <div
+        v-for="session in sessionProgress"
+        :key="session.id"
+        class="progress-pillow highlightable"
+        :id="'stats-pillow-' + session.id"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-pillow-' + session.id, $event)"
+        @openModal="handleOpenModal"
+        :system="selectedSystemStore.selectedSystem"
+      >
         <div class="pillow-header">
           <span class="pillow-title">{{ session.name }}</span>
           <span class="pillow-count">{{ session.count }}/{{ session.capacity }}</span>
         </div>
         <div class="pillow-bar-bg">
-          <div class="pillow-bar"
-            :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
+          <div class="pillow-bar" :style="{ width: session.percent + '%', backgroundColor: session.color }"></div>
         </div>
         <div class="pillow-percent">{{ session.percent }}%</div>
       </div>
@@ -18,16 +25,19 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from 'vue'
+import { computed } from 'vue';
+import { useHighlightStore } from '#imports';
+import { useSelectedSystemStore } from '#imports';
 
 /* 2. Stores */
-// none
+const highlightStore = useHighlightStore()
+const selectedSystemStore = useSelectedSystemStore()
 
 /* 3. Context hooks */
 // none
 
 /* 4. Constants (non-reactive) */
-// none
+
 
 /* 5. Props */
 const props = defineProps<{
