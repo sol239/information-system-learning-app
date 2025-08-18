@@ -21,6 +21,10 @@
             <p>
                 All keydown events are not working correctly on every page.
             </p>
+            <h3 class="text-xl font-semibold mt-4 mb-2 text-[#9ca3ff]">4. Missing translations</h3>
+            <p>
+                Some translations are missing.
+            </p>
         </div>
 
         <USeparator />
@@ -49,6 +53,7 @@
 // TODO: Since rehydrate method uses original config.json's data database changes are not persisted.
 // TODO: The visualization of allergens has to be redone in the future.
 // TODO: All keydown events are not working correctly on every page.
+// TODO: Some translations are missing. 
 
 // TO BE IMPLEMENTED:
 // TODO: Some important UI elements need to be redesigned for better usability.
