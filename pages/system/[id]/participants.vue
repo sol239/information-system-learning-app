@@ -4,23 +4,34 @@
 
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
-                <USelectMenu v-model="value" :items="filterSessionsItems" />
+
+                <!-- Session Select Menu-->
+                <USelectMenu class="highlightable" :id="'participants-session-menu'"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
+                    v-model="value" :items="filterSessionsItems" />
+
+                <!-- Session Capacity Pillow -->
                 <div v-if="selectedSessionInfo" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <UIcon name="i-heroicons-users" class="w-4 h-4 text-gray-600" />
-                    <span class="text-sm font-medium text-gray-700">
+
+                    <!-- Session Capacity Count -->
+                    <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
                         {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{ selectedSessionInfo.totalCapacity
                         }}
                     </span>
-                    <UBadge :color="getCapacityBadgeColor(selectedSessionInfo.fillPercentage)" variant="soft" size="sm"
-                        class="font-bold">
+
+                    <!-- Session Capacity Percentage -->
+                    <UBadge class="highlightable" :id="'participants-capacity-percentage'"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-percentage', $event)"
+                        :color="getCapacityBadgeColor(selectedSessionInfo.fillPercentage)" variant="soft" size="sm">
                         {{ Math.round(selectedSessionInfo.fillPercentage) }}%
                     </UBadge>
                 </div>
                 <div class="ml-auto">
                     <!-- Add Participant Drawer -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
-                        <UButton color="sky" variant="outline" @click="createNewParticipant"
-                            icon="i-heroicons-plus">
+                        <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
                             {{ t('add_participant') }}
                         </UButton>
 
@@ -30,7 +41,8 @@
                                     <h3 class="text-lg font-semibold">{{ t('add_participant') }}</h3>
                                 </template>
 
-                                <UForm :state="newParticipant" @submit="handleAddParticipant(newParticipant)" class="flex flex-col space-y-4">
+                                <UForm :state="newParticipant" @submit="handleAddParticipant(newParticipant)"
+                                    class="flex flex-col space-y-4">
                                     <div>
                                         <label for="name"
                                             class="block text-sm font-medium text-white mb-1">Jméno</label>
@@ -46,8 +58,8 @@
                                     <div>
                                         <label for="personal_number"
                                             class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                        <UInput color="sky" id="personal_number" v-model="newParticipant.personal_number"
-                                            placeholder="123456/7890" />
+                                        <UInput color="sky" id="personal_number"
+                                            v-model="newParticipant.personal_number" placeholder="123456/7890" />
                                     </div>
                                     <div>
                                         <label for="phone"
@@ -63,8 +75,8 @@
                                     </div>
                                     <div>
                                         <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                        <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1" max="100"
-                                            placeholder="18" />
+                                        <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1"
+                                            max="100" placeholder="18" />
                                     </div>
                                     <div>
                                         <label for="sessionId"
@@ -73,14 +85,10 @@
                                             :items="sessionOptions" placeholder="Vyberte turnus" />
                                     </div>
                                     <div>
-                                        <label for="allergens" class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                        <USelectMenu color="sky"
-                                            id="allergens"
-                                            v-model="newParticipant.allergens"
-                                            :items="allergenOptions"
-                                            :multiple="true"
-                                            placeholder="Vyberte alergeny"
-                                        />
+                                        <label for="allergens"
+                                            class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                        <USelectMenu color="sky" id="allergens" v-model="newParticipant.allergens"
+                                            :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny" />
                                         <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
@@ -101,7 +109,8 @@
 
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card">
+                <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card highlightable" :id="'participants-card-' + participant.id"
+                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
                     <!-- Participant Header -->
                     <div class="participant-header">
                         <div class="flex items-center justify-between mb-4">
@@ -143,7 +152,8 @@
                         <div class="flex gap-2">
                             <!-- Edit Participant Button only -->
                             <div class="ml-auto">
-                                <UButton size="sm" color="sky" variant="solid" @click="viewParticipantDetails(participant)" class="flex-1">
+                                <UButton size="sm" color="sky" variant="solid"
+                                    @click="viewParticipantDetails(participant)" class="flex-1">
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
@@ -163,26 +173,24 @@
                             <h3 class="text-lg font-semibold">{{ t('participant_details') }}</h3>
                         </template>
 
-                        <UForm :state="selectedParticipant" @submit="handleEditParticipant(selectedParticipant)" class="flex flex-col space-y-4">
+                        <UForm :state="selectedParticipant" @submit="handleEditParticipant(selectedParticipant)"
+                            class="flex flex-col space-y-4">
                             <div>
-                                <label for="edit-name"
-                                    class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
                                 <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
                                     placeholder="Zadejte jméno účastníka" />
                             </div>
                             <div>
-                                <label for="edit-email"
-                                    class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                <UInput color="sky" id="edit-email" v-model="selectedParticipant.email"
-                                    type="email" placeholder="email@example.com" />
+                                <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                <UInput color="sky" id="edit-email" v-model="selectedParticipant.email" type="email"
+                                    placeholder="email@example.com" />
                             </div>
                             <div>
                                 <label for="edit-personal_number"
                                     class="block text-sm font-medium text-white mb-1">Rodné
                                     číslo</label>
-                                <UInput  color="sky" id="edit-personal_number"
-                                    v-model="selectedParticipant.personal_number"
-                                    placeholder="123456/7890" />
+                                <UInput color="sky" id="edit-personal_number"
+                                    v-model="selectedParticipant.personal_number" placeholder="123456/7890" />
                             </div>
                             <div>
                                 <label for="edit-phone"
@@ -197,27 +205,21 @@
                                     placeholder="Ulice číslo, město, PSČ" :rows="2" />
                             </div>
                             <div>
-                                <label for="edit-age"
-                                    class="block text-sm font-medium text-white mb-1">Věk</label>
-                                <UInput color="sky" id="edit-age" v-model="selectedParticipant.age"
-                                    type="number" min="1" max="100" placeholder="18" />
+                                <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
+                                <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
+                                    min="1" max="100" placeholder="18" />
                             </div>
                             <div>
                                 <label for="edit-sessionId"
                                     class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                <USelectMenu color="sky" id="edit-sessionId"
-                                    v-model="selectedParticipant.sessionId" :items="sessionOptions"
-                                    placeholder="Vyberte turnus" />
+                                <USelectMenu color="sky" id="edit-sessionId" v-model="selectedParticipant.sessionId"
+                                    :items="sessionOptions" placeholder="Vyberte turnus" />
                             </div>
                             <div>
-                                <label for="edit-allergens" class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                <USelectMenu color="sky"
-                                    id="edit-allergens"
-                                    v-model="selectedParticipant.allergens"
-                                    :items="allergenOptions"
-                                    :multiple="true"
-                                    placeholder="Vyberte alergeny"
-                                />
+                                <label for="edit-allergens"
+                                    class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                <USelectMenu color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
+                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny" />
                                 <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
@@ -241,16 +243,18 @@
                 </UButton>
 
                 <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-600">
+                    <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
                         {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
                     </span>
-                    <span class="text-xs text-gray-500">
+                    <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)"   >
                         ({{ filteredParticipants.length }} {{ t('participants') }})
                     </span>
                 </div>
 
-                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right" :disabled="currentPage === totalPages"
-                    @click="currentPage++">
+                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
+                    :disabled="currentPage === totalPages" @click="currentPage++">
                     {{ t('next') }}
                 </UButton>
             </div>
@@ -274,9 +278,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useSelectedSystemStore } from '#imports'
 import { Participant } from '~/model/Participant'
 import { Session } from '~/model/Session'
+import { useHighlightStore } from '#imports'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
+const highlightStore = useHighlightStore()
 const localItems = ref([
     {
         label: t('dashboard'),
@@ -319,6 +325,7 @@ const selectedSession = ref('all')
 const isSubmitting = ref(false)
 const editModalOpen = ref(false);
 const addModalOpen = ref(false);
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
 // New participant form
 const newParticipant = ref({
@@ -538,8 +545,10 @@ const manageParticipant = (participant: Participant) => {
 }
 
 const createNewParticipant = () => {
-    resetForm()
-    addModalOpen.value = true
+    if (!highlightStore.isHighlightMode) {
+        resetForm()
+        addModalOpen.value = true
+    }
 }
 
 const handleAddParticipant = async (data: any) => {
@@ -717,11 +726,6 @@ onMounted(() => {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     border: 4px solid #00bcff;
     padding: 1.5rem;
-    transition: box-shadow 0.3s ease;
-}
-
-.participant-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .participant-header {

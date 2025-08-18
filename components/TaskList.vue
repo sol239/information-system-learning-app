@@ -93,8 +93,8 @@
                 {{ t('submit') }}
               </UButton>
 
-              <UButton v-if="selectedTask.answer !== 'none'" variant="outline" style="margin-left: 5px;" :disabled="!selectedTask.componentsRepaired"
-                @click="evaluate()">
+              <UButton v-if="selectedTask.answer !== 'none'" variant="outline" style="margin-left: 5px;"
+                :disabled="!selectedTask.componentsRepaired" @click="evaluate()">
                 {{ t('check_repair_task') }}
               </UButton>
             </div>
@@ -120,7 +120,7 @@
 
           <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
           <div v-if="selectedTask.completed">
-            <USeparator color="primary" class="mt-4 mb-2"/>
+            <USeparator color="primary" class="mt-4 mb-2" />
             <h3 class="text-lg font-semibold ">{{ t('feedback') }}</h3>
 
             <p> {{ selectedTask.feedback }}</p>
@@ -355,7 +355,6 @@ async function handleSubmit() {
     isMatch = match
     if (isMatch) {
       await evaluate();
-      return;
     }
   } else if (selectedTask.value.kind === 'type-correct') {
     const expected = selectedTask.value.answer.trim()
@@ -370,12 +369,10 @@ async function handleSubmit() {
     system.tasks[idx].completed = isMatch
     if (isMatch) {
       await evaluate();
-      return;
     }
   } else if (selectedTask.value.kind === 'select-options') {
     if (isMatch) {
       await evaluate();
-      return;
     }
   }
 

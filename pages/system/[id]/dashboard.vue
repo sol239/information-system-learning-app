@@ -5,7 +5,6 @@
             <TaskList :system-id="system?.id" />
         </aside>-->
         <LocalNavbar :items="localItems" class />
-        <UButton @click="persistentStorageTestStore.incrementCounter">Increment Counter</UButton>
         <main class="dashboard-main">
             <div class="dashboard-content-row">
                 <div class="dashboard-content-main">

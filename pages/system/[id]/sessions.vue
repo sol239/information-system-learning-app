@@ -7,26 +7,34 @@
             <!-- Sessions Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="session in sessions" :key="session.id" class="session-card">
+
                     <!-- Session Header -->
                     <div class="session-header">
+                        <!-- Session Capacity Status -->
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ t('session') }} {{ session.id }}
                             </h3>
-                            <UBadge :color="getSessionStatusColor(session)" variant="soft">
+                            <UBadge class="highlightable" :color="getSessionStatusColor(session)" variant="soft"
+                                :id="'sessions-status-' + session.id"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-status-' + session.id, $event)">
                                 {{ getSessionStatus(session) }}
                             </UBadge>
                         </div>
 
                         <!-- Date Range -->
-                        <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                        <div class="flex items-center gap-2 text-sm text-gray-600 mb-4 highlightable"
+                            :id="'sessions-date-' + session.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-date-' + session.id, $event)">
                             <UIcon name="i-heroicons-calendar-days" />
                             <span>{{ formatDateRange(session.fromDate, session.toDate) }}</span>
                         </div>
+
                     </div>
 
                     <!-- Capacity Progress -->
-                    <div class="capacity-section mb-6">
+                    <div class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + session.id, $event)">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
                             <span class="text-sm text-gray-600">
@@ -45,7 +53,9 @@
                     </div>
 
                     <!-- Participants Section -->
-                    <div class="participants-section mb-6">
+                    <div class="participants-section mb-6 highlightable"
+                        :id="'sessions-participants-' + session.id"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
                         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                             <UIcon name="i-heroicons-users" />
                             {{ t('participants') }} ({{ session.participants.length }})
@@ -71,7 +81,9 @@
                     </div>
 
                     <!-- Supervisors Section -->
-                    <div class="supervisors-section">
+                    <div class="supervisors-section mb-6 highlightable"
+                        :id="'sessions-supervisors-' + session.id"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
                         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                             <UIcon name="i-heroicons-user-group" />
                             {{ t('supervisors') }} ({{ getSessionSupervisors(session.id).length }})
@@ -96,11 +108,14 @@
                     <!-- Session Actions -->
                     <div class="session-actions mt-6 pt-4 border-t border-gray-200">
                         <div class="flex gap-2">
-                            <UButton size="sm" variant="outline" @click="viewSessionDetails(session)" class="flex-1">
-                                {{ t('view_details') }}
+                            <div><UButton size="sm" variant="outline" @click="!highlightStore.isHighlightMode ? viewSessionDetails(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-view-' + session.id, $event)"
+                                class="flex-1 highlightable" :id="'sessions-view-' + session.id">h
+                                TO-DO
                             </UButton>
-                            <UButton size="sm" color="primary" @click="manageSession(session)" class="flex-1">
-                                {{ t('manage') }}
+                        </div>
+                            <UButton size="sm" color="primary" @click="!highlightStore.isHighlightMode ? manageSession(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-manage-' + session.id, $event)"
+                                class="flex-1 highlightable" :id="'sessions-manage-' + session.id">
+                                TO-DO
                             </UButton>
                         </div>
                     </div>
@@ -132,9 +147,11 @@ import { Session } from '~/model/Session'
 import { Participant } from '~/model/Participant'
 import { Supervisor } from '~/model/Supervisor'
 import { useI18n } from 'vue-i18n'
+import { useHighlightStore } from '#imports'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
+const highlightStore = useHighlightStore()
 
 const localItems = ref([
     {
@@ -142,7 +159,7 @@ const localItems = ref([
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${selectedSystemStore.selectedId}/dashboard`,
         data_target: 'system-dashboard',
-    }, 
+    },
     {
         label: t('sessions'),
         icon: 'i-heroicons-calendar-date-range',
@@ -287,6 +304,7 @@ const manageSession = (session: Session) => {
     // Implementation for managing session
     console.log('Managing session:', session.id)
 }
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
 const createNewSession = () => {
     // Implementation for creating new session

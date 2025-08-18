@@ -12,6 +12,7 @@ export class HighlightHandler {
     }
 
     public selectElement(id: string, event: any): void {
+        console.log("Selecting element:", id)
         if (this.isHighlightOn) {
             console.log("HIGHLIGHT ON:", this.isHighlightOn)
             const element = event.currentTarget;
