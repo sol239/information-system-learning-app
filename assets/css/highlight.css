@@ -1,6 +1,6 @@
 .highlighted-yellow {
-    border: 4px solid #facc15;
-    border-radius: 6px;
+    border: 6px solid #facc15;
+    border-radius: 12px;
     transition: all 0.3s;
     background: none !important;
     position: relative;
@@ -8,10 +8,12 @@
     animation: illuminate 2s ease-in-out infinite alternate;
     box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
     cursor: pointer;
+    z-index: 10;
+
 }
 
 .highlighted-selected {
-    border: 5px solid #f59e0b;
+    border: 6px solid #f59e0b;
     border-radius: 8px;
     transition: all 0.3s;
     background: none !important;
@@ -24,7 +26,7 @@
 }
 
 .highlighted-dimmed {
-    border: 1px solid #facc15;
+    border: 6px solid #facc15;
     border-radius: 6px;
     transition: all 0.3s;
     background: none !important;
@@ -41,13 +43,9 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(250, 204, 21, 0.1), transparent);
+    background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.1), transparent);
     z-index: 1;
     pointer-events: none;
-}
-
-.highlighted-selected::before {
-    background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.2), transparent);
 }
 
 .highlighted-yellow>*,
@@ -93,11 +91,11 @@
 
 .highlightable {
     z-index: 2000;
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .highlightable:hover {
-  background-color: rgba(100, 100, 255, 0.1);
+    background-color: rgba(100, 100, 255, 0.1);
 
 }
 
@@ -128,4 +126,3 @@
         border-color: #facc15;
     }
 }
-

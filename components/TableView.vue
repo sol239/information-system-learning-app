@@ -156,25 +156,25 @@ watch(showEditor, (newValue) => {
 // Add these new helper methods
 function isArrayColumn(value: any): boolean {
     if (!value) return false
-    
+
     // Check if it's already an array
     if (Array.isArray(value)) return true
-    
+
     // Check if it's a string that looks like an array
     if (typeof value === 'string') {
         const trimmed = value.trim()
         return trimmed.startsWith('[') && trimmed.endsWith(']')
     }
-    
+
     return false
 }
 
 function parseArrayData(value: any): string[] {
     if (!value) return []
-    
+
     // If it's already an array, return it
     if (Array.isArray(value)) return value
-    
+
     // If it's a string representation of an array, parse it
     if (typeof value === 'string') {
         try {
@@ -188,7 +188,7 @@ function parseArrayData(value: any): string[] {
             }
         }
     }
-    
+
     return []
 }
 
@@ -317,7 +317,7 @@ function openEditorForColumn(col: any) {
         ) {
             orderClause = ` ORDER BY "${editingColumn.value}" ${currentSort.value.order.toUpperCase()}`
         }
-    draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${props.selectedTableName}${orderClause}`
+        draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${props.selectedTableName}${orderClause}`
     } else {
         draftSqlQuery.value = ''
     }
@@ -379,26 +379,24 @@ defineExpose({
 <template>
     <div>
         <div class="flex flex-row items-center gap-4 w-full px-4 py-2">
+
             <!-- Table Selector -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 highlightable" id="database-select-table"
+                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('database-select-table', $event)">
                 <label for="table-select">{{ t('select_table') }}:</label>
-                <USelect 
-                    :model-value="selectedTableName" 
-                    :items="tableNames" 
-                    class="w-48" 
-                    @update:model-value="handleTableSelect"
-                />
+                <USelect :model-value="selectedTableName" :items="tableNames" class="w-48"
+                    @update:model-value="handleTableSelect" />
             </div>
 
             <!-- Add Button -->
             <UButton variant="subtle" @click="addMethod">{{ t('add') }}</UButton>
 
             <!-- Global Filter Input -->
-            <UInput 
-                v-model="globalFilter" 
-                class="max-w-sm"
-                :placeholder="`${t('filter')} ${selectedTableName || 'items'}...`" 
-            />
+            <div class="highlightable" id="database-filter"
+                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('database-filter', $event)">
+                <UInput :disabled="highlightStore.isHighlightMode" v-model="globalFilter" class="max-w-sm"
+                    :placeholder="`${t('filter')} ${selectedTableName || 'items'}...`" />
+            </div>
 
             <!-- SQL Query Display -->
             <div class="ml-auto text-sm text-gray-500 font-mono flex items-center">
@@ -416,17 +414,22 @@ defineExpose({
                 <tr>
                     <th v-for="col in autoColumns.filter(col => col.id !== 'action')" :key="col.accessorKey || col.id"
                         class="px-4 py-2 text-left font-semibold relative">
-                        <span :id="`table-${col.accessorKey}`" v-if="typeof col.header === 'function'" class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-${col.accessorKey}`, $event)">
+                        <span :id="`table-${col.accessorKey}`" v-if="typeof col.header === 'function'"
+                            class="highlightable"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-${col.accessorKey}`, $event)">
                             <component :is="col.header()" />
                         </span>
-                        <span v-else :id="`table-${col.accessorKey}`" class="highlightable" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-${col.accessorKey}`, $event)">
+                        <span v-else :id="`table-${col.accessorKey}`" class="highlightable"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(`table-${col.accessorKey}`, $event)">
                             {{ col.header }}
                         </span>
                         <!-- Edit icon for column -->
-                        <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @click="openEditorForColumn(col)" />
+                        <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
+                            @click="openEditorForColumn(col)" />
                     </th>
                     <!-- Pokud existuje sloupec 'od' a 'do', přidej třetí sloupec 'délka' -->
-                    <th v-if="columnNames.includes('od') && columnNames.includes('do')" class="px-4 py-2 text-left font-semibold">
+                    <th v-if="columnNames.includes('od') && columnNames.includes('do')"
+                        class="px-4 py-2 text-left font-semibold">
                         Délka
                     </th>
                 </tr>
@@ -458,11 +461,8 @@ defineExpose({
                         <!-- Special rendering for array data columns (like roles, alergeny, etc.) -->
                         <template v-else-if="isArrayColumn(row[col.accessorKey])">
                             <div class="flex flex-wrap gap-1">
-                                <UBadge 
-                                    v-for="(item, index) in parseArrayData(row[col.accessorKey])" 
-                                    :key="index"
-                                    size="md"
-                                >
+                                <UBadge v-for="(item, index) in parseArrayData(row[col.accessorKey])" :key="index"
+                                    size="md">
                                     {{ item }}
                                 </UBadge>
                             </div>
@@ -491,15 +491,10 @@ defineExpose({
             </tbody>
         </table>
 
-        <EditComponentModal
-            :showEditor="showEditor"
-            :draftHtmlTemplate="draftHtmlTemplate"
-            :draftSqlQuery="draftSqlQuery"
-            @update:showEditor="showEditor = $event"
-            @update:draftHtmlTemplate="draftHtmlTemplate = $event"
-            @update:draftSqlQuery="draftSqlQuery = $event"
-            @applyChanges="applyChanges"
-        />
+        <EditComponentModal :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate"
+            :draftSqlQuery="draftSqlQuery" @update:showEditor="showEditor = $event"
+            @update:draftHtmlTemplate="draftHtmlTemplate = $event" @update:draftSqlQuery="draftSqlQuery = $event"
+            @applyChanges="applyChanges" />
     </div>
 </template>
 
