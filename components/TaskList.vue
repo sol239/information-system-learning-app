@@ -275,21 +275,6 @@ onMounted(() => {
 })
 
 /* 11. Methods */
-function addTask() {
-  if (!newTaskText.value.trim() || !system) return
-
-  const newTask = new Task(
-    Date.now(),
-    newTaskText.value.trim(),
-    '',
-    false,
-    'general',
-    ''
-  )
-
-  system.tasks.push(newTask)
-  newTaskText.value = ''
-}
 
 async function handleRepair(event: MouseEvent) {
   // print selected task answer

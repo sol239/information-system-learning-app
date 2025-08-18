@@ -134,5 +134,8 @@
     "participant_details": "Detaily účastníka",
     "development": "Vývoj",
     "add_supervisor": "Přidat vedoucího",
-    "supervisor_details": "Detaily vedoucího"
+    "supervisor_details": "Detaily vedoucího",
+    "refresh_tasks_success": "Úkoly úspěšně obnoveny",
+    "refresh_tasks_error": "Chyba při obnově úkolů",
+    "refresh_tasks": "Obnovit úkoly"
 }

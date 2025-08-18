@@ -5,15 +5,6 @@
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
                 <USelectMenu v-model="value" :items="filterSessionsItems" />
-                <div v-if="selectedSessionInfo" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-                    <UIcon name="i-heroicons-users" class="w-4 h-4 text-gray-600" />
-                    <span class="text-sm font-medium text-gray-700">
-                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{ selectedSessionInfo.totalCapacity }}
-                    </span>
-                    <UBadge :color="getCapacityBadgeColor(selectedSessionInfo.fillPercentage)" variant="soft" size="sm" class="font-bold">
-                        {{ Math.round(selectedSessionInfo.fillPercentage) }}%
-                    </UBadge>
-                </div>
                 <div class="ml-auto">
                     <!-- Add Supervisor Drawer -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
@@ -304,29 +295,7 @@ const filteredSupervisors = computed(() => {
 const toast = useToast()
 
 const selectedSessionInfo = computed(() => {
-    if (value.value.value === 'all') {
-        const totalCapacity = sessions.value.reduce((sum, session) => sum + session.capacity, 0)
-        const currentCount = supervisors.value.length
-        const fillPercentage = totalCapacity > 0 ? (currentCount / totalCapacity) * 100 : 0
-        return {
-            currentCount,
-            totalCapacity,
-            fillPercentage,
-            isFull: currentCount >= totalCapacity,
-            isNearFull: fillPercentage >= 80
-        }
-    }
-    const session = sessions.value.find(s => s.id === value.value.value)
-    if (!session) return null
-    const currentCount = supervisors.value.filter(s => s.sessionId === session.id).length
-    const fillPercentage = (currentCount / session.capacity) * 100
-    return {
-        currentCount,
-        totalCapacity: session.capacity,
-        fillPercentage,
-        isFull: currentCount >= session.capacity,
-        isNearFull: fillPercentage >= 80
-    }
+    return null
 })
 
 // Reactive database monitoring using computed hash

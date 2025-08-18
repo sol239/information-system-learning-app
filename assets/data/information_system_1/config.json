@@ -798,7 +798,7 @@
             "kind": "repair",
             "answer": "stats-participants-sql.vue == SELECT COUNT(*) as count FROM účastníci && stats-meals-sql.vue == SELECT COUNT(*) as count FROM jídla",
             "elementClass": [],
-            "round": 3,
+            "round": 2,
             "is_editable": true,
             "error-components": [
                 {
@@ -879,7 +879,7 @@
             "answer": "",
             "elementClass": "table-alergeny",
             "is_editable": false,
-            "round": 3,
+            "round": 4,
             "options": {
                 "correct_option": "Tabulka špatně zobrazuje data.",
                 "wrong_option_1": "Formulář špatně ukládá data.",

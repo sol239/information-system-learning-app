@@ -40,6 +40,13 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     }
   }
 
+  function resetTasks() {
+    clearSelectedTaskId()
+    clearSelectedTask()
+    clearCurrentRound()
+    completedTasksCount.value = 0
+  }
+
   const componentsToFind = computed(() => selectedTask.value?.componentsIdsToFind || [])
 
 
@@ -55,7 +62,8 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     setSelectedTask,
     clearSelectedTask,
     setSelectedTaskComponentsToFind,
-    componentsToFind
+    componentsToFind,
+    resetTasks
   }
 }, {
   persist: true

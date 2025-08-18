@@ -42,7 +42,16 @@ export const useScoreStore = defineStore('score', () => {
     score.value = correctAnswers.value - wrongAnswers.value;
   }
 
-  return { score, setScore, correctAnswers, wrongAnswers, incrementCorrectAnswers, incrementWrongAnswers, incrementScore, decrementScore, updateScore, addUserRecord, getUserRecords }
+  function resetScore() {
+    score.value = 0;
+    correctAnswers.value = 0;
+    wrongAnswers.value = 0;
+
+    // TODO: shall i reset this also?
+    userRecords.value = [];
+  }
+
+  return { score, setScore, correctAnswers, wrongAnswers, incrementCorrectAnswers, incrementWrongAnswers, incrementScore, decrementScore, updateScore, addUserRecord, getUserRecords, resetScore }
 }, {
   persist: true
 })

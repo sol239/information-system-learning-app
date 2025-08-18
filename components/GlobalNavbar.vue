@@ -34,8 +34,11 @@
           <div class="flex flex-col gap-2">
             <UButton :label="$t('refresh_components')" color="primary" variant="outline" icon="i-heroicons-arrow-path"
               @click="refreshComponents" />
-            <UButton :label="$t('refresh_database')" color="primary" variant="outline" icon="i-heroicons-arrow-path"
+            <UButton :label="$t('refresh_database')" color="lime" variant="outline" icon="i-heroicons-arrow-path"
               @click="refreshDatabase" />
+            <UButton :label="$t('refresh_tasks')" color="sky" variant="outline" icon="i-heroicons-arrow-path"
+              @click="refreshTasks" />
+
           </div>
         </UCard>
       </template>
@@ -67,11 +70,9 @@ const selectedSystemStore = useSelectedSystemStore()
 const settingsStore = useSettingsStore()
 const informationSystemStore = useInformationSystemStore()
 
-import { useValuatorStore } from '#imports';
 import { useComponentCodeStore } from '#imports';
 import { toast } from '#build/ui'
 
-useValuatorStore()
 const componentCodeStore = useComponentCodeStore()
 
 /* 3. Context hooks */
@@ -150,11 +151,16 @@ onMounted(() => {
   })
 })
 
+
+
+
 /* 11. Methods */
 async function handleHelperClick() {
   // Placeholder for helper click logic
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sqsl.vue"));
-  console.log(selectedSystemStore.selectedSystem?.db.query("SELECT * FROM účastníci").results);
+  console.log(ComponentHandler.isInErrorComponents("stats-supervisors.vue"));
+  const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql");
+  console.log(errorSql);
 }
 
 async function refreshComponents() {
@@ -169,6 +175,26 @@ async function refreshComponents() {
   } catch {
     toast.add({
       title: t('component_refresh_error') || 'Component refresh error',
+      color: 'red',
+      icon: 'i-lucide-alert-triangle'
+    })
+  }
+}
+
+async function refreshTasks() {
+  try {
+    selectedTaskStore.resetTasks()
+    scoreStore.resetScore()
+    errorComponentStore.clearErrorComponents()
+    ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
+    toast.add({
+      title: t('refresh_tasks_success') || 'Tasks refreshed successfully',
+      color: 'primary',
+      icon: 'i-lucide-check-circle'
+    })
+  } catch {
+    toast.add({
+      title: t('refresh_tasks_error') || 'Tasks refresh error',
       color: 'red',
       icon: 'i-lucide-alert-triangle'
     })
@@ -216,35 +242,6 @@ async function refreshDatabase() {
   }
 }
 
-async function refreshSystem() {
-  // This could involve reloading the current system data, resetting states, etc.
-  console.log("Refreshing system...");
-  // Example: Resetting component codes
-  componentCodeStore.resetAllComponentCodes();
-  const handler = new FileHandler();
-  const systems: InformationSystem[] = handler.getInformationSystems();
-  console.log(selectedSystemStore.selectedId);
-  console.log(systems);
-
-  // from systems find system with current id as selectedSystemId and use its table
-
-  for (const system of systems) {
-    console.log("SYSTEM ID:", system.id);
-    console.log("SELECTED ID:", selectedSystemStore.selectedId);
-    if (system.id === selectedSystemStore.selectedId) {
-      if (selectedSystemStore.selectedSystem) {
-        selectedSystemStore.selectedSystem.tables = system.tables;
-      }
-      console.log("UPDATED");
-      break;
-    }
-  }
-
-  if (selectedSystemStore.selectedSystem) {
-    selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData);
-  }
-
-}
 
 /* 12. Lifecycle */
 // none

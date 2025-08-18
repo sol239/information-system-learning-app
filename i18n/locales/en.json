@@ -136,6 +136,9 @@
     "save_changes": "Save Changes",
     "participant_details": "Details of Participant",
     "development": "Development",
-    "add_supervisor": "Přidat vedoucího",
-    "supervisor_details": "Detaily vedoucího"
+    "add_supervisor": "Add Supervisor",
+    "supervisor_details": "Details of Supervisor",
+    "refresh_tasks_success": "Tasks refreshed successfully",
+    "refresh_tasks_error": "Error refreshing tasks",
+    "refresh_tasks": "Refresh Tasks"
 }
