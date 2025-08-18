@@ -187,6 +187,15 @@ async function refreshTasks() {
     scoreStore.resetScore()
     errorComponentStore.clearErrorComponents()
     ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
+
+    for (let j = 0; j < informationSystemStore.systems.length; j++) {
+      const system = informationSystemStore.systems[j];
+      for (let i = 0; i < system.tasks.length; i++) {
+        system.tasks[i].completed = false;
+        system.tasks[i].componentsRepaired = false;
+      }
+    }
+
     toast.add({
       title: t('refresh_tasks_success') || 'Tasks refreshed successfully',
       color: 'primary',
