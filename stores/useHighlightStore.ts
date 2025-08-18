@@ -22,4 +22,6 @@ export const useHighlightStore = defineStore('highlight', () => {
     isEditModeActive,
     toggleEdit
   }
+}, {
+  persist: true
 })

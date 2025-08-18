@@ -19,4 +19,6 @@ export const useSelectedTableStore = defineStore('selectedTable', () => {
     select,
     clear
   }
+}, {
+  persist: true
 })

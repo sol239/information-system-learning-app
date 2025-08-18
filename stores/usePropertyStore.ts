@@ -18,4 +18,6 @@ export const usePropertyStore = defineStore('property', () => {
         setPropertiesNameTypeMap,
         addProperty
     }
+}, {
+  persist: true
 })

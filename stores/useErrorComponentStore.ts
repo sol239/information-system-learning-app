@@ -33,4 +33,6 @@ export const useErrorComponentStore = defineStore('errorComponent', () => {
     clearErrorComponents,
     removeErrorComponent
   }
+}, {
+  persist: true
 })

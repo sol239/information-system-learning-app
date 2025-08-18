@@ -10,9 +10,9 @@ export const useSettingsStore = defineStore('settings', () => {
         ["toggle_highlight_mode", 'h']
     ]))
 
-
-
     return {
         shortcuts
     }
+}, {
+  persist: true
 })

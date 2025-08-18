@@ -33,4 +33,6 @@ export const useValuatorStore = defineStore('valuator', () => {
   return {
     kristynaAlergeny
   }
+}, {
+  persist: true
 })

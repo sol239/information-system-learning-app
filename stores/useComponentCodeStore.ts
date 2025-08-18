@@ -37,9 +37,7 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     }
 
     // DB reset
-    const tasks = TaskQueue.getTasks();
-    
-
+    // const tasks = TaskQueue.getTasks();
   }
 
   return {
@@ -52,4 +50,6 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     resetComponentCode,
     resetAllComponentCodes
   }
+}, {
+  persist: true,
 })

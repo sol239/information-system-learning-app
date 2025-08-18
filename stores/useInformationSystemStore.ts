@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
-import type { InformationSystem } from '~/model/InformationSystem'
+import { InformationSystem } from '~/model/InformationSystem'
+import { ref } from 'vue'
+import { sys } from 'typescript'
 
 export const useInformationSystemStore = defineStore('informationSystem', () => {
-  // State
   const systems = ref<InformationSystem[]>([])
 
-  // Actions
   function addSystem(system: InformationSystem) {
     systems.value.push(system)
   }
@@ -14,10 +14,25 @@ export const useInformationSystemStore = defineStore('informationSystem', () => 
     systems.value = []
   }
 
-  // Return
+  async function initializeDbs() {
+    console.log("Reinitializing databases.")
+    for (let i = 0; i < systems.value.length; i++) {
+        const dbHandler = await InformationSystem.databaseInitStatic(systems.value[i].configData);
+        systems.value[i].db = dbHandler;
+        console.log("Results:", systems.value[i].db.query("SELECT * FROM účastníci").results);
+    }
+  }
+
   return {
     systems,
     addSystem,
-    clearSystems
+    clearSystems,
+    initializeDbs
+  }
+}, {
+  persist: {
+    afterHydrate: async (context) => {
+      await context.store.initializeDbs()
+    }
   }
 })
