@@ -86,8 +86,10 @@ async function onSubmit() {
           : localFormState.value[col]
       )
       const sql = `INSERT INTO ${props.selectedTableName} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
+            console.log("SQL Query: ", sql)
+
       props.selectedSystem?.db.exec(sql)
-      toast.add({ title: t('add_toast_success'), color: 'success' })
+      toast.add({ title: t('add_toast_success'), color: 'primary' })
     } else {
       // Update the row if id is present
       const setClause = props.columnNames
@@ -96,8 +98,9 @@ async function onSubmit() {
         .join(', ')
 
       const sql = `UPDATE ${props.selectedTableName} SET ${setClause} WHERE id = '${id}'`
+      console.log("SQL Query: ", sql)
       props.selectedSystem?.db.exec(sql)
-      toast.add({ title: t('edit_entity_toast_success'), color: 'success' })
+      toast.add({ title: t('edit_entity_toast_success'), color: 'primary' })
     }
 
     modalOpen.value = false
@@ -106,7 +109,7 @@ async function onSubmit() {
     console.error('Error saving entity:', error)
     toast.add({
       title: t('save_entity_error') || 'Error saving entity',
-      color: 'error',
+      color: 'red',
       icon: 'i-lucide-alert-triangle'
     })
   }

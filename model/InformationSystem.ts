@@ -24,9 +24,15 @@ export class InformationSystem {
     this.db = new DbHandler();
   }
 
-  public databaseInit(json: any): void {
+  public static async databaseInitStatic(json: any) {
+    const dbHandler = await DbHandler.fromJSON(json);
+    console.log("Database initialized for Information System (static):", json.name);
+    return dbHandler;
+  }
+
+  public async databaseInit(json: any): Promise<void> {
     console.log("Initializing database for Information System:", this.name);
-    this.db.init(json);
+    await this.db.init(json);
     console.log("Database initialized for Information System:", this.name);
   }
 

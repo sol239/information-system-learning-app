@@ -238,7 +238,7 @@ watch(() => selectedTaskStore.currentRound, (newRound) => {
   if (newTasksCount !== 0) {
     toast.add({
       title: t('new_tasks_added', { count: newTasksCount }),
-      color: 'success',
+      color: 'primary',
       icon: 'i-lucide-circle-check'
     })
 
@@ -246,7 +246,7 @@ watch(() => selectedTaskStore.currentRound, (newRound) => {
     // TODO: trochu zabugované ještě, někdy se zobrazlo jen po dokončení roundu
     toast.add({
       title: t('all_tasks_completed'),
-      color: 'secondary',
+      color: 'sky',
       icon: 'i-lucide-circle-check'
     })
   }

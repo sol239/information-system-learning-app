@@ -50,6 +50,16 @@ const localItems = ref([
         data_target: 'system-sessions',
     },
     {
+        label: t('participants'),
+        to: `/system/${selectedSystemStore.selectedId}/participants`,
+        data_target: 'system-participants',
+    },
+    {
+        label: t('supervisors'),
+        to: `/system/${selectedSystemStore.selectedId}/supervisors`,
+        data_target: 'system-supervisors',
+    },
+    {
         label: t('database'),
         icon: 'i-heroicons-table-cells',
         to: `/system/${selectedSystemStore.selectedId}/database`,
@@ -241,7 +251,7 @@ function handleEdit(row: any) {
     if (!entity) {
         toast.add({
             title: t('edit_entity_toast_error') || 'Entity not found',
-            color: 'error',
+            color: 'red',
             icon: 'i-lucide-alert-triangle'
         })
         return
@@ -272,14 +282,14 @@ function handleDelete(row: any) {
         // Notify user of success
         toast.add({
             title: t('delete_toast_success'),
-            color: 'success',
+            color: 'primary',
             icon: 'i-lucide-circle-check'
         })
     } catch (error) {
         console.error(`Error deleting row from table ${selectedTableName.value}:`, error)
         toast.add({
             title: t('delete_toast_error'),
-            color: 'error',
+            color: 'red',
             icon: 'i-lucide-alert-triangle'
         })
     }

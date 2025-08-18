@@ -82,9 +82,9 @@ const draftSqlQuery = ref('')
 const draftHtmlTemplate = ref('')
 
 const supervisorsCount = computed(() => {
-  const result = props.system?.db.query(sqlQuery.value).results
-  console.log("SQL Query:", sqlQuery.value) 
-  return result?.[0]?.count || 0
+  const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
+  //const result = 0
+  return result || 0
 })
 
 const renderedHtml = computed(() => {

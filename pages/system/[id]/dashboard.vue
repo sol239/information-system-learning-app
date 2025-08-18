@@ -5,6 +5,7 @@
             <TaskList :system-id="system?.id" />
         </aside>-->
         <LocalNavbar :items="localItems" class />
+        <UButton @click="persistentStorageTestStore.incrementCounter">Increment Counter</UButton>
         <main class="dashboard-main">
             <div class="dashboard-content-row">
                 <div class="dashboard-content-main">
@@ -46,7 +47,7 @@ import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
-
+import { usePersistentStorageTestStore} from "#imports"
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 
@@ -54,7 +55,7 @@ import '~/assets/css/highlight.css'
 const store = useInformationSystemStore()
 const highlightStore = useHighlightStore()
 const selectedComponentStore = useSelectedComponentStore()
-
+const persistentStorageTestStore = usePersistentStorageTestStore()
 /* 3. Kontextové hooky */
 const route = useRoute()
 const { t } = useI18n()
@@ -100,21 +101,31 @@ const sessionColorMap = computed(function () {
     return map
 })
 const sessionProgress = computed(() => {
-    const result = system.value?.db.query(`SELECT * FROM turnusy`).results || []
-    return result.map((turnus, idx) => {
-        const count = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`).results[0]?.count || 0
-        const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
+    // Check if system exists and database is initialized
+    if (!system.value?.db || typeof system.value.db.query !== 'function') {
+        return []
+    }
+    
+    try {
+        const result = system.value.db.query(`SELECT * FROM turnusy`).results || []
+        return result.map((turnus, idx) => {
+            const countResult = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`)
+            const count = countResult?.results?.[0]?.count || 0
+            const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
 
-
-        return {
-            id: turnus.id,
-            name: `Turnus ${turnus.id}`,
-            color: sessionColors[idx % sessionColors.length],
-            count: count,
-            capacity: turnus.kapacita,
-            percent: percent
-        }
-    })
+            return {
+                id: turnus.id,
+                name: `Turnus ${turnus.id}`,
+                color: sessionColors[idx % sessionColors.length],
+                count: count,
+                capacity: turnus.kapacita,
+                percent: percent
+            }
+        })
+    } catch (error) {
+        console.warn('Database query failed in sessionProgress:', error)
+        return []
+    }
 })
 
 const currentYear = computed(function () { return currentDate.value.getFullYear() })
@@ -195,12 +206,22 @@ const localItems = ref([
         icon: 'i-heroicons-chart-bar-20-solid',
         to: `/system/${systemId}/dashboard`,
         data_target: 'system-dashboard',
-    }, 
+    },
     {
         label: t('sessions'),
         icon: 'i-heroicons-calendar-date-range',
         to: `/system/${systemId}/session`,
         data_target: 'system-sessions',
+    },
+    {
+        label: t('participants'),
+        to: `/system/${systemId}/participants`,
+        data_target: 'system-participants',
+    },
+    {
+        label: t('supervisors'),
+        to: `/system/${systemId}/supervisors`,
+        data_target: 'system-supervisors',
     },
     {
         label: t('database'),

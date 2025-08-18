@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Rendered Stat Card -->
-    <div class="stat-card-wrapper" >
+    <div class="stat-card-wrapper">
       <div id="stats-meals" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
 
       <!-- Edit Icon Button -->
@@ -34,8 +34,8 @@ const { t } = useI18n()
 // none
 
 /* 5. Props */
-const props = defineProps<{ 
-  system: any 
+const props = defineProps<{
+  system: any
 }>()
 
 /* 6. Emits */
@@ -83,8 +83,10 @@ const navigateJs = computed(() => {
 })
 
 const mealsCount = computed(() => {
-  const result = props.system?.db.query(sqlQuery.value).results
-  return result?.[0]?.count || 0
+  const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
+  //const result = 0
+
+  return result || 0
 })
 
 const renderedHtml = computed(() => {

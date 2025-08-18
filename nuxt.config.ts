@@ -2,7 +2,11 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt'],
+  piniaPluginPersistedstate: {
+    storage: 'localStorage',
+    debug: true,
+  },
   css: ['./assets/css/main.css'],
   ssr: false,
   i18n: {

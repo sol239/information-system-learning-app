@@ -8,6 +8,22 @@ export class DbHandler {
         this.db = null;
     }
 
+    public static async fromJSON(json: any): Promise<DbHandler> {
+
+        const SQL = await initSqlJs({
+            // github pages:
+            // locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
+            
+            locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
+        });
+
+        const dbHandler: DbHandler = new DbHandler();
+        dbHandler.db = new SQL.Database();
+        dbHandler.createTables();
+        dbHandler.insertData(json.tables);
+        return dbHandler;
+    }
+
     public async init(json: any): Promise<void> {
         // Use the WASM file from the public directory
         const SQL = await initSqlJs({

@@ -56,6 +56,7 @@ import { Task } from '~/model/Task'
 import { useSelectedTaskStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
 import { useSettingsStore } from '#imports'
+import { useInformationSystemStore } from '#imports'
 
 /* 2. Stores */
 const highlightStore = useHighlightStore()
@@ -64,6 +65,8 @@ const errorComponentStore = useErrorComponentStore()
 const selectedTaskStore = useSelectedTaskStore()
 const selectedSystemStore = useSelectedSystemStore()
 const settingsStore = useSettingsStore()
+const informationSystemStore = useInformationSystemStore()
+
 import { useValuatorStore } from '#imports';
 import { useComponentCodeStore } from '#imports';
 import { toast } from '#build/ui'
@@ -112,6 +115,12 @@ const items = computed<NavigationMenuItem[]>(() => [
     to: '/settings',
     data_target: 'settings',
   },
+  {
+    label: t('development'),
+    icon: 'i-heroicons-code-bracket',
+    to: '/development',
+    data_target: 'development',
+  },
 ])
 
 const isOnSystemDetailPage = computed(() => {
@@ -145,7 +154,7 @@ onMounted(() => {
 async function handleHelperClick() {
   // Placeholder for helper click logic
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sqsl.vue"));
-  console.log(settingsStore.shortcuts);
+  console.log(selectedSystemStore.selectedSystem?.db.query("SELECT * FROM účastníci").results);
 }
 
 async function refreshComponents() {
@@ -190,13 +199,14 @@ async function refreshDatabase() {
     }
 
     if (selectedSystemStore.selectedSystem) {
-      selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData)
+      await selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData)
+      toast.add({
+        title: t('refresh_database_success') || 'Database refreshed successfully',
+        color: 'primary',
+        icon: 'i-lucide-check-circle'
+      })
     }
-    toast.add({
-      title: t('refresh_database_success') || 'Database refreshed successfully',
-      color: 'primary',
-      icon: 'i-lucide-check-circle'
-    })
+
   } catch {
     toast.add({
       title: t('refresh_database_error') || 'Database refresh error',
