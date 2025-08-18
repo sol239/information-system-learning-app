@@ -142,7 +142,7 @@ onMounted(() => {
 async function handleHelperClick() {
   // Placeholder for helper click logic
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sql.vue"));
-  console.log(componentCodeStore.getComponentCode("stats-meals-js.vue"));
+  console.log(selectedTaskStore.selectedTask?.feedback);
 }
 
 async function refreshComponents() {

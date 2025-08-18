@@ -819,7 +819,8 @@
                     },
                     "error-component-name": ""
                 }
-            ]
+            ],
+            "feedback": "Správně jsi opravil SQL dotazy dvou komponent. Komponenta, která měla zobrazovat počet účastníku chybně zobrazovala počet vedoucích a komponenta, která měla zobrazovat počet jídel, zobrazovala počet turnusů. Opravil jsi to tak, že jsi změnil SQL dotazy na správné."
         },
         {
             "id": 2,
@@ -843,7 +844,8 @@
                     },
                     "error-component-name": ""
                 }
-            ]
+            ],
+            "feedback": "Správně jsi zvolil komponentu, která zobrazovala chybně počet dozorčích."
         },
         {
             "id": 3,
@@ -865,7 +867,8 @@
                     },
                     "error-component-name": ""
                 }
-            ]
+            ],
+            "feedback": "Před opravením komponenty bylo možné jenom v nabídce vybrat pouze jeden alergen. Po opravení je možné jich vybrat libobolně mnoho."
         },
         {
             "id": 4,
@@ -888,7 +891,8 @@
                     "variables": {},
                     "error-component-name": ""
                 }
-            ]
+            ],
+            "feedback": "Tabulka špatně zobrazuje data, protože se v ní nezobrazují alergeny správně. Formulář ukládá data správně."
         }
     ]
 }

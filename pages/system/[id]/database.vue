@@ -40,13 +40,19 @@ const localItems = ref([
     {
         label: t('dashboard'),
         icon: 'i-heroicons-chart-bar-20-solid',
-        to: `/system/${systemId}/dashboard`,
+        to: `/system/${selectedSystemStore.selectedId}/dashboard`,
         data_target: 'system-dashboard',
+    }, 
+    {
+        label: t('sessions'),
+        icon: 'i-heroicons-calendar-date-range',
+        to: `/system/${selectedSystemStore.selectedId}/session`,
+        data_target: 'system-sessions',
     },
     {
         label: t('database'),
         icon: 'i-heroicons-table-cells',
-        to: `/system/${systemId}/database`,
+        to: `/system/${selectedSystemStore.selectedId}/database`,
         data_target: 'system-table',
     }
 ])

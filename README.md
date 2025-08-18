@@ -1,21 +1,28 @@
-# Výuková aplikace pro hledání a opravu chyb v UI
+# verze 0.1
 
-- Odkaz na [Notion](https://www.notion.so/20e3d84aceaa804fb499d820f8dc7e27?v=20e3d84aceaa80e69c54000ca16e47f9) wiki.
-- V ./concept/ jsou uloženy možné koncepty, jak by mohla aplikace vypadat/fungovat. Nejnižší číslo znamená nejstarší koncept.
-    - Součástí adresáře concept/ je i adresář ./concept/component/, který obsahuje koncepty komponent, které by mohly být použity v aplikaci, např. landing page, error page, atd. 
-- V ./docs/ jsou uloženy dokumenty, které popisují různé aspekty aplikace, např. architekturu, design, atd.
+## Jak spustit
+
+```shell
+npm install
+np run dev
+```
 
 ---
 
-## Úkoly
+## Popis
 
-V každém úkolu by měl student: 
-1. něco udělat (přidat alergen, přidat jídlo, atd.)
-2. během úkolu by měl student najít chybu (špatné SQL, špatný překlad, atd.)
-3. poté by ji měl opravit. (Úprava SQL, úprava překladu, atd.)
+Jedná se o první verzi programu.
 
-### 1.
+## Druhy chyb
 
+### Select
 
+Cílem je najít a komponentu, ve které se konkrétní chyba nachází.
+Po opravení - tj. potom, co je task označen jako completed, tak se začne zobrazovat správná komponenta.
 
+#### Jak implementovat nové
+- Úprava komponenty XXXXX-error.vue, která se použije pokud ji nějaký task obsahuje.
 
+---
+
+### Repair
