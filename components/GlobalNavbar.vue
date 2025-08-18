@@ -55,12 +55,15 @@ import { useErrorComponentStore } from '#imports'
 import { Task } from '~/model/Task'
 import { useSelectedTaskStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
+import { useSettingsStore } from '#imports'
+
 /* 2. Stores */
 const highlightStore = useHighlightStore()
 const scoreStore = useScoreStore()
 const errorComponentStore = useErrorComponentStore()
 const selectedTaskStore = useSelectedTaskStore()
 const selectedSystemStore = useSelectedSystemStore()
+const settingsStore = useSettingsStore()
 import { useValuatorStore } from '#imports';
 import { useComponentCodeStore } from '#imports';
 import { toast } from '#build/ui'
@@ -141,8 +144,8 @@ onMounted(() => {
 /* 11. Methods */
 async function handleHelperClick() {
   // Placeholder for helper click logic
-  //console.log(componentCodeStore.getComponentCode("stats-supervisors-sql.vue"));
-  console.log(selectedTaskStore.selectedTask);
+  //console.log(componentCodeStore.getComponentCode("stats-supervisors-sqsl.vue"));
+  console.log(settingsStore.shortcuts);
 }
 
 async function refreshComponents() {

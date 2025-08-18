@@ -87,5 +87,8 @@
     "js_code": "JavaScript code",
     "html_template": "HTML template",
     "database": "Database",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "open_taskview": "Open Tasks",
+    "toggle_edit_mode": "Toggle Edit Mode",
+    "toggle_highlight_mode": "Toggle Highlight Mode"
 }

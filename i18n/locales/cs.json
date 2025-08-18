@@ -87,5 +87,8 @@
     "js_code": "JavaScript kód",
     "html_template": "HTML šablona",
     "database": "Databáze",
-    "feedback": "Zpětná vazba"
+    "feedback": "Zpětná vazba",
+    "open_taskview": "Zobrazit úkoly",
+    "toggle_edit_mode": "Přepnout režim úprav",
+    "toggle_highlight_mode": "Přepnout režim zvýraznění"
 }
