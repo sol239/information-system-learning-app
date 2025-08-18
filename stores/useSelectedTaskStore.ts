@@ -65,6 +65,4 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     componentsToFind,
     resetTasks
   }
-}, {
-  persist: true
 })

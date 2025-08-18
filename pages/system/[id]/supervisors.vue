@@ -8,7 +8,7 @@
                 <div class="ml-auto">
                     <!-- Add Supervisor Drawer -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
-                        <UButton color="primary" variant="outline" @click="createNewSupervisor" icon="i-heroicons-plus">
+                        <UButton color="violet" variant="outline" @click="createNewSupervisor" icon="i-heroicons-plus">
                             {{ t('add_supervisor') }}
                         </UButton>
                         <template #content>
@@ -19,37 +19,37 @@
                                 <UForm :state="newSupervisor" @submit="handleAddSupervisor(newSupervisor)" class="flex flex-col space-y-4">
                                     <div>
                                         <label for="name" class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                        <UInput id="name" v-model="newSupervisor.name" placeholder="Zadejte jméno vedoucího" />
+                                        <UInput color="violet" id="name" v-model="newSupervisor.name" placeholder="Zadejte jméno vedoucího" />
                                     </div>
                                     <div>
                                         <label for="email" class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                        <UInput id="email" v-model="newSupervisor.email" type="email" placeholder="email@example.com" />
+                                        <UInput color="violet" id="email" v-model="newSupervisor.email" type="email" placeholder="email@example.com" />
                                     </div>
                                     <div>
                                         <label for="personal_number" class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                        <UInput id="personal_number" v-model="newSupervisor.personal_number" placeholder="123456/7890" />
+                                        <UInput color="violet" id="personal_number" v-model="newSupervisor.personal_number" placeholder="123456/7890" />
                                     </div>
                                     <div>
                                         <label for="phone" class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                        <UInput id="phone" v-model="newSupervisor.phone" placeholder="+420 123 456 789" />
+                                        <UInput color="violet" id="phone" v-model="newSupervisor.phone" placeholder="+420 123 456 789" />
                                     </div>
                                     <div>
                                         <label for="address" class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                        <UTextarea id="address" v-model="newSupervisor.address" placeholder="Ulice číslo, město, PSČ" :rows="2" />
+                                        <UTextarea color="violet" id="address" v-model="newSupervisor.address" placeholder="Ulice číslo, město, PSČ" :rows="2" />
                                     </div>
                                     <div>
                                         <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                        <UInput id="age" v-model="newSupervisor.age" type="number" min="18" max="100" placeholder="18" />
+                                        <UInput color="violet" id="age" v-model="newSupervisor.age" type="number" min="18" max="100" placeholder="18" />
                                     </div>
                                     <div>
                                         <label for="sessionId" class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                        <USelectMenu id="sessionId" v-model="newSupervisor.sessionId" :items="sessionOptions" placeholder="Vyberte turnus" />
+                                        <USelectMenu id="sessionId" color="violet" v-model="newSupervisor.sessionId" :items="sessionOptions" placeholder="Vyberte turnus" />
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
-                                        <UButton type="submit" color="primary" :loading="isSubmitting">
+                                        <UButton type="submit" color="violet" :loading="isSubmitting">
                                             {{ t('add') }}
                                         </UButton>
-                                        <UButton variant="outline" @click="resetForm">
+                                        <UButton variant="outline" color="violet" @click="resetForm">
                                             {{ t('cancel') }}
                                         </UButton>
                                     </div>
@@ -69,7 +69,7 @@
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ supervisor.name }}
                             </h3>
-                            <UBadge color="primary" variant="soft">
+                            <UBadge color="violet" size="lg" variant="soft">
                                 {{ t('age') }}: {{ supervisor.age }}
                             </UBadge>
                         </div>
@@ -99,7 +99,7 @@
                     <div class="supervisor-actions mt-6 pt-4 border-t border-gray-200">
                         <div class="flex gap-2">
                             <div class="ml-auto">
-                                <UButton size="sm" variant="solid" @click="viewSupervisorDetails(supervisor)" class="flex-1">
+                                <UButton size="sm" color="violet" variant="solid" @click="viewSupervisorDetails(supervisor)" class="flex-1">
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
@@ -121,37 +121,37 @@
                         <UForm :state="selectedSupervisor" @submit="handleEditSupervisor(selectedSupervisor)" class="flex flex-col space-y-4">
                             <div>
                                 <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                <UInput id="edit-name" v-model="selectedSupervisor.name" placeholder="Zadejte jméno vedoucího" />
+                                <UInput color="violet" id="edit-name" v-model="selectedSupervisor.name" placeholder="Zadejte jméno vedoucího" />
                             </div>
                             <div>
                                 <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                <UInput id="edit-email" v-model="selectedSupervisor.email" type="email" placeholder="email@example.com" />
+                                <UInput color="violet" id="edit-email" v-model="selectedSupervisor.email" type="email" placeholder="email@example.com" />
                             </div>
                             <div>
                                 <label for="edit-personal_number" class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                <UInput id="edit-personal_number" v-model="selectedSupervisor.personal_number" placeholder="123456/7890" />
+                                <UInput color="violet" id="edit-personal_number" v-model="selectedSupervisor.personal_number" placeholder="123456/7890" />
                             </div>
                             <div>
                                 <label for="edit-phone" class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                <UInput id="edit-phone" v-model="selectedSupervisor.phone" placeholder="+420 123 456 789" />
+                                <UInput color="violet" id="edit-phone" v-model="selectedSupervisor.phone" placeholder="+420 123 456 789" />
                             </div>
                             <div>
                                 <label for="edit-address" class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                <UTextarea id="edit-address" v-model="selectedSupervisor.address" placeholder="Ulice číslo, město, PSČ" :rows="2" />
+                                <UTextarea color="violet" id="edit-address" v-model="selectedSupervisor.address" placeholder="Ulice číslo, město, PSČ" :rows="2" />
                             </div>
                             <div>
                                 <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                <UInput id="edit-age" v-model="selectedSupervisor.age" type="number" min="18" max="100" placeholder="18" />
+                                <UInput color="violet" id="edit-age" v-model="selectedSupervisor.age" type="number" min="18" max="100" placeholder="18" />
                             </div>
                             <div>
                                 <label for="edit-sessionId" class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                <USelectMenu id="edit-sessionId" v-model="selectedSupervisor.sessionId" :items="sessionOptions" placeholder="Vyberte turnus" />
+                                <USelectMenu color="violet" id="edit-sessionId" v-model="selectedSupervisor.sessionId" :items="sessionOptions" placeholder="Vyberte turnus" />
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
-                                <UButton type="submit" color="primary" :loading="isSubmitting">
+                                <UButton type="submit" color="violet" :loading="isSubmitting">
                                     {{ t('save_changes') }}
                                 </UButton>
-                                <UButton variant="outline" @click="resetForm">
+                                <UButton variant="outline" color="violet" @click="resetForm">
                                     {{ t('cancel') }}
                                 </UButton>
                             </div>
@@ -162,7 +162,7 @@
 
             <!-- Pagination -->
             <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
-                <UButton variant="outline" icon="i-heroicons-chevron-left" :disabled="currentPage === 1" @click="currentPage--">
+                <UButton variant="outline" color="violet" icon="i-heroicons-chevron-left" :disabled="currentPage === 1" @click="currentPage--">
                     {{ t('previous') }}
                 </UButton>
                 <div class="flex items-center gap-2">
@@ -173,7 +173,7 @@
                         ({{ filteredSupervisors.length }} {{ t('supervisors') }})
                     </span>
                 </div>
-                <UButton variant="outline" icon="i-heroicons-chevron-right" :disabled="currentPage === totalPages" @click="currentPage++">
+                <UButton variant="outline" color="violet" icon="i-heroicons-chevron-right" :disabled="currentPage === totalPages" @click="currentPage++">
                     {{ t('next') }}
                 </UButton>
             </div>
@@ -519,7 +519,7 @@ onMounted(() => {
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
+    border: 4px solid #a684ff;
     padding: 1.5rem;
     transition: box-shadow 0.3s ease;
 }

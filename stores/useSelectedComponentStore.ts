@@ -19,6 +19,4 @@ export const useSelectedComponentStore = defineStore('selectedComponent', () => 
     select,
     clear
   }
-}, {
-  persist: true
 })

@@ -50,6 +50,4 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     resetComponentCode,
     resetAllComponentCodes
   }
-}, {
-  persist: true,
 })

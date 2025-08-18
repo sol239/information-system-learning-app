@@ -19,7 +19,7 @@
                 <div class="ml-auto">
                     <!-- Add Participant Drawer -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
-                        <UButton color="primary" variant="outline" @click="createNewParticipant"
+                        <UButton color="sky" variant="outline" @click="createNewParticipant"
                             icon="i-heroicons-plus">
                             {{ t('add_participant') }}
                         </UButton>
@@ -34,47 +34,47 @@
                                     <div>
                                         <label for="name"
                                             class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                        <UInput id="name" v-model="newParticipant.name"
+                                        <UInput color="sky" id="name" v-model="newParticipant.name"
                                             placeholder="Zadejte jméno účastníka" />
                                     </div>
                                     <div>
                                         <label for="email"
                                             class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                        <UInput id="email" v-model="newParticipant.email" type="email"
+                                        <UInput color="sky" id="email" v-model="newParticipant.email" type="email"
                                             placeholder="email@example.com" />
                                     </div>
                                     <div>
                                         <label for="personal_number"
                                             class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                        <UInput id="personal_number" v-model="newParticipant.personal_number"
+                                        <UInput color="sky" id="personal_number" v-model="newParticipant.personal_number"
                                             placeholder="123456/7890" />
                                     </div>
                                     <div>
                                         <label for="phone"
                                             class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                        <UInput id="phone" v-model="newParticipant.phone"
+                                        <UInput color="sky" id="phone" v-model="newParticipant.phone"
                                             placeholder="+420 123 456 789" />
                                     </div>
                                     <div>
                                         <label for="address"
                                             class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                        <UTextarea id="address" v-model="newParticipant.address"
+                                        <UTextarea color="sky" id="address" v-model="newParticipant.address"
                                             placeholder="Ulice číslo, město, PSČ" :rows="2" />
                                     </div>
                                     <div>
                                         <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                        <UInput id="age" v-model="newParticipant.age" type="number" min="1" max="100"
+                                        <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1" max="100"
                                             placeholder="18" />
                                     </div>
                                     <div>
                                         <label for="sessionId"
                                             class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                        <USelectMenu id="sessionId" v-model="newParticipant.sessionId"
+                                        <USelectMenu color="sky" id="sessionId" v-model="newParticipant.sessionId"
                                             :items="sessionOptions" placeholder="Vyberte turnus" />
                                     </div>
                                     <div>
                                         <label for="allergens" class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                        <USelectMenu
+                                        <USelectMenu color="sky"
                                             id="allergens"
                                             v-model="newParticipant.allergens"
                                             :items="allergenOptions"
@@ -84,10 +84,10 @@
                                         <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
-                                        <UButton type="submit" color="primary" :loading="isSubmitting">
+                                        <UButton type="submit" color="sky" :loading="isSubmitting">
                                             {{ t('add') }}
                                         </UButton>
-                                        <UButton variant="outline" @click="resetForm">
+                                        <UButton variant="outline" color="sky" @click="resetForm">
                                             {{ t('cancel') }}
                                         </UButton>
                                     </div>
@@ -108,7 +108,7 @@
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ participant.name }}
                             </h3>
-                            <UBadge color="primary" variant="soft">
+                            <UBadge size="lg" color="sky" variant="soft">
                                 {{ t('age') }}: {{ participant.age }}
                             </UBadge>
                         </div>
@@ -143,7 +143,7 @@
                         <div class="flex gap-2">
                             <!-- Edit Participant Button only -->
                             <div class="ml-auto">
-                                <UButton size="sm" variant="solid" @click="viewParticipantDetails(participant)" class="flex-1">
+                                <UButton size="sm" color="sky" variant="solid" @click="viewParticipantDetails(participant)" class="flex-1">
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
@@ -167,51 +167,51 @@
                             <div>
                                 <label for="edit-name"
                                     class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                <UInput id="edit-name" v-model="selectedParticipant.name"
+                                <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
                                     placeholder="Zadejte jméno účastníka" />
                             </div>
                             <div>
                                 <label for="edit-email"
                                     class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                <UInput id="edit-email" v-model="selectedParticipant.email"
+                                <UInput color="sky" id="edit-email" v-model="selectedParticipant.email"
                                     type="email" placeholder="email@example.com" />
                             </div>
                             <div>
                                 <label for="edit-personal_number"
                                     class="block text-sm font-medium text-white mb-1">Rodné
                                     číslo</label>
-                                <UInput id="edit-personal_number"
+                                <UInput  color="sky" id="edit-personal_number"
                                     v-model="selectedParticipant.personal_number"
                                     placeholder="123456/7890" />
                             </div>
                             <div>
                                 <label for="edit-phone"
                                     class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                <UInput id="edit-phone" v-model="selectedParticipant.phone"
+                                <UInput color="sky" id="edit-phone" v-model="selectedParticipant.phone"
                                     placeholder="+420 123 456 789" />
                             </div>
                             <div>
                                 <label for="edit-address"
                                     class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                <UTextarea id="edit-address" v-model="selectedParticipant.address"
+                                <UTextarea color="sky" id="edit-address" v-model="selectedParticipant.address"
                                     placeholder="Ulice číslo, město, PSČ" :rows="2" />
                             </div>
                             <div>
                                 <label for="edit-age"
                                     class="block text-sm font-medium text-white mb-1">Věk</label>
-                                <UInput id="edit-age" v-model="selectedParticipant.age"
+                                <UInput color="sky" id="edit-age" v-model="selectedParticipant.age"
                                     type="number" min="1" max="100" placeholder="18" />
                             </div>
                             <div>
                                 <label for="edit-sessionId"
                                     class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                <USelectMenu id="edit-sessionId"
+                                <USelectMenu color="sky" id="edit-sessionId"
                                     v-model="selectedParticipant.sessionId" :items="sessionOptions"
                                     placeholder="Vyberte turnus" />
                             </div>
                             <div>
                                 <label for="edit-allergens" class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                <USelectMenu
+                                <USelectMenu color="sky"
                                     id="edit-allergens"
                                     v-model="selectedParticipant.allergens"
                                     :items="allergenOptions"
@@ -221,10 +221,10 @@
                                 <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
-                                <UButton type="submit" color="primary" :loading="isSubmitting">
+                                <UButton type="submit" color="sky" :loading="isSubmitting">
                                     {{ t('save_changes') }}
                                 </UButton>
-                                <UButton variant="outline" @click="resetForm">
+                                <UButton variant="outline" color="sky" @click="resetForm">
                                     {{ t('cancel') }}
                                 </UButton>
                             </div>
@@ -235,7 +235,7 @@
 
             <!-- Pagination -->
             <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
-                <UButton variant="outline" icon="i-heroicons-chevron-left" :disabled="currentPage === 1"
+                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left" :disabled="currentPage === 1"
                     @click="currentPage--">
                     {{ t('previous') }}
                 </UButton>
@@ -249,7 +249,7 @@
                     </span>
                 </div>
 
-                <UButton variant="outline" icon="i-heroicons-chevron-right" :disabled="currentPage === totalPages"
+                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right" :disabled="currentPage === totalPages"
                     @click="currentPage++">
                     {{ t('next') }}
                 </UButton>
@@ -715,7 +715,7 @@ onMounted(() => {
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
+    border: 4px solid #00bcff;
     padding: 1.5rem;
     transition: box-shadow 0.3s ease;
 }

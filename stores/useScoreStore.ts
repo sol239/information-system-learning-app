@@ -52,6 +52,4 @@ export const useScoreStore = defineStore('score', () => {
   }
 
   return { score, setScore, correctAnswers, wrongAnswers, incrementCorrectAnswers, incrementWrongAnswers, incrementScore, decrementScore, updateScore, addUserRecord, getUserRecords, resetScore }
-}, {
-  persist: true
 })

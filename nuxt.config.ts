@@ -44,7 +44,8 @@ export default defineNuxtConfig({
         'yellow',
         'lime',
         'green',
-        'sky'
+        'sky',
+        'violet'
       ]
     }
   }
