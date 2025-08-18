@@ -12,7 +12,8 @@ export class Task {
       public isEditable: boolean = false,
       public status: string = '',
       public errorComponents: any[] = [],
-      public componentsIdsToFind: string[] = []
+      public componentsIdsToFind: string[] = [],
+      public feedback: string
     ) {}
 
     static fromJSON(json: any): Task {
@@ -44,7 +45,8 @@ export class Task {
         json.round ?? 1,
         isEditable,
         json.status ?? '',
-        errorComponents
+        errorComponents,
+        json.feedback ?? ''
       );
     }
 

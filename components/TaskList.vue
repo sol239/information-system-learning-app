@@ -119,6 +119,9 @@
           </div>
 
           <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
+          <div v-if="selectedTask.completed">
+            <p>{{ t('task_feedback') }}: {{ selectedTask.feedback }}</p>
+          </div>
         </div>
       </div>
 
