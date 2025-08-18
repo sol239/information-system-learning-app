@@ -83,5 +83,7 @@
     "creation_2_title": "2. Switching to a faulty component",
     "creation_2_desc": "For each component, there is a dual matching .error component, see ./components/. In the config.json file, it is possible to specify that the faulty component should be used.",
     "how_to_title": "How to create tasks using the config.json file",
-    "how_to_desc": "TODO - Needs to be completed"
+    "how_to_desc": "TODO - Needs to be completed",
+    "js_code": "JavaScript code",
+    "html_template": "HTML template"
 }

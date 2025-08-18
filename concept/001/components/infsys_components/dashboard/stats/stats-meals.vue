@@ -111,13 +111,12 @@ function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
 }
 
 function navigate() {
-
   if (highlightStore.isHighlightMode) {
     return
   }
 
-  console.log(navigateJs.value)
-  eval(navigateJs.value)
+  const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
+  navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
 }
 
 /* 12. Lifecycle */

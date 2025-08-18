@@ -46,7 +46,7 @@
         :showEditor="showEditor" 
         :draftHtmlTemplate="draftHtmlTemplate" 
         :draftSqlQuery="draftSqlQuery"
-        :draftJsCode="componentCodeStore.getComponentCode(currentComponentId + '-js.sql')"
+        :draftJsCode="componentCodeStore.getComponentCode(currentComponentId + '-js.vue')"
         :componentId="currentComponentId"
         @update:showEditor="showEditor = $event" 
         @update:draftHtmlTemplate="draftHtmlTemplate = $event"
@@ -117,6 +117,7 @@ useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 /* 11. Methods */
 function handleOpenModal(data: { componentId: string, htmlTemplate: string, sqlQuery: string }) {
   currentComponentId.value = data.componentId
+  console.log("Opening editor for component:", currentComponentId.value)
   draftHtmlTemplate.value = data.htmlTemplate
   draftSqlQuery.value = data.sqlQuery
   showEditor.value = true

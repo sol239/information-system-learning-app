@@ -58,6 +58,7 @@ function isInErrorComponents(componentFilename: string): boolean {
 
 const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-sessions-sql.vue"))
 const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-sessions-html.vue"))
+const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-sessions-js.vue"))
 
 const sqlQuery = computed(() => {
   if (isInErrorComponents("stats-sessions.vue")) {
@@ -75,6 +76,15 @@ const htmlTemplate = computed(() => {
     return errorHtml
   }
   return correctHtmlTemplate.value
+})
+
+const navigateJs = computed(() => {
+  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
+    const errorJs = ComponentHandler.getVariableValue("stats-sessions.vue", "js") || correctNavigateJs.value
+    componentCodeStore.updateComponentCode("stats-sessions-js.vue", errorJs)
+    return errorJs
+  }
+  return correctNavigateJs.value
 })
 
 const sessionsCount = computed(() => {
@@ -109,12 +119,8 @@ function navigate() {
   if (highlightStore.isHighlightMode) {
     return
   }
-
-  const systemId = selectedSystemStore.selectedId;
-  selectedTableStore.select('turnusy')
-  navigateTo({
-    path: `/system/${systemId}/table`,
-  })
+  const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
+  navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
 }
 
 /* 12. Lifecycle */

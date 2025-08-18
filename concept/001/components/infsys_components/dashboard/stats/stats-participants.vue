@@ -58,6 +58,7 @@ function isInErrorComponents(componentFilename: string): boolean {
 
 const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-participants-sql.vue"))
 const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-participants-html.vue"))
+const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-participants-js.vue"))
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
@@ -75,6 +76,15 @@ const htmlTemplate = computed(() => {
     return errorHtml
   }
   return correctHtmlTemplate.value
+})
+
+const navigateJs = computed(() => {
+  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
+    const errorJs = ComponentHandler.getVariableValue("stats-participants.vue", "js") || correctNavigateJs.value
+    componentCodeStore.updateComponentCode("stats-participants-js.vue", errorJs)
+    return errorJs
+  }
+  return correctNavigateJs.value
 })
 
 const participantsCount = computed(() => {
@@ -110,11 +120,8 @@ function navigate() {
     return
   }
 
-  const systemId = selectedSystemStore.selectedId;
-  selectedTableStore.select('účastníci')
-  navigateTo({
-    path: `/system/${systemId}/table`,
-  })
+  const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
+  navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
 }
 
 /* 12. Lifecycle */

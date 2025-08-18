@@ -1,36 +1,44 @@
 <template>
   <div v-if="showEditor" class="modal-overlay">
     <div class="modal">
-      <template v-if="draftHtmlTemplate">
-        <h3 class="editor-label html-label">HTML Template</h3>
-        <textarea
-          :value="draftHtmlTemplate"
-          @input="onHtmlInput"
-          class="code-editor html-editor"
-          spellcheck="false"
-        />
-      </template>
+      <div class="editor-container">
+        <template v-if="htmlTemplate">
+          <div class="editor-section">
+            <h3 class="editor-label html-label">{{ t('html_template') }}</h3>
+            <textarea
+              :value="htmlTemplate"
+              @input="onHtmlInput"
+              class="code-editor html-editor"
+              spellcheck="false"
+            />
+          </div>
+        </template>
 
-      <template v-if="draftSqlQuery">
-        <h3 class="editor-label sql-label">SQL Query</h3>
-        <textarea
-          :value="draftSqlQuery"
-          @input="onSqlInput"
-          class="code-editor sql-editor"
-          :class="{ 'invalid-sql': !sqlValid }"
-          spellcheck="false"
-        />
-      </template>
+        <template v-if="sqlQuery">
+          <div class="editor-section">
+            <h3 class="editor-label sql-label">{{ t('sql_query') }}</h3>
+            <textarea
+              :value="sqlQuery"
+              @input="onSqlInput"
+              class="code-editor sql-editor"
+              :class="{ 'invalid-sql': !sqlValid }"
+              spellcheck="false"
+            />
+          </div>
+        </template>
 
-      <template v-if="draftJsCode">
-        <h3 class="editor-label js-label">JavaScript Code</h3>
-        <textarea
-          :value="draftJsCode"
-          @input="onJsInput"
-          class="code-editor js-editor"
-          spellcheck="false"
-        />
-      </template>
+        <template v-if="jsCode">
+          <div class="editor-section">
+            <h3 class="editor-label js-label">{{ t('js_code') }}</h3>
+            <textarea
+              :value="jsCode"
+              @input="onJsInput"
+              class="code-editor js-editor"
+              spellcheck="false"
+            />
+          </div>
+        </template>
+      </div>
 
       <div class="modal-actions">
         <UButton
@@ -64,11 +72,9 @@ const informationSystemStore = useInformationSystemStore()
 const selectedSystemStore = useSelectedSystemStore()
 const componentCodeStore = useComponentCodeStore()
 
-/* 3. Context hooks */
-// none
-
 /* 4. Constants (non-reactive) */
 const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
+const {t} = useI18n()
 
 /* 5. Props */
 const props = defineProps<{
@@ -82,45 +88,28 @@ const props = defineProps<{
 /* 6. Emits */
 const emit = defineEmits<{
   (e: 'update:showEditor', value: boolean): void
-  //(e: 'update:draftHtmlTemplate', value: string): void
-  //(e: 'update:draftSqlQuery', value: string): void
-  //(e: 'applyChanges'): void
 }>()
-
-/* 7. Template refs */
-// none
 
 /* 8. Local state (ref, reactive) */
 const sqlValid = ref(true)
-const originalHtmlTemplate = ref(props.draftHtmlTemplate)
-const originalSqlQuery = ref(props.draftSqlQuery)
-const originalJsCode = ref(props.draftJsCode)
-
-/* 9. Computed */
-// none
+const htmlTemplate = ref(props.draftHtmlTemplate)
+const sqlQuery = ref(props.draftSqlQuery)
+const jsCode = ref(props.draftJsCode)
 
 /* 10. Watchers */
 watch(() => props.showEditor, (val) => {
   if (val) {
-    // Save originals when opening
-    originalHtmlTemplate.value = props.draftHtmlTemplate
-    originalSqlQuery.value = props.draftSqlQuery
-    originalJsCode.value = props.draftJsCode
+    // reset editors to props when opening
+    htmlTemplate.value = props.draftHtmlTemplate
+    sqlQuery.value = props.draftSqlQuery
+    jsCode.value = props.draftJsCode
   }
 })
 
 /* 11. Methods */
-function printCurrentHtml() {
-  console.log('Current HTML Template:', props.draftHtmlTemplate)
-}
-
-function printCurrentSql() {
-  console.log('Current SQL Query:', props.draftSqlQuery)
-}
-
 function onSqlInput(event: Event) {
   const value = (event.target as HTMLTextAreaElement)?.value || ''
-  emit('update:draftSqlQuery', value)
+  sqlQuery.value = value
   console.log('Current SQL Query:', value)
 
   try {
@@ -141,65 +130,41 @@ function onSqlInput(event: Event) {
 
 function onHtmlInput(event: Event) {
   const value = (event.target as HTMLTextAreaElement)?.value || ''
-  emit('update:draftHtmlTemplate', value)
-  printCurrentHtml()
+  htmlTemplate.value = value
+  console.log('Current HTML Template:', value)
 }
 
 function onJsInput(event: Event) {
   const value = (event.target as HTMLTextAreaElement)?.value || ''
-  emit('update:draftJsCode', value)
-  console.log('Current JavaScript Code:', value)
-}
-
-async function validateHtml(html: string): Promise<boolean> {
-  const options = {
-    data: html,
-    format: 'json'
-  }
-
-  try {
-    const result = await validator(options)
-    if (result.errors.length > 0) {
-      console.error('HTML Validation Errors:', result.errors)
-      return false
-    }
-    return true
-  } catch (err) {
-    console.error('Validation failed:', err)
-    return false
-  }
+  jsCode.value = value
+  console.log('Current JS Code:', value)
 }
 
 function onApplyChanges(event: MouseEvent) {
   console.log("Applying changes to: ", props.componentId)
-  componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, props.draftHtmlTemplate)
-  componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, props.draftSqlQuery)
-  componentCodeStore.updateComponentCode(`${props.componentId}-js.js`, props.draftJsCode)
+  componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, htmlTemplate.value)
+  componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, sqlQuery.value)
+  componentCodeStore.updateComponentCode(`${props.componentId}-js.vue`, jsCode.value)
+
   console.log("====== Changes applied ======")
   console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
   console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
-  console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.js`))
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', props.draftHtmlTemplate)
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', props.draftSqlQuery)
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'js', props.draftJsCode)
+  console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.vue`))
+
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', htmlTemplate.value)
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', sqlQuery.value)
+  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'js', jsCode.value)
+
   emit('update:showEditor', false)
 }
 
 function onClose() {
-  emit('update:draftHtmlTemplate', originalHtmlTemplate.value)
-  emit('update:draftSqlQuery', originalSqlQuery.value)
-  emit('update:draftJsCode', originalJsCode.value)
   emit('update:showEditor', false)
 }
-
-/* 12. Lifecycle */
-// none
-
-/* 13. defineExpose */
-// none
 </script>
 
 <style scoped>
+/* same styles as before */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -212,17 +177,27 @@ function onClose() {
   justify-content: center;
   z-index: 3000;
 }
-
 .modal {
   background: #0f172b;
   color: #fff;
   padding: 20px;
-  width: 50%;
+  width: 90%;
+  max-width: 1200px;
   border-radius: 8px;
   box-shadow: 0 0 10px black;
   z-index: 3001;
+  overflow-y: auto;
+  max-height: 90%;
 }
-
+.editor-container {
+  display: flex;
+  gap: 20px;
+}
+.editor-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 .editor-label {
   font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
   font-size: 1rem;
@@ -232,19 +207,9 @@ function onClose() {
   font-weight: 600;
   padding-left: 2px;
 }
-
-.html-label {
-  color: #38bdf8;
-}
-
-.sql-label {
-  color: #facc15;
-}
-
-.js-label {
-  color: #10b981; /* Tailwind green-500 */
-}
-
+.html-label { color: #38bdf8; }
+.sql-label { color: #facc15; }
+.js-label { color: #10b981; }
 .code-editor {
   width: 100%;
   height: 300px;
@@ -261,51 +226,22 @@ function onClose() {
   transition: border 0.2s;
   box-shadow: 0 2px 8px #0002;
 }
-
-.code-editor:focus {
-  border: 1.5px solid #38bdf8;
-  background: #1e293b;
-}
-
-.html-editor:focus {
-  border-color: #38bdf8;
-}
-
-.sql-editor:focus {
-  border-color: #facc15;
-}
-
-.js-editor:focus {
-  border-color: #10b981;
-}
-
-textarea {
-  /* Remove default textarea styles for code editors */
-  background: none;
-  color: inherit;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 0;
-  margin: 0;
-}
-
+.code-editor:focus { border: 1.5px solid #38bdf8; background: #1e293b; }
+.html-editor:focus { border-color: #38bdf8; }
+.sql-editor:focus { border-color: #facc15; }
+.js-editor:focus { border-color: #10b981; }
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 1.2rem;
 }
-
 .sql-editor.invalid-sql {
-  border-color: #ef4444 !important; /* Tailwind red-500 */
+  border-color: #ef4444 !important;
   box-shadow: 0 0 0 2px #ef444488;
 }
-
 .invalid-sql-button {
-  background-color: #ef4444 !important; /* Tailwind red-500 */
+  background-color: #ef4444 !important;
   color: white;
   cursor: not-allowed;
   opacity: 0.7;

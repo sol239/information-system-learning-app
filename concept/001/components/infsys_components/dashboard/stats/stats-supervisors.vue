@@ -49,6 +49,7 @@ const showEditor = ref(false)
 /* 9. Computed */
 const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-supervisors-sql.vue"))
 const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-supervisors-html.vue"))
+const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-supervisors-js.vue"))
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
@@ -66,6 +67,15 @@ const htmlTemplate = computed(() => {
     return errorHtml
   }
   return correctHtmlTemplate.value
+})
+
+const navigateJs = computed(() => {
+  if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
+    const errorJs = ComponentHandler.getVariableValue("stats-supervisors.vue", "js") || correctNavigateJs.value
+    componentCodeStore.updateComponentCode("stats-supervisors-js.vue", errorJs)
+    return errorJs
+  }
+  return correctNavigateJs.value
 })
 
 const draftSqlQuery = ref('')
@@ -115,11 +125,9 @@ function navigate() {
     return
   }
 
-  const systemId = selectedSystemStore.selectedId;
-  selectedTableStore.select('vedoucí')
-  navigateTo({
-    path: `/system/${systemId}/table`,
-  })
+  const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
+  navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
+
 }
 
 /* 12. Lifecycle */

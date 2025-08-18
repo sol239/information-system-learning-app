@@ -13,6 +13,9 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
   }
 
   function updateComponentCode(componentName: string, code: string) {
+    console.log("Updating component code for:", componentName)
+    console.log(":")
+    console.log("New code:", code)
     actualComponentCodeMap[componentName] = code
   }
 

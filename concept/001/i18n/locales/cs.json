@@ -83,5 +83,7 @@
     "creation_2_title": "2. Změna na chybnou komponentu",
     "creation_2_desc": "Ke každé komponentě, existuje duální shodná .error komponenta, viz. ./components/. V config.json souboru je možné určit, aby se použilá chybová komponenta.",
     "how_to_title": "Jak vytvářet úkoly pomocí config.json souboru",
-    "how_to_desc": "TODO - Je potřeba dodělat"
+    "how_to_desc": "TODO - Je potřeba dodělat",
+    "js_code": "JavaScript kód",
+    "html_template": "HTML šablona"
 }

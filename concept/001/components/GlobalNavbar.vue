@@ -142,8 +142,7 @@ onMounted(() => {
 async function handleHelperClick() {
   // Placeholder for helper click logic
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sql.vue"));
-  console.log(componentCodeStore.actualComponentCodeMap);
-  console.log(ComponentHandler.isInErrorComponents("stats-supervisors.vue"));
+  console.log(componentCodeStore.getComponentCode("stats-meals-js.vue"));
 }
 
 async function refreshComponents() {

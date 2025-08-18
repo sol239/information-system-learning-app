@@ -805,7 +805,8 @@
                     "name": "stats-participants.vue",
                     "variables": {
                         "html": "",
-                        "sql": "SELECT COUNT(*) as count FROM vedoucí"
+                        "sql": "SELECT COUNT(*) as count FROM vedoucí",
+                        "js": ""
                     },
                     "error-component-name": ""
                 },
@@ -813,7 +814,8 @@
                     "name": "stats-meals.vue",
                     "variables": {
                         "html": "",
-                        "sql": "SELECT COUNT(*) as count FROM turnusy"
+                        "sql": "SELECT COUNT(*) as count FROM turnusy",
+                        "js": ""
                     },
                     "error-component-name": ""
                 }
@@ -836,7 +838,8 @@
                     "name": "stats-supervisors.vue",
                     "variables": {
                         "html": "",
-                        "sql": "SELECT COUNT(*) as count FROM jídla"
+                        "sql": "SELECT COUNT(*) as count FROM jídla",
+                        "js": ""
                     },
                     "error-component-name": ""
                 }
