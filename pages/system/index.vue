@@ -2,7 +2,7 @@
 /* 1. Imports */
 import { onMounted } from 'vue'
 import { navigateTo } from '#app'
-import { FileHandler } from '~/composables/FileHandler'
+import { FileHandler } from '~/composables/FileHandler.ts'
 import { InformationSystem } from '~/model/InformationSystem'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
