@@ -25,6 +25,10 @@ export default defineNuxtConfig({
     strategy: 'no_prefix', // nebo 'no_prefix', 'prefix_except_default'
   },
   app: {
+    // locally:
+    // baseURL: './'
+
+    // gh pages
     baseURL: '/information-system-learning-app', 
   },
   target: "static",
