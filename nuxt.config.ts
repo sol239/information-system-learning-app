@@ -24,6 +24,9 @@ export default defineNuxtConfig({
     langDir: 'locales/',
     strategy: 'no_prefix', // nebo 'no_prefix', 'prefix_except_default'
   },
+  app: {
+    baseURL: '/<information-system-learning-app>/', 
+  },
   ui: {
     theme: {
       colors: [

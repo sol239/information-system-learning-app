@@ -46,6 +46,7 @@ export class Task {
         isEditable,
         json.status ?? '',
         errorComponents,
+        json.componentsIdsToFind ?? [],
         json.feedback ?? ''
       );
     }
