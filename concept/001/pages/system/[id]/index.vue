@@ -39,9 +39,9 @@ const localItems = computed(() => [
     data_target: 'system-dashboard',
   },
   {
-    label: $t('tables'),
+    label: $t('database'),
     icon: 'i-heroicons-table-cells',
-    to: `/system/${systemId}/table`,
+        to: `/system/${systemId}/database`,
     data_target: 'system-table',
   }
 ])

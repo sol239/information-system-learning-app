@@ -203,9 +203,9 @@ const localItems = ref([
         data_target: 'system-sessions',
     },
     {
-        label: t('tables'),
+        label: t('database'),
         icon: 'i-heroicons-table-cells',
-        to: `/system/${systemId}/table`,
+        to: `/system/${systemId}/database`,
         data_target: 'system-table',
     }
 ])

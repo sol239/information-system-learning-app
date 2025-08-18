@@ -85,5 +85,6 @@
     "how_to_title": "How to create tasks using the config.json file",
     "how_to_desc": "TODO - Needs to be completed",
     "js_code": "JavaScript code",
-    "html_template": "HTML template"
+    "html_template": "HTML template",
+    "database": "Database"
 }

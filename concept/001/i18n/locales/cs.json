@@ -85,5 +85,6 @@
     "how_to_title": "Jak vytvářet úkoly pomocí config.json souboru",
     "how_to_desc": "TODO - Je potřeba dodělat",
     "js_code": "JavaScript kód",
-    "html_template": "HTML šablona"
+    "html_template": "HTML šablona",
+    "database": "Databáze"
 }

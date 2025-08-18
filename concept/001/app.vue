@@ -24,14 +24,14 @@ const statsMealsSql = `SELECT COUNT(*) as count FROM jídla`
 const statsMealsNavigateJs = `
 selectedTableStore.select('jídla');
 navigateTo({
-  path: \`/system/\${systemId}/table\`,
+  path: \`/system/\${systemId}/database\`,
 });
 `
 
 const statsParticipantsNavigateJs = `
 selectedTableStore.select('účastníci');
 navigateTo({
-  path: \`/system/\${systemId}/table\`,
+  path: \`/system/\${systemId}/database\`,
 });
 `
 
@@ -39,7 +39,7 @@ navigateTo({
 const statsSupervisorsNavigateJs = `
 selectedTableStore.select('vedoucí');
 navigateTo({
-  path: \`/system/\${systemId}/table\`,
+  path: \`/system/\${systemId}/database\`,
 });
 `
 
@@ -47,7 +47,7 @@ navigateTo({
 const statsSessionsNavigateJs = `
 selectedTableStore.select('turnusy');
 navigateTo({
-  path: \`/system/\${systemId}/table\`,
+  path: \`/system/\${systemId}/database\`,
 });
 `
 
