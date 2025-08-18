@@ -25,8 +25,9 @@ export default defineNuxtConfig({
     strategy: 'no_prefix', // nebo 'no_prefix', 'prefix_except_default'
   },
   app: {
-    baseURL: '/<information-system-learning-app>/', 
+    baseURL: '/information-system-learning-app/', 
   },
+  target: "static",
   ui: {
     theme: {
       colors: [
