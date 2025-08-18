@@ -11,6 +11,9 @@ export class DbHandler {
     public async init(json: any): Promise<void> {
         // Use the WASM file from the public directory
         const SQL = await initSqlJs({
+            // github pages:
+            // locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
+            
             locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
         });
 
