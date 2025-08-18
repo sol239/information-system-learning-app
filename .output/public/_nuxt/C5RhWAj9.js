@@ -1,0 +1,1 @@
+class n{constructor(a,s,e,r,h,o,d,i=0){this.id=a,this.name=s,this.email=e,this.personal_number=r,this.phone=h,this.address=o,this.age=d,this.sessionId=i}static fromJSON(a){return a.map(s=>new n(s.id,s.name,s.email,s.personal_number,s.phone,s.address,s.age,s.sessionId||0))}}export{n as S};

@@ -1,0 +1,1 @@
+class h{constructor(t,i=new Date,s=new Date,a,e=[]){this.id=t,this.fromDate=i,this.toDate=s,this.capacity=a,this.participants=e}ifFull(){return this.participants.length>=this.capacity}}export{h as S};

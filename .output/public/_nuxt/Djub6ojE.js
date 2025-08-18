@@ -1,0 +1,1 @@
+import{f as n,A as e,bq as s,o as i}from"./j0WNL21o.js";const _=n({__name:"LocalNavbar",props:{items:{}},setup(o){const t=o;return(c,r)=>{const a=s;return i(),e(a,{orientation:"horizontal",items:t.items,class:"data-[orientation=vertical]:w-48"},null,8,["items"])}}});export{_};
