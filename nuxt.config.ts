@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     // locally:
     // baseURL: './'
 
-    // gh-pages
+    // gh-pages :) :)
     baseURL: '/information-system-learning-app', 
   },
   target: "static",
