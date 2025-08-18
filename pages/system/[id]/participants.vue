@@ -287,7 +287,7 @@ const localItems = ref([
     {
         label: t('sessions'),
         icon: 'i-heroicons-calendar-date-range',
-        to: `/system/${selectedSystemStore.selectedId}/session`,
+        to: `/system/${selectedSystemStore.selectedId}/sessions`,
         data_target: 'system-sessions',
     },
     {

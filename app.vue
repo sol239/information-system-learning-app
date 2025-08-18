@@ -31,7 +31,7 @@ navigateTo({
 const statsParticipantsNavigateJs = `
 selectedTableStore.select('účastníci');
 navigateTo({
-  path: \`/system/\${systemId}/database\`,
+  path: \`/system/\${systemId}/participants\`,
 });
 `
 
@@ -39,7 +39,7 @@ navigateTo({
 const statsSupervisorsNavigateJs = `
 selectedTableStore.select('vedoucí');
 navigateTo({
-  path: \`/system/\${systemId}/database\`,
+  path: \`/system/\${systemId}/supervisors\`,
 });
 `
 
@@ -47,7 +47,7 @@ navigateTo({
 const statsSessionsNavigateJs = `
 selectedTableStore.select('turnusy');
 navigateTo({
-  path: \`/system/\${systemId}/database\`,
+  path: \`/system/\${systemId}/sessions\`,
 });
 `
 
