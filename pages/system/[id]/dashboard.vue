@@ -99,8 +99,7 @@ const sessionColorMap = computed(function () {
     return map
 })
 const sessionProgress = computed(() => {
-    // Check if system exists and database is initialized
-    if (!system.value?.db || typeof system.value.db.query !== 'function') {
+    if (!system.value?.db || typeof system?.value?.db?.query !== "function") {
         return []
     }
     
@@ -121,7 +120,6 @@ const sessionProgress = computed(() => {
             }
         })
     } catch (error) {
-        console.warn('Database query failed in sessionProgress:', error)
         return []
     }
 })

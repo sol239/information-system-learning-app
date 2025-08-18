@@ -28,6 +28,31 @@
                         {{ Math.round(selectedSessionInfo.fillPercentage) }}%
                     </UBadge>
                 </div>
+
+                <!-- Pagination -->
+                <div v-if="totalPages > 1" class="flex justify-center items-center gap-4">
+                    <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left" :disabled="currentPage === 1"
+                        @click="currentPage--">
+                        {{ t('previous') }}
+                    </UButton>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
+                            {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
+                        </span>
+                        <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)">
+                            ({{ filteredParticipants.length }} {{ t('participants') }})
+                        </span>
+                    </div>
+
+                    <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
+                        :disabled="currentPage === totalPages" @click="currentPage++">
+                        {{ t('next') }}
+                    </UButton>
+                </div>
+
                 <div class="ml-auto">
                     <!-- Add Participant Drawer -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
@@ -43,53 +68,66 @@
 
                                 <UForm :state="newParticipant" @submit="handleAddParticipant(newParticipant)"
                                     class="flex flex-col space-y-4">
-                                    <div>
+                                    <div class="highlightable" id="participants-add-name"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-name', $event)">
                                         <label for="name"
                                             class="block text-sm font-medium text-white mb-1">Jméno</label>
                                         <UInput color="sky" id="name" v-model="newParticipant.name"
-                                            placeholder="Zadejte jméno účastníka" />
+                                            placeholder="Zadejte jméno účastníka"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-email"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-email', $event)">
                                         <label for="email"
                                             class="block text-sm font-medium text-white mb-1">E-mail</label>
                                         <UInput color="sky" id="email" v-model="newParticipant.email" type="email"
-                                            placeholder="email@example.com" />
+                                            placeholder="email@example.com"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-personal_number"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-personal_number', $event)">
                                         <label for="personal_number"
                                             class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
                                         <UInput color="sky" id="personal_number"
-                                            v-model="newParticipant.personal_number" placeholder="123456/7890" />
+                                            v-model="newParticipant.personal_number" placeholder="123456/7890"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-phone"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-phone', $event)">
                                         <label for="phone"
                                             class="block text-sm font-medium text-white mb-1">Telefon</label>
                                         <UInput color="sky" id="phone" v-model="newParticipant.phone"
-                                            placeholder="+420 123 456 789" />
+                                            placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-address"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-address', $event)">
                                         <label for="address"
                                             class="block text-sm font-medium text-white mb-1">Adresa</label>
                                         <UTextarea color="sky" id="address" v-model="newParticipant.address"
-                                            placeholder="Ulice číslo, město, PSČ" :rows="2" />
+                                            placeholder="Ulice číslo, město, PSČ" :rows="2"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-age"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-age', $event)">
                                         <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
                                         <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1"
-                                            max="100" placeholder="18" />
+                                            max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-session"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-session', $event)">
                                         <label for="sessionId"
                                             class="block text-sm font-medium text-white mb-1">Turnus</label>
                                         <USelectMenu color="sky" id="sessionId" v-model="newParticipant.sessionId"
-                                            :items="sessionOptions" placeholder="Vyberte turnus" />
+                                            :items="sessionOptions" placeholder="Vyberte turnus"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
-                                    <div>
+                                    <div class="highlightable" id="participants-add-allergens"
+                                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-allergens', $event)">
                                         <label for="allergens"
                                             class="block text-sm font-medium text-white mb-1">Alergeny</label>
                                         <USelectMenu color="sky" id="allergens" v-model="newParticipant.allergens"
-                                            :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny" />
-                                        <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
+                                            :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                            :disabled="highlightStore.isHighlightMode" />
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
                                         <UButton type="submit" color="sky" :loading="isSubmitting">
@@ -109,8 +147,9 @@
 
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card highlightable" :id="'participants-card-' + participant.id"
-                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
+                <div v-for="participant in paginatedParticipants" :key="participant.id"
+                    class="participant-card highlightable" :id="'participants-card-' + participant.id"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
                     <!-- Participant Header -->
                     <div class="participant-header">
                         <div class="flex items-center justify-between mb-4">
@@ -175,51 +214,62 @@
 
                         <UForm :state="selectedParticipant" @submit="handleEditParticipant(selectedParticipant)"
                             class="flex flex-col space-y-4">
-                            <div>
+                            <div class="highlightable" id="participants-edit-name"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-name', $event)">
                                 <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
                                 <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
-                                    placeholder="Zadejte jméno účastníka" />
+                                    placeholder="Zadejte jméno účastníka" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-email"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-email', $event)">
                                 <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
                                 <UInput color="sky" id="edit-email" v-model="selectedParticipant.email" type="email"
-                                    placeholder="email@example.com" />
+                                    placeholder="email@example.com" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-personal_number"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-personal_number', $event)">
                                 <label for="edit-personal_number"
-                                    class="block text-sm font-medium text-white mb-1">Rodné
-                                    číslo</label>
+                                    class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
                                 <UInput color="sky" id="edit-personal_number"
-                                    v-model="selectedParticipant.personal_number" placeholder="123456/7890" />
+                                    v-model="selectedParticipant.personal_number" placeholder="123456/7890"
+                                    :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-phone"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-phone', $event)">
                                 <label for="edit-phone"
                                     class="block text-sm font-medium text-white mb-1">Telefon</label>
                                 <UInput color="sky" id="edit-phone" v-model="selectedParticipant.phone"
-                                    placeholder="+420 123 456 789" />
+                                    placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-address"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-address', $event)">
                                 <label for="edit-address"
                                     class="block text-sm font-medium text-white mb-1">Adresa</label>
                                 <UTextarea color="sky" id="edit-address" v-model="selectedParticipant.address"
-                                    placeholder="Ulice číslo, město, PSČ" :rows="2" />
+                                    placeholder="Ulice číslo, město, PSČ" :rows="2"
+                                    :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-age"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-age', $event)">
                                 <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
                                 <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
-                                    min="1" max="100" placeholder="18" />
+                                    min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-session"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-session', $event)">
                                 <label for="edit-sessionId"
                                     class="block text-sm font-medium text-white mb-1">Turnus</label>
                                 <USelectMenu color="sky" id="edit-sessionId" v-model="selectedParticipant.sessionId"
-                                    :items="sessionOptions" placeholder="Vyberte turnus" />
+                                    :items="sessionOptions" placeholder="Vyberte turnus"
+                                    :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div>
+                            <div class="highlightable" id="participants-edit-allergens"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-allergens', $event)">
                                 <label for="edit-allergens"
                                     class="block text-sm font-medium text-white mb-1">Alergeny</label>
                                 <USelectMenu color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
-                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny" />
+                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                    :disabled="highlightStore.isHighlightMode" />
                                 <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
@@ -235,29 +285,7 @@
                 </template>
             </UDrawer>
 
-            <!-- Pagination -->
-            <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
-                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left" :disabled="currentPage === 1"
-                    @click="currentPage--">
-                    {{ t('previous') }}
-                </UButton>
 
-                <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
-                        {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
-                    </span>
-                    <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)"   >
-                        ({{ filteredParticipants.length }} {{ t('participants') }})
-                    </span>
-                </div>
-
-                <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
-                    :disabled="currentPage === totalPages" @click="currentPage++">
-                    {{ t('next') }}
-                </UButton>
-            </div>
 
             <!-- Empty State -->
             <div v-if="filteredParticipants.length === 0" class="empty-state">

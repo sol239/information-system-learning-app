@@ -88,6 +88,10 @@ const navigateJs = computed(() => {
 })
 
 const participantsCount = computed(() => {
+
+  if (!props.system?.db || typeof props.system?.db?.query !== "function") {
+    return 0
+  }
   const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
   //const result = 0
   return result || 0

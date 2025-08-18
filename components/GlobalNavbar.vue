@@ -4,7 +4,7 @@
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" style="z-index: 10000;" />
 
-    <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
+    <!--<UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>-->
 
     <UBadge v-if="isOnSystemDetailPage" color="red" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
@@ -27,7 +27,7 @@
       :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" style="margin-left: 10px"
       @click="highlightStore.toggleEdit" />
     <UPopover v-if="isOnSystemDetailPage" v-model:open="resetPopoverOpen" arrow>
-      <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle" />
+      <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle" style="margin-left: 10px" />
 
       <template #content>
         <UCard>
