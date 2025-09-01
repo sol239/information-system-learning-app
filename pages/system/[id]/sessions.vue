@@ -202,32 +202,39 @@ const loadSessionsFromDatabase = () => {
 
     try {
         // Load sessions (turnusy)
-        const sessionsQuery = selectedSystemStore.selectedSystem.db.query('SELECT * FROM turnusy ORDER BY id')
+        const sessionsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions')
+        const participantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')
+        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions_participants')
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')
+        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions_supervisors')
+
+        const sessionsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsTable} ORDER BY session_id`)
         if (sessionsQuery.success) {
             const sessionsData = sessionsQuery.results.map((row: any) => {
                 // Load participants for this session
-                const participantsQuery = selectedSystemStore.selectedSystem?.db.query(
-                    'SELECT * FROM účastníci WHERE turnus_id = ?',
-                    [row.id]
+                const participantsQuery = selectedSystemStore.selectedSystem.db.query(
+                    `SELECT p.* FROM ${participantsTable} p
+                     JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
+                     WHERE sp.session_id = ?`,
+                    [row.session_id]
                 )
 
                 const participants = participantsQuery?.success ?
                     participantsQuery.results.map((p: any) => new Participant(
-                        p.id,
-                        p.jméno,
+                        p.participant_id,
+                        p.name,
                         p.email,
-                        p.rodné_číslo,
-                        p.telefon,
-                        p.adresa,
-                        p.věk,
-                        p.turnus_id
+                        p.personal_number,
+                        p.phone,
+                        p.address,
+                        p.age
                     )) : []
 
                 return new Session(
-                    row.id,
-                    new Date(row.od),
-                    new Date(row.do),
-                    row.kapacita,
+                    row.session_id,
+                    new Date(row.from_date),
+                    new Date(row.to_date),
+                    row.capacity,
                     participants
                 )
             })
@@ -236,17 +243,21 @@ const loadSessionsFromDatabase = () => {
         }
 
         // Load supervisors (vedoucí)
-        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query('SELECT * FROM vedoucí ORDER BY id')
+        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query(
+            `SELECT s.*, ss.session_id FROM ${supervisorsTable} s
+             LEFT JOIN ${sessionsSupervisorsTable} ss ON s.supervisor_id = ss.supervisor_id
+             ORDER BY s.supervisor_id`
+        )
         if (supervisorsQuery.success) {
             supervisors.value = supervisorsQuery.results.map((row: any) => new Supervisor(
-                row.id,
-                row.jméno,
+                row.supervisor_id,
+                row.name,
                 row.email,
-                row.rodné_číslo,
-                row.telefon,
-                row.adresa,
-                row.věk,
-                row.turnus_id
+                row.personal_number,
+                row.phone,
+                row.address,
+                row.age,
+                row.session_id // may be undefined if not assigned
             ))
         }
 

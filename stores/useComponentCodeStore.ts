@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
+import type { Component } from '~/model/Component'
 
 export const useComponentCodeStore = defineStore('componentCode', () => {
   const defaultComponentCodeMap = reactive<Record<string, string>>({})
   const actualComponentCodeMap = reactive<Record<string, string>>({})
+
+  const defaultComponentMap = reactive<Array<Component>>([])
+  const actualComponentMap = reactive<Array<Component>>([])
 
   function updateDefaultComponentCode(componentName: string, code: string) {
     defaultComponentCodeMap[componentName] = code

@@ -9,8 +9,8 @@ export class Participant implements TableEntity {
         public phone: string,
         public address: string,
         public age: number,
-        public sessionId: number,
-        public allergens: string[] // přidáno pole alergeny
+        public sessionId: number = 1,
+        public allergens: any[] = []
     ) {}
 
     static fromJSON(json: any): Participant[] {
@@ -22,7 +22,7 @@ export class Participant implements TableEntity {
             item.phone,
             item.address,
             item.age,
-            item.sessionId || 0,
+            item.sessionId || 1,
             item.alergeny || [] // načtení alergeny
         ));
     }
@@ -36,24 +36,23 @@ export class Participant implements TableEntity {
             item.telefon,  // Czech field name
             item.adresa,  // Czech field name
             item.věk,  // Czech field name
-            item.turnus_id || 0,  // Czech field name
+            item.turnus_id || 1,  // Czech field name
             item.alergeny || [] // načtení alergeny
             
         ));
     }
 
-    // Add a static method for single object conversion
-    static fromDbRow(item: any): Participant {
+    public static fromDbRow(row: any): Participant {
         return new Participant(
-            item.id,
-            item.jméno,  // Czech field name
-            item.email,
-            item.rodné_číslo,  // Czech field name
-            item.telefon,  // Czech field name
-            item.adresa,  // Czech field name
-            item.věk,  // Czech field name
-            item.turnus_id || 0,  // Czech field name
-            item.alergeny || [] // načtení alergeny
+            row.participant_id,
+            row.name,
+            row.email,
+            row.personal_number,
+            row.phone,
+            row.address,
+            row.age,
+            row.session_id || 1,
+            row.allergens ? JSON.parse(row.allergens) : []
         );
     }
 }

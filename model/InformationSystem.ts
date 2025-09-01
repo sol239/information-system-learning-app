@@ -1,4 +1,4 @@
-import DbHandler from "~/utils/db/DbHandler";
+import DbHandler from "~/composables/DbHandler";
 import { Participant } from "./Participant";
 import { Task } from "./Task";
 

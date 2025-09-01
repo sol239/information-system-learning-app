@@ -91,7 +91,7 @@ const tableDataHash = computed(() => {
         // Get a simple hash of the data to detect changes
         const columnList = columnNames.value.map(col => `"${col}"`).join(', ')
         if (columnList) {
-            const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value} ORDER BY id LIMIT 5`)
+            const dataRes = system.value.db.query(`SELECT ${columnList} FROM ${selectedTableName.value} LIMIT 5`)
             const sample = JSON.stringify(dataRes?.results || [])
             return `${count}-${sample.length}-${Date.now()}`
         }

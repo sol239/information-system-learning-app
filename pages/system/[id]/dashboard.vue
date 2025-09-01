@@ -104,18 +104,18 @@ const sessionProgress = computed(() => {
     }
     
     try {
-        const result = system.value.db.query(`SELECT * FROM turnusy`).results || []
-        return result.map((turnus, idx) => {
-            const countResult = system.value?.db.query(`SELECT COUNT(*) as count FROM účastníci WHERE turnus_id = ${turnus.id}`)
+        const result = system.value.db.query(`SELECT * FROM ${system.value.tableNameMap.get('sessions')}`).results || []
+        return result.map((session, idx) => {
+            const countResult = system.value?.db.query(`SELECT COUNT(*) as count FROM ${system.value.tableNameMap.get('participants')} JOIN ${system.value.tableNameMap.get('meals_participants')} ON ${system.value.tableNameMap.get('participants')}.participant_id = ${system.value.tableNameMap.get('meals_participants')}.participant_id WHERE ${system.value.tableNameMap.get('meals_participants')}.meal_id IN (SELECT id FROM ${system.value.tableNameMap.get('meals')} WHERE session_id = ${session.id})`)
             const count = countResult?.results?.[0]?.count || 0
-            const percent = turnus.kapacita ? Math.min(100, Math.round((count / turnus.kapacita) * 100)) : 0
+            const percent = session.kapacita ? Math.min(100, Math.round((count / session.kapacita) * 100)) : 0
 
             return {
-                id: turnus.id,
-                name: `Turnus ${turnus.id}`,
+                id: session.id,
+                name: `Turnus ${session.id}`,
                 color: sessionColors[idx % sessionColors.length],
                 count: count,
-                capacity: turnus.kapacita,
+                capacity: session.kapacita,
                 percent: percent
             }
         })

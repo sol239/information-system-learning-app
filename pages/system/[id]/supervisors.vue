@@ -335,55 +335,21 @@ function resetFilter() {
 }
 
 const filteredSupervisors = computed(() => {
-    if (!selectedSystemStore.selectedSystem?.db) return []
+    let arr = supervisors.value
 
-    const text = filterText.value?.trim()
-    if (text) {
-        const query = `
-            SELECT * FROM vedoucí
-            WHERE (
-                id LIKE '%${text}%'
-                OR jméno LIKE '%${text}%'
-                OR email LIKE '%${text}%'
-                OR rodné_číslo LIKE '%${text}%'
-                OR telefon LIKE '%${text}%'
-                OR adresa LIKE '%${text}%'
-                OR věk LIKE '%${text}%'
-                OR turnus_id LIKE '%${text}%'
-            )
-            ORDER BY id
-        `
-        const results = selectedSystemStore.selectedSystem.db.query(query).results || []
-        return results.map((s: any) => new Supervisor(
-            s.id,
-            s.jméno,
-            s.email,
-            s.rodné_číslo,
-            s.telefon,
-            s.adresa,
-            s.věk,
-            s.turnus_id
-        ))
+    if (filterText.value) {
+        const text = filterText.value.toLowerCase()
+        arr = arr.filter(s =>
+            (s.name && s.name.toLowerCase().includes(text)) ||
+            (s.email && s.email.toLowerCase().includes(text)) ||
+            (s.phone && s.phone.toLowerCase().includes(text)) ||
+            (s.address && s.address.toLowerCase().includes(text))
+        )
     } else if (value.value !== 'all') {
-        const query = `
-            SELECT * FROM vedoucí
-            WHERE turnus_id = '${value.value}'
-            ORDER BY id
-        `
-        const results = selectedSystemStore.selectedSystem.db.query(query).results || []
-        return results.map((s: any) => new Supervisor(
-            s.id,
-            s.jméno,
-            s.email,
-            s.rodné_číslo,
-            s.telefon,
-            s.adresa,
-            s.věk,
-            s.turnus_id
-        ))
-    } else {
-        return supervisors.value
+        arr = arr.filter(s => s.sessionId === Number(value.value))
     }
+
+    return arr
 })
 
 const toast = useToast()
@@ -396,11 +362,13 @@ const selectedSessionInfo = computed(() => {
 const supervisorsDataHash = computed(() => {
     if (!selectedSystemStore.selectedSystem?.db) return ''
     try {
-        const supervisorsCountRes = selectedSystemStore.selectedSystem.db.query('SELECT COUNT(*) as count FROM vedoucí')
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')
+        const sessionsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions')
+        const supervisorsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${supervisorsTable}`)
         const supervisorsCount = supervisorsCountRes?.results?.[0]?.count || 0
-        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query('SELECT COUNT(*) as count FROM turnusy')
+        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${sessionsTable}`)
         const sessionsCount = sessionsCountRes?.results?.[0]?.count || 0
-        const supervisorsSample = selectedSystemStore.selectedSystem.db.query('SELECT id, jméno, email FROM vedoucí ORDER BY id DESC LIMIT 3')
+        const supervisorsSample = selectedSystemStore.selectedSystem.db.query(`SELECT supervisor_id, name, email FROM ${supervisorsTable} ORDER BY supervisor_id DESC LIMIT 3`)
         const sampleData = JSON.stringify(supervisorsSample?.results || [])
         return `v${supervisorsCount}-s${sessionsCount}-${sampleData.length}-${Date.now()}`
     } catch (error) {
@@ -421,19 +389,24 @@ const loadSupervisorsFromDatabase = () => {
         return
     }
     try {
-        const _supervisors = selectedSystemStore.selectedSystem.db.query('SELECT * FROM vedoucí ORDER BY id').results || []
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')
+        const _supervisors = selectedSystemStore.selectedSystem.db.query(`
+            SELECT supervisor_id, name, email, personal_number, phone, address, age
+            FROM ${supervisorsTable}
+            ORDER BY supervisor_id
+        `).results || []
         const _supervisorsArray: Supervisor[] = []
         for (const s of _supervisors) {
             _supervisorsArray.push(
                 new Supervisor(
-                    s.id,
-                    s.jméno,
+                    s.supervisor_id,
+                    s.name,
                     s.email,
-                    s.rodné_číslo,
-                    s.telefon,
-                    s.adresa,
-                    s.věk,
-                    s.turnus_id
+                    s.personal_number,
+                    s.phone,
+                    s.address,
+                    s.age,
+                    0 // sessionId not used
                 )
             )
         }
@@ -495,10 +468,10 @@ const handleAddSupervisor = async (data: any) => {
     }
     isSubmitting.value = true
     try {
-        const sessionIdValue = typeof data.sessionId === 'object' ? data.sessionId.value : data.sessionId
+        // Only use allowed columns
         const query = `
-            INSERT INTO vedoucí (jméno, email, rodné_číslo, telefon, adresa, věk, turnus_id)
-            VALUES ('${data.name}', '${data.email}', '${data.personal_number}', '${data.phone}', '${data.address}', ${data.age}, ${sessionIdValue})
+            INSERT INTO ${selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')} (name, email, personal_number, phone, address, age)
+            VALUES ('${data.name}', '${data.email}', '${data.personal_number}', '${data.phone}', '${data.address}', ${data.age})
         `
         const result = selectedSystemStore.selectedSystem.db.query(query)
         if (result.success) {
@@ -513,7 +486,6 @@ const handleAddSupervisor = async (data: any) => {
             throw new Error('Database insert failed')
         }
     } catch (error) {
-        console.error('Error adding supervisor:', error)
         toast.add({
             title: t('supervisor_added_error'),
             color: 'red',
@@ -545,12 +517,12 @@ const handleEditSupervisor = async (data: any) => {
     }
     isSubmitting.value = true
     try {
-        const sessionIdValue = typeof data.sessionId === 'object' ? data.sessionId.value : data.sessionId
+        // Only use allowed columns
         const query = `
-            UPDATE vedoucí 
-            SET jméno = '${data.name}', email = '${data.email}', rodné_číslo = '${data.personal_number}', 
-                telefon = '${data.phone}', adresa = '${data.address}', věk = ${data.age}, turnus_id = ${sessionIdValue}
-            WHERE id = '${selectedSupervisor.value.id}'
+            UPDATE ${selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')}
+            SET name = '${data.name}', email = '${data.email}', personal_number = '${data.personal_number}',
+                phone = '${data.phone}', address = '${data.address}', age = ${data.age}
+            WHERE supervisor_id = '${selectedSupervisor.value.id}'
         `
         const result = selectedSystemStore.selectedSystem.db.query(query)
         if (result.success) {
@@ -583,7 +555,7 @@ const handleEditSupervisor = async (data: any) => {
 
 const removeSupervisor = (supervisor: Supervisor) => {
     try {
-        selectedSystemStore.selectedSystem?.db.query(`DELETE FROM vedoucí WHERE id = ${supervisor.id}`)
+        selectedSystemStore.selectedSystem?.db.query(`DELETE FROM ${selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')} WHERE supervisor_id = ${supervisor.id}`)
         loadSupervisorsFromDatabase()
         toast.add({
             title: t('supervisor_deleted_success', { name: supervisor.name }),

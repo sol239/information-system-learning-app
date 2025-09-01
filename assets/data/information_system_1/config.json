@@ -5,52 +5,64 @@
     "description": "Školní tábor v Krkonoších, zaměřený na výuku a zábavu pro děti.",
     "tables": [
         {
-            "name": "participants",
+            "id": "participants",
+            "name": "účastníci",
             "csv_path": "csv/participants.csv"
         },
         {
-            "name": "meals",
+            "id": "meals",
+            "name": "jídla",
             "csv_path": "csv/meals.csv"
         },
         {
-            "name": "sessions",
+            "id": "sessions",
+            "name": "turnusy",
             "csv_path": "csv/sessions.csv"
         },
         {
-            "name": "allergens",
+            "id": "allergens",
+            "name": "alergeny",
             "csv_path": "csv/allergens.csv"
         },
         {
-            "name": "supervisors",
+            "id": "supervisors",
+            "name": "vedoucí",
             "csv_path": "csv/supervisors.csv"
         },
         {
-            "name": "participants_allergens",
+            "id": "participants_allergens",
+            "name": "účastníci_alergeny",
             "csv_path": "csv/participants-allergens.csv"
         },
         {
-            "name": "participants_meals",
+            "id": "meals_participants",
+            "name": "účastníci_jídla",
             "csv_path": "csv/meals-participants.csv"
         },
         {
-            "name": "participants_sessions",
-            "csv_path": "csv/participants-sessions.csv"
+            "id": "meals_supervisors",
+            "name": "jídla_vedoucí",
+            "csv_path": "csv/meals-supervisors.csv"
         },
         {
-            "name": "meals_allergens",
+            "id": "sessions_participants",
+            "name": "turnusy_účastníci",
+            "csv_path": "csv/sessions-participants.csv"
+        },
+        {
+            "id": "allergens_meals",
+            "name": "jídla_alergeny",
             "csv_path": "csv/allergens-meals.csv"
         },
         {
-            "name": "supervisors_allergens",
+            "id": "supervisors_allergens",
+            "name": "vedoucí_alergeny",
             "csv_path": "csv/supervisors-allergens.csv"
         },
         {
-            "name": "supervisors_sessions",
+            "id": "sessions_supervisors",
+            "name": "vedoucí_turnusy",
             "csv_path": "csv/sessions-supervisors.csv"
-        },
-        {
-            "name": "participants_sessions",
-            "csv_path": "csv/participants-sessions.csv"
         }
     ],
     "tasks": [

@@ -267,23 +267,6 @@
                                 <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
                                     min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            <div class="highlightable" id="participants-edit-session"
-                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-session', $event)">
-                                <label for="edit-sessionId"
-                                    class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                <USelectMenu color="sky" id="edit-sessionId" v-model="selectedParticipant.sessionId"
-                                    :items="sessionOptions" placeholder="Vyberte turnus"
-                                    :disabled="highlightStore.isHighlightMode" />
-                            </div>
-                            <div class="highlightable" id="participants-edit-allergens"
-                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-allergens', $event)">
-                                <label for="edit-allergens"
-                                    class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                <USelectMenu color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
-                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
-                                    :disabled="highlightStore.isHighlightMode" />
-                                <small class="text-xs text-gray-400">Můžete vybrat více možností</small>
-                            </div>
                             <div class="flex flex-col gap-3 pt-4">
                                 <UButton type="submit" color="sky" :loading="isSubmitting">
                                     {{ t('save_changes') }}
@@ -296,8 +279,6 @@
                     </UCard>
                 </template>
             </UDrawer>
-
-
 
             <!-- Empty State -->
             <div v-if="filteredParticipants.length === 0" class="empty-state">
@@ -467,6 +448,8 @@ const filteredParticipants = computed(() => {
         arr = arr.filter(p => p.sessionId === Number(value.value))
     }
 
+    console.log("Filtered:", arr);
+
     return arr
 });
 
@@ -509,15 +492,17 @@ const participantsDataHash = computed(() => {
 
     try {
         // Get participants count
-        const participantsCountRes = selectedSystemStore.selectedSystem.db.query('SELECT COUNT(*) as count FROM účastníci')
+        const participantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')
+        const sessionsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions')
+        const participantsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${participantsTable}`)
         const participantsCount = participantsCountRes?.results?.[0]?.count || 0
 
         // Get sessions count  
-        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query('SELECT COUNT(*) as count FROM turnusy')
+        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${sessionsTable}`)
         const sessionsCount = sessionsCountRes?.results?.[0]?.count || 0
 
-        // Get sample of recent data to detect content changes
-        const participantsSample = selectedSystemStore.selectedSystem.db.query('SELECT id, jméno, email FROM účastníci ORDER BY id DESC LIMIT 3')
+        // Get sample of recent data to detect content changes - removed the trailing comma after email
+        const participantsSample = selectedSystemStore.selectedSystem.db.query(`SELECT participant_id, name, email FROM ${participantsTable} ORDER BY participant_id DESC LIMIT 3`)
         const sampleData = JSON.stringify(participantsSample?.results || [])
 
         return `p${participantsCount}-s${sessionsCount}-${sampleData.length}-${Date.now()}`
@@ -533,7 +518,6 @@ watch(participantsDataHash, (newHash, oldHash) => {
     }
 })
 
-// Load data from database
 const loadParticipantsFromDatabase = () => {
     if (!selectedSystemStore.selectedSystem?.db) {
         console.error('Database not available')
@@ -541,27 +525,56 @@ const loadParticipantsFromDatabase = () => {
     }
 
     try {
-        // Load participants
-        const _participants = selectedSystemStore.selectedSystem.db.query('SELECT * FROM účastníci ORDER BY id').results || []
+        const participantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')
+        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions_participants')
+        const sessionsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions')
+
+        // Join participants with their sessions
+        const _participants = selectedSystemStore.selectedSystem.db.query(`
+            SELECT p.participant_id, p.name, p.email, p.personal_number, p.phone, p.address, p.age,
+                   sp.session_id
+            FROM ${participantsTable} p
+            LEFT JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
+            LEFT JOIN ${sessionsTable} s ON sp.session_id = s.session_id
+            ORDER BY p.participant_id
+        `).results || []
+
+        // Group sessions by participant
+        const participantMap = new Map<number, any>()
+        for (const row of _participants) {
+            if (!participantMap.has(row.participant_id)) {
+                participantMap.set(row.participant_id, {
+                    ...row,
+                    sessions: []
+                })
+            }
+            if (row.session_id) {
+                participantMap.get(row.participant_id).sessions.push({
+                    session_id: row.session_id,
+                })
+            }
+        }
+
         const _participantsArray: Participant[] = []
-        for (const p of _participants) {
+        for (const p of participantMap.values()) {
             _participantsArray.push(
-                Participant.fromDbRow(p)
+                new Participant(
+                    p.participant_id,
+                    p.name,
+                    p.email,
+                    p.personal_number,
+                    p.phone,
+                    p.address,
+                    p.age,
+                    p.sessions, // Pass sessions array
+                    []  // allergens not used
+                )
             )
         }
         participants.value = _participantsArray
 
-        // Load sessions for mapping
-        const sessionsQuery = selectedSystemStore.selectedSystem.db.query('SELECT * FROM turnusy ORDER BY id')
-        if (sessionsQuery.success) {
-            sessions.value = sessionsQuery.results.map((row: any) => new Session(
-                row.id,
-                new Date(row.od),
-                new Date(row.do),
-                row.kapacita,
-                []
-            ))
-        }
+        console.log('Participants loaded:', participants.value)
+
     } catch (error) {
         console.error('Error loading data from database:', error)
     }
@@ -619,18 +632,11 @@ const handleAddParticipant = async (data: any) => {
 
     isSubmitting.value = true
     try {
-        // Extract value from sessionId if it's an object
-        const sessionIdValue = typeof data.sessionId === 'object' ? data.sessionId.value : data.sessionId
-
-        // Ulož celý array objektů (label, value) do DB
-        const alergenyArr = Array.isArray(data.allergens) ? data.allergens : [];
-        const alergenyJson = JSON.stringify(alergenyArr);
-
+        // Only use allowed columns
         const query = `
-            INSERT INTO účastníci (jméno, email, rodné_číslo, telefon, adresa, věk, turnus_id, alergeny)
-            VALUES ('${data.name}', '${data.email}', '${data.personal_number}', '${data.phone}', '${data.address}', ${data.age}, ${sessionIdValue}, '${alergenyJson}')
+            INSERT INTO ${selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')} (name, email, personal_number, phone, address, age)
+            VALUES ('${data.name}', '${data.email}', '${data.personal_number}', '${data.phone}', '${data.address}', ${data.age})
         `
-
         const result = selectedSystemStore.selectedSystem.db.query(query)
 
         if (result.success) {
@@ -681,27 +687,13 @@ const handleEditParticipant = async (data: any) => {
 
     isSubmitting.value = true
     try {
-        // Extract value from sessionId if it's an object
-        const sessionIdValue = typeof data.sessionId === 'object' ? data.sessionId.value : data.sessionId
-
-        // Convert allergens array of objects to array of values
-        const alergenyArr = Array.isArray(data.allergens)
-            ? data.allergens.map((item: any) => item.value || item)
-            : [];
-        const alergenyJson = JSON.stringify(alergenyArr);
-
-        console.log('Updating participant:', selectedParticipant.value.id)
-
-        // Use SQL style with spaces around '=' and correct order
+        // Only use allowed columns
         const query = `
-            UPDATE účastníci 
-            SET jméno = '${data.name}', email = '${data.email}', rodné_číslo = '${data.personal_number}', 
-                telefon = '${data.phone}', adresa = '${data.address}', věk = ${data.age}, alergeny = '${alergenyJson}', turnus_id = ${sessionIdValue}
-            WHERE id = '${selectedParticipant.value.id}'
+            UPDATE ${selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')} 
+            SET name = '${data.name}', email = '${data.email}', personal_number = '${data.personal_number}', 
+                phone = '${data.phone}', address = '${data.address}', age = ${data.age}
+            WHERE participant_id = '${selectedParticipant.value.id}'
         `
-
-        console.log("QUERY: ", query)
-
         const result = selectedSystemStore.selectedSystem.db.query(query)
 
         if (result.success) {
@@ -711,7 +703,6 @@ const handleEditParticipant = async (data: any) => {
                 icon: 'i-heroicons-check'
             })
             loadParticipantsFromDatabase()
-            // Hide drawer after successful update
             editModalOpen.value = false
         } else {
             toast.add({
@@ -722,7 +713,6 @@ const handleEditParticipant = async (data: any) => {
             editModalOpen.value = false
         }
     } catch (error) {
-        console.log('Error updating participant:', error)
         toast.add({
             title: t('participant_update_error'),
             color: 'red',
@@ -746,11 +736,9 @@ const closeParticipantDetails = () => {
 }
 
 const removeParticipant = (participant: Participant) => {
-    // Implementation for removing participant
-    console.log('Removing participant:', participant.id)
+    // Only use allowed columns/table name
     try {
-        selectedSystemStore.selectedSystem?.db.query(`DELETE FROM účastníci WHERE id = ${participant.id}`)
-        // Refresh the participants list after deletion
+        selectedSystemStore.selectedSystem?.db.query(`DELETE FROM ${selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')} WHERE participant_id = ${participant.id}`)
         loadParticipantsFromDatabase()
         toast.add({
             title: t('participant_deleted_success', { name: participant.name }),
@@ -758,13 +746,11 @@ const removeParticipant = (participant: Participant) => {
             icon: 'i-lucide-trash-2'
         })
     } catch {
-        console.error('Error deleting participant:', participant.id)
         toast.add({
             title: t('participant_delete_error', { name: participant.name }),
             color: 'red',
             icon: 'i-lucide-alert-triangle'
         })
-
     }
 }
 
