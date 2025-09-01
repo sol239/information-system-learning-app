@@ -149,5 +149,6 @@
     "supervisor_added_error": "Error adding supervisor",
     "supervisor_updated_success": "Supervisor updated successfully",
     "supervisor_updated_error": "Error updating supervisor",
-    "filter_supervisors": "Filter Supervisors"
+    "filter_supervisors": "Filter Supervisors",
+    "days_count": "Number of Days"
 }

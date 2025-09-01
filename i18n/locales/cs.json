@@ -147,5 +147,6 @@
     "supervisor_added_error": "Chyba při přidávání vedoucího",
     "supervisor_updated_success": "Vedoucí úspěšně aktualizován",
     "supervisor_updated_error": "Chyba při aktualizaci vedoucího",
-    "filter_supervisors": "Filtrovat vedoucí"
+    "filter_supervisors": "Filtrovat vedoucí",
+    "days_count": "Počet dní"
 }

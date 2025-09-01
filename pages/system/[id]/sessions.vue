@@ -23,15 +23,15 @@
                         </div>
 
                         <!-- Date Range + Day Count Badge -->
-                        <div class="flex items-center gap-2 text-sm text-gray-600 mb-4 highlightable"
-                            :id="'sessions-date-' + session.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-date-' + session.id, $event)">
+                        <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
                             <UIcon name="i-heroicons-calendar-days" />
-                            <span>{{ formatDateRange(session.fromDate, session.toDate) }}</span>
+                            <span class="highlightable"
+                            :id="'sessions-date-' + session.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-date-' + session.id, $event)">{{ formatDateRange(session.fromDate, session.toDate) }}</span>
                             <UBadge class="highlightable" color="sky" variant="soft"
                                 :id="'sessions-day-count-' + session.id"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-day-count-' + session.id, $event)">
-                                {{ getDayCount(session) }}
+                                {{ t('days_count') }}: {{ getDayCount(session) }}
                             </UBadge>
                         </div>
 

@@ -6,7 +6,7 @@
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <USelect  class="highlightable" :id="'participants-session-menu'"
+                <USelect class="highlightable" :id="'participants-session-menu'"
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
                     v-model="value" :items="filterSessionsItems" />
 
@@ -56,10 +56,16 @@
                 <div class="ml-auto flex gap-4 items-start">
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
-                        <UButton variant="outline" color="sky" size="sm" @click="resetFilter"
-                            icon="i-lucide-rotate-ccw">
+                        <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
+                            size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw"
+                            @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-reset', $event)">
                         </UButton>
-                        <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')" size="sm" />
+                        <div class="highlightable" id="participants-filter-input"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
+                            <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')"
+                                size="sm" />
+                        </div>
+
                     </div>
                     <!-- Add Participant Drawer (right) -->
                     <UDrawer v-model:open="addModalOpen" direction="right">

@@ -3,14 +3,21 @@
         <LocalNavbar :items="localItems" />
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
-                <USelect color="violet" class="highlightable" :id="'supervisors-session-menu'"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-session-menu', $event)"
-                    v-model="value" :items="filterSessionsItems" />
-
+                <!-- Session Selector -->
+                <div class="highlightable" :id="'supervisors-session-menu'"
+                    @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-session-menu', $event)">
+                    <USelect color="violet" :disabled="highlightStore.isHighlightMode" v-model="value"
+                        :items="filterSessionsItems" />
+                </div>
                 <!-- Filter Field and Reset Button (left) -->
                 <div class="flex gap-2 items-center ml-auto">
-                    <UButton variant="outline" color="violet" size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw" />
-                    <UInput v-model="filterText" color="violet" :placeholder="t('filter_supervisors')" size="sm" />
+                    <UButton id="supervisors-filter-reset" class="highlightable" variant="outline" color="violet"
+                        size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw"
+                        @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-filter-reset', $event)" />
+                    <div @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-filter-input', $event)"
+                        id="supervisors-filter-input" class="highlightable">
+                        <UInput v-model="filterText" color="violet" :placeholder="t('filter_supervisors')" size="sm" />
+                    </div>
                 </div>
 
                 <!-- Add Supervisor Drawer -->
@@ -27,32 +34,27 @@
                                 class="flex flex-col space-y-4">
                                 <div class="highlightable" id="supervisors-add-name"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-name', $event)">
-                                    <label for="name"
-                                        class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                    <label for="name" class="block text-sm font-medium text-white mb-1">Jméno</label>
                                     <UInput color="violet" id="name" v-model="newSupervisor.name"
                                         placeholder="Zadejte jméno vedoucího"
                                         :disabled="highlightStore.isHighlightMode" />
                                 </div>
                                 <div class="highlightable" id="supervisors-add-email"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-email', $event)">
-                                    <label for="email"
-                                        class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                    <label for="email" class="block text-sm font-medium text-white mb-1">E-mail</label>
                                     <UInput color="violet" id="email" v-model="newSupervisor.email" type="email"
-                                        placeholder="email@example.com"
-                                        :disabled="highlightStore.isHighlightMode" />
+                                        placeholder="email@example.com" :disabled="highlightStore.isHighlightMode" />
                                 </div>
                                 <div class="highlightable" id="supervisors-add-personal_number"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-personal_number', $event)">
-                                    <label for="personal_number"
-                                        class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                    <UInput color="violet" id="personal_number"
-                                        v-model="newSupervisor.personal_number" placeholder="123456/7890"
-                                        :disabled="highlightStore.isHighlightMode" />
+                                    <label for="personal_number" class="block text-sm font-medium text-white mb-1">Rodné
+                                        číslo</label>
+                                    <UInput color="violet" id="personal_number" v-model="newSupervisor.personal_number"
+                                        placeholder="123456/7890" :disabled="highlightStore.isHighlightMode" />
                                 </div>
                                 <div class="highlightable" id="supervisors-add-phone"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-phone', $event)">
-                                    <label for="phone"
-                                        class="block text-sm font-medium text-white mb-1">Telefon</label>
+                                    <label for="phone" class="block text-sm font-medium text-white mb-1">Telefon</label>
                                     <UInput color="violet" id="phone" v-model="newSupervisor.phone"
                                         placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
                                 </div>
@@ -67,9 +69,8 @@
                                 <div class="highlightable" id="supervisors-add-age"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-age', $event)">
                                     <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                    <UInput color="violet" id="age" v-model="newSupervisor.age" type="number"
-                                        min="18" max="100" placeholder="18"
-                                        :disabled="highlightStore.isHighlightMode" />
+                                    <UInput color="violet" id="age" v-model="newSupervisor.age" type="number" min="18"
+                                        max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
                                 </div>
                                 <div class="highlightable" id="supervisors-add-session"
                                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-add-session', $event)">
@@ -171,7 +172,8 @@
                             <div class="highlightable" id="supervisors-edit-personal_number"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('supervisors-edit-personal_number', $event)">
                                 <label for="edit-personal_number"
-                                    class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
+                                    class="block text-sm font-medium text-white mb-1">Rodné
+                                    číslo</label>
                                 <UInput color="violet" id="edit-personal_number"
                                     v-model="selectedSupervisor.personal_number" placeholder="123456/7890"
                                     :disabled="highlightStore.isHighlightMode" />
