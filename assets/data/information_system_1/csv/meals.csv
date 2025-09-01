@@ -1,0 +1,31 @@
+meal_id,name,when_served
+1,Ovesná kaše s banány,snídaně
+2,Míchaná vejce s toastem,snídaně
+3,Ovocný jogurt,snídaně
+4,Lívance s sirupem,snídaně
+5,Sendvič se šunkou a sýrem,snídaně
+6,Smoothie miska,snídaně
+7,Granola s mlékem,snídaně
+8,Vařená vejce s krekry,snídaně
+9,Sýrový croissant,snídaně
+10,Tvaroh s bobulemi,snídaně
+11,Špagety Bolognese,oběd
+12,Grilované kuře s rýží,oběd
+13,Hovězí guláš s knedlíky,oběd
+14,Zeleninové stir fry s tofu,oběd
+15,Rybí filet s bramborovou kaší,oběd
+16,Čočková polévka s chlebem,oběd
+17,Plněné papriky s rýží,oběd
+18,Kuřecí řízek s brambory,oběd
+19,Rizoto s houbami,oběd
+20,Pečená cuketa se sýrem,oběd
+21,Rajčatová polévka s těstovinami,večeře
+22,Grilovaný sýrový sendvič,večeře
+23,Tuňákový salát s krekry,večeře
+24,Zeleninová pizza,večeře
+25,Vaječný salát v tortille,večeře
+26,Kuskus se zeleninou,večeře
+27,Kuřecí Caesar wrap,večeře
+28,Špenátový quiche,večeře
+29,Rýže s fazolemi,večeře
+30,Bulgur salát s fetou,večeře

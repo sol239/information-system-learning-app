@@ -13,13 +13,18 @@ export class DbHandler {
         const SQL = await initSqlJs({
             // github pages:
             // locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
-            
             locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
         });
 
         const dbHandler: DbHandler = new DbHandler();
         dbHandler.db = new SQL.Database();
         dbHandler.createTables();
+
+        json.tables.forEach(table => {
+            const columns = DbHandler.getTableColumns(table);
+            console.log(`Table: ${table.name}, Columns: ${JSON.stringify(columns)}`);
+        });
+
         dbHandler.insertData(json.tables);
         return dbHandler;
     }
@@ -38,6 +43,14 @@ export class DbHandler {
         // Create tables and insert data
         this.createTables();
         this.insertData(json.tables);
+    }
+
+    private static getTableColumns(table) {
+        const columns = [];
+        for (const [key, value] of Object.entries(table)) {
+            columns.push({ name: key, type: typeof value });
+        }
+        return columns;
     }
 
     private createTables(): void {
