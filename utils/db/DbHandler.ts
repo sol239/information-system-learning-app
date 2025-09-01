@@ -1,5 +1,17 @@
 import initSqlJs from 'sql.js';
 
+// Simple CSV parser (assumes no quoted commas, first row is header)
+function parseCSV(csv: string): any[] {
+    const lines = csv.trim().split('\n');
+    const headers = lines[0].split(',');
+    return lines.slice(1).map(line => {
+        const values = line.split(',');
+        const obj: any = {};
+        headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
+        return obj;
+    });
+}
+
 export class DbHandler {
 
     private db: any;
@@ -13,19 +25,18 @@ export class DbHandler {
         const SQL = await initSqlJs({
             // github pages:
             // locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
+
             locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
         });
 
         const dbHandler: DbHandler = new DbHandler();
         dbHandler.db = new SQL.Database();
-        dbHandler.createTables();
 
-        json.tables.forEach(table => {
-            const columns = DbHandler.getTableColumns(table);
-            console.log(`Table: ${table.name}, Columns: ${JSON.stringify(columns)}`);
-        });
+        console.log("JSON 1", json);
 
-        dbHandler.insertData(json.tables);
+        dbHandler.createTables(json.tables);
+
+        await dbHandler.insertData(json.tables);
         return dbHandler;
     }
 
@@ -34,15 +45,16 @@ export class DbHandler {
         const SQL = await initSqlJs({
             // github pages:
             // locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
-            
+
             locateFile: () => '/information-system-learning-app/sql-wasm.wasm'
         });
 
         this.db = new SQL.Database();
+        console.log("JSON 2", json.tables);
 
         // Create tables and insert data
-        this.createTables();
-        this.insertData(json.tables);
+        this.createTables(json.tables);
+        await this.insertData(json.tables);
     }
 
     private static getTableColumns(table) {
@@ -53,20 +65,19 @@ export class DbHandler {
         return columns;
     }
 
-    private createTables(): void {
+    private createTables(tables: any[]): void {
+
         // Create participants table
         try {
             this.db.exec(`
-            CREATE TABLE účastníci (
-                id INTEGER PRIMARY KEY,
-                jméno TEXT NOT NULL,
+            CREATE TABLE participants (
+                participant_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
                 email TEXT NOT NULL,
-                rodné_číslo TEXT NOT NULL,
-                telefon TEXT NOT NULL,
-                adresa TEXT NOT NULL,
-                věk INTEGER NOT NULL,
-                alergeny TEXT, -- JSON array as string
-                turnus_id INTEGER NOT NULL
+                personal_number TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                address TEXT NOT NULL,
+                age INTEGER NOT NULL
             )
         `);
             console.log("Participants table created successfully. ✅");
@@ -75,13 +86,12 @@ export class DbHandler {
         }
 
         try {
-            // Create jídla table
+            // Create meals table
             this.db.exec(`
-            CREATE TABLE jídla (
-                id INTEGER PRIMARY KEY,
-                jméno TEXT NOT NULL,
-                alergeny TEXT, -- JSON array as string
-                kdy_podáváno TEXT NOT NULL
+            CREATE TABLE meals (
+                meal_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                date_served TEXT NOT NULL
             )
         `);
             console.log("Meals table created successfully. ✅");
@@ -90,13 +100,13 @@ export class DbHandler {
         }
 
         try {
-            // Create turnusy    table
+            // Create sessions table
             this.db.exec(`
-            CREATE TABLE turnusy (
-                id INTEGER PRIMARY KEY,
-                od TEXT NOT NULL,
-                do TEXT NOT NULL,
-                kapacita INTEGER NOT NULL
+            CREATE TABLE sessions (
+                session_id INTEGER PRIMARY KEY,
+                from_date TEXT NOT NULL,
+                to_date TEXT NOT NULL,
+                capacity INTEGER NOT NULL
             )
         `);
             console.log("Sessions table created successfully. ✅");
@@ -105,17 +115,16 @@ export class DbHandler {
         }
 
         try {
-            // Create vedoucí table
+            // Create supervisors table
             this.db.exec(`
-            CREATE TABLE vedoucí (
-                id INTEGER PRIMARY KEY,
-                jméno TEXT NOT NULL,
+            CREATE TABLE supervisors (
+                supervisor_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
                 email TEXT NOT NULL,
-                rodné_číslo TEXT NOT NULL,
-                telefon TEXT NOT NULL,
-                adresa TEXT NOT NULL,
-                věk INTEGER NOT NULL,
-                turnus_id INTEGER NOT NULL
+                personal_number TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                address TEXT NOT NULL,
+                age INTEGER NOT NULL
             )
         `);
             console.log("Supervisors table created successfully. ✅");
@@ -124,97 +133,204 @@ export class DbHandler {
         }
 
         try {
-            // Create alergeny table
+            // Create allergens table
             this.db.exec(`
-            CREATE TABLE alergeny (
-                id INTEGER PRIMARY KEY,
-                název TEXT NOT NULL
+            CREATE TABLE allergens (
+                allergen_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL
             )
         `);
-            console.log("Alergeny table created successfully. ✅");
+            console.log("Allergens table created successfully. ✅");
         } catch (error) {
-            console.error('Error creating alergeny table: ⛔', error);
+            console.error('Error creating allergens table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE allergens_meals (
+                allergen_id INTEGER NOT NULL,
+                meal_id INTEGER NOT NULL,
+                PRIMARY KEY (allergen_id, meal_id)
+            )
+        `);
+            console.log("Allergens_meals table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating allergens_meals table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE meals_participants (
+                meal_id INTEGER NOT NULL,
+                participant_id INTEGER NOT NULL,
+                date_served TEXT NOT NULL,
+                PRIMARY KEY (participant_id, meal_id)
+            )
+        `);
+            console.log("Meals_participants table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating meals_participants table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE meals_supervisors (
+                meal_id INTEGER NOT NULL,
+                supervisor_id INTEGER NOT NULL,
+                date_served TEXT NOT NULL,
+                PRIMARY KEY (supervisor_id, meal_id)
+            )
+        `);
+            console.log("Meals_supervisors table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating meals_supervisors table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE participants_allergens (
+                participant_id INTEGER NOT NULL,
+                allergen_id INTEGER NOT NULL,
+                PRIMARY KEY (participant_id, allergen_id)
+            )
+        `);
+            console.log("Participants_allergens table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating participants_allergens table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE supervisors_allergens (
+                supervisor_id INTEGER NOT NULL,
+                allergen_id INTEGER NOT NULL,
+                PRIMARY KEY (supervisor_id, allergen_id)
+            )
+        `);
+            console.log("Supervisors_allergens table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating supervisors_allergens table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE sessions_supervisors (
+                session_id INTEGER NOT NULL,
+                supervisor_id INTEGER NOT NULL,
+                PRIMARY KEY (session_id, supervisor_id)
+            )
+        `);
+            console.log("Sessions_supervisors table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating sessions_supervisors table: ⛔', error);
+        }
+
+        try {
+            this.db.exec(`
+            CREATE TABLE sessions_participants (
+                session_id INTEGER NOT NULL,
+                participant_id INTEGER NOT NULL,
+                PRIMARY KEY (session_id, participant_id)
+            )
+        `);
+            console.log("Sessions_participants table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating sessions_participants table: ⛔', error);
         }
     }
 
-    private insertData(tables: any[]): void {
-        tables.forEach(table => {
+    private async insertData(tables: any[]): Promise<void> {
+        for (const table of tables) {
+            const response = await fetch(table.csv_path);
+            const csvContent = await response.text();
+            const rows = parseCSV(csvContent);
+
             switch (table.name) {
                 case 'účastníci':
-                    this.insertParticipants(table.data);
+                    await this.insertParticipants(rows);
                     break;
                 case 'jídla':
-                    this.insertMeals(table.data);
+                    await this.insertMeals(rows);
                     break;
                 case 'turnusy':
-                    this.insertSessions(table.data);
+                    await this.insertSessions(rows);
                     break;
                 case 'vedoucí':
-                    this.insertSupervisors(table.data);
+                    await this.insertSupervisors(rows);
                     break;
                 case 'alergeny':
-                    this.insertAlergeny(table.data);
+                    await this.insertAlergeny(rows);
+                    break;
+                case 'účastníci_alergeny':
+                    await this.insertParticipantsAllergens(rows);
+                    break;
+                case 'účastníci_jídla':
+                    await this.insertMealsParticipants(rows);
+                    break;
+                case 'účastníci_turnusy':
+                    await this.insertParticipantsSessions(rows);
+                    break;
+                case 'jídla_alergeny':
+                    await this.insertAllergensMeals(rows);
+                    break;
+                case 'vedoucí_alergeny':
+                    await this.insertSupervisorsAllergens(rows);
+                    break;
+                case 'vedoucí_turnusy':
+                case 'turnusy_vedoucí':
+                    await this.insertSessionsSupervisors(rows);
                     break;
             }
-        });
+        }
     }
 
-    private insertParticipants(data: any[]): void {
+    private async insertParticipants(data: any[]): Promise<void> {
         const stmt = this.db.prepare(`
-            INSERT INTO účastníci (id, jméno, email, rodné_číslo, telefon, adresa, věk, alergeny, turnus_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO participants (participant_id, name, email, personal_number, phone, address, age)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `);
-
-        data.forEach(participant => {
+        data.forEach(row => {
             stmt.run([
-                participant.id,
-                participant.jméno,
-                participant.email,
-                participant.rodné_číslo,
-                participant.telefon,
-                participant.adresa,
-                participant.věk,
-                JSON.stringify(participant.alergeny),
-                participant.turnus_id
+                row.participant_id || row.id,
+                row.name || row.jméno,
+                row.email,
+                row.personal_number || row.rodné_číslo,
+                row.phone || row.telefon,
+                row.address || row.adresa,
+                Number(row.age || row.věk)
             ]);
         });
-
         stmt.free();
     }
 
-    private insertMeals(data: any[]): void {
+    private async insertMeals(data: any[]): Promise<void> {
         const stmt = this.db.prepare(`
-            INSERT INTO jídla (id, jméno, alergeny, kdy_podáváno)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO meals (meal_id, name, date_served)
+            VALUES (?, ?, ?)
         `);
-
-        data.forEach(meal => {
+        data.forEach(row => {
             stmt.run([
-                meal.id,
-                meal.jméno,
-                JSON.stringify(meal.alergeny),
-                meal.kdy_podáváno
+                row.meal_id || row.id,
+                row.name || row.jméno,
+                row.date_served || row.kdy_podáváno
             ]);
         });
-
         stmt.free();
     }
 
-    private insertSessions(data: any[]): void {
+    private async insertSessions(data: any[]): Promise<void> {
         const stmt = this.db.prepare(`
-            INSERT INTO turnusy (id, od, do, kapacita)
+            INSERT INTO sessions (session_id, from_date, to_date, capacity)
             VALUES (?, ?, ?, ?)
         `);
-
-        data.forEach(session => {
+        data.forEach(row => {
             stmt.run([
-                session.id,
-                session.od,
-                session.do,
-                session.kapacita
+                row.session_id || row.id,
+                row.from_date || row.od,
+                row.to_date || row.do,
+                Number(row.capacity || row.kapacita)
             ]);
         });
-
         stmt.free();
     }
 
@@ -231,41 +347,122 @@ export class DbHandler {
         }
     }
 
-    private insertSupervisors(data: any[]): void {
+    private async insertSupervisors(data: any[]): Promise<void> {
         const stmt = this.db.prepare(`
-            INSERT INTO vedoucí (id, jméno, email, rodné_číslo, telefon, adresa, věk, turnus_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO supervisors (supervisor_id, name, email, personal_number, phone, address, age)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `);
-
-        data.forEach(supervisor => {
+        data.forEach(row => {
             stmt.run([
-                supervisor.id,
-                supervisor.jméno,
-                supervisor.email,
-                supervisor.rodné_číslo,
-                supervisor.telefon,
-                supervisor.adresa,
-                supervisor.věk,
-                supervisor.turnus_id
+                row.supervisor_id || row.id,
+                row.name || row.jméno,
+                row.email,
+                row.personal_number || row.rodné_číslo,
+                row.phone || row.telefon,
+                row.address || row.adresa,
+                Number(row.age || row.věk)
             ]);
         });
-
         stmt.free();
     }
 
-    private insertAlergeny(data: any[]): void {
+    private async insertAlergeny(data: any[]): Promise<void> {
         const stmt = this.db.prepare(`
-            INSERT INTO alergeny (id, název)
+            INSERT INTO allergens (allergen_id, name)
             VALUES (?, ?)
         `);
-
-        data.forEach(alergen => {
+        data.forEach(row => {
             stmt.run([
-                alergen.id,
-                alergen.název
+                row.allergen_id || row.id,
+                row.name || row.název
             ]);
         });
+        stmt.free();
+    }
 
+    // Add new insert methods for join tables
+    private async insertParticipantsAllergens(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO participants_allergens (participant_id, allergen_id)
+            VALUES (?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.participant_id,
+                row.allergen_id
+            ]);
+        });
+        stmt.free();
+    }
+
+    private async insertMealsParticipants(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO meals_participants (meal_id, participant_id, date_served)
+            VALUES (?, ?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.meal_id,
+                row.participant_id,
+                row.date_served
+            ]);
+        });
+        stmt.free();
+    }
+
+    private async insertParticipantsSessions(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO sessions_participants (session_id, participant_id)
+            VALUES (?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.session_id,
+                row.participant_id
+            ]);
+        });
+        stmt.free();
+    }
+
+    private async insertAllergensMeals(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO allergens_meals (allergen_id, meal_id)
+            VALUES (?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.allergen_id,
+                row.meal_id
+            ]);
+        });
+        stmt.free();
+    }
+
+    private async insertSupervisorsAllergens(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO supervisors_allergens (supervisor_id, allergen_id)
+            VALUES (?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.supervisor_id,
+                row.allergen_id
+            ]);
+        });
+        stmt.free();
+    }
+
+    private async insertSessionsSupervisors(data: any[]): Promise<void> {
+        const stmt = this.db.prepare(`
+            INSERT INTO sessions_supervisors (session_id, supervisor_id)
+            VALUES (?, ?)
+        `);
+        data.forEach(row => {
+            stmt.run([
+                row.session_id,
+                row.supervisor_id
+            ]);
+        });
         stmt.free();
     }
 
