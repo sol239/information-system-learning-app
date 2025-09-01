@@ -11,6 +11,19 @@ export class TaskAnswerEval {
         return true;
     }
 
+    public static getAnswerType(taskAnswer: string): string {
+        const trimmedAnswer = taskAnswer.trim();
+        const answerType: string = trimmedAnswer.split('==')[0].trim().split("-")[0].trim();
+        return answerType;
+    }
+
+    public static getQuestions(taskAnswer: string): string[] {
+        const trimmedAnswer = taskAnswer.trim();
+        const questionPart = trimmedAnswer.split('==')[1]?.trim();
+        if (!questionPart) return [];
+        return questionPart.split(';').map(q => q.trim().split(":")[1]).filter(q => q);
+    }
+
     private static getColumnValueTableMap(tableAnswer: string): Map<string, string[]> {
         const columnValueMap = new Map<string, string[]>();
         const rows = tableAnswer.split(';');
@@ -115,6 +128,8 @@ export class TaskAnswerEval {
                 // Add table comparison logic here if needed
             } else if (componentId.includes("js")) {
                 // Add JS comparison logic here if needed
+            } else if (componentId.includes("opt")) {
+                return false;
             }
         }
         return areAnswersCorrect;

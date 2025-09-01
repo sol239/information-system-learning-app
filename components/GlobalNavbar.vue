@@ -4,7 +4,7 @@
     <!-- Navigation Menu on the left/center -->
     <UNavigationMenu :items="items" class="flex-grow justify-start" style="z-index: 10000;" />
 
-    <!--<UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>-->
+    <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
 
     <UBadge v-if="isOnSystemDetailPage" color="red" variant="outline" size="xl" style="margin-right: 10px;">
       {{ $t('score') }}: {{ scoreStore.score }}
@@ -53,13 +53,14 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useHighlightStore } from '~/stores/useHighlightStore'
-import { ComponentHandler, TaskQueue, useScoreStore } from '#imports'
+import { ComponentHandler, SystemReset, TaskAnswerEval, TaskQueue, useScoreStore } from '#imports'
 import { useErrorComponentStore } from '#imports'
 import { Task } from '~/model/Task'
 import { useSelectedTaskStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
 import { useSettingsStore } from '#imports'
 import { useInformationSystemStore } from '#imports'
+
 
 /* 2. Stores */
 const highlightStore = useHighlightStore()
@@ -71,7 +72,6 @@ const settingsStore = useSettingsStore()
 const informationSystemStore = useInformationSystemStore()
 
 import { useComponentCodeStore } from '#imports';
-import { toast } from '#build/ui'
 
 const componentCodeStore = useComponentCodeStore()
 
@@ -158,10 +158,9 @@ onMounted(() => {
 async function handleHelperClick() {
   // Placeholder for helper click logic
   //console.log(componentCodeStore.getComponentCode("stats-supervisors-sqsl.vue"));
-  console.log(ComponentHandler.isInErrorComponents("stats-supervisors.vue"));
-  const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql");
-  console.log(errorSql);
+  console.log(TaskAnswerEval.getQuestions(selectedTaskStore.selectedTask?.answer || ''));
 }
+
 
 async function refreshComponents() {
   console.log("Refreshing components...");

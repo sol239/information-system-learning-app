@@ -116,6 +116,24 @@
                 {{ t('check_repair_task') }}
               </UButton>
             </div>
+
+            <div v-if="selectedTask.componentsRepaired">
+              <UForm :state="questionsForm" >
+                <div v-for="(question, idx) in questions" :key="idx" class="mb-2 flex items-center gap-2">
+                  <UCheckbox v-model="questionsForm[idx]" />
+                  <label>{{ question }}</label>
+                </div>
+                <UButton
+                  type="submit"
+                  :disabled="selectedTask.completed || selectedTask.componentsRepaired || !highlightStore.selectedIds || highlightStore.selectedIds.length === 0"
+                  variant="outline"
+                  style="margin-left: 5px;"
+                >
+                  {{ t('check_repair_task') }}
+                </UButton>
+              </UForm>
+            </div>
+
           </div>
 
           <UButton class="mt-4" @click="selectTask(selectedTask.id)">{{ t('back_to_tasks') }}</UButton>
@@ -229,6 +247,14 @@ const tasks = computed(() => {
 const selectedTask = computed(() =>
   tasks.value.find((t: Task) => t.id === selectedTaskStore.selectedId) ?? null
 )
+
+const questions = computed(() => {
+  if (!selectedTask.value) return []
+  return TaskAnswerEval.getQuestions(selectedTask.value.answer)
+})
+
+const questionsForm = ref<string[]>([])
+// TODO: Finish
 
 /* 10. Watchers */
 watch(() => selectedTaskStore.currentRound, (newRound) => {

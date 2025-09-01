@@ -140,5 +140,14 @@
     "supervisor_details": "Details of Supervisor",
     "refresh_tasks_success": "Tasks refreshed successfully",
     "refresh_tasks_error": "Error refreshing tasks",
-    "refresh_tasks": "Refresh Tasks"
+    "refresh_tasks": "Refresh Tasks",
+    "filter_participants": "Filter Participants",
+    "participant_updated_success": "Participant updated successfully",
+    "participant_update_error": "Error updating participant",
+    "participant_added_error": "Error adding participant",
+    "supervisor_added_success": "Supervisor added successfully",
+    "supervisor_added_error": "Error adding supervisor",
+    "supervisor_updated_success": "Supervisor updated successfully",
+    "supervisor_updated_error": "Error updating supervisor",
+    "filter_supervisors": "Filter Supervisors"
 }

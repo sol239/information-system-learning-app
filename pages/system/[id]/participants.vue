@@ -6,7 +6,7 @@
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <USelectMenu class="highlightable" :id="'participants-session-menu'"
+                <USelect  class="highlightable" :id="'participants-session-menu'"
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
                     v-model="value" :items="filterSessionsItems" />
 
@@ -53,8 +53,15 @@
                     </UButton>
                 </div>
 
-                <div class="ml-auto">
-                    <!-- Add Participant Drawer -->
+                <div class="ml-auto flex gap-4 items-start">
+                    <!-- Filter Field and Reset Button (left) -->
+                    <div class="flex gap-2 items-center">
+                        <UButton variant="outline" color="sky" size="sm" @click="resetFilter"
+                            icon="i-lucide-rotate-ccw">
+                        </UButton>
+                        <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')" size="sm" />
+                    </div>
+                    <!-- Add Participant Drawer (right) -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
                         <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
                             {{ t('add_participant') }}
@@ -141,7 +148,6 @@
                             </UCard>
                         </template>
                     </UDrawer>
-
                 </div>
             </div>
 
@@ -292,7 +298,7 @@
                 <UIcon name="i-heroicons-user-x-mark" class="empty-icon" />
                 <h3 class="empty-title">{{ t('no_participants') }}</h3>
                 <p class="empty-description">{{ t('no_participants_description') }}</p>
-                <UButton @click="createNewParticipant" class="mt-4">
+                <UButton color="sky" @click="createNewParticipant" class="mt-4">
                     {{ t('create_participant') }}
                 </UButton>
             </div>
@@ -341,10 +347,7 @@ const localItems = ref([
         data_target: 'system-table',
     }
 ])
-const value = ref({
-    label: t('all_sessions'),
-    value: 'all'
-})
+const value = ref('all')
 const participants = ref<Participant[]>([])
 const sessions = ref<Session[]>([])
 const showDetailModal = ref(false)
@@ -421,27 +424,50 @@ watch(() => value.value.value, () => {
 })
 
 const filterSessionsItems = computed(() => [
-    {
-        label: t('all_sessions'),
-        value: 'all'
-    },
+    { label: t('all_sessions'), value: 'all' },
     ...sessions.value.map(session => ({
         label: formatDateRange(session.fromDate, session.toDate),
         value: session.id
     }))
 ])
 
-const filteredParticipants = computed(() => {
-    if (value.value.value === 'all') {
-        return participants.value
-    }
-    return participants.value.filter(p => p.sessionId === value.value.value)
+const filterForm = ref({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    sessionId: null as number | null
 })
+
+const filterText = ref('')
+
+function resetFilter() {
+    filterText.value = ''
+}
+
+const filteredParticipants = computed(() => {
+    let arr = participants.value
+
+    if (filterText.value) {
+        const text = filterText.value.toLowerCase()
+        arr = arr.filter(p =>
+            (p.name && p.name.toLowerCase().includes(text)) ||
+            (p.email && p.email.toLowerCase().includes(text)) ||
+            (p.phone && p.phone.toLowerCase().includes(text)) ||
+            (p.address && p.address.toLowerCase().includes(text)) ||
+            (p.sessionId && getSessionName(p.sessionId).toLowerCase().includes(text))
+        )
+    } else if (value.value !== 'all') {
+        arr = arr.filter(p => p.sessionId === Number(value.value))
+    }
+
+    return arr
+});
 
 const toast = useToast()
 
 const selectedSessionInfo = computed(() => {
-    if (value.value.value === 'all') {
+    if (value.value === 'all') {
         // Calculate total capacity for all sessions
         const totalCapacity = sessions.value.reduce((sum, session) => sum + session.capacity, 0)
         const currentCount = participants.value.length
@@ -615,7 +641,7 @@ const handleAddParticipant = async (data: any) => {
     } catch (error) {
         console.error('Error adding participant:', error)
         toast.add({
-            title: t('participant_add_error'),
+            title: t('participant_added_error'),
             color: 'red',
             icon: 'i-heroicons-exclamation-triangle'
         })

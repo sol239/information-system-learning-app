@@ -22,101 +22,105 @@
                             </UBadge>
                         </div>
 
-                        <!-- Date Range -->
+                        <!-- Date Range + Day Count Badge -->
                         <div class="flex items-center gap-2 text-sm text-gray-600 mb-4 highlightable"
                             :id="'sessions-date-' + session.id"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-date-' + session.id, $event)">
                             <UIcon name="i-heroicons-calendar-days" />
                             <span>{{ formatDateRange(session.fromDate, session.toDate) }}</span>
+                            <UBadge class="highlightable" color="sky" variant="soft"
+                                :id="'sessions-day-count-' + session.id"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-day-count-' + session.id, $event)">
+                                {{ getDayCount(session) }}
+                            </UBadge>
                         </div>
 
-                    </div>
-
-                    <!-- Capacity Progress -->
-                    <div class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + session.id, $event)">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
-                            <span class="text-sm text-gray-600">
-                                {{ session.participants.length }}/{{ session.capacity }}
-                            </span>
-                        </div>
-                        <div class="capacity-bar">
-                            <div class="capacity-fill" :style="{
-                                width: getCapacityPercentage(session) + '%',
-                                backgroundColor: getCapacityColor(session)
+                        <!-- Capacity Progress -->
+                        <div class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + session.id, $event)">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
+                                <span class="text-sm text-gray-600">
+                                    {{ session.participants.length }}/{{ session.capacity }}
+                                </span>
+                            </div>
+                            <div class="capacity-bar">
+                                <div class="capacity-fill" :style="{
+                                    width: getCapacityPercentage(session) + '%',
+                                    backgroundColor: getCapacityColor(session)
                             }"></div>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                            {{ getCapacityPercentage(session) }}% {{ t('occupied') }}
-                        </div>
-                    </div>
-
-                    <!-- Participants Section -->
-                    <div class="participants-section mb-6 highlightable"
-                        :id="'sessions-participants-' + session.id"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
-                        <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <UIcon name="i-heroicons-users" />
-                            {{ t('participants') }} ({{ session.participants.length }})
-                        </h4>
-                        <div v-if="session.participants.length > 0" class="space-y-2">
-                            <div v-for="participant in session.participants.slice(0, 3)" :key="participant.id"
-                                class="participant-item">
-                                <div class="participant-avatar">
-                                    {{ getInitials(participant.name) }}
-                                </div>
-                                <div class="participant-info">
-                                    <div class="participant-name">{{ participant.name }}</div>
-                                    <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
-                                </div>
                             </div>
-                            <div v-if="session.participants.length > 3" class="text-xs text-gray-500">
-                                + {{ session.participants.length - 3 }} {{ t('more_participants') }}
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ getCapacityPercentage(session) }}% {{ t('occupied') }}
                             </div>
                         </div>
-                        <div v-else class="text-sm text-gray-500 italic">
-                            {{ t('no_participants') }}
-                        </div>
-                    </div>
 
-                    <!-- Supervisors Section -->
-                    <div class="supervisors-section mb-6 highlightable"
-                        :id="'sessions-supervisors-' + session.id"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
-                        <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <UIcon name="i-heroicons-user-group" />
-                            {{ t('supervisors') }} ({{ getSessionSupervisors(session.id).length }})
-                        </h4>
-                        <div v-if="getSessionSupervisors(session.id).length > 0" class="space-y-2">
-                            <div v-for="supervisor in getSessionSupervisors(session.id)" :key="supervisor.id"
-                                class="supervisor-item">
-                                <div class="supervisor-avatar">
-                                    {{ getInitials(supervisor.name) }}
+                        <!-- Participants Section -->
+                        <div class="participants-section mb-6 highlightable"
+                            :id="'sessions-participants-' + session.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <UIcon name="i-heroicons-users" />
+                                {{ t('participants') }} ({{ session.participants.length }})
+                            </h4>
+                            <div v-if="session.participants.length > 0" class="space-y-2">
+                                <div v-for="participant in session.participants.slice(0, 3)" :key="participant.id"
+                                    class="participant-item">
+                                    <div class="participant-avatar">
+                                        {{ getInitials(participant.name) }}
+                                    </div>
+                                    <div class="participant-info">
+                                        <div class="participant-name">{{ participant.name }}</div>
+                                        <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
+                                    </div>
                                 </div>
-                                <div class="supervisor-info">
-                                    <div class="supervisor-name">{{ supervisor.name }}</div>
-                                    <div class="supervisor-details">{{ supervisor.email }}</div>
+                                <div v-if="session.participants.length > 3" class="text-xs text-gray-500">
+                                    + {{ session.participants.length - 3 }} {{ t('more_participants') }}
                                 </div>
                             </div>
+                            <div v-else class="text-sm text-gray-500 italic">
+                                {{ t('no_participants') }}
+                            </div>
                         </div>
-                        <div v-else class="text-sm text-gray-500 italic">
-                            {{ t('no_supervisors') }}
-                        </div>
-                    </div>
 
-                    <!-- Session Actions -->
-                    <div class="session-actions mt-6 pt-4 border-t border-gray-200">
-                        <div class="flex gap-2">
-                            <div><UButton size="sm" variant="outline" @click="!highlightStore.isHighlightMode ? viewSessionDetails(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-view-' + session.id, $event)"
-                                class="flex-1 highlightable" :id="'sessions-view-' + session.id">h
-                                TO-DO
-                            </UButton>
+                        <!-- Supervisors Section -->
+                        <div class="supervisors-section mb-6 highlightable"
+                            :id="'sessions-supervisors-' + session.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <UIcon name="i-heroicons-user-group" />
+                                {{ t('supervisors') }} ({{ getSessionSupervisors(session.id).length }})
+                            </h4>
+                            <div v-if="getSessionSupervisors(session.id).length > 0" class="space-y-2">
+                                <div v-for="supervisor in getSessionSupervisors(session.id)" :key="supervisor.id"
+                                    class="supervisor-item">
+                                    <div class="supervisor-avatar">
+                                        {{ getInitials(supervisor.name) }}
+                                    </div>
+                                    <div class="supervisor-info">
+                                        <div class="supervisor-name">{{ supervisor.name }}</div>
+                                        <div class="supervisor-details">{{ supervisor.email }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="text-sm text-gray-500 italic">
+                                {{ t('no_supervisors') }}
+                            </div>
                         </div>
-                            <UButton size="sm" color="primary" @click="!highlightStore.isHighlightMode ? manageSession(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-manage-' + session.id, $event)"
-                                class="flex-1 highlightable" :id="'sessions-manage-' + session.id">
-                                TO-DO
-                            </UButton>
+
+                        <!-- Session Actions -->
+                        <div class="session-actions mt-6 pt-4 border-t border-gray-200">
+                            <div class="flex gap-2">
+                                <div><UButton size="sm" variant="outline" @click="!highlightStore.isHighlightMode ? viewSessionDetails(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-view-' + session.id, $event)"
+                                    class="flex-1 highlightable" :id="'sessions-view-' + session.id">h
+                                    TO-DO
+                                </UButton>
+                                </div>
+                                    <UButton size="sm" color="primary" @click="!highlightStore.isHighlightMode ? manageSession(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-manage-' + session.id, $event)"
+                                        class="flex-1 highlightable" :id="'sessions-manage-' + session.id">
+                                        TO-DO
+                                    </UButton>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -306,9 +310,11 @@ const manageSession = (session: Session) => {
 }
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
-const createNewSession = () => {
-    // Implementation for creating new session
-    console.log('Creating new session')
+function getDayCount(session: Session): number {
+    const start = session.fromDate
+    const end = session.toDate
+    const diff = end.getTime() - start.getTime()
+    return Math.ceil(diff / (1000 * 3600 * 24)) + 1
 }
 
 onMounted(() => {

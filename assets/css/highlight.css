@@ -94,10 +94,13 @@
     cursor: pointer;
 }
 
+/* TODO: remove this hover */
+/*
 .highlightable:hover {
     background-color: rgba(100, 100, 255, 0.1);
-
 }
+*/
+
 
 .repaired-animation {
     animation: repairedPulse 2s cubic-bezier(.4, 0, .2, 1);

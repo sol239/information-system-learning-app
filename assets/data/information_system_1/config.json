@@ -832,7 +832,7 @@
             "elementClass": [
                 "stats-supervisors"
             ],
-            "round": 1,
+            "round": 2,
             "is_editable": false,
             "error-components": [
                 {
@@ -872,27 +872,26 @@
         },
         {
             "id": 4,
-            "title": "Zobrazování alergenů v tabulce",
-            "description": "Proč se nezobrazují alergeny v tabulce správně.",
+            "title": "Poslední ukázkový úkol",
+            "description": "Na stránce nástěnka se chybně zobrazuje počet vedoucích, vyber tuto komponentu a pošli ji a poté vyber důvod chyby.",
             "status": "pending",
-            "kind": "select-options",
-            "answer": "",
-            "elementClass": "table-alergeny",
+            "kind": "select",
+            "answer": "opt == cop1:Komponenta místo počtu vedoucích zobrazovala počet alergenů.;wop2:Komponenta zobrazovala počet účastníků.;wop3:Komponenta zobrazovala počet jídel.",
+            "elementClass": "stats-supervisors",
             "is_editable": false,
-            "round": 4,
-            "options": {
-                "correct_option": "Tabulka špatně zobrazuje data.",
-                "wrong_option_1": "Formulář špatně ukládá data.",
-                "wrong_option_2": "Obě ostatní možnosti jsou správné"
-            },
+            "round": 1,
             "error-components": [
                 {
-                    "name": "table-alergeny",
-                    "variables": {},
+                    "name": "stats-supervisors.vue",
+                    "variables": {
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM alergeny",
+                        "js": ""
+                    },
                     "error-component-name": ""
                 }
             ],
-            "feedback": "Tabulka špatně zobrazuje data, protože se v ní nezobrazují alergeny správně. Formulář ukládá data správně."
+            "feedback": "Správně jsi odpověděl, že komponenta využívala špatný SQL dotaz."
         }
     ]
 }

@@ -16,7 +16,7 @@ const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
 const handler = new FileHandler()
-const systems: InformationSystem[] = handler.getInformationSystems()
+let systems: InformationSystem[] = handler.getInformationSystems()
 
 /* 5. Props */
 // none
@@ -51,12 +51,17 @@ function navigateToSystem(systemId: number) {
 
 function initializeSystems() {
   console.log('Loaded systems:', systems)
-  
+
   try {
     informationSystemStore.systems = systems
   } catch (error) {
     console.error('Error setting systems in store:', error)
   }
+}
+
+function reloadSystems() {
+  systems = handler.getInformationSystems()
+  informationSystemStore.systems = systems
 }
 
 /* 12. Lifecycle */
@@ -69,7 +74,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex  justify-center gap-4" style="margin-top: 20px;">
+  <div class="flex justify-center gap-4" style="margin-top: 20px;">
     <UCard v-for="system in systems" :key="system.id" style="width: 90%;">
       <template #header>
         <h2 class="text-lg font-semibold">{{ system.name }}</h2>
@@ -78,9 +83,17 @@ onMounted(() => {
       <p class="text-sm text-white-600/25">{{ system.description }}</p>
 
       <template #footer>
-        <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">
-          {{ t('enter_system') }}
-        </UButton>
+        <div class="flex justify-between items-center w-full">
+          <UButton color="primary" variant="outline" @click="navigateToSystem(system.id)">
+            {{ t('enter_system') }}
+          </UButton>
+
+          <!-- TODO: Add loading animation -->
+          <UButton icon="heroicons-outline:refresh" color="primary" variant="solid" @click="reloadSystems">
+            Reload
+          </UButton>
+
+        </div>
       </template>
     </UCard>
   </div>

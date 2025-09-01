@@ -137,5 +137,15 @@
     "supervisor_details": "Detaily vedoucího",
     "refresh_tasks_success": "Úkoly úspěšně obnoveny",
     "refresh_tasks_error": "Chyba při obnově úkolů",
-    "refresh_tasks": "Obnovit úkoly"
+    "refresh_tasks": "Obnovit úkoly",
+    "filter_participants": "Filtrovat účastníky",
+    "participant_updated_success": "Účastník úspěšně aktualizován",
+    "participant_update_error": "Chyba při aktualizaci účastníka",
+    "participant_added_success": "Účastník {name} úspěšně přidán",
+    "participant_added_error": "Chyba při přidávání účastníka",
+    "supervisor_added_success": "Vedoucí úspěšně přidán",
+    "supervisor_added_error": "Chyba při přidávání vedoucího",
+    "supervisor_updated_success": "Vedoucí úspěšně aktualizován",
+    "supervisor_updated_error": "Chyba při aktualizaci vedoucího",
+    "filter_supervisors": "Filtrovat vedoucí"
 }
