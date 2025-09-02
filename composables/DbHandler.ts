@@ -246,7 +246,7 @@ export default class DbHandler {
         }
     }
 
-
+    // TODO: use simpler execution logic
     private async insertData(json: any): Promise<void> {
         console.log(`Inserting data into tables for system: ${json.directory}`);
 
@@ -297,7 +297,7 @@ export default class DbHandler {
                 meals_participants: this.insertMealsParticipants,
                 meals_supervisors: this.insertMealsSupervisors,
                 sessions_participants: this.insertParticipantsSessions,
-                meals_allergens: this.insertAllergensMeals,
+                allergens_meals: this.insertAllergensMeals,
                 supervisors_allergens: this.insertSupervisorsAllergens,
                 sessions_supervisors: this.insertSessionsSupervisors,
             };
