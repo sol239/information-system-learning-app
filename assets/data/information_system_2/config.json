@@ -1,0 +1,173 @@
+{
+    "id": 2,
+    "directory": "information_system_2",
+    "name": "Skautský tábor Jihlava",
+    "description": "Školní tábor v Jihlavě, zaměřený na výuku a zábavu pro děti.",
+    "tables": [
+        {
+            "id": "participants",
+            "name": "účastníci",
+            "csv_path": "csv/participants.csv"
+        },
+        {
+            "id": "meals",
+            "name": "jídla",
+            "csv_path": "csv/meals.csv"
+        },
+        {
+            "id": "sessions",
+            "name": "turnusy",
+            "csv_path": "csv/sessions.csv"
+        },
+        {
+            "id": "allergens",
+            "name": "alergeny",
+            "csv_path": "csv/allergens.csv"
+        },
+        {
+            "id": "supervisors",
+            "name": "vedoucí",
+            "csv_path": "csv/supervisors.csv"
+        },
+        {
+            "id": "participants_allergens",
+            "name": "účastníci_alergeny",
+            "csv_path": "csv/participants-allergens.csv"
+        },
+        {
+            "id": "meals_participants",
+            "name": "účastníci_jídla",
+            "csv_path": "csv/meals-participants.csv"
+        },
+        {
+            "id": "meals_supervisors",
+            "name": "jídla_vedoucí",
+            "csv_path": "csv/meals-supervisors.csv"
+        },
+        {
+            "id": "sessions_participants",
+            "name": "turnusy_účastníci",
+            "csv_path": "csv/sessions-participants.csv"
+        },
+        {
+            "id": "allergens_meals",
+            "name": "jídla_alergeny",
+            "csv_path": "csv/allergens-meals.csv"
+        },
+        {
+            "id": "supervisors_allergens",
+            "name": "vedoucí_alergeny",
+            "csv_path": "csv/supervisors-allergens.csv"
+        },
+        {
+            "id": "sessions_supervisors",
+            "name": "vedoucí_turnusy",
+            "csv_path": "csv/sessions-supervisors.csv"
+        }
+    ],
+    "tasks": [
+        {
+            "id": 1,
+            "title": "Jídla a účastníci v nástěnce",
+            "description": "Zkontrolujte, zda se v nástěnce správně zobrazují jídla a účastníci. Pokud najdete nějakou chybu, tak chybu opravte.",
+            "status": "pending",
+            "kind": "repair",
+            "answer": "stats-participants-sql.vue == SELECT COUNT(*) as count FROM účastníci && stats-meals-sql.vue == SELECT COUNT(*) as count FROM jídla",
+            "elementClass": [],
+            "round": 2,
+            "is_editable": true,
+            "error-components": [
+                {
+                    "name": "stats-participants.vue",
+                    "variables": {
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM vedoucí",
+                        "js": ""
+                    },
+                    "error-component-name": ""
+                },
+                {
+                    "name": "stats-meals.vue",
+                    "variables": {
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM turnusy",
+                        "js": ""
+                    },
+                    "error-component-name": ""
+                }
+            ],
+            "feedback": "Správně jsi opravil SQL dotazy dvou komponent. Komponenta, která měla zobrazovat počet účastníku chybně zobrazovala počet vedoucích a komponenta, která měla zobrazovat počet jídel, zobrazovala počet turnusů. Opravil jsi to tak, že jsi změnil SQL dotazy na správné."
+        },
+        {
+            "id": 2,
+            "title": "Zobrazování statistik v Dashboardu",
+            "description": "Zkontrolujte, zda se v Dashboardu správně zobrazují statistiky o počtu účastníků, jídlech a dozorčích. Pokud najdete nějakou chybu, tak vyberte komponentu, která je chybná.",
+            "status": "pending",
+            "kind": "select",
+            "answer": "none",
+            "elementClass": [
+                "stats-supervisors"
+            ],
+            "round": 2,
+            "is_editable": false,
+            "error-components": [
+                {
+                    "name": "stats-supervisors.vue",
+                    "variables": {
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM jídla",
+                        "js": ""
+                    },
+                    "error-component-name": ""
+                }
+            ],
+            "feedback": "Správně jsi zvolil komponentu, která zobrazovala chybně počet vedoucích."
+        },
+        {
+            "id": 3,
+            "title": "Úprava uživatele",
+            "description": "Upravte uživatele: Kristýna Němcová, tak že ji přidáte alergeny na Lepek a Vejce.",
+            "status": "pending",
+            "kind": "select",
+            "answer": "tbl-účastníci == jméno:Kristýna Němcová;alergeny:Lepek,Vejce",
+            "elementClass": [
+                "table-form-účastníci-alergeny"
+            ],
+            "is_editable": false,
+            "round": 3,
+            "error-components": [
+                {
+                    "name": "table-form-účastníci-alergeny.vue",
+                    "variables": {
+                        "isMultiple": false
+                    },
+                    "error-component-name": ""
+                }
+            ],
+            "feedback": "Před opravením komponenty bylo možné jenom v nabídce vybrat pouze jeden alergen. Po opravení je možné jich vybrat libobolně mnoho."
+        },
+        {
+            "id": 4,
+            "title": "Poslední ukázkový úkol",
+            "description": "Na stránce nástěnka se chybně zobrazuje počet vedoucích, vyber tuto komponentu a pošli ji a poté vyber důvod chyby.",
+            "status": "pending",
+            "kind": "select",
+            "answer": "opt == cop1:Komponenta místo počtu vedoucích zobrazovala počet alergenů.;wop2:Komponenta zobrazovala počet účastníků.;wop3:Komponenta zobrazovala počet jídel.",
+            "elementClass": "stats-supervisors",
+            "is_editable": false,
+            "round": 1,
+            "error-components": [
+                {
+                    "name": "stats-supervisors.vue",
+                    "variables": {
+                        "html": "",
+                        "sql": "SELECT COUNT(*) as count FROM alergeny",
+                        "js": ""
+                    },
+                    "error-component-name": ""
+                }
+            ],
+            "feedback": "Správně jsi odpověděl, že komponenta využívala špatný SQL dotaz."
+        }
+    ]
+}

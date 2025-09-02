@@ -6,7 +6,7 @@
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <USelect  class="highlightable" :id="'participants-session-menu'"
+                <USelect class="highlightable" :id="'participants-session-menu'"
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
                     v-model="value" :items="filterSessionsItems" />
 
@@ -130,14 +130,9 @@
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-session', $event)">
                                         <label for="sessionId"
                                             class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                        
-                                        <USelect 
-                                            color="sky" 
-                                            id="sessionId" 
-                                            v-model="newParticipant.sessionId"
-                                            :options="sessionOptions" 
-                                            placeholder="Vyberte turnus" 
-                                            multiple
+
+                                        <USelect color="sky" id="sessionId" v-model="newParticipant.sessionId"
+                                            :items="sessionOptions" placeholder="Vyberte turnus" multiple
                                             :disabled="highlightStore.isHighlightMode" />
                                     </div>
                                     <div class="highlightable" id="participants-add-allergens"
@@ -145,7 +140,7 @@
                                         <label for="allergens"
                                             class="block text-sm font-medium text-white mb-1">Alergeny</label>
                                         <USelectMenu color="sky" id="allergens" v-model="newParticipant.allergens"
-                                            :options="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                            :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
                                             :disabled="highlightStore.isHighlightMode" />
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
@@ -186,8 +181,9 @@
 
                     <!-- Turnus Info -->
                     <div class="turnus-section mb-4">
-                        <div v-if="participant.sessionId.length > 0" class="space-y-1">
-                            <div v-for="sessionId in participant.sessionId" :key="sessionId" class="text-sm text-gray-600">
+                        <div v-if="participant.sessions.length > 0" class="space-y-1">
+                            <div v-for="sessionId in participant.sessions" :key="sessionId"
+                                class="text-sm text-gray-600">
                                 <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
                                 {{ getSessionName(sessionId) }}
                             </div>
@@ -237,8 +233,8 @@
                             <h3 class="text-lg font-semibold">{{ t('participant_details') }}</h3>
                         </template>
 
-                        <UForm v-if="selectedParticipant" :state="selectedParticipant" @submit="handleEditParticipant(selectedParticipant)"
-                            class="flex flex-col space-y-4">
+                        <UForm v-if="selectedParticipant" :state="selectedParticipant"
+                            @submit="handleEditParticipant(selectedParticipant)" class="flex flex-col space-y-4">
                             <div class="highlightable" id="participants-edit-name"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-name', $event)">
                                 <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
@@ -280,19 +276,22 @@
                                 <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
                                     min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
                             </div>
-                            
-                            <!-- Session Management -->
+                            <!-- Allergen Edit Field -->
+                            <div class="highlightable" id="participants-edit-allergens"
+                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-allergens', $event)">
+                                <label for="edit-allergens"
+                                    class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                <USelectMenu color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
+                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                    :disabled="highlightStore.isHighlightMode" />
+                            </div>
                             <div class="highlightable" id="participants-edit-sessions"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-sessions', $event)">
-                                <label for="edit-sessions" class="block text-sm font-medium text-white mb-1">Turnus</label>
-                                
-                                <USelect 
-                                    color="sky" 
-                                    id="edit-sessions" 
-                                    v-model="selectedParticipant.sessionId"
-                                    :options="sessionOptions" 
-                                    placeholder="Vyberte turnus" 
-                                    multiple
+                                <label for="edit-sessions"
+                                    class="block text-sm font-medium text-white mb-1">Turnus</label>
+
+                                <USelect color="sky" id="edit-sessions" v-model="selectedParticipant.sessions"
+                                    :items="sessionOptions" placeholder="Vyberte turnus" multiple
                                     :disabled="highlightStore.isHighlightMode" />
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
@@ -385,21 +384,7 @@ const newParticipant = ref({
     allergens: [] as string[]
 })
 
-const allergenOptions = [
-    { label: 'Mléko', value: 'Mléko' },
-    { label: 'Skořápkové plody', value: 'Skořápkové plody' },
-    { label: 'Lepek', value: 'Lepek' },
-    { label: 'Vejce', value: 'Vejce' },
-    { label: 'Ryby', value: 'Ryby' },
-    { label: 'Sója', value: 'Sója' },
-    { label: 'Arašídy', value: 'Arašídy' },
-    { label: 'Celer', value: 'Celer' },
-    { label: 'Hořčice', value: 'Hořčice' },
-    { label: 'Sezam', value: 'Sezam' },
-    { label: 'Oxid siřičitý', value: 'Oxid siřičitý' },
-    { label: 'Lupina', value: 'Lupina' },
-    { label: 'Měkkýši', value: 'Měkkýši' }
-]
+
 
 const participantSchema = {
     type: 'object',
@@ -445,6 +430,16 @@ function resetFilter() {
     filterText.value = ''
 }
 
+const allergenOptions = computed(() => {
+    const query: string =  `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}`;
+    const result = selectedSystemStore.selectedSystem?.db?.query(query)?.results || [];
+    return result.map(allergen => ({
+        label: allergen.name,
+        value: allergen.allergen_id
+    }))
+})
+
+
 const filteredParticipants = computed(() => {
     let arr = participants.value
 
@@ -455,10 +450,10 @@ const filteredParticipants = computed(() => {
             (p.email && p.email.toLowerCase().includes(text)) ||
             (p.phone && p.phone.toLowerCase().includes(text)) ||
             (p.address && p.address.toLowerCase().includes(text)) ||
-            (p.sessionId && getSessionNames(p.sessionId).toLowerCase().includes(text))
+            (p.sessions && getSessionNames(p.sessions).toLowerCase().includes(text))
         )
     } else if (value.value !== 'all') {
-        arr = arr.filter(p => p.sessionId.includes(Number(value.value)))
+        arr = arr.filter(p => p.sessions.includes(Number(value.value)))
     }
 
     console.log("Filtered:", arr);
@@ -487,7 +482,7 @@ const selectedSessionInfo = computed(() => {
     const session = sessions.value.find(s => s.id === Number(value.value))
     if (!session) return null
 
-    const currentCount = participants.value.filter(p => p.sessionId.includes(session.id)).length
+    const currentCount = participants.value.filter(p => p.sessions.includes(session.id)).length
     const fillPercentage = (currentCount / session.capacity) * 100
 
     return {
@@ -527,7 +522,11 @@ const participantsDataHash = computed(() => {
 watch(participantsDataHash, (newHash, oldHash) => {
     if (oldHash && newHash !== oldHash && !newHash.startsWith('error')) {
         console.log('Database changes detected via hash, reloading data...')
-        loadParticipantsFromDatabase()
+        try {
+            loadParticipantsFromDatabase()
+        } catch (error) {
+            console.error('Error reloading participants data:', error)
+        }
     }
 })
 
@@ -538,57 +537,68 @@ const loadParticipantsFromDatabase = () => {
     }
 
     try {
-        const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
 
-        // Join participants with their sessions
-        const _participants = selectedSystemStore.selectedSystem.db.query(`
-            SELECT p.participant_id, p.name, p.email, p.personal_number, p.phone, p.address, p.age,
-                   sp.session_id
-            FROM ${participantsTable} p
-            LEFT JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
-            LEFT JOIN ${sessionsTable} s ON sp.session_id = s.session_id
-            ORDER BY p.participant_id
-        `).results || []
 
-        // Group sessions by participant
-        const participantMap = new Map<number, any>()
-        for (const row of _participants) {
-            if (!participantMap.has(row.participant_id)) {
-                participantMap.set(row.participant_id, {
-                    participant_id: row.participant_id,
-                    name: row.name,
-                    email: row.email,
-                    personal_number: row.personal_number,
-                    phone: row.phone,
-                    address: row.address,
-                    age: row.age,
-                    sessionIds: []
-                })
-            }
-            if (row.session_id) {
-                participantMap.get(row.participant_id).sessionIds.push(row.session_id)
+
+
+
+
+
+        const getParticipantsQuery: string = `
+            SELECT participant_id, name, email, personal_number, phone, address, age
+            FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')}
+            ORDER BY participant_id
+        `;
+
+        const participantsResult = selectedSystemStore.selectedSystem.db.query(getParticipantsQuery);
+
+        const participantsMap = new Map<number, Participant>();
+        for (const row of participantsResult?.results || []) {
+            const participant = new Participant(
+                row.participant_id,
+                row.name,
+                row.email,
+                row.personal_number,
+                row.phone,
+                row.address,
+                row.age,
+                [], // session IDs not used
+                []  // allergens not used
+            );
+            participantsMap.set(participant.id, participant);
+        }
+
+        // get participant's allergens
+        const getParticipantAllergensQuery: string = `
+            SELECT pa.participant_id, a.allergen_id
+            FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')} pa
+            JOIN ${selectedSystemStore.selectedSystem.db.getTableName('allergens')} a ON pa.allergen_id = a.allergen_id
+        `;
+
+        const allergensResult = selectedSystemStore.selectedSystem.db.query(getParticipantAllergensQuery);
+        for (const row of allergensResult?.results || []) {
+            const participant = participantsMap.get(row.participant_id);
+            if (participant) {
+                participant.allergens.push(row.allergen_id);
             }
         }
 
-        const _participantsArray: Participant[] = []
-        for (const p of participantMap.values()) {
-            _participantsArray.push(
-                new Participant(
-                    p.participant_id,
-                    p.name,
-                    p.email,
-                    p.personal_number,
-                    p.phone,
-                    p.address,
-                    p.age,
-                    p.sessionIds, // Pass array of session IDs
-                    []  // allergens not used
-                )
-            )
+        // get participant's sessions
+        const getParticipantSessionsQuery: string = `
+            SELECT ps.participant_id, s.session_id
+            FROM ${selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')} ps
+            JOIN ${selectedSystemStore.selectedSystem.db.getTableName('sessions')} s ON ps.session_id = s.session_id
+        `;
+
+        const sessionsResult = selectedSystemStore.selectedSystem.db.query(getParticipantSessionsQuery);
+        for (const row of sessionsResult?.results || []) {
+            const participant = participantsMap.get(row.participant_id);
+            if (participant) {
+                participant.sessions.push(row.session_id);
+            }
         }
-        participants.value = _participantsArray
+
+        participants.value = Array.from(participantsMap.values());
 
         console.log('Participants loaded:', participants.value)
 
@@ -616,7 +626,7 @@ const loadSessionsFromDatabase = () => {
             toDate: new Date(s.to_date),
             capacity: s.capacity,
             participants: [],
-            ifFull: function() { return this.participants.length >= this.capacity; }
+            ifFull: function () { return this.participants.length >= this.capacity; }
         }))
     } catch (error) {
         console.error('Error loading sessions from database:', error)
@@ -680,7 +690,7 @@ async function viewParticipantDetails(participant: Participant) {
         participant.phone,
         participant.address,
         participant.age,
-        [...participant.sessionId], // Create a copy of the array
+        [...participant.sessions], // Create a copy of the array
         [...participant.allergens]
     )
     editModalOpen.value = true
@@ -776,7 +786,9 @@ const handleEditParticipant = async (data: any) => {
     try {
         // Store original session IDs before update
         const originalParticipant = participants.value.find(p => p.id === selectedParticipant.value?.id)
-        const oldSessionIds = originalParticipant?.sessionId || []
+        const oldSessionIds = originalParticipant?.sessions || []
+
+        console.log("EDIT DATE:", data)
 
         // Update participant basic info
         const query = `
@@ -800,6 +812,7 @@ const handleEditParticipant = async (data: any) => {
             })
             loadParticipantsFromDatabase()
             editModalOpen.value = false
+            selectedParticipant.value = null
         } else {
             toast.add({
                 title: t('participant_update_error'),
@@ -807,6 +820,7 @@ const handleEditParticipant = async (data: any) => {
                 icon: 'i-heroicons-exclamation-triangle'
             })
             editModalOpen.value = false
+            selectedParticipant.value = null
         }
     } catch (error) {
         toast.add({
@@ -815,6 +829,7 @@ const handleEditParticipant = async (data: any) => {
             icon: 'i-heroicons-exclamation-triangle'
         })
         editModalOpen.value = false
+        selectedParticipant.value = null
     } finally {
         isSubmitting.value = false
     }
@@ -834,10 +849,10 @@ const closeParticipantDetails = () => {
 const removeParticipant = (participant: Participant) => {
     try {
         // First remove all session associations
-        if (participant.sessionId.length > 0) {
-            removeParticipantFromSessions(participant.id, participant.sessionId)
+        if (participant.sessions.length > 0) {
+            removeParticipantFromSessions(participant.id, participant.sessions)
         }
-        
+
         // Then remove the participant
         selectedSystemStore.selectedSystem?.db.query(`DELETE FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')} WHERE participant_id = ${participant.id}`)
         loadParticipantsFromDatabase()
@@ -873,12 +888,12 @@ const toggleSessionForNewParticipant = (sessionId: number) => {
 
 const toggleSessionForEditParticipant = (sessionId: number) => {
     if (!selectedParticipant.value) return
-    
-    const index = selectedParticipant.value.sessionId.indexOf(sessionId)
+
+    const index = selectedParticipant.value.sessions.indexOf(sessionId)
     if (index > -1) {
-        selectedParticipant.value.sessionId.splice(index, 1)
+        selectedParticipant.value.sessions.splice(index, 1)
     } else {
-        selectedParticipant.value.sessionId.push(sessionId)
+        selectedParticipant.value.sessions.push(sessionId)
     }
 }
 
@@ -887,7 +902,7 @@ const addParticipantToSessions = async (participantId: number, sessionIds: numbe
     if (!selectedSystemStore.selectedSystem?.db) return
 
     const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-    
+
     for (const sessionId of sessionIds) {
         try {
             const query = `
@@ -905,7 +920,7 @@ const removeParticipantFromSessions = async (participantId: number, sessionIds: 
     if (!selectedSystemStore.selectedSystem?.db) return
 
     const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-    
+
     for (const sessionId of sessionIds) {
         try {
             const query = `
@@ -923,11 +938,11 @@ const updateParticipantSessions = async (participantId: number, oldSessionIds: n
     // Find sessions to add and remove
     const sessionsToAdd = newSessionIds.filter(id => !oldSessionIds.includes(id))
     const sessionsToRemove = oldSessionIds.filter(id => !newSessionIds.includes(id))
-    
+
     if (sessionsToRemove.length > 0) {
         await removeParticipantFromSessions(participantId, sessionsToRemove)
     }
-    
+
     if (sessionsToAdd.length > 0) {
         await addParticipantToSessions(participantId, sessionsToAdd)
     }

@@ -9,7 +9,7 @@ export class Participant implements TableEntity {
         public phone: string,
         public address: string,
         public age: number,
-        public sessionId: number[] = [],
+        public sessions: number[] = [],
         public allergens: any[] = []
     ) {}
 
@@ -17,15 +17,15 @@ export class Participant implements TableEntity {
      * Get all session IDs as an array
      */
     public getSessionIds(): number[] {
-        return this.sessionId;
+        return this.sessions;
     }
 
     /**
      * Add a session ID to the participant
      */
     public addSessionId(sessionId: number): void {
-        if (!this.sessionId.includes(sessionId)) {
-            this.sessionId.push(sessionId);
+        if (!this.sessions.includes(sessionId)) {
+            this.sessions.push(sessionId);
         }
     }
 
@@ -33,13 +33,13 @@ export class Participant implements TableEntity {
      * Remove a session ID from the participant
      */
     public removeSessionId(sessionId: number): void {
-        this.sessionId = this.sessionId.filter(id => id !== sessionId);
+        this.sessions = this.sessions.filter(id => id !== sessionId);
     }
 
     /**
      * Check if participant is enrolled in a specific session
      */
     public isInSession(sessionId: number): boolean {
-        return this.sessionId.includes(sessionId);
+        return this.sessions.includes(sessionId);
     }
 }

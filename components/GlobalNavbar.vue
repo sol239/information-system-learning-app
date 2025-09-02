@@ -72,6 +72,7 @@ const settingsStore = useSettingsStore()
 const informationSystemStore = useInformationSystemStore()
 
 import { useComponentCodeStore } from '#imports';
+import type { InformationSystem } from '~/model/InformationSystem'
 
 const componentCodeStore = useComponentCodeStore()
 
@@ -213,8 +214,7 @@ async function refreshDatabase() {
   try {
     // This could involve reloading the current database state, resetting states, etc.
     console.log("Refreshing database...");
-    const handler = new FileHandler();
-    const systems: InformationSystem[] = handler.getInformationSystems();
+    const systems: InformationSystem[] = FileHandler.getInformationSystems();
     console.log(selectedSystemStore.selectedId);
     console.log(systems);
 

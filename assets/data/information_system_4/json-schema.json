@@ -1,0 +1,488 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Školní tábor informační systém",
+  "description": "Schema pro informační systém školního tábora v Krkonoších",
+  "required": [
+    "id",
+    "directory",
+    "name",
+    "description",
+    "tables",
+    "tasks"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Jedinečný identifikátor informačního systému"
+    },
+    "directory": {
+      "type": "string",
+      "description": "Název adresáře systému"
+    },
+    "name": {
+      "type": "string",
+      "description": "Název školního tábora"
+    },
+    "description": {
+      "type": "string",
+      "description": "Popis školního tábora"
+    },
+    "tables": {
+      "type": "array",
+      "description": "Pole databázových tabulek",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "data"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "účastníci",
+              "jídla",
+              "turnusy",
+              "vedoucí",
+              "alergeny"
+            ],
+            "description": "Název tabulky"
+          },
+          "data": {
+            "type": "array",
+            "description": "Data v tabulce"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "účastníci"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/participant"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "jídla"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/food"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "turnusy"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/session"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "vedoucí"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/supervisor"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "name": {
+                  "const": "alergeny"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/allergen"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "description": "Pole úkolů pro testování systému",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    }
+  },
+  "definitions": {
+    "participant": {
+      "type": "object",
+      "title": "Účastník tábora",
+      "required": [
+        "id",
+        "jméno",
+        "email",
+        "rodné_číslo",
+        "telefon",
+        "adresa",
+        "věk",
+        "alergeny",
+        "turnus_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor účastníka"
+        },
+        "jméno": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Jméno a příjmení účastníka"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Emailová adresa účastníka"
+        },
+        "rodné_číslo": {
+          "type": "string",
+          "pattern": "^[0-9]{6}/[0-9]{4}$",
+          "description": "Rodné číslo ve formátu RRMMDD/NNNN"
+        },
+        "telefon": {
+          "type": "string",
+          "pattern": "^\\+420 [0-9]{3} [0-9]{3} [0-9]{3}$",
+          "description": "Telefonní číslo ve formátu +420 XXX XXX XXX"
+        },
+        "adresa": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Adresa bydliště účastníka"
+        },
+        "věk": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 18,
+          "description": "Věk účastníka v letech"
+        },
+        "alergeny": {
+          "type": "array",
+          "description": "Seznam alergenů účastníka",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Lepek",
+              "Korýši",
+              "Vejce",
+              "Ryby",
+              "Arašídy",
+              "Sója",
+              "Mléko",
+              "Skořápkové plody",
+              "Celer",
+              "Hořčice",
+              "Sezam",
+              "Oxid siřičitý a siřičitany",
+              "Vlčí bob",
+              "Měkkýši"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "turnus_id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "ID turnusu, kterého se účastník účastní"
+        }
+      }
+    },
+    "food": {
+      "type": "object",
+      "title": "Jídlo",
+      "required": [
+        "id",
+        "jméno",
+        "alergeny",
+        "kdy_podáváno"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor jídla"
+        },
+        "jméno": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Název jídla"
+        },
+        "alergeny": {
+          "type": "array",
+          "description": "Seznam alergenů obsažených v jídle",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Lepek",
+              "Korýši",
+              "Vejce",
+              "Ryby",
+              "Arašídy",
+              "Sója",
+              "Mléko",
+              "Skořápkové plody",
+              "Celer",
+              "Hořčice",
+              "Sezam",
+              "Oxid siřičitý a siřičitany",
+              "Vlčí bob",
+              "Měkkýši"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "kdy_podáváno": {
+          "type": "string",
+          "enum": [
+            "snídaně",
+            "oběd",
+            "večeře"
+          ],
+          "description": "Doba podávání jídla"
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "title": "Turnus",
+      "required": [
+        "id",
+        "od",
+        "do",
+        "kapacita"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor turnusu"
+        },
+        "od": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Datum a čas začátku turnusu"
+        },
+        "do": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Datum a čas konce turnusu"
+        },
+        "kapacita": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximální počet účastníků v turnusu"
+        }
+      }
+    },
+    "supervisor": {
+      "type": "object",
+      "title": "Vedoucí",
+      "required": [
+        "id",
+        "jméno",
+        "email",
+        "rodné_číslo",
+        "telefon",
+        "adresa",
+        "věk",
+        "turnus_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor vedoucího"
+        },
+        "jméno": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Jméno a příjmení vedoucího"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Emailová adresa vedoucího"
+        },
+        "rodné_číslo": {
+          "type": "string",
+          "pattern": "^[0-9]{6}/[0-9]{4}$",
+          "description": "Rodné číslo ve formátu RRMMDD/NNNN"
+        },
+        "telefon": {
+          "type": "string",
+          "pattern": "^\\+420 [0-9]{3} [0-9]{3} [0-9]{3}$",
+          "description": "Telefonní číslo ve formátu +420 XXX XXX XXX"
+        },
+        "adresa": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Adresa bydliště vedoucího"
+        },
+        "věk": {
+          "type": "integer",
+          "minimum": 18,
+          "description": "Věk vedoucího v letech"
+        },
+        "turnus_id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "ID turnusu, který vedoucí vede"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "title": "Úkol",
+      "required": [
+        "id",
+        "title",
+        "description",
+        "status",
+        "kind",
+        "answer",
+        "elementClass",
+        "round"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor úkolu"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Název úkolu"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Popis úkolu"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "completed",
+            "failed"
+          ],
+          "description": "Stav úkolu"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "select",
+            "type-correct",
+            "action"
+          ],
+          "description": "Typ úkolu"
+        },
+        "answer": {
+          "type": "string",
+          "description": "Odpověď nebo očekávaná hodnota pro úkol"
+        },
+        "elementClass": {
+          "type": "string",
+          "description": "CSS třída elementu souvisejícího s úkolem"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Kolo, ve kterém je úkol zařazen"
+        }
+      }
+    },
+    "allergen": {
+      "type": "object",
+      "title": "Alergen",
+      "required": [
+        "id",
+        "název"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Jedinečný identifikátor alergenu"
+        },
+        "název": {
+          "type": "string",
+          "enum": [
+            "Lepek",
+            "Korýši",
+            "Vejce",
+            "Ryby",
+            "Arašídy",
+            "Sója",
+            "Mléko",
+            "Skořápkové plody",
+            "Celer",
+            "Hořčice",
+            "Sezam",
+            "Oxid siřičitý a siřičitany",
+            "Vlčí bob",
+            "Měkkýši"
+          ],
+          "description": "Název alergenu"
+        }
+      }
+    }
+  }
+}

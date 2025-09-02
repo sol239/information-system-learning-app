@@ -15,8 +15,7 @@ const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
-const handler = new FileHandler()
-let systems: InformationSystem[] = handler.getInformationSystems()
+let systems: InformationSystem[] = FileHandler.getInformationSystems()
 
 /* 5. Props */
 // none
@@ -60,7 +59,7 @@ function initializeSystems() {
 }
 
 function reloadSystems() {
-  systems = handler.getInformationSystems()
+  systems = FileHandler.getInformationSystems()
   informationSystemStore.systems = systems
 }
 
@@ -74,8 +73,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex justify-center gap-4" style="margin-top: 20px;">
-    <UCard v-for="system in systems" :key="system.id" style="width: 90%;">
+  <div class="flex flex-col justify-center gap-4 min-h-screen">
+    <UCard v-for="(system, index) in systems" :key="system.id" :class="{ 'mt-4': index === 0 }" class="w-full max-w-4xl mx-auto">
       <template #header>
         <h2 class="text-lg font-semibold">{{ system.name }}</h2>
       </template>
