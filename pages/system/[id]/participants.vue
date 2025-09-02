@@ -139,8 +139,8 @@
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-allergens', $event)">
                                         <label for="allergens"
                                             class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                        <USelectMenu color="sky" id="allergens" v-model="newParticipant.allergens"
-                                            :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                        <USelect color="sky" id="allergens" v-model="newParticipant.allergens"
+                                            :items="allergenOptions" multiple placeholder="Vyberte alergeny"
                                             :disabled="highlightStore.isHighlightMode" />
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
@@ -204,6 +204,10 @@
                             <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
                             <span>{{ participant.address }}</span>
                         </div>
+                        <!-- Allergies Badge -->
+                        <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft" class="mt-2">
+                            Alergie: {{ participant.allergens.length > 0 ? t('yes') : t('no') }}
+                        </UBadge>
                     </div>
 
                     <!-- Participant Actions -->
@@ -281,8 +285,8 @@
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-allergens', $event)">
                                 <label for="edit-allergens"
                                     class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                <USelectMenu color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
-                                    :items="allergenOptions" :multiple="true" placeholder="Vyberte alergeny"
+                                <USelect color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
+                                    :items="allergenOptions" multiple placeholder="Vyberte alergeny"
                                     :disabled="highlightStore.isHighlightMode" />
                             </div>
                             <div class="highlightable" id="participants-edit-sessions"
@@ -381,7 +385,7 @@ const newParticipant = ref({
     address: '',
     age: null as number | null,
     sessionId: [] as number[],
-    allergens: [] as string[]
+    allergens: [] as number[]
 })
 
 
@@ -576,10 +580,20 @@ const loadParticipantsFromDatabase = () => {
         `;
 
         const allergensResult = selectedSystemStore.selectedSystem.db.query(getParticipantAllergensQuery);
+        // Build a map of allergen_id to label for easy lookup
+    const allergenLabelMap: Record<string, string> = {};
+        const allergenOpts = allergenOptions.value;
+        for (const opt of allergenOpts) {
+            allergenLabelMap[opt.value] = opt.label;
+        }
+
         for (const row of allergensResult?.results || []) {
             const participant = participantsMap.get(row.participant_id);
             if (participant) {
-                participant.allergens.push(row.allergen_id);
+                // Push the label instead of the ID
+                if (allergenLabelMap[row.allergen_id]) {
+                    participant.allergens.push(allergenLabelMap[row.allergen_id]);
+                }
             }
         }
 
@@ -682,6 +696,16 @@ const formatDateRange = (fromDate: Date, toDate: Date): string => {
 
 async function viewParticipantDetails(participant: Participant) {
     console.log("Participant: ", participant);
+    
+    // Convert allergen labels back to IDs for the edit form
+    const allergenLabelToIdMap: Record<string, number> = {};
+    const allergenOpts = allergenOptions.value;
+    for (const opt of allergenOpts) {
+        allergenLabelToIdMap[opt.label] = opt.value;
+    }
+    
+    const allergenIds = participant.allergens.map(label => allergenLabelToIdMap[label]).filter(id => id !== undefined);
+    
     selectedParticipant.value = new Participant(
         participant.id,
         participant.name,
@@ -691,7 +715,7 @@ async function viewParticipantDetails(participant: Participant) {
         participant.address,
         participant.age,
         [...participant.sessions], // Create a copy of the array
-        [...participant.allergens]
+        allergenIds // Use IDs for the edit form
     )
     editModalOpen.value = true
     console.log("FINISHED")
@@ -732,9 +756,16 @@ const handleAddParticipant = async (data: any) => {
                 ORDER BY participant_id DESC LIMIT 1
             `).results[0]?.participant_id
 
-            if (participantId && data.sessionId && data.sessionId.length > 0) {
+            if (participantId) {
                 // Add session associations
-                await addParticipantToSessions(participantId, data.sessionId)
+                if (data.sessionId && data.sessionId.length > 0) {
+                    await addParticipantToSessions(participantId, data.sessionId)
+                }
+
+                // Add allergen associations
+                if (data.allergens && data.allergens.length > 0) {
+                    await addParticipantAllergens(participantId, data.allergens)
+                }
             }
 
             toast.add({
@@ -784,11 +815,12 @@ const handleEditParticipant = async (data: any) => {
 
     isSubmitting.value = true
     try {
-        // Store original session IDs before update
+        // Store original session IDs and allergen IDs before update
         const originalParticipant = participants.value.find(p => p.id === selectedParticipant.value?.id)
         const oldSessionIds = originalParticipant?.sessions || []
+        const oldAllergenIds = await getParticipantAllergenIds(selectedParticipant.value.id)
 
-        console.log("EDIT DATE:", data)
+        console.log("EDIT DATA:", data)
 
         // Update participant basic info
         const query = `
@@ -801,8 +833,13 @@ const handleEditParticipant = async (data: any) => {
 
         if (result.success) {
             // Update session associations
-            if (data.sessionId) {
-                await updateParticipantSessions(selectedParticipant.value.id, oldSessionIds, data.sessionId)
+            if (data.sessions && Array.isArray(data.sessions)) {
+                await updateParticipantSessions(selectedParticipant.value.id, oldSessionIds, data.sessions)
+            }
+
+            // Update allergen associations
+            if (data.allergens && Array.isArray(data.allergens)) {
+                await updateParticipantAllergens(selectedParticipant.value.id, oldAllergenIds, data.allergens)
             }
 
             toast.add({
@@ -823,6 +860,7 @@ const handleEditParticipant = async (data: any) => {
             selectedParticipant.value = null
         }
     } catch (error) {
+        console.error('Error updating participant:', error)
         toast.add({
             title: t('participant_update_error'),
             color: 'red',
@@ -852,6 +890,14 @@ const removeParticipant = (participant: Participant) => {
         if (participant.sessions.length > 0) {
             removeParticipantFromSessions(participant.id, participant.sessions)
         }
+
+        // Remove all allergen associations
+        const participantAllergenIds = getParticipantAllergenIds(participant.id)
+        participantAllergenIds.then(allergenIds => {
+            if (allergenIds.length > 0) {
+                removeParticipantAllergens(participant.id, allergenIds)
+            }
+        })
 
         // Then remove the participant
         selectedSystemStore.selectedSystem?.db.query(`DELETE FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')} WHERE participant_id = ${participant.id}`)
@@ -945,6 +991,76 @@ const updateParticipantSessions = async (participantId: number, oldSessionIds: n
 
     if (sessionsToAdd.length > 0) {
         await addParticipantToSessions(participantId, sessionsToAdd)
+    }
+}
+
+// Allergen management helper functions
+const getParticipantAllergenIds = async (participantId: number): Promise<number[]> => {
+    if (!selectedSystemStore.selectedSystem?.db) return []
+
+    const participantsAllergensTable = selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')
+
+    try {
+        const query = `
+            SELECT allergen_id 
+            FROM ${participantsAllergensTable} 
+            WHERE participant_id = ${participantId}
+        `
+        const result = selectedSystemStore.selectedSystem.db.query(query)
+        return result.results?.map(row => row.allergen_id) || []
+    } catch (error) {
+        console.error(`Error getting allergen IDs for participant ${participantId}:`, error)
+        return []
+    }
+}
+
+const addParticipantAllergens = async (participantId: number, allergenIds: number[]): Promise<void> => {
+    if (!selectedSystemStore.selectedSystem?.db) return
+
+    const participantsAllergensTable = selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')
+
+    for (const allergenId of allergenIds) {
+        try {
+            const query = `
+                INSERT INTO ${participantsAllergensTable} (participant_id, allergen_id)
+                VALUES (${participantId}, ${allergenId})
+            `
+            selectedSystemStore.selectedSystem.db.query(query)
+        } catch (error) {
+            console.error(`Error adding allergen ${allergenId} to participant ${participantId}:`, error)
+        }
+    }
+}
+
+const removeParticipantAllergens = async (participantId: number, allergenIds: number[]): Promise<void> => {
+    if (!selectedSystemStore.selectedSystem?.db) return
+
+    const participantsAllergensTable = selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')
+
+    for (const allergenId of allergenIds) {
+        try {
+            const query = `
+                DELETE FROM ${participantsAllergensTable} 
+                WHERE participant_id = ${participantId} AND allergen_id = ${allergenId}
+            `
+            selectedSystemStore.selectedSystem.db.query(query)
+        } catch (error) {
+            console.error(`Error removing allergen ${allergenId} from participant ${participantId}:`, error)
+        }
+    }
+}
+
+const updateParticipantAllergens = async (participantId: number, oldAllergenIds: number[], newAllergenIds: number[]): Promise<void> => {
+    // Find allergens to add and remove
+    const allergensToAdd = newAllergenIds.filter(id => !oldAllergenIds.includes(id))
+    const allergensToRemove = oldAllergenIds.filter(id => !newAllergenIds.includes(id))
+
+    if (allergensToRemove.length > 0) {
+        await removeParticipantAllergens(participantId, allergensToRemove)
+    }
+
+    if (allergensToAdd.length > 0) {
+        await addParticipantAllergens(participantId, allergensToAdd)
     }
 }
 

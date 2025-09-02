@@ -150,5 +150,7 @@
     "supervisor_updated_success": "Supervisor updated successfully",
     "supervisor_updated_error": "Error updating supervisor",
     "filter_supervisors": "Filter Supervisors",
-    "days_count": "Number of Days"
+    "days_count": "Number of Days",
+    "yes": "Yes",
+    "no": "No"
 }

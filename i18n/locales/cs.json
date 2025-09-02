@@ -148,5 +148,7 @@
     "supervisor_updated_success": "Vedoucí úspěšně aktualizován",
     "supervisor_updated_error": "Chyba při aktualizaci vedoucího",
     "filter_supervisors": "Filtrovat vedoucí",
-    "days_count": "Počet dní"
+    "days_count": "Počet dní",
+    "yes": "Ano",
+    "no": "Ne"
 }
