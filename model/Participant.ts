@@ -9,50 +9,37 @@ export class Participant implements TableEntity {
         public phone: string,
         public address: string,
         public age: number,
-        public sessionId: number = 1,
+        public sessionId: number[] = [],
         public allergens: any[] = []
     ) {}
 
-    static fromJSON(json: any): Participant[] {
-        return json.map((item: any) => new Participant(
-            item.id,
-            item.name,
-            item.email,
-            item.personal_number,
-            item.phone,
-            item.address,
-            item.age,
-            item.sessionId || 1,
-            item.alergeny || [] // načtení alergeny
-        ));
+    /**
+     * Get all session IDs as an array
+     */
+    public getSessionIds(): number[] {
+        return this.sessionId;
     }
 
-    static fromDbQuery(json: any): Participant[] {
-        return json.map((item: any) => new Participant(
-            item.id,
-            item.jméno,  // Czech field name
-            item.email,
-            item.rodné_číslo,  // Czech field name
-            item.telefon,  // Czech field name
-            item.adresa,  // Czech field name
-            item.věk,  // Czech field name
-            item.turnus_id || 1,  // Czech field name
-            item.alergeny || [] // načtení alergeny
-            
-        ));
+    /**
+     * Add a session ID to the participant
+     */
+    public addSessionId(sessionId: number): void {
+        if (!this.sessionId.includes(sessionId)) {
+            this.sessionId.push(sessionId);
+        }
     }
 
-    public static fromDbRow(row: any): Participant {
-        return new Participant(
-            row.participant_id,
-            row.name,
-            row.email,
-            row.personal_number,
-            row.phone,
-            row.address,
-            row.age,
-            row.session_id || 1,
-            row.allergens ? JSON.parse(row.allergens) : []
-        );
+    /**
+     * Remove a session ID from the participant
+     */
+    public removeSessionId(sessionId: number): void {
+        this.sessionId = this.sessionId.filter(id => id !== sessionId);
+    }
+
+    /**
+     * Check if participant is enrolled in a specific session
+     */
+    public isInSession(sessionId: number): boolean {
+        return this.sessionId.includes(sessionId);
     }
 }

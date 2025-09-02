@@ -72,6 +72,10 @@ export default class DbHandler {
         return map;
     }
 
+    public getTableName(tableId: string): string | undefined {
+        return this.tableNameMap.get(tableId);
+    }
+
     private createTables(tables: any[]): void {
 
         // Create participants table
