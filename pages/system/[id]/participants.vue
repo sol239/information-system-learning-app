@@ -206,7 +206,7 @@
                         </div>
                         <!-- Allergies Badge -->
                         <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft" class="mt-2">
-                            Alergie: {{ participant.allergens.length > 0 ? t('yes') : t('no') }}
+                            {{ t("allergens") }}: {{ participant.allergens.length }}
                         </UBadge>
                     </div>
 

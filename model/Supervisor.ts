@@ -9,19 +9,7 @@ export class Supervisor implements TableEntity {
         public phone: string,
         public address: string,
         public age: number,
-        public sessionId: number = 0        
+        public sessions: number[] = [],
+        public allergens: any[] = []
     ) {}
-
-    static fromJSON(json: any): Supervisor[] {
-        return json.map((item: any) => new Supervisor(
-            item.id,
-            item.name,
-            item.email,
-            item.personal_number,
-            item.phone,
-            item.address,
-            item.age,
-            item.sessionId || 0
-        ));
-    }
 }
