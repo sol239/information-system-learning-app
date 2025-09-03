@@ -4,7 +4,7 @@
             <LocalNavbar :items="localItems" />
             <TaskList :system-id="system?.id" />
         </aside>-->
-        <LocalNavbar :items="localItems" class />
+        <LocalNavbar />
         <main class="dashboard-main">
             <div class="dashboard-content-row">
                 <div class="dashboard-content-main">

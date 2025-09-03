@@ -85,5 +85,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <LocalNavbar :items="localItems" />
+  <LocalNavbar />
 </template>

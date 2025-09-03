@@ -322,7 +322,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <LocalNavbar :items="localItems" />
+        <LocalNavbar/>
         
         <TableView
             :system="system"
