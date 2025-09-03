@@ -1,6 +1,7 @@
 <template>
     <div>
         <LocalNavbar/>
+        <!-- TODO: move to components -->
 
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
