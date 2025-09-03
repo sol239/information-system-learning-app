@@ -15,111 +15,63 @@
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ t('session') }} {{ session.id }}
                             </h3>
-                            <UBadge class="highlightable" :color="getSessionStatusColor(session)" variant="soft"
-                                :id="'sessions-status-' + session.id"
-                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-status-' + session.id, $event)">
-                                {{ getSessionStatus(session) }}
-                            </UBadge>
+                            <SessionStatusBadge
+                                :session="session"
+                                :get-session-status="getSessionStatus"
+                                :get-session-status-color="getSessionStatusColor"
+                            />
                         </div>
 
                         <!-- Date Range + Day Count Badge -->
                         <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                            <UIcon name="i-heroicons-calendar-days" />
-                            <span class="highlightable"
-                            :id="'sessions-date-' + session.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-date-' + session.id, $event)">{{ formatDateRange(session.fromDate, session.toDate) }}</span>
-                            <UBadge class="highlightable" color="sky" variant="soft"
-                                :id="'sessions-day-count-' + session.id"
-                                @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-day-count-' + session.id, $event)">
-                                {{ t('days_count') }}: {{ getDayCount(session) }}
-                            </UBadge>
+                            <SessionDateRange
+                                :session="session"
+                                :format-date-range="formatDateRange"
+                            />
+                            <SessionDayCountBadge
+                                :session="session"
+                                :get-day-count="getDayCount"
+                            />
                         </div>
 
                         <!-- Capacity Progress -->
-                        <div class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + session.id, $event)">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
-                                <span class="text-sm text-gray-600">
-                                    {{ session.participants.length }}/{{ session.capacity }}
-                                </span>
-                            </div>
-                            <div class="capacity-bar">
-                                <div class="capacity-fill" :style="{
-                                    width: getCapacityPercentage(session) + '%',
-                                    backgroundColor: getCapacityColor(session)
-                            }"></div>
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">
-                                {{ getCapacityPercentage(session) }}% {{ t('occupied') }}
-                            </div>
-                        </div>
+                        <SessionCapacitySection
+                            :session="session"
+                            :get-capacity-percentage="getCapacityPercentage"
+                            :get-capacity-color="getCapacityColor"
+                        />
 
                         <!-- Participants Section -->
-                        <div class="participants-section mb-6 highlightable"
-                            :id="'sessions-participants-' + session.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                <UIcon name="i-heroicons-users" />
-                                {{ t('participants') }} ({{ session.participants.length }})
-                            </h4>
-                            <div v-if="session.participants.length > 0" class="space-y-2">
-                                <div v-for="participant in session.participants.slice(0, 3)" :key="participant.id"
-                                    class="participant-item">
-                                    <div class="participant-avatar">
-                                        {{ getInitials(participant.name) }}
-                                    </div>
-                                    <div class="participant-info">
-                                        <div class="participant-name">{{ participant.name }}</div>
-                                        <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
-                                    </div>
-                                </div>
-                                <div v-if="session.participants.length > 3" class="text-xs text-gray-500">
-                                    + {{ session.participants.length - 3 }} {{ t('more_participants') }}
-                                </div>
-                            </div>
-                            <div v-else class="text-sm text-gray-500 italic">
-                                {{ t('no_participants') }}
-                            </div>
-                        </div>
+                        <SessionParticipantsSection
+                            :session="session"
+                            :get-displayed-participants="getDisplayedParticipants"
+                            :is-participants-expanded="isParticipantsExpanded"
+                            :toggle-participants-expanded="toggleParticipantsExpanded"
+                            :get-initials="getInitials"
+                        />
 
                         <!-- Supervisors Section -->
-                        <div class="supervisors-section mb-6 highlightable"
-                            :id="'sessions-supervisors-' + session.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                <UIcon name="i-heroicons-user-group" />
-                                {{ t('supervisors') }} ({{ getSessionSupervisors(session.id).length }})
-                            </h4>
-                            <div v-if="getSessionSupervisors(session.id).length > 0" class="space-y-2">
-                                <div v-for="supervisor in getSessionSupervisors(session.id)" :key="supervisor.id"
-                                    class="supervisor-item">
-                                    <div class="supervisor-avatar">
-                                        {{ getInitials(supervisor.name) }}
-                                    </div>
-                                    <div class="supervisor-info">
-                                        <div class="supervisor-name">{{ supervisor.name }}</div>
-                                        <div class="supervisor-details">{{ supervisor.email }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else class="text-sm text-gray-500 italic">
-                                {{ t('no_supervisors') }}
-                            </div>
-                        </div>
+                        <SessionSupervisorsSection
+                            :session="session"
+                            :get-session-supervisors="getSessionSupervisors"
+                            :get-initials="getInitials"
+                        />
 
                         <!-- Session Actions -->
                         <div class="session-actions mt-6 pt-4 border-t border-gray-200">
                             <div class="flex gap-2">
-                                <div><UButton size="sm" variant="outline" @click="!highlightStore.isHighlightMode ? viewSessionDetails(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-view-' + session.id, $event)"
-                                    class="flex-1 highlightable" :id="'sessions-view-' + session.id">h
-                                    TO-DO
-                                </UButton>
-                                </div>
-                                    <UButton size="sm" color="primary" @click="!highlightStore.isHighlightMode ? manageSession(session) : highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-manage-' + session.id, $event)"
-                                        class="flex-1 highlightable" :id="'sessions-manage-' + session.id">
+                                <div>
+                                    <UButton size="sm" variant="outline" @click="viewSessionDetails(session)"
+                                        class="flex-1" :id="'sessions-view-' + session.id">
                                         TO-DO
                                     </UButton>
+                                </div>
+                                <div>
+                                    <UButton size="sm" color="primary" @click="manageSession(session)" class="flex-1"
+                                        :id="'sessions-manage-' + session.id">
+                                        TO-DO
+                                    </UButton>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -152,6 +104,14 @@ import { Participant } from '~/model/Participant'
 import { Supervisor } from '~/model/Supervisor'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import SessionStatusBadge from '~/components/infsys_components/sessions/SessionStatusBadge.vue'
+import SessionDateRange from '~/components/infsys_components/sessions/SessionDateRange.vue'
+import SessionDayCountBadge from '~/components/infsys_components/sessions/SessionDayCountBadge.vue'
+import SessionCapacitySection from '~/components/infsys_components/sessions/SessionCapacitySection.vue'
+import SessionParticipantsSection from '~/components/infsys_components/sessions/SessionParticipantsSection.vue'
+import SessionSupervisorsSection from '~/components/infsys_components/sessions/SessionSupervisorsSection.vue'
+import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
@@ -192,6 +152,7 @@ const sessions = ref<Session[]>([])
 const supervisors = ref<Supervisor[]>([])
 const showDetailModal = ref(false)
 const selectedSession = ref<Session | null>(null)
+const expandedParticipants = ref<Set<number>>(new Set())
 
 // Load data from database
 const loadSessionsFromDatabase = () => {
@@ -243,22 +204,29 @@ const loadSessionsFromDatabase = () => {
         }
 
         // Load supervisors (vedoucí)
-        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query(
-            `SELECT s.*, ss.session_id FROM ${supervisorsTable} s
-             LEFT JOIN ${sessionsSupervisorsTable} ss ON s.supervisor_id = ss.supervisor_id
-             ORDER BY s.supervisor_id`
-        )
+        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${supervisorsTable} ORDER BY supervisor_id`)
         if (supervisorsQuery.success) {
-            supervisors.value = supervisorsQuery.results.map((row: any) => new Supervisor(
+            const supervisorsData = supervisorsQuery.results.map((row: any) => new Supervisor(
                 row.supervisor_id,
                 row.name,
                 row.email,
                 row.personal_number,
                 row.phone,
                 row.address,
-                row.age,
-                row.session_id // may be undefined if not assigned
+                row.age
             ))
+            supervisors.value = supervisorsData
+        }
+
+        // Load sessions-supervisors relationships
+        const sessionsSupervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsSupervisorsTable}`)
+        if (sessionsSupervisorsQuery.success) {
+            sessionsSupervisorsQuery.results.forEach((row: any) => {
+                const supervisor = supervisors.value.find(s => s.id === row.supervisor_id)
+                if (supervisor) {
+                    supervisor.sessions.push(row.session_id)
+                }
+            })
         }
 
     } catch (error) {
@@ -305,7 +273,7 @@ const getInitials = (name: string): string => {
 }
 
 const getSessionSupervisors = (sessionId: number): Supervisor[] => {
-    const _supervisors = supervisors.value.filter(s => s.sessionId === sessionId);
+    const _supervisors = supervisors.value.filter(s => s.sessions.includes(sessionId));
     console.log("SUPERVISORS: ", _supervisors);
     return _supervisors
 }
@@ -318,6 +286,30 @@ const viewSessionDetails = (session: Session) => {
 const manageSession = (session: Session) => {
     // Implementation for managing session
     console.log('Managing session:', session.id)
+}
+
+const getDisplayedParticipants = (session: Session): Participant[] => {
+    if (isParticipantsExpanded(session.id)) {
+        return session.participants
+    }
+    return session.participants.slice(0, 3)
+}
+
+const isParticipantsExpanded = (sessionId: number): boolean => {
+    return expandedParticipants.value.has(sessionId)
+}
+
+const toggleParticipantsExpanded = (sessionId: number) => {
+    if (expandedParticipants.value.has(sessionId)) {
+        expandedParticipants.value.delete(sessionId)
+    } else {
+        expandedParticipants.value.add(sessionId)
+    }
+}
+
+const createNewSession = () => {
+    // Implementation for creating new session
+    console.log('Creating new session')
 }
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
@@ -351,88 +343,6 @@ onMounted(() => {
     border-bottom: 1px solid #f3f4f6;
     padding-bottom: 1rem;
     margin-bottom: 1rem;
-}
-
-.capacity-section {
-    margin-bottom: 1.5rem;
-}
-
-.capacity-bar {
-    width: 100%;
-    background-color: #e5e7eb;
-    border-radius: 9999px;
-    height: 0.5rem;
-    overflow: hidden;
-}
-
-.capacity-fill {
-    height: 100%;
-    transition: all 0.5s ease-out;
-    border-radius: 9999px;
-}
-
-.participants-section,
-.supervisors-section {
-    margin-bottom: 1rem;
-}
-
-.participant-item,
-.supervisor-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-}
-
-.participant-item:hover,
-.supervisor-item:hover {
-    background-color: #f9fafb;
-}
-
-.participant-avatar,
-.supervisor-avatar {
-    width: 2rem;
-    height: 2rem;
-    background-color: #dbeafe;
-    color: #2563eb;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.supervisor-avatar {
-    background-color: #e9d5ff;
-    color: #7c3aed;
-}
-
-.participant-info,
-.supervisor-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.participant-name,
-.supervisor-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.participant-details,
-.supervisor-details {
-    font-size: 0.75rem;
-    color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .session-actions {
@@ -470,11 +380,6 @@ onMounted(() => {
 @media (max-width: 768px) {
     .session-card {
         padding: 1rem;
-    }
-
-    .participant-item,
-    .supervisor-item {
-        padding: 0.25rem;
     }
 }
 </style>

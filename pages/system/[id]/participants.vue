@@ -1,32 +1,23 @@
 <template>
     <div>
-        <LocalNavbar  />
+        <LocalNavbar />
 
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <USelect class="highlightable" :id="'participants-session-menu'"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
-                    v-model="value" :items="filterSessionsItems" />
+                <SessionSelectMenu v-model="value" :items="filterSessionsItems" />
 
                 <!-- Session Capacity Pillow -->
                 <div v-if="selectedSessionInfo" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <UIcon name="i-heroicons-users" class="w-4 h-4 text-gray-600" />
 
                     <!-- Session Capacity Count -->
-                    <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
-                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{ selectedSessionInfo.totalCapacity
-                        }}
-                    </span>
+                    <SessionCapacityCount :current-count="selectedSessionInfo.currentCount"
+                        :total-capacity="selectedSessionInfo.totalCapacity" />
 
                     <!-- Session Capacity Percentage -->
-                    <UBadge class="highlightable" :id="'participants-capacity-percentage'"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-percentage', $event)"
-                        :color="getCapacityBadgeColor(selectedSessionInfo.fillPercentage)" variant="soft" size="sm">
-                        {{ Math.round(selectedSessionInfo.fillPercentage) }}%
-                    </UBadge>
+                    <SessionCapacityPercentage :fill-percentage="selectedSessionInfo.fillPercentage" />
                 </div>
 
                 <!-- Pagination -->
@@ -36,16 +27,8 @@
                         {{ t('previous') }}
                     </UButton>
 
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
-                            {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
-                        </span>
-                        <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)">
-                            ({{ filteredParticipants.length }} {{ t('participants') }})
-                        </span>
-                    </div>
+                    <PageCount :current-page="currentPage" :total-pages="totalPages"
+                        :total-items="filteredParticipants.length" />
 
                     <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
                         :disabled="currentPage === totalPages" @click="currentPage++">
@@ -56,15 +39,8 @@
                 <div class="ml-auto flex gap-4 items-start">
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
-                        <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
-                            size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw"
-                            @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-reset', $event)">
-                        </UButton>
-                        <div class="highlightable" id="participants-filter-input"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
-                            <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')"
-                                size="sm" />
-                        </div>
+                        <FilterResetButton :on-click="resetFilter" />
+                        <FilterInput v-model="filterText" :placeholder="t('filter_participants')" />
 
                     </div>
                     <!-- Add Participant Drawer (right) -->
@@ -72,7 +48,6 @@
                         <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
                             {{ t('add_participant') }}
                         </UButton>
-
                         <template #content>
                             <UCard class="p-4 min-w-96">
                                 <template #header>
@@ -160,73 +135,9 @@
 
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="participant in paginatedParticipants" :key="participant.id"
-                    class="participant-card highlightable" :id="'participants-card-' + participant.id"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
-                    <!-- Participant Header -->
-                    <div class="participant-header">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-semibold text-gray-900">
-                                {{ participant.name }}
-                            </h3>
-                            <UBadge size="lg" color="sky" variant="soft">
-                                {{ t('age') }}: {{ participant.age }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
-                            <span>{{ participant.email }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Turnus Info -->
-                    <div class="turnus-section mb-4">
-                        <div v-if="participant.sessions.length > 0" class="space-y-1">
-                            <div v-for="sessionId in participant.sessions" :key="sessionId"
-                                class="text-sm text-gray-600">
-                                <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
-                                {{ getSessionName(sessionId) }}
-                            </div>
-                        </div>
-                        <div v-else class="text-sm text-gray-400 italic">
-                            <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
-                            {{ t('no_sessions') }}
-                        </div>
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div class="contact-section mb-6 space-y-2">
-                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-phone" class="w-4 h-4" />
-                            <span>{{ participant.phone }}</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
-                            <span>{{ participant.address }}</span>
-                        </div>
-                        <!-- Allergies Badge -->
-                        <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft" class="mt-2">
-                            {{ t("allergens") }}: {{ participant.allergens.length }}
-                        </UBadge>
-                    </div>
-
-                    <!-- Participant Actions -->
-
-                    <div class="participant-actions mt-6 pt-4 border-t border-gray-200">
-                        <div class="flex gap-2">
-                            <!-- Edit Participant Button only -->
-                            <div class="ml-auto">
-                                <UButton size="sm" color="sky" variant="solid"
-                                    @click="viewParticipantDetails(participant)" class="flex-1">
-                                    {{ t('view_details') }}
-                                </UButton>
-                            </div>
-                            <UButton size="sm" color="red" variant="outline" @click="removeParticipant(participant)">
-                                {{ t('delete') }}
-                            </UButton>
-                        </div>
-                    </div>
-                </div>
+                <ParticipantCard v-for="participant in paginatedParticipants" :key="participant.id"
+                    :participant="participant" :get-session-name="getSessionName"
+                    :on-view-details="viewParticipantDetails" :on-remove="removeParticipant" />
             </div>
 
             <!-- Edit Participant Drawer outside v-for -->
@@ -330,7 +241,20 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useSelectedSystemStore } from '#imports'
 import { Participant } from '~/model/Participant'
 import { Session } from '~/model/Session'
+import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
+import { useToast } from '#imports'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import SessionSelectMenu from '~/components/infsys_components/participants/SessionSelectMenu.vue'
+import SessionCapacityCount from '~/components/infsys_components/participants/SessionCapacityCount.vue'
+import SessionCapacityPercentage from '~/components/infsys_components/participants/SessionCapacityPercentage.vue'
+import PageCount from '~/components/infsys_components/participants/PageCount.vue'
+import FilterResetButton from '~/components/infsys_components/participants/FilterResetButton.vue'
+import FilterInput from '~/components/infsys_components/participants/FilterInput.vue'
+import ParticipantCard from '~/components/infsys_components/participants/ParticipantCard.vue'
+import AddParticipantDrawer from '~/components/infsys_components/participants/AddParticipantDrawer.vue'
+import EditParticipantDrawer from '~/components/infsys_components/participants/EditParticipantDrawer.vue'
+import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
@@ -435,7 +359,7 @@ function resetFilter() {
 }
 
 const allergenOptions = computed(() => {
-    const query: string =  `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}`;
+    const query: string = `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}`;
     const result = selectedSystemStore.selectedSystem?.db?.query(query)?.results || [];
     return result.map(allergen => ({
         label: allergen.name,
@@ -581,7 +505,7 @@ const loadParticipantsFromDatabase = () => {
 
         const allergensResult = selectedSystemStore.selectedSystem.db.query(getParticipantAllergensQuery);
         // Build a map of allergen_id to label for easy lookup
-    const allergenLabelMap: Record<string, string> = {};
+        const allergenLabelMap: Record<string, string> = {};
         const allergenOpts = allergenOptions.value;
         for (const opt of allergenOpts) {
             allergenLabelMap[opt.value] = opt.label;
@@ -696,16 +620,16 @@ const formatDateRange = (fromDate: Date, toDate: Date): string => {
 
 async function viewParticipantDetails(participant: Participant) {
     console.log("Participant: ", participant);
-    
+
     // Convert allergen labels back to IDs for the edit form
     const allergenLabelToIdMap: Record<string, number> = {};
     const allergenOpts = allergenOptions.value;
     for (const opt of allergenOpts) {
         allergenLabelToIdMap[opt.label] = opt.value;
     }
-    
+
     const allergenIds = participant.allergens.map(label => allergenLabelToIdMap[label]).filter(id => id !== undefined);
-    
+
     selectedParticipant.value = new Participant(
         participant.id,
         participant.name,
@@ -1070,31 +994,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.participant-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    border: 4px solid #00bcff;
-    padding: 1.5rem;
-}
-
-.participant-header {
-    border-bottom: 1px solid #f3f4f6;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-
-.turnus-section,
-.contact-section {
-    margin-bottom: 1.5rem;
-}
-
-.participant-actions {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
-}
-
 .empty-state {
     text-align: center;
     padding: 3rem 0;
@@ -1118,12 +1017,5 @@ onMounted(() => {
     color: #4b5563;
     max-width: 28rem;
     margin: 0 auto;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .participant-card {
-        padding: 1rem;
-    }
 }
 </style>

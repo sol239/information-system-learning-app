@@ -1,0 +1,111 @@
+<template>
+    <div class="participants-section mb-6 highlightable" :id="'sessions-participants-' + session.id"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
+        <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <UIcon name="i-heroicons-users" />
+            {{ t('participants') }} ({{ session.participants.length }})
+        </h4>
+        <div v-if="session.participants.length > 0" class="space-y-2">
+            <div v-for="participant in getDisplayedParticipants(session)" :key="participant.id"
+                class="participant-item">
+                <div class="participant-avatar">
+                    {{ getInitials(participant.name) }}
+                </div>
+                <div class="participant-info">
+                    <div class="participant-name">{{ participant.name }}</div>
+                    <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
+                </div>
+            </div>
+            <div v-if="session.participants.length > 3 && !isParticipantsExpanded(session.id)"
+                class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
+                @click="toggleParticipantsExpanded(session.id)">
+                + {{ session.participants.length - 3 }} {{ t('more_participants') }}
+            </div>
+            <div v-if="session.participants.length > 3 && isParticipantsExpanded(session.id)"
+                class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
+                @click="toggleParticipantsExpanded(session.id)">
+                {{ t('show_less') }}
+            </div>
+        </div>
+        <div v-else class="text-sm text-gray-500 italic">
+            {{ t('no_participants') }}
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { useHighlightStore } from '#imports'
+
+interface Props {
+    session: any
+    getDisplayedParticipants: (session: any) => any[]
+    isParticipantsExpanded: (sessionId: number) => boolean
+    toggleParticipantsExpanded: (sessionId: number) => void
+    getInitials: (name: string) => string
+}
+
+const props = defineProps<Props>()
+const { t } = useI18n()
+const highlightStore = useHighlightStore()
+</script>
+
+<style scoped>
+.participants-section {
+    margin-bottom: 1rem;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.participant-item:hover {
+    background-color: #f9fafb;
+}
+
+.participant-avatar {
+    width: 2rem;
+    height: 2rem;
+    background-color: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.participant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.participant-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.participant-details {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .participant-item {
+        padding: 0.25rem;
+    }
+}
+</style>
