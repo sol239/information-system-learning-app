@@ -172,5 +172,7 @@
     "select_allergen": "Vyberte alergen",
     "date": "Datum",
     "select_date": "Vyberte datum",
-    "filtered": "filtrováno"
+    "filtered": "filtrováno",
+    "search_meals": "Hledat jídla",
+    "search_placeholder": "Hledat podle názvu jídla, kdy podáváno, alergenů nebo data..."
 }

@@ -167,12 +167,6 @@
     "error_loading_data": "Error loading data",
     "system_not_selected": "No system selected",
     "clear_filters": "Clear Filters",
-    "meal_name": "Meal Name",
-    "search_meal_name": "Search meal name...",
-    "when_served": "When Served",
-    "select_when_served": "Select when served",
-    "select_allergen": "Select allergen",
-    "date": "Date",
-    "select_date": "Select date",
-    "filtered": "filtered"
+    "search_meals": "Search Meals",
+    "search_placeholder": "Search by meal name, when served, allergens, or date..."
 }

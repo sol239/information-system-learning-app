@@ -3,18 +3,6 @@
         <LocalNavbar />
 
         <div class="container mx-auto px-4 py-8">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">{{ t('meals') }}</h1>
-                
-                <!-- Date Range Display -->
-                <div v-if="dateRange" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-                    <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
-                    <span class="text-sm font-medium text-gray-700">
-                        {{ formatDate(dateRange.start) }} - {{ formatDate(dateRange.end) }}
-                    </span>
-                </div>
-            </div>
-
             <!-- Filter Section -->
             <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
@@ -32,50 +20,14 @@
                     </UButton>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Meal Name Filter -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('meal_name') }}</label>
-                        <UInput 
-                            v-model="filters.mealName"
-                            :placeholder="t('search_meal_name')"
-                            icon="i-heroicons-magnifying-glass"
-                            class="w-full"
-                        />
-                    </div>
-
-                    <!-- When Served Filter -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('when_served') }}</label>
-                        <USelect 
-                            v-model="filters.whenServed"
-                            :options="whenServedOptions"
-                            :placeholder="t('select_when_served')"
-                            class="w-full"
-                        />
-                    </div>
-
-                    <!-- Allergen Filter -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('allergens') }}</label>
-                        <USelect 
-                            v-model="filters.allergen"
-                            :options="allergenOptions"
-                            :placeholder="t('select_allergen')"
-                            class="w-full"
-                        />
-                    </div>
-
-                    <!-- Date Filter -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('date') }}</label>
-                        <USelect 
-                            v-model="filters.date"
-                            :options="dateOptions"
-                            :placeholder="t('select_date')"
-                            class="w-full"
-                        />
-                    </div>
+                <div class="max-w-md">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('search_meals') }}</label>
+                    <UInput 
+                        v-model="filters.search"
+                        :placeholder="t('search_placeholder')"
+                        icon="i-heroicons-magnifying-glass"
+                        class="w-full"
+                    />
                 </div>
             </div>
 
@@ -206,25 +158,17 @@ const dateRange = ref<{ start: string; end: string } | null>(null)
 
 // Filter state
 const filters = ref({
-    mealName: '',
-    whenServed: '',
-    allergen: '',
-    date: ''
+    search: ''
 })
 
 // Filter options
-const whenServedOptions = ref<{ label: string; value: string }[]>([])
-const allergenOptions = ref<{ label: string; value: string }[]>([])
-const dateOptions = ref<{ label: string; value: string }[]>([])
+// Removed - using unified search instead
 
 // Computed properties
 const systemId = computed(() => parseInt(route.params.id as string))
 
 const hasActiveFilters = computed(() => {
-    return filters.value.mealName !== '' || 
-           filters.value.whenServed !== '' || 
-           filters.value.allergen !== '' || 
-           filters.value.date !== ''
+    return filters.value.search !== ''
 })
 
 // Methods
@@ -306,8 +250,8 @@ const loadMeals = async () => {
             dateRange.value = { start: minDate, end: maxDate }
         }
 
-        // Build filter options
-        buildFilterOptions()
+        // Build filter options - not needed for unified search
+        // buildFilterOptions()
 
     } catch (err) {
         console.error('Error loading meals:', err)
@@ -317,75 +261,40 @@ const loadMeals = async () => {
     }
 }
 
-const buildFilterOptions = () => {
-    const whenServedSet = new Set<string>()
-    const allergenSet = new Set<string>()
-    const dateSet = new Set<string>()
-
-    Object.keys(allMealsData.value).forEach(date => {
-        dateSet.add(date)
-        allMealsData.value[date].forEach(meal => {
-            whenServedSet.add(meal.when_served)
-            meal.allergens.forEach((allergen: any) => {
-                allergenSet.add(allergen.name)
-            })
-        })
-    })
-
-    // Build options arrays
-    whenServedOptions.value = Array.from(whenServedSet).map(item => ({
-        label: item,
-        value: item
-    }))
-
-    allergenOptions.value = Array.from(allergenSet).map(item => ({
-        label: item,
-        value: item
-    }))
-
-    dateOptions.value = Array.from(dateSet).sort().map(item => ({
-        label: formatDate(item),
-        value: item
-    }))
-}
-
 const applyFilters = () => {
     if (!hasActiveFilters.value) {
         mealsByDate.value = { ...allMealsData.value }
         return
     }
 
+    const searchTerm = filters.value.search.toLowerCase()
     const filtered: Record<string, any[]> = {}
 
     Object.keys(allMealsData.value).forEach(date => {
-        // Date filter
-        if (filters.value.date && date !== filters.value.date) {
-            return
-        }
-
         const filteredMeals = allMealsData.value[date].filter(meal => {
-            // Meal name filter
-            if (filters.value.mealName && 
-                !meal.name.toLowerCase().includes(filters.value.mealName.toLowerCase())) {
-                return false
+            // Search in meal name
+            if (meal.name.toLowerCase().includes(searchTerm)) {
+                return true
             }
 
-            // When served filter
-            if (filters.value.whenServed && meal.when_served !== filters.value.whenServed) {
-                return false
+            // Search in when served
+            if (meal.when_served.toLowerCase().includes(searchTerm)) {
+                return true
             }
 
-            // Allergen filter
-            if (filters.value.allergen) {
-                const hasAllergen = meal.allergens.some((allergen: any) => 
-                    allergen.name === filters.value.allergen
-                )
-                if (!hasAllergen) {
-                    return false
-                }
+            // Search in allergens
+            if (meal.allergens.some((allergen: any) => 
+                allergen.name.toLowerCase().includes(searchTerm)
+            )) {
+                return true
             }
 
-            return true
+            // Search in date (formatted)
+            if (formatDate(date).toLowerCase().includes(searchTerm)) {
+                return true
+            }
+
+            return false
         })
 
         if (filteredMeals.length > 0) {
@@ -398,10 +307,7 @@ const applyFilters = () => {
 
 const clearFilters = () => {
     filters.value = {
-        mealName: '',
-        whenServed: '',
-        allergen: '',
-        date: ''
+        search: ''
     }
 }
 
