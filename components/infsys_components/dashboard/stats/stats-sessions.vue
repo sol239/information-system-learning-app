@@ -15,7 +15,8 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
-import { useComponentCodeStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import type { Component } from '~/model/Component'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -47,32 +48,31 @@ const draftSqlQuery = ref('')
 const draftHtmlTemplate = ref('')
 
 /* 9. Computed */
-function isInErrorComponents(componentFilename: string): boolean {
-  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-  const isInErrorComponents = getNotCompletedTasks.some(task => {
-    return Array.isArray(task.errorComponents) &&
-      task.errorComponents.some(ec => ec.name === componentFilename)
-  })
-  return isInErrorComponents
-}
 
-const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-sessions-sql.vue"))
-const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-sessions-html.vue"))
-const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-sessions-js.vue"))
+// Use a component object for sessions, similar to meals/participants
+const sessionsComponent = computed(() => componentCodeStore.getComponentById('stats-sessions') || componentCodeStore.getDefaultComponent('stats-sessions'))
+
+const correctSqlQuery = computed(() => sessionsComponent.value?.sql || '')
+const correctHtmlTemplate = computed(() => sessionsComponent.value?.html || '')
+const correctNavigateJs = computed(() => sessionsComponent.value?.js || '')
 
 const sqlQuery = computed(() => {
-  if (isInErrorComponents("stats-sessions.vue")) {
+  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || correctSqlQuery.value
-    componentCodeStore.updateComponentCode("stats-sessions-sql.vue", errorSql)
+    if (sessionsComponent.value) {
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, sql: errorSql })
+    }
     return errorSql
   }
   return correctSqlQuery.value
 })
 
 const htmlTemplate = computed(() => {
-  if (isInErrorComponents("stats-sessions.vue")) {
+  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-sessions.vue", "html") || correctHtmlTemplate.value
-    componentCodeStore.updateComponentCode("stats-sessions-html.vue", errorHtml)
+    if (sessionsComponent.value) {
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, html: errorHtml })
+    }
     return errorHtml
   }
   return correctHtmlTemplate.value
@@ -81,7 +81,9 @@ const htmlTemplate = computed(() => {
 const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-sessions.vue", "js") || correctNavigateJs.value
-    componentCodeStore.updateComponentCode("stats-sessions-js.vue", errorJs)
+    if (sessionsComponent.value) {
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, js: errorJs })
+    }
     return errorJs
   }
   return correctNavigateJs.value
@@ -92,7 +94,6 @@ const sessionsCount = computed(() => {
     return 0
   }
   const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
-  //const result = 0
   return result || 0
 })
 

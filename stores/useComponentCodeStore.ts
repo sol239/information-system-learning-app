@@ -44,6 +44,55 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     // const tasks = TaskQueue.getTasks();
   }
 
+  // New methods for Component instances
+  function updateDefaultComponent(component: Component) {
+    const index = defaultComponentMap.findIndex(c => c.id === component.id)
+    if (index >= 0) {
+      defaultComponentMap[index] = component
+    } else {
+      defaultComponentMap.push(component)
+    }
+  }
+
+  function getComponentById(id: string): Component | undefined {
+    return actualComponentMap.find(c => c.id === id)
+  }
+
+  function getDefaultComponent(id: string): Component | undefined {
+    return defaultComponentMap.find(c => c.id === id)
+  }
+
+  function updateActualComponent(component: Component) {
+    const index = actualComponentMap.findIndex(c => c.id === component.id)
+    if (index >= 0) {
+      actualComponentMap[index] = component
+    } else {
+      actualComponentMap.push(component)
+    }
+  }
+
+  function getActualComponent(id: string): Component | undefined {
+    return actualComponentMap.find(c => c.id === id)
+  }
+
+  function resetComponent(id: string) {
+    const defaultComp = getDefaultComponent(id)
+    if (defaultComp) {
+      updateActualComponent(defaultComp)
+    }
+  }
+
+  function resetAllComponents() {
+    actualComponentMap.splice(0, actualComponentMap.length, ...defaultComponentMap)
+  }
+
+  function updateComponent(id: string, component: Component) {
+    const index = actualComponentMap.findIndex(c => c.id === id)
+    if (index >= 0) {
+      actualComponentMap[index] = component
+    }
+  }
+
   return {
     defaultComponentCodeMap,
     actualComponentCodeMap,
@@ -52,6 +101,16 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     updateComponentCode,
     getComponentCode,
     resetComponentCode,
-    resetAllComponentCodes
+    resetAllComponentCodes,
+    defaultComponentMap,
+    actualComponentMap,
+    updateDefaultComponent,
+    getDefaultComponent,
+    updateActualComponent,
+    getActualComponent,
+    resetComponent,
+    resetAllComponents,
+    getComponentById,
+    updateComponent
   }
 })

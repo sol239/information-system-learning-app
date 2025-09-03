@@ -15,7 +15,8 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
-import { useComponentCodeStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import type { Component } from '~/model/Component'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -47,23 +48,20 @@ const draftSqlQuery = ref('')
 const draftHtmlTemplate = ref('')
 
 /* 9. Computed */
-function isInErrorComponents(componentFilename: string): boolean {
-  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-  const isInErrorComponents = getNotCompletedTasks.some(task => {
-    return Array.isArray(task.errorComponents) &&
-      task.errorComponents.some(ec => ec.name === componentFilename)
-  })
-  return isInErrorComponents
-}
 
-const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-participants-sql.vue"))
-const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-participants-html.vue"))
-const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-participants-js.vue"))
+// Use a component object for participants, similar to meals
+const participantsComponent = computed(() => componentCodeStore.getComponentById('stats-participants') || componentCodeStore.getDefaultComponent('stats-participants'))
+
+const correctSqlQuery = computed(() => participantsComponent.value?.sql || '')
+const correctHtmlTemplate = computed(() => participantsComponent.value?.html || '')
+const correctNavigateJs = computed(() => participantsComponent.value?.js || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-participants.vue", "sql") || correctSqlQuery.value
-    componentCodeStore.updateComponentCode("stats-participants-sql.vue", errorSql)
+    if (participantsComponent.value) {
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, sql: errorSql })
+    }
     return errorSql
   }
   return correctSqlQuery.value
@@ -72,7 +70,9 @@ const sqlQuery = computed(() => {
 const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-participants.vue", "html") || correctHtmlTemplate.value
-    componentCodeStore.updateComponentCode("stats-participants-html.vue", errorHtml)
+    if (participantsComponent.value) {
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, html: errorHtml })
+    }
     return errorHtml
   }
   return correctHtmlTemplate.value
@@ -81,19 +81,19 @@ const htmlTemplate = computed(() => {
 const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-participants.vue", "js") || correctNavigateJs.value
-    componentCodeStore.updateComponentCode("stats-participants-js.vue", errorJs)
+    if (participantsComponent.value) {
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, js: errorJs })
+    }
     return errorJs
   }
   return correctNavigateJs.value
 })
 
 const participantsCount = computed(() => {
-
   if (!props.system?.db || typeof props.system?.db?.query !== "function") {
     return 0
   }
   const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
-  //const result = 0
   return result || 0
 })
 
@@ -124,7 +124,6 @@ function navigate() {
   if (highlightStore.isHighlightMode) {
     return
   }
-
   const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
   navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
 }

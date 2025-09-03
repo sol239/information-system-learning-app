@@ -8,6 +8,7 @@
 <script setup lang="ts">
 
 import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import { Component } from './model/Component'
 const componentCodeStore = useComponentCodeStore()
 
 const statsMealsHtml = `
@@ -115,5 +116,58 @@ componentCodeStore.resetComponentCode("stats-sessions-js.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-html.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-sql.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-js.vue")
+
+// New instances created from the existing code above
+const statsMealsComponent = new Component(
+    "stats-meals",
+    "Stats Meals",
+    `Component for meals stats. SQL: ${statsMealsSql}`,
+    statsMealsHtml,
+    "",
+    statsMealsNavigateJs,
+    statsMealsSql
+);
+
+const statsParticipantsComponent = new Component(
+    "stats-participants",
+    "Stats Participants",
+    `Component for participants stats. SQL: ${statsParticipantsSql}`,
+    statsParticipantsHtml,
+    "",
+    statsParticipantsNavigateJs,
+    statsParticipantsSql
+);
+
+const statsSessionsComponent = new Component(
+    "stats-sessions",
+    "Stats Sessions",
+    `Component for sessions stats. SQL: ${statsSessionsSql}`,
+    statsSessionsHtml,
+    "",
+    statsSessionsNavigateJs,
+    statsSessionsSql
+);
+
+const statsSupervisorsComponent = new Component(
+    "stats-supervisors",
+    "Stats Supervisors",
+    `Component for supervisors stats. SQL: ${statsSupervisorsSql}`,
+    statsSupervisorsHtml,
+    "",
+    statsSupervisorsNavigateJs,
+    statsSupervisorsSql
+);
+
+// Store the instances into the store
+componentCodeStore.updateDefaultComponent(statsMealsComponent);
+componentCodeStore.updateDefaultComponent(statsParticipantsComponent);
+componentCodeStore.updateDefaultComponent(statsSessionsComponent);
+componentCodeStore.updateDefaultComponent(statsSupervisorsComponent);
+
+// Reset
+componentCodeStore.resetComponentCode("stats-meals");
+componentCodeStore.resetComponentCode("stats-participants");
+componentCodeStore.resetComponentCode("stats-sessions");
+componentCodeStore.resetComponentCode("stats-supervisors");
 
 </script>

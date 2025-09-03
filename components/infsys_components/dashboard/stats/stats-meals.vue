@@ -20,6 +20,7 @@ import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
 import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import type { Component } from '~/model/Component'
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
 const selectedTableStore = useSelectedTableStore()
@@ -51,14 +52,19 @@ const draftHtmlTemplate = ref('')
 
 /* 9. Computed */
 
-const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-meals-sql.vue"))
-const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-meals-html.vue"))
-const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-meals-js.vue"))
+const mealsComponent = computed(() => componentCodeStore.getComponentById('stats-meals') || componentCodeStore.getDefaultComponent('stats-meals'))
+console.log("Meals Component:", mealsComponent.value)
+
+const correctSqlQuery = computed(() => mealsComponent.value?.sql || '')
+const correctHtmlTemplate = computed(() => mealsComponent.value?.html || '')
+const correctNavigateJs = computed(() => mealsComponent.value?.js || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-meals.vue", "sql") || correctSqlQuery.value
-    componentCodeStore.updateComponentCode("stats-meals-sql.vue", errorSql)
+    if (mealsComponent.value) {
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, sql: errorSql })
+    }
     return errorSql
   }
   return correctSqlQuery.value
@@ -67,7 +73,9 @@ const sqlQuery = computed(() => {
 const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-meals.vue", "html") || correctHtmlTemplate.value
-    componentCodeStore.updateComponentCode("stats-meals-html.vue", errorHtml)
+    if (mealsComponent.value) {
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, html: errorHtml })
+    }
     return errorHtml
   }
   return correctHtmlTemplate.value
@@ -76,7 +84,9 @@ const htmlTemplate = computed(() => {
 const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-meals.vue", "js") || correctNavigateJs.value
-    componentCodeStore.updateComponentCode("stats-meals-js.vue", errorJs)
+    if (mealsComponent.value) {
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, js: errorJs })
+    }
     return errorJs
   }
   return correctNavigateJs.value

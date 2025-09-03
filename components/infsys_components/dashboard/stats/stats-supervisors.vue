@@ -15,7 +15,8 @@ import { TaskQueue, useSelectedTableStore } from '#imports'
 import { ComponentHandler } from '~/composables/ComponentHandler'
 import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
-import { useComponentCodeStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import type { Component } from '~/model/Component'
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -41,20 +42,26 @@ const emit = defineEmits<{
   (e: 'applyChanges', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
 }>()
 
-
-
 /* 8. Local state (ref, reactive) */
 const showEditor = ref(false)
+const draftSqlQuery = ref('')
+const draftHtmlTemplate = ref('')
 
 /* 9. Computed */
-const correctSqlQuery = computed(() => componentCodeStore.getComponentCode("stats-supervisors-sql.vue"))
-const correctHtmlTemplate = computed(() => componentCodeStore.getComponentCode("stats-supervisors-html.vue"))
-const correctNavigateJs = computed(() => componentCodeStore.getComponentCode("stats-supervisors-js.vue"))
+
+// Use a component object for supervisors, similar to meals/participants/sessions
+const supervisorsComponent = computed(() => componentCodeStore.getComponentById('stats-supervisors') || componentCodeStore.getDefaultComponent('stats-supervisors'))
+
+const correctSqlQuery = computed(() => supervisorsComponent.value?.sql || '')
+const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html || '')
+const correctNavigateJs = computed(() => supervisorsComponent.value?.js || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || correctSqlQuery.value
-    componentCodeStore.updateComponentCode("stats-supervisors-sql.vue", errorSql)
+    if (supervisorsComponent.value) {
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, sql: errorSql })
+    }
     return errorSql
   }
   return correctSqlQuery.value
@@ -63,7 +70,9 @@ const sqlQuery = computed(() => {
 const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || correctHtmlTemplate.value
-    componentCodeStore.updateComponentCode("stats-supervisors-html.vue", errorHtml)
+    if (supervisorsComponent.value) {
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, html: errorHtml })
+    }
     return errorHtml
   }
   return correctHtmlTemplate.value
@@ -72,21 +81,19 @@ const htmlTemplate = computed(() => {
 const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-supervisors.vue", "js") || correctNavigateJs.value
-    componentCodeStore.updateComponentCode("stats-supervisors-js.vue", errorJs)
+    if (supervisorsComponent.value) {
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, js: errorJs })
+    }
     return errorJs
   }
   return correctNavigateJs.value
 })
-
-const draftSqlQuery = ref('')
-const draftHtmlTemplate = ref('')
 
 const supervisorsCount = computed(() => {
   if (!props.system?.db || typeof props.system?.db?.query !== "function") {
     return 0
   }
   const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
-  //const result = 0
   return result || 0
 })
 
@@ -97,15 +104,6 @@ const renderedHtml = computed(() => {
 })
 
 /* 11. Methods */
-function isInErrorComponents(componentFilename: string): boolean {
-  const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-  const isInErrorComponents = getNotCompletedTasks.some(task => {
-    return Array.isArray(task.errorComponents) &&
-      task.errorComponents.some(ec => ec.name === componentFilename)
-  })
-  return isInErrorComponents
-}
-
 function openEditor() {
   draftSqlQuery.value = sqlQuery.value
   draftHtmlTemplate.value = htmlTemplate.value
@@ -117,7 +115,6 @@ function openEditor() {
 }
 
 function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
-  // If you want to allow editing, you need to update the source (ComponentHandler or other state)
   draftSqlQuery.value = data.sqlQuery
   draftHtmlTemplate.value = data.htmlTemplate
   // Optionally, update ComponentHandler here if needed
@@ -127,10 +124,8 @@ function navigate() {
   if (highlightStore.isHighlightMode) {
     return
   }
-
   const navigateFunction = new Function('selectedTableStore', 'navigateTo', 'systemId', navigateJs.value)
   navigateFunction(selectedTableStore, navigateTo, selectedSystemStore.selectedId)
-
 }
 
 /* 12. Lifecycle */
