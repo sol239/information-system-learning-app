@@ -63,6 +63,11 @@
             "id": "sessions_supervisors",
             "name": "vedoucí_turnusy",
             "csv_path": "csv/sessions-supervisors.csv"
+        },
+        {
+            "id": "meals_book",
+            "name": "kniha_jídel",
+            "csv_path": "csv/meals_book.csv"
         }
     ],
     "tasks": [

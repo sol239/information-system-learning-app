@@ -48,15 +48,15 @@ const localItems = ref<NavigationMenuItem[]>([
         data_target: 'system-supervisors',
     },
     {
+        label: t('meals'),
+        to: `/system/${selectedSystemStore.selectedId}/meals`,
+        data_target: 'system-meals',
+    },
+    {
         label: t('database'),
         icon: 'i-heroicons-table-cells',
         to: `/system/${selectedSystemStore.selectedId}/database`,
         data_target: 'system-table',
-    },
-    {
-        label: t('meals'),
-        to: `/system/${selectedSystemStore.selectedId}/meals`,
-        data_target: 'system-meals',
     }
 ])
 

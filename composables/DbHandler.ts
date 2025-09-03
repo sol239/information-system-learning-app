@@ -248,6 +248,20 @@ export default class DbHandler {
         } catch (error) {
             console.error('Error creating sessions_participants table: ⛔', error);
         }
+
+        // Add meals_book table
+        try {
+            this.db.exec(`
+            CREATE TABLE ${this.tableNameMap.get('meals_book')} (
+                meal_id INTEGER NOT NULL,
+                date TEXT NOT NULL,
+                PRIMARY KEY (meal_id, date)
+            )
+        `);
+            console.log("Meals_book table created successfully. ✅");
+        } catch (error) {
+            console.error('Error creating meals_book table: ⛔', error);
+        }
     }
 
     // TODO: use simpler execution logic
@@ -304,6 +318,7 @@ export default class DbHandler {
                 allergens_meals: this.insertAllergensMeals,
                 supervisors_allergens: this.insertSupervisorsAllergens,
                 sessions_supervisors: this.insertSessionsSupervisors,
+                meals_book: this.insertMealsBook,
             };
 
             const insertMethod = methodMap[table.id];
@@ -560,6 +575,26 @@ export default class DbHandler {
             console.log("Inserted sessions_supervisors successfully. ✅");
         } catch (error) {
             console.error('Error inserting sessions_supervisors: ⛔', error);
+        }
+    }
+
+    // Add insertMealsBook method
+    private async insertMealsBook(data: any[]): Promise<void> {
+        try {
+            const stmt = this.db.prepare(`
+                INSERT INTO ${this.tableNameMap.get('meals_book')} (meal_id, date)
+                VALUES (?, ?)
+            `);
+            data.forEach(row => {
+                stmt.run([
+                    row.meal_id,
+                    row.date
+                ]);
+            });
+            stmt.free();
+            console.log("Inserted meals_book successfully. ✅");
+        } catch (error) {
+            console.error('Error inserting meals_book: ⛔', error);
         }
     }
 
