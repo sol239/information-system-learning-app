@@ -9,6 +9,7 @@ export const useHighlightStore = defineStore('highlight', () => {
 
   function toggleHighlight() {
     isHighlightMode.value = !isHighlightMode.value
+    console.log("Current highlight mode:", isHighlightMode.value)
   }
 
   function toggleEdit() {

@@ -5,19 +5,11 @@
       <p class="dashboard-subtitle">{{ t('dashboard_subtitle') }}</p>
     </div>
     <div class="stats">
-      <StatsSessions ref="statsSessionsRef" id="stats-sessions" class="highlightable"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-sessions', $event)" />
-      <StatsParticipants ref="statsParticipantsRef" id="stats-participants" class="highlightable"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-participants', $event)"/>
-      <StatsSupervisors ref="statsSupervisorsRef" id="stats-supervisors" class="highlightable"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-supervisors', $event)" />
-      <StatsMeals ref="statsMealsRef" id="stats-meals" class="highlightable"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('stats-meals', $event)" />
+      <StatsSessions ref="statsSessionsRef" />
+      <StatsParticipants ref="statsParticipantsRef" />
+      <StatsSupervisors ref="statsSupervisorsRef" />
+      <StatsMeals ref="statsMealsRef"/>
     </div>
-
-
-    <!-- Modal rendered outside of stats container using Teleport -->
-      <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId"/>
   </div>
 </template>
 
@@ -31,11 +23,6 @@ import StatsParticipants from '~/components/infsys_components/dashboard/stats/st
 import StatsSupervisors from '~/components/infsys_components/dashboard/stats/stats-supervisors.vue'
 import StatsMeals from '~/components/infsys_components/dashboard/stats/stats-meals.vue'
 import '@/assets/css/stats.css'
-import { useHighlightWatchers } from '~/composables/highlightWatchers'
-import '~/assets/css/highlight.css'
-import { useHighlightStore } from '#imports'
-import { useComponentCodeStore } from '#imports'
-
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -46,7 +33,6 @@ const highlightStore = useHighlightStore()
 const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
-const componentCodeStore = useComponentCodeStore()
 
 /* 5. Props */
 const props = defineProps<{
@@ -63,10 +49,6 @@ const statsSupervisorsRef = ref()
 const statsMealsRef = ref()
 
 /* 8. Local state (ref, reactive) */
-const showEditor = ref(false)
-const draftHtmlTemplate = ref('')
-const draftSqlQuery = ref('')
-const currentComponentId = ref('')
 
 /* 9. Computed */
 const system = computed(() => {
@@ -76,52 +58,9 @@ const system = computed(() => {
 
 /* 10. Watchers */
 
-useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
-
 /* 11. Methods */
-function handleOpenModal(data: { componentId: string, htmlTemplate: string, sqlQuery: string }) {
-  currentComponentId.value = data.componentId
-  console.log("Opening editor for component:", currentComponentId.value)
-  draftHtmlTemplate.value = data.htmlTemplate
-  draftSqlQuery.value = data.sqlQuery
-  showEditor.value = true
-}
-
-function applyChanges() {
-  const componentRef = getComponentRef(currentComponentId.value)
-  if (componentRef) {
-    componentRef.applyChanges({
-      htmlTemplate: draftHtmlTemplate.value,
-      sqlQuery: draftSqlQuery.value
-    })
-  }
-  showEditor.value = false
-}
-
-function getComponentRef(componentId: string) {
-  switch (componentId) {
-    case 'stats-sessions':
-      return statsSessionsRef.value
-    case 'stats-participants':
-      return statsParticipantsRef.value
-    case 'stats-supervisors':
-      return statsSupervisorsRef.value
-    case 'stats-meals':
-      return statsMealsRef.value
-    default:
-      return null
-  }
-}
 
 /* 12. Lifecycle */
-onMounted(() => {
-  const highlightStore = useHighlightStore()
-  console.log("HIGHLIGHT  ON:", highlightStore.isHighlightMode)
-  console.log(highlightStore.highlightHandler.getHighlightedElements())
-})
-
-
-/* 13. defineExpose (if needed) */
 // none
 </script>
 

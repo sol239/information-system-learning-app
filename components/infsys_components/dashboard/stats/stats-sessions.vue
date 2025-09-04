@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="highlightable" :id="componentId" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
     <div class="stat-card-wrapper">
       <div id="stats-sessions" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
       <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId" />
     </div>
   </div>
+  <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId"/>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +18,9 @@ import { useHighlightStore } from '#imports'
 import { useSelectedTaskStore } from '#imports'
 import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
 import type { Component } from '~/model/Component'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import '~/assets/css/highlight.css'
+
 
 /* 2. Stores */
 const selectedSystemStore = useSelectedSystemStore()
@@ -94,6 +98,10 @@ const renderedHtml = computed(() => {
     .replace('{{ label }}', t('sessions'))
 })
 
+/* 10. Watchers */
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
+
+/* 11. Methods */
 function navigate() {
   if (highlightStore.isHighlightMode) {
     return
