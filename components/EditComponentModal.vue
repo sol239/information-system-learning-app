@@ -162,14 +162,34 @@ function onJsInput(event: Event) {
 
 function onApplyChanges(event: MouseEvent) {
   console.log("Applying changes to: ", props.componentId)
-  componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, htmlTemplate.value)
-  componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, sqlQuery.value)
-  componentCodeStore.updateComponentCode(`${props.componentId}-js.vue`, jsCode.value)
 
-  console.log("====== Changes applied ======")
-  console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
-  console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
-  console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.vue`))
+  // Get current component
+  const currentComponent = componentCodeStore.getComponentById(props.componentId)
+
+  if (currentComponent) {
+    // Update the entire component object using updateComponent function
+    const updatedComponent = {
+      ...currentComponent,
+      html: { ...currentComponent.html, 'default': htmlTemplate.value },
+      sql: { ...currentComponent.sql, 'default': sqlQuery.value },
+      js: { ...currentComponent.js, 'default': jsCode.value }
+    }
+
+    componentCodeStore.updateComponent(props.componentId, updatedComponent)
+
+    console.log("====== Changes applied ======")
+    console.log("Component updated:", updatedComponent)
+  } else {
+    // Fallback to individual code updates if component not found
+    componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, htmlTemplate.value)
+    componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, sqlQuery.value)
+    componentCodeStore.updateComponentCode(`${props.componentId}-js.vue`, jsCode.value)
+
+    console.log("====== Changes applied (fallback) ======")
+    console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
+    console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
+    console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.vue`))
+  }
 
   ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', htmlTemplate.value)
   ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', sqlQuery.value)

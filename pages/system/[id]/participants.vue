@@ -31,7 +31,7 @@
                             borderRadius: '6px',
                             border: '1px solid rgba(0, 0, 0, 0.1)'
                         }">
-                            {{ Math.round(selectedSessionInfo.fillPercentage) }}%
+                            {{ selectedSessionInfo.fillPercentage }}%
                         </span>
                     </div>
 
@@ -553,7 +553,7 @@ const selectedSessionInfo = computed(() => {
         console.log("Capacity:", totalCapacity)
         console.log("Current:", currentCount)
 
-        const fillPercentageJs: string = `currentCount / totalCapacity * 100`;
+        const fillPercentageJs: string = `Math.round(currentCount / totalCapacity * 100)`;
 
         let fillPercentage: number = 0;
 

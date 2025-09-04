@@ -139,7 +139,7 @@
                 "table-form-účastníci-alergeny"
             ],
             "is_editable": false,
-            "round": 3,
+            "round": 1,
             "error-components": [
                 {
                     "name": "table-form-účastníci-alergeny.vue",
@@ -160,7 +160,7 @@
             "answer": "opt == cop1:Komponenta místo počtu vedoucích zobrazovala počet alergenů.;wop2:Komponenta zobrazovala počet účastníků.;wop3:Komponenta zobrazovala počet jídel.",
             "elementClass": "stats-supervisors",
             "is_editable": false,
-            "round": 1,
+            "round": 3,
             "error-components": [
                 {
                     "name": "stats-supervisors.vue",

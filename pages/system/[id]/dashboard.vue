@@ -45,9 +45,10 @@ import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
 import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
-import { usePersistentStorageTestStore} from "#imports"
+import { ComponentManager, usePersistentStorageTestStore} from "#imports"
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
+import { Component } from '~/model/Component'
 
 /* 2. Stores */
 const store = useInformationSystemStore()
@@ -233,8 +234,11 @@ function isElementTaskCompleted(elementId: string): boolean {
 }
 
 /* 12. Lifecycle */
-// none
-
+onMounted(() => {
+    if(!ComponentManager.areComponentsInitialized()) {
+        ComponentManager.initializeComponents();
+    }
+})
 /* 13. defineExpose */
 // none
 </script>

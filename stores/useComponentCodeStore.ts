@@ -90,6 +90,8 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     const index = actualComponentMap.findIndex(c => c.id === id)
     if (index >= 0) {
       actualComponentMap[index] = component
+    } else {
+      actualComponentMap.push(component)
     }
   }
 
