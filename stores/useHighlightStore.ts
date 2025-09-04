@@ -5,6 +5,7 @@ export const useHighlightStore = defineStore('highlight', () => {
   const selectedIds = ref<Set<string>>(new Set())
   const highlightHandler = new HighlightHandler()
   const isEditModeActive = ref(false)
+  const selectedComponentId = ref<string | null>(null)
 
   function toggleHighlight() {
     isHighlightMode.value = !isHighlightMode.value
@@ -20,6 +21,7 @@ export const useHighlightStore = defineStore('highlight', () => {
     selectedIds,
     highlightHandler,
     isEditModeActive,
-    toggleEdit
+    toggleEdit,
+    selectedComponentId
   }
 })

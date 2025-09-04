@@ -288,7 +288,7 @@ watch(selectedTask, (task) => {
 // Keyboard shortcut for submit button
 onMounted(() => {
   const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 's' && selectedTask.value && !selectedTask.value.completed) {
+    if (event.key === 's' && event.altKey && selectedTask.value && !selectedTask.value.completed) {
       handleSubmit()
     }
   }

@@ -86,10 +86,10 @@ const localItems = ref<NavigationMenuItem[]>([
 // Keyboard shortcut for highlight toggle
 onMounted(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-        if (event.key === 'h') {
+        if (event.key === 'q' && event.altKey) {
             highlightStore.toggleHighlight()
         }
-        if (event.key === 'e') {
+        if (event.key === 'w' && event.altKey) {
             highlightStore.toggleEdit()
         }
         if (event.key === 't' && event.altKey) {
