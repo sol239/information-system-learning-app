@@ -6,18 +6,36 @@
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <SessionSelectMenu v-model="value" :items="filterSessionsItems" />
+                <USelect class="highlightable" :id="'participants-session-menu'"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
+                    v-model="value" :items="filterSessionsItems" />
 
                 <!-- Session Capacity Pillow -->
                 <div v-if="selectedSessionInfo" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <UIcon name="i-heroicons-users" class="w-4 h-4 text-gray-600" />
 
                     <!-- Session Capacity Count -->
-                    <SessionCapacityCount :current-count="selectedSessionInfo.currentCount"
-                        :total-capacity="selectedSessionInfo.totalCapacity" />
+                    <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
+                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{ selectedSessionInfo.totalCapacity}}
+                    </span>
 
                     <!-- Session Capacity Percentage -->
-                    <SessionCapacityPercentage :fill-percentage="selectedSessionInfo.fillPercentage" />
+                    <div class="highlightable" :id="'participants-capacity-percentage'"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-percentage', $event)">
+                        <span :style="{
+                            color: darkenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.3),
+                            backgroundColor: lightenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.8),
+                            fontWeight: 'bold',
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(0, 0, 0, 0.1)'
+                        }">
+                            {{ Math.round(selectedSessionInfo.fillPercentage) }}%
+                        </span>
+                    </div>
+
+
                 </div>
 
                 <!-- Pagination -->
@@ -27,8 +45,16 @@
                         {{ t('previous') }}
                     </UButton>
 
-                    <PageCount :current-page="currentPage" :total-pages="totalPages"
-                        :total-items="filteredParticipants.length" />
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
+                            {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
+                        </span>
+                        <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)">
+                            ({{ filteredParticipants.length }} {{ t('participants') }})
+                        </span>
+                    </div>
 
                     <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
                         :disabled="currentPage === totalPages" @click="currentPage++">
@@ -39,8 +65,15 @@
                 <div class="ml-auto flex gap-4 items-start">
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
-                        <FilterResetButton :on-click="resetFilter" />
-                        <FilterInput v-model="filterText" :placeholder="t('filter_participants')" />
+                        <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
+                            size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw"
+                            @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-reset', $event)">
+                        </UButton>
+                        <div class="highlightable" id="participants-filter-input"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
+                            <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')"
+                                size="sm" />
+                        </div>
 
                     </div>
                     <!-- Add Participant Drawer (right) -->
@@ -48,6 +81,7 @@
                         <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
                             {{ t('add_participant') }}
                         </UButton>
+
                         <template #content>
                             <UCard class="p-4 min-w-96">
                                 <template #header>
@@ -135,9 +169,74 @@
 
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ParticipantCard v-for="participant in paginatedParticipants" :key="participant.id"
-                    :participant="participant" :get-session-name="getSessionName"
-                    :on-view-details="viewParticipantDetails" :on-remove="removeParticipant" />
+                <div v-for="participant in paginatedParticipants" :key="participant.id"
+                    class="participant-card highlightable" :id="'participants-card-' + participant.id"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
+                    <!-- Participant Header -->
+                    <div class="participant-header">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold text-gray-900">
+                                {{ participant.name }}
+                            </h3>
+                            <UBadge size="lg" color="sky" variant="soft">
+                                {{ t('age') }}: {{ participant.age }}
+                            </UBadge>
+                        </div>
+                        <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                            <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
+                            <span>{{ participant.email }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Turnus Info -->
+                    <div class="turnus-section mb-4">
+                        <div v-if="participant.sessions.length > 0" class="space-y-1">
+                            <div v-for="sessionId in participant.sessions" :key="sessionId"
+                                class="text-sm text-gray-600">
+                                <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
+                                {{ getSessionName(sessionId) }}
+                            </div>
+                        </div>
+                        <div v-else class="text-sm text-gray-400 italic">
+                            <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
+                            {{ t('no_sessions') }}
+                        </div>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="contact-section mb-6 space-y-2">
+                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <UIcon name="i-heroicons-phone" class="w-4 h-4" />
+                            <span>{{ participant.phone }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
+                            <span>{{ participant.address }}</span>
+                        </div>
+                        <!-- Allergies Badge -->
+                        <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
+                            class="mt-2">
+                            {{ t("allergens") }}: {{ participant.allergens.length }}
+                        </UBadge>
+                    </div>
+
+                    <!-- Participant Actions -->
+
+                    <div class="participant-actions mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex gap-2">
+                            <!-- Edit Participant Button only -->
+                            <div class="ml-auto">
+                                <UButton size="sm" color="sky" variant="solid"
+                                    @click="viewParticipantDetails(participant)" class="flex-1">
+                                    {{ t('view_details') }}
+                                </UButton>
+                            </div>
+                            <UButton size="sm" color="red" variant="outline" @click="removeParticipant(participant)">
+                                {{ t('delete') }}
+                            </UButton>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Edit Participant Drawer outside v-for -->
@@ -241,20 +340,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useSelectedSystemStore } from '#imports'
 import { Participant } from '~/model/Participant'
 import { Session } from '~/model/Session'
-import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
-import { useToast } from '#imports'
-import { useHighlightWatchers } from '~/composables/highlightWatchers'
-import SessionSelectMenu from '~/components/infsys_components/participants/SessionSelectMenu.vue'
-import SessionCapacityCount from '~/components/infsys_components/participants/SessionCapacityCount.vue'
-import SessionCapacityPercentage from '~/components/infsys_components/participants/SessionCapacityPercentage.vue'
-import PageCount from '~/components/infsys_components/participants/PageCount.vue'
-import FilterResetButton from '~/components/infsys_components/participants/FilterResetButton.vue'
-import FilterInput from '~/components/infsys_components/participants/FilterInput.vue'
-import ParticipantCard from '~/components/infsys_components/participants/ParticipantCard.vue'
-import AddParticipantDrawer from '~/components/infsys_components/participants/AddParticipantDrawer.vue'
-import EditParticipantDrawer from '~/components/infsys_components/participants/EditParticipantDrawer.vue'
-import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
@@ -299,6 +385,63 @@ const isSubmitting = ref(false)
 const editModalOpen = ref(false);
 const addModalOpen = ref(false);
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
+function lightenColor(color: string, percent: number): string {
+    const colorMap: Record<string, string> = {
+        'red': '#ff0000',
+        'yellow': '#ffff00',
+        'green': '#00ff00'
+    };
+    if (colorMap[color]) {
+        color = colorMap[color];
+    }
+    // convert hex to RGB
+    let r: number, g: number, b: number;
+
+    if (color.startsWith('#')) {
+        const hex = color.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+    } else {
+        // fallback if color is not hex
+        return color;
+    }
+
+    // lighten each channel
+    r = Math.min(255, Math.floor(r + (255 - r) * percent));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent));
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+function darkenColor(color: string, percent: number): string {
+    const colorMap: Record<string, string> = {
+        'red': '#ff0000',
+        'yellow': '#ffff00',
+        'green': '#00ff00'
+    };
+    if (colorMap[color]) {
+        color = colorMap[color];
+    }
+    let r: number, g: number, b: number;
+
+    if (color.startsWith('#')) {
+        const hex = color.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+    } else {
+        return color;
+    }
+
+    // darken each channel
+    r = Math.max(0, Math.floor(r * (1 - percent)));
+    g = Math.max(0, Math.floor(g * (1 - percent)));
+    b = Math.max(0, Math.floor(b * (1 - percent)));
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
 
 // New participant form
 const newParticipant = ref({
@@ -393,10 +536,34 @@ const toast = useToast()
 
 const selectedSessionInfo = computed(() => {
     if (value.value === 'all') {
-        // Calculate total capacity for all sessions
-        const totalCapacity = sessions.value.reduce((sum, session) => sum + session.capacity, 0)
-        const currentCount = participants.value.length
-        const fillPercentage = totalCapacity > 0 ? (currentCount / totalCapacity) * 100 : 0
+
+        const totalCapacityQuery: string = `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`;
+        const result = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery)?.results || [];
+        const totalCapacity = result[0]?.count || 0;
+
+        const currentCountQuery: string = `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
+        `;
+
+        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery)?.results || [];
+        const currentCount = currentCountResult[0]?.count || 0;
+
+        console.log("Capacity:", totalCapacity)
+        console.log("Current:", currentCount)
+
+        const fillPercentageJs: string = `currentCount / totalCapacity * 100`;
+
+        let fillPercentage: number = 0;
+
+        try {
+            fillPercentage = eval(fillPercentageJs);
+            console.log("Fill percentage:", fillPercentage);
+        } catch (error) {
+            console.error("Error evaluating fillPercentageJs:", error);
+            fillPercentage = 0;
+        }
 
         return {
             currentCount,
@@ -994,6 +1161,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.participant-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 4px solid #00bcff;
+    padding: 1.5rem;
+}
+
+.participant-header {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.turnus-section,
+.contact-section {
+    margin-bottom: 1.5rem;
+}
+
+.participant-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
 .empty-state {
     text-align: center;
     padding: 3rem 0;
@@ -1017,5 +1209,12 @@ onMounted(() => {
     color: #4b5563;
     max-width: 28rem;
     margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .participant-card {
+        padding: 1rem;
+    }
 }
 </style>

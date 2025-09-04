@@ -638,4 +638,58 @@ export default class DbHandler {
         }
         this.db.exec(sql);
     }
+
+    public validateSql(sql: string): boolean {
+        if (!this.db) {
+            console.error('Database not initialized');
+            return false;
+        }
+
+        if (!sql || sql.trim().length === 0) {
+            console.error('SQL query is empty');
+            return false;
+        }
+
+        try {
+            // Try to prepare the statement to validate syntax
+            const stmt = this.db.prepare(sql);
+
+            // If preparation succeeds, the SQL is syntactically valid
+            stmt.free();
+
+            // Additional validation for common SQL injection patterns
+            const lowerSql = sql.toLowerCase().trim();
+
+            // Check for potentially dangerous operations
+            const dangerousPatterns = [
+                /;\s*(drop|delete|truncate|alter|create|insert|update)\s/i,
+                /union\s+select.*--/i,
+                /\/\*/i,  // Block comments
+                /\*\//i,  // Block comments
+                /--/i,    // Line comments (allow in some cases)
+            ];
+
+            for (const pattern of dangerousPatterns) {
+                if (pattern.test(lowerSql)) {
+                    console.warn('Potentially dangerous SQL pattern detected:', pattern);
+                    // For now, we'll allow these but log a warning
+                    // return false; // Uncomment to block these patterns
+                }
+            }
+
+            return true;
+        } catch (error) {
+            console.error('SQL validation error:', error);
+            return false;
+        }
+    }
+
+    public getAllTableNames(): string[] {
+        const sql = "SELECT name FROM sqlite_master WHERE type='table'";
+        const result = this.query(sql);
+        if (result.success) {
+            return result.results.map((row: any) => row.name as string);
+        }
+        return [];
+    }
 }

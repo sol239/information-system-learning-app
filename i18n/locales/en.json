@@ -169,5 +169,11 @@
     "system_not_selected": "No system selected",
     "clear_filters": "Clear Filters",
     "search_meals": "Search Meals",
-    "search_placeholder": "Search by meal name, when served, allergens, or date..."
+    "search_placeholder": "Search by meal name, when served, allergens, or date...",
+    "apply": "Apply",
+    "exit_system": "Exit System",
+    "leave_system": "Leave and Do Not Save",
+    "leave_and_save": "Leave and Save Result",
+    "stay_in_system": "Stay in System",
+    "save_success": "Result saved successfully"
 }

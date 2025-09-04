@@ -175,5 +175,11 @@
     "select_date": "Vyberte datum",
     "filtered": "filtrováno",
     "search_meals": "Hledat jídla",
-    "search_placeholder": "Hledat podle názvu jídla, kdy podáváno, alergenů nebo data..."
+    "search_placeholder": "Hledat podle názvu jídla, kdy podáváno, alergenů nebo data...",
+    "apply": "Použít",
+    "exit_system": "Opustit systém",
+    "leave_system": "Odejít a neukládat",
+    "leave_and_save": "Odejít a uložit výsledek",
+    "stay_in_system": "Zůstat v systému",
+    "save_success": "Výsledek úspěšně uložen"
 }

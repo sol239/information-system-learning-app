@@ -85,6 +85,7 @@ const statsSupervisorsHtml = `
 `
 const statsSupervisorsSql = `SELECT COUNT(*) as count FROM vedoucí`
 
+/*
 componentCodeStore.updateDefaultComponentCode("stats-meals-html.vue", statsMealsHtml)
 componentCodeStore.updateDefaultComponentCode("stats-meals-sql.vue", statsMealsSql)
 componentCodeStore.updateDefaultComponentCode("stats-meals-js.vue", statsMealsNavigateJs)
@@ -116,47 +117,70 @@ componentCodeStore.resetComponentCode("stats-sessions-js.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-html.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-sql.vue")
 componentCodeStore.resetComponentCode("stats-supervisors-js.vue")
+*/
 
 // New instances created from the existing code above
-const statsMealsComponent = new Component(
-    "stats-meals",
-    "Stats Meals",
-    `Component for meals stats. SQL: ${statsMealsSql}`,
-    statsMealsHtml,
-    "",
-    statsMealsNavigateJs,
-    statsMealsSql
-);
+const statsMealsComponent = new Component({
+    id: "stats-meals",
+    name: "Stats Meals",
+    description: `Component for meals stats. SQL: ${statsMealsSql}`,
+    html: { "default": statsMealsHtml },
+    css: { "default": "" },
+    js: { "default": statsMealsNavigateJs },
+    sql: { "default": statsMealsSql },
+    additionals: {}
+});
 
-const statsParticipantsComponent = new Component(
-    "stats-participants",
-    "Stats Participants",
-    `Component for participants stats. SQL: ${statsParticipantsSql}`,
-    statsParticipantsHtml,
-    "",
-    statsParticipantsNavigateJs,
-    statsParticipantsSql
-);
+const statsParticipantsComponent = new Component({
+    id: "stats-participants",
+    name: "Stats Participants",
+    description: `Component for participants stats. SQL: ${statsParticipantsSql}`,
+    html: { "default": statsParticipantsHtml },
+    css: { "default": "" },
+    js: { "default": statsParticipantsNavigateJs },
+    sql: { "default": statsParticipantsSql },
+    additionals: {}
+});
 
-const statsSessionsComponent = new Component(
-    "stats-sessions",
-    "Stats Sessions",
-    `Component for sessions stats. SQL: ${statsSessionsSql}`,
-    statsSessionsHtml,
-    "",
-    statsSessionsNavigateJs,
-    statsSessionsSql
-);
+const statsSessionsComponent = new Component({
+    id: "stats-sessions",
+    name: "Stats Sessions",
+    description: `Component for sessions stats. SQL: ${statsSessionsSql}`,
+    html: { "default": statsSessionsHtml },
+    css: { "default": "" },
+    js: { "default": statsSessionsNavigateJs },
+    sql: { "default": statsSessionsSql },
+    additionals: {}
+});
 
-const statsSupervisorsComponent = new Component(
-    "stats-supervisors",
-    "Stats Supervisors",
-    `Component for supervisors stats. SQL: ${statsSupervisorsSql}`,
-    statsSupervisorsHtml,
-    "",
-    statsSupervisorsNavigateJs,
-    statsSupervisorsSql
-);
+const statsSupervisorsComponent = new Component({
+    id: "stats-supervisors",
+    name: "Stats Supervisors",
+    description: `Component for supervisors stats. SQL: ${statsSupervisorsSql}`,
+    html: { "default": statsSupervisorsHtml },
+    css: { "default": "" },
+    js: { "default": statsSupervisorsNavigateJs },
+    sql: { "default": statsSupervisorsSql },
+    additionals: {}
+});
+
+// participants.vue participants-capacity-count
+const participantsCapacityCountComponent = new Component({
+    id: "participants-capacity-count",
+    name: "Participants Capacity Count",
+    description: `Badge showing the capacity count of the selected session.`,
+    html: { "default": "" },
+    css: { "default": "" },
+    js: { "default": `
+    function getCapacityBadgeColor(percentage: number): string {
+        if (percentage < 50) return 'green';
+        if (percentage < 80) return 'yellow';
+        return 'red';
+    }
+    ` },
+    sql: { "default": "" },
+    additionals: {}
+}); 
 
 // Store the instances into the store
 componentCodeStore.updateDefaultComponent(statsMealsComponent);

@@ -5,54 +5,47 @@
         <template v-if="htmlTemplate">
           <div class="editor-section">
             <h3 class="editor-label html-label">{{ t('html_template') }}</h3>
-            <textarea
-              :value="htmlTemplate"
-              @input="onHtmlInput"
-              class="code-editor html-editor"
-              spellcheck="false"
-            />
+            <textarea :value="htmlTemplate" @input="onHtmlInput" class="code-editor html-editor" spellcheck="false" />
           </div>
         </template>
 
         <template v-if="sqlQuery">
           <div class="editor-section">
-            <h3 class="editor-label sql-label">{{ t('sql_query') }}</h3>
-            <textarea
-              :value="sqlQuery"
-              @input="onSqlInput"
-              class="code-editor sql-editor"
-              :class="{ 'invalid-sql': !sqlValid }"
-              spellcheck="false"
-            />
+            <div class="title-row">
+              <h3 class="editor-label sql-label">{{ t('sql_query') }}</h3>
+              <UButton @click="toggleTables" class="tables-button">
+                Tables: {{ availableTables.length }}
+              </UButton>
+            </div>
+            <ul v-if="showTables" class="tables-list">
+              <li v-for="table in availableTables" :key="table">{{ table }}</li>
+            </ul>
+            <textarea :value="sqlQuery" @input="onSqlInput" class="code-editor sql-editor"
+              :class="{ 'invalid-sql': !sqlValid }" spellcheck="false" />
           </div>
         </template>
 
         <template v-if="jsCode">
           <div class="editor-section">
             <h3 class="editor-label js-label">{{ t('js_code') }}</h3>
-            <textarea
-              :value="jsCode"
-              @input="onJsInput"
-              class="code-editor js-editor"
-              spellcheck="false"
-            />
+            <textarea :value="jsCode" @input="onJsInput" class="code-editor js-editor" spellcheck="false" />
           </div>
         </template>
       </div>
 
       <div class="modal-actions">
-        <UButton
-          @click="onApplyChanges"
-          :disabled="!sqlValid"
-          :style="{ backgroundColor: !sqlValid ? '#ef4444' : '#3b82f6', color: 'white' }"
-        >
-          Apply
+        <UButton @click="onApplyChanges" :disabled="!sqlValid"
+          :style="getApplyButtonStyle()"
+          class="apply-button"
+          @mouseover="applyButtonHover = true"
+          @mouseleave="applyButtonHover = false">
+          {{ t('apply') }}
         </UButton>
-        <UButton
-          @click="onClose"
-          class="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Close
+        <UButton @click="onClose" :style="getCloseButtonStyle()"
+          class="close-button"
+          @mouseover="closeButtonHover = true"
+          @mouseleave="closeButtonHover = false">
+          {{ t('close') }}
         </UButton>
       </div>
     </div>
@@ -74,7 +67,9 @@ const componentCodeStore = useComponentCodeStore()
 
 /* 4. Constants (non-reactive) */
 const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
-const {t} = useI18n()
+const { t } = useI18n()
+const availableTables: string[] = selectedSystem?.db?.getAllTableNames() || []
+
 
 /* 5. Props */
 const props = defineProps<{
@@ -95,6 +90,9 @@ const sqlValid = ref(true)
 const htmlTemplate = ref(props.draftHtmlTemplate)
 const sqlQuery = ref(props.draftSqlQuery)
 const jsCode = ref(props.draftJsCode)
+const applyButtonHover = ref(false)
+const closeButtonHover = ref(false)
+const showTables = ref(false)
 
 /* 10. Watchers */
 watch(() => props.showEditor, (val) => {
@@ -107,6 +105,28 @@ watch(() => props.showEditor, (val) => {
 })
 
 /* 11. Methods */
+function getApplyButtonStyle() {
+  const baseColor = !sqlValid.value ? '#ef4444' : '#3b82f6'
+  const hoverColor = !sqlValid.value ? '#dc2626' : '#2563eb'
+
+  return {
+    backgroundColor: applyButtonHover.value ? hoverColor : baseColor,
+    color: 'white',
+    transition: 'all 0.2s ease',
+    transform: applyButtonHover.value ? 'translateY(-1px)' : 'translateY(0)',
+    boxShadow: applyButtonHover.value ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none'
+  }
+}
+
+function getCloseButtonStyle() {
+  return {
+    backgroundColor: closeButtonHover.value ? '#4b5563' : '#6b7280',
+    color: 'white',
+    transition: 'all 0.2s ease',
+    transform: closeButtonHover.value ? 'translateY(-1px)' : 'translateY(0)',
+    boxShadow: closeButtonHover.value ? '0 4px 12px rgba(107, 114, 128, 0.4)' : 'none'
+  }
+}
 function onSqlInput(event: Event) {
   const value = (event.target as HTMLTextAreaElement)?.value || ''
   sqlQuery.value = value
@@ -161,6 +181,10 @@ function onApplyChanges(event: MouseEvent) {
 function onClose() {
   emit('update:showEditor', false)
 }
+
+function toggleTables() {
+  showTables.value = !showTables.value
+}
 </script>
 
 <style scoped>
@@ -177,6 +201,7 @@ function onClose() {
   justify-content: center;
   z-index: 3000;
 }
+
 .modal {
   background: #0f172b;
   color: #fff;
@@ -189,15 +214,18 @@ function onClose() {
   overflow-y: auto;
   max-height: 90%;
 }
+
 .editor-container {
   display: flex;
   gap: 20px;
 }
+
 .editor-section {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
+
 .editor-label {
   font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
   font-size: 1rem;
@@ -207,9 +235,19 @@ function onClose() {
   font-weight: 600;
   padding-left: 2px;
 }
-.html-label { color: #38bdf8; }
-.sql-label { color: #facc15; }
-.js-label { color: #10b981; }
+
+.html-label {
+  color: #38bdf8;
+}
+
+.sql-label {
+  color: #facc15;
+}
+
+.js-label {
+  color: #10b981;
+}
+
 .code-editor {
   width: 100%;
   height: 300px;
@@ -226,24 +264,75 @@ function onClose() {
   transition: border 0.2s;
   box-shadow: 0 2px 8px #0002;
 }
-.code-editor:focus { border: 1.5px solid #38bdf8; background: #1e293b; }
-.html-editor:focus { border-color: #38bdf8; }
-.sql-editor:focus { border-color: #facc15; }
-.js-editor:focus { border-color: #10b981; }
+
+.code-editor:focus {
+  border: 1.5px solid #38bdf8;
+  background: #1e293b;
+}
+
+.html-editor:focus {
+  border-color: #38bdf8;
+}
+
+.sql-editor:focus {
+  border-color: #facc15;
+}
+
+.js-editor:focus {
+  border-color: #10b981;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 1.2rem;
 }
+
 .sql-editor.invalid-sql {
   border-color: #ef4444 !important;
   box-shadow: 0 0 0 2px #ef444488;
 }
+
 .invalid-sql-button {
   background-color: #ef4444 !important;
   color: white;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.tables-button {
+  background-color: #374151;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tables-list {
+  list-style-type: none;
+  padding: 0;
+  background: #181f2a;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.tables-list li {
+  padding: 4px 8px;
+  border-bottom: 1px solid #334155;
+}
+
+.tables-list li:last-child {
+  border-bottom: none;
 }
 </style>

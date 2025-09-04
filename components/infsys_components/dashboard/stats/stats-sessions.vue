@@ -52,15 +52,15 @@ const draftHtmlTemplate = ref('')
 // Use a component object for sessions, similar to meals/participants
 const sessionsComponent = computed(() => componentCodeStore.getComponentById('stats-sessions') || componentCodeStore.getDefaultComponent('stats-sessions'))
 
-const correctSqlQuery = computed(() => sessionsComponent.value?.sql || '')
-const correctHtmlTemplate = computed(() => sessionsComponent.value?.html || '')
-const correctNavigateJs = computed(() => sessionsComponent.value?.js || '')
+const correctSqlQuery = computed(() => sessionsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => sessionsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => sessionsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || correctSqlQuery.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, sql: errorSql })
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, sql: { ...sessionsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -71,7 +71,7 @@ const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-sessions.vue", "html") || correctHtmlTemplate.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, html: errorHtml })
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, html: { ...sessionsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -82,7 +82,7 @@ const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-sessions.vue", "js") || correctNavigateJs.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, js: errorJs })
+      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, js: { ...sessionsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }

@@ -55,15 +55,15 @@ const draftHtmlTemplate = ref('')
 const mealsComponent = computed(() => componentCodeStore.getComponentById('stats-meals') || componentCodeStore.getDefaultComponent('stats-meals'))
 console.log("Meals Component:", mealsComponent.value)
 
-const correctSqlQuery = computed(() => mealsComponent.value?.sql || '')
-const correctHtmlTemplate = computed(() => mealsComponent.value?.html || '')
-const correctNavigateJs = computed(() => mealsComponent.value?.js || '')
+const correctSqlQuery = computed(() => mealsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => mealsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => mealsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-meals.vue", "sql") || correctSqlQuery.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, sql: errorSql })
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, sql: { ...mealsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -74,7 +74,7 @@ const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-meals.vue", "html") || correctHtmlTemplate.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, html: errorHtml })
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, html: { ...mealsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -85,7 +85,7 @@ const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-meals.vue", "js") || correctNavigateJs.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, js: errorJs })
+      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, js: { ...mealsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }

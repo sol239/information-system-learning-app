@@ -52,15 +52,15 @@ const draftHtmlTemplate = ref('')
 // Use a component object for participants, similar to meals
 const participantsComponent = computed(() => componentCodeStore.getComponentById('stats-participants') || componentCodeStore.getDefaultComponent('stats-participants'))
 
-const correctSqlQuery = computed(() => participantsComponent.value?.sql || '')
-const correctHtmlTemplate = computed(() => participantsComponent.value?.html || '')
-const correctNavigateJs = computed(() => participantsComponent.value?.js || '')
+const correctSqlQuery = computed(() => participantsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => participantsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => participantsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-participants.vue", "sql") || correctSqlQuery.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, sql: errorSql })
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, sql: { ...participantsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -71,7 +71,7 @@ const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-participants.vue", "html") || correctHtmlTemplate.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, html: errorHtml })
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, html: { ...participantsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -82,7 +82,7 @@ const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-participants.vue", "js") || correctNavigateJs.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, js: errorJs })
+      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, js: { ...participantsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }

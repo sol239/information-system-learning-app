@@ -52,15 +52,15 @@ const draftHtmlTemplate = ref('')
 // Use a component object for supervisors, similar to meals/participants/sessions
 const supervisorsComponent = computed(() => componentCodeStore.getComponentById('stats-supervisors') || componentCodeStore.getDefaultComponent('stats-supervisors'))
 
-const correctSqlQuery = computed(() => supervisorsComponent.value?.sql || '')
-const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html || '')
-const correctNavigateJs = computed(() => supervisorsComponent.value?.js || '')
+const correctSqlQuery = computed(() => supervisorsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => supervisorsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorSql = ComponentHandler.getVariableValue("stats-supervisors.vue", "sql") || correctSqlQuery.value
     if (supervisorsComponent.value) {
-      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, sql: errorSql })
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, sql: { ...supervisorsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -71,7 +71,7 @@ const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorHtml = ComponentHandler.getVariableValue("stats-supervisors.vue", "html") || correctHtmlTemplate.value
     if (supervisorsComponent.value) {
-      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, html: errorHtml })
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, html: { ...supervisorsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -82,7 +82,7 @@ const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents("stats-supervisors.vue")) {
     const errorJs = ComponentHandler.getVariableValue("stats-supervisors.vue", "js") || correctNavigateJs.value
     if (supervisorsComponent.value) {
-      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, js: errorJs })
+      componentCodeStore.updateComponent("stats-supervisors", { ...supervisorsComponent.value, js: { ...supervisorsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }
