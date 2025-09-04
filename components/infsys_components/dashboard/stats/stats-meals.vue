@@ -55,8 +55,8 @@ const correctHtmlTemplate = computed(() => mealsComponent.value?.html?.['default
 const correctNavigateJs = computed(() => mealsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
-    const errorSql = ComponentHandler.getVariableValue(componentId + ".vue", "sql") || correctSqlQuery.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
     if (mealsComponent.value) {
       componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, sql: { ...mealsComponent.value.sql, 'default': errorSql } })
     }
@@ -66,8 +66,8 @@ const sqlQuery = computed(() => {
 })
 
 const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
-    const errorHtml = ComponentHandler.getVariableValue(componentId + ".vue", "html") || correctHtmlTemplate.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
     if (mealsComponent.value) {
       componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, html: { ...mealsComponent.value.html, 'default': errorHtml } })
     }
@@ -77,8 +77,8 @@ const htmlTemplate = computed(() => {
 })
 
 const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
-    const errorJs = ComponentHandler.getVariableValue(componentId + ".vue", "js") || correctNavigateJs.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
     if (mealsComponent.value) {
       componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, js: { ...mealsComponent.value.js, 'default': errorJs } })
     }

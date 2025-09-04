@@ -44,18 +44,21 @@ const system = selectedSystemStore.selectedSystem;
 
 /* 9. Computed */
 
-// Use a component object for sessions, similar to meals/participants
+// - 1. Get the component by its ID or use a default if not found
+//   * It shall be computed because solving tasks might change the component code in the store and also editing the component in the editor shall update the displayed component
 const sessionsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
+// - 2. Get the correct attributes from the component. It is not mandatory to use all of them. It is up to you. Eg. You can just use the sql from the component.
+//   * It shall be computed because solving tasks might change the component code in the store and also editing the component in the editor shall update the displayed component
 const correctSqlQuery = computed(() => sessionsComponent.value?.sql?.['default'] || '')
 const correctHtmlTemplate = computed(() => sessionsComponent.value?.html?.['default'] || '')
 const correctNavigateJs = computed(() => sessionsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
-    const errorSql = ComponentHandler.getVariableValue("stats-sessions.vue", "sql") || correctSqlQuery.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, sql: { ...sessionsComponent.value.sql, 'default': errorSql } })
+      componentCodeStore.updateComponent(componentId, { ...sessionsComponent.value, sql: { ...sessionsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -63,10 +66,10 @@ const sqlQuery = computed(() => {
 })
 
 const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
-    const errorHtml = ComponentHandler.getVariableValue("stats-sessions.vue", "html") || correctHtmlTemplate.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, html: { ...sessionsComponent.value.html, 'default': errorHtml } })
+      componentCodeStore.updateComponent(componentId, { ...sessionsComponent.value, html: { ...sessionsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -74,10 +77,10 @@ const htmlTemplate = computed(() => {
 })
 
 const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-sessions.vue")) {
-    const errorJs = ComponentHandler.getVariableValue("stats-sessions.vue", "js") || correctNavigateJs.value
+  if (ComponentHandler.isInErrorComponents(componentId)) {
+    const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
     if (sessionsComponent.value) {
-      componentCodeStore.updateComponent("stats-sessions", { ...sessionsComponent.value, js: { ...sessionsComponent.value.js, 'default': errorJs } })
+      componentCodeStore.updateComponent(componentId, { ...sessionsComponent.value, js: { ...sessionsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }

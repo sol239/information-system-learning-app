@@ -73,6 +73,7 @@ const highlightStore = useHighlightStore()
 const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
 const { t } = useI18n()
 const availableTables: string[] = selectedSystem?.db?.getAllTableNames() || []
+const toast = useToast()
 
 
 /* 5. Props */
@@ -166,21 +167,17 @@ function onApplyChanges(event: MouseEvent) {
       js: { ...currentComponent.js, 'default': jsCode.value }
     }
 
-    componentCodeStore.updateComponent(highlightStore.selectedComponentId, updatedComponent)
+    componentCodeStore.updateComponent(highlightStore.selectedComponentId ?? '', updatedComponent)
 
-    console.log("====== Changes applied ======")
-    console.log("Component updated:", updatedComponent)
+     toast.add({
+      title: t('changes_applied_successfully'),
+      color: 'primary',
+    })
   } else {
-    // Fallback to individual code updates if component not found
-    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-html.vue`, htmlTemplate.value)
-    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-sql.vue`, sqlQuery.value)
-    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-js.vue`, jsCode.value)
-
-    console.log("====== Changes applied (fallback) ======")
-    console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-html.vue`))
-    console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-sql.vue`))
-    console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-js.vue`))
-
+     toast.add({
+      title: t('changes_applied_successfully'),
+      color: 'red',
+    })
   }
 
   ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'html', htmlTemplate.value)

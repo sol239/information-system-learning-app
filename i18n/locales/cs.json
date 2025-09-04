@@ -181,5 +181,7 @@
     "leave_system": "Odejít a neukládat",
     "leave_and_save": "Odejít a uložit výsledek",
     "stay_in_system": "Zůstat v systému",
-    "save_success": "Výsledek úspěšně uložen"
+    "save_success": "Výsledek úspěšně uložen",
+    "changes_applied_successfully": "Změny úspěšně aplikovány",
+    "error_applying_changes": "Chyba při aplikování změn"
 }
