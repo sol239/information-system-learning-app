@@ -2,7 +2,7 @@
   <div>
     <div class="stat-card-wrapper">
       <div id="stats-participants" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
-      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId" />
     </div>
   </div>
 </template>
@@ -29,38 +29,29 @@ const componentCodeStore = useComponentCodeStore()
 const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
-// none
+const componentId = 'stats-participants';
 
 /* 5. Props */
-const props = defineProps<{ 
-  system: any 
-}>()
 
 /* 6. Emits */
-const emit = defineEmits<{
-  (e: 'openModal', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
-  (e: 'applyChanges', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
-}>()
 
 /* 8. Local state (ref, reactive) */
-const showEditor = ref(false)
-const draftSqlQuery = ref('')
-const draftHtmlTemplate = ref('')
+const system = selectedSystemStore.selectedSystem;
 
 /* 9. Computed */
 
 // Use a component object for participants, similar to meals
-const participantsComponent = computed(() => componentCodeStore.getComponentById('stats-participants') || componentCodeStore.getDefaultComponent('stats-participants'))
+const participantsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
 const correctSqlQuery = computed(() => participantsComponent.value?.sql?.['default'] || '')
 const correctHtmlTemplate = computed(() => participantsComponent.value?.html?.['default'] || '')
 const correctNavigateJs = computed(() => participantsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
-    const errorSql = ComponentHandler.getVariableValue("stats-participants.vue", "sql") || correctSqlQuery.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorSql = ComponentHandler.getVariableValue(componentId + ".vue", "sql") || correctSqlQuery.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, sql: { ...participantsComponent.value.sql, 'default': errorSql } })
+      componentCodeStore.updateComponent(componentId, { ...participantsComponent.value, sql: { ...participantsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -68,10 +59,10 @@ const sqlQuery = computed(() => {
 })
 
 const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
-    const errorHtml = ComponentHandler.getVariableValue("stats-participants.vue", "html") || correctHtmlTemplate.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorHtml = ComponentHandler.getVariableValue(componentId + ".vue", "html") || correctHtmlTemplate.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, html: { ...participantsComponent.value.html, 'default': errorHtml } })
+      componentCodeStore.updateComponent(componentId, { ...participantsComponent.value, html: { ...participantsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -79,10 +70,10 @@ const htmlTemplate = computed(() => {
 })
 
 const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-participants.vue")) {
-    const errorJs = ComponentHandler.getVariableValue("stats-participants.vue", "js") || correctNavigateJs.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorJs = ComponentHandler.getVariableValue(componentId + ".vue", "js") || correctNavigateJs.value
     if (participantsComponent.value) {
-      componentCodeStore.updateComponent("stats-participants", { ...participantsComponent.value, js: { ...participantsComponent.value.js, 'default': errorJs } })
+      componentCodeStore.updateComponent(componentId, { ...participantsComponent.value, js: { ...participantsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }
@@ -90,10 +81,10 @@ const navigateJs = computed(() => {
 })
 
 const participantsCount = computed(() => {
-  if (!props.system?.db || typeof props.system?.db?.query !== "function") {
+  if (!system?.db || typeof system?.db?.query !== "function") {
     return 0
   }
-  const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
+  const result = system?.db.query(sqlQuery.value).results?.[0]?.count
   return result || 0
 })
 
@@ -104,22 +95,6 @@ const renderedHtml = computed(() => {
 })
 
 /* 11. Methods */
-function openEditor() {
-  draftSqlQuery.value = sqlQuery.value
-  draftHtmlTemplate.value = htmlTemplate.value
-  emit('openModal', {
-    componentId: 'stats-participants',
-    htmlTemplate: draftHtmlTemplate.value,
-    sqlQuery: draftSqlQuery.value
-  })
-}
-
-function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
-  draftSqlQuery.value = data.sqlQuery
-  draftHtmlTemplate.value = data.htmlTemplate
-  // Optionally, update ComponentHandler here if needed
-}
-
 function navigate() {
   if (highlightStore.isHighlightMode) {
     return
@@ -132,9 +107,6 @@ function navigate() {
 // none
 
 /* 13. defineExpose (if needed) */
-defineExpose({
-  applyChanges
-})
 </script>
 
 <style scoped>

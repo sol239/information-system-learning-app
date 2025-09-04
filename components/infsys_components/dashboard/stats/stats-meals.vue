@@ -5,7 +5,7 @@
       <div id="stats-meals" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
 
       <!-- Edit Icon Button -->
-      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" @open="openEditor" />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId" />
 
     </div>
   </div>
@@ -32,27 +32,18 @@ const componentCodeStore = useComponentCodeStore()
 const { t } = useI18n()
 
 /* 4. Constants (non-reactive) */
-// none
+const componentId = 'stats-meals';
 
 /* 5. Props */
-const props = defineProps<{
-  system: any
-}>()
 
 /* 6. Emits */
-const emit = defineEmits<{
-  (e: 'openModal', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
-  (e: 'applyChanges', data: { componentId: string, htmlTemplate: string, sqlQuery: string }): void
-}>()
 
 /* 8. Local state (ref, reactive) */
-const showEditor = ref(false)
-const draftSqlQuery = ref('')
-const draftHtmlTemplate = ref('')
+const system = selectedSystemStore.selectedSystem;
 
 /* 9. Computed */
 
-const mealsComponent = computed(() => componentCodeStore.getComponentById('stats-meals') || componentCodeStore.getDefaultComponent('stats-meals'))
+const mealsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 console.log("Meals Component:", mealsComponent.value)
 
 const correctSqlQuery = computed(() => mealsComponent.value?.sql?.['default'] || '')
@@ -60,10 +51,10 @@ const correctHtmlTemplate = computed(() => mealsComponent.value?.html?.['default
 const correctNavigateJs = computed(() => mealsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
-    const errorSql = ComponentHandler.getVariableValue("stats-meals.vue", "sql") || correctSqlQuery.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorSql = ComponentHandler.getVariableValue(componentId + ".vue", "sql") || correctSqlQuery.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, sql: { ...mealsComponent.value.sql, 'default': errorSql } })
+      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, sql: { ...mealsComponent.value.sql, 'default': errorSql } })
     }
     return errorSql
   }
@@ -71,10 +62,10 @@ const sqlQuery = computed(() => {
 })
 
 const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
-    const errorHtml = ComponentHandler.getVariableValue("stats-meals.vue", "html") || correctHtmlTemplate.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorHtml = ComponentHandler.getVariableValue(componentId + ".vue", "html") || correctHtmlTemplate.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, html: { ...mealsComponent.value.html, 'default': errorHtml } })
+      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, html: { ...mealsComponent.value.html, 'default': errorHtml } })
     }
     return errorHtml
   }
@@ -82,10 +73,10 @@ const htmlTemplate = computed(() => {
 })
 
 const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents("stats-meals.vue")) {
-    const errorJs = ComponentHandler.getVariableValue("stats-meals.vue", "js") || correctNavigateJs.value
+  if (ComponentHandler.isInErrorComponents(componentId + ".vue")) {
+    const errorJs = ComponentHandler.getVariableValue(componentId + ".vue", "js") || correctNavigateJs.value
     if (mealsComponent.value) {
-      componentCodeStore.updateComponent("stats-meals", { ...mealsComponent.value, js: { ...mealsComponent.value.js, 'default': errorJs } })
+      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, js: { ...mealsComponent.value.js, 'default': errorJs } })
     }
     return errorJs
   }
@@ -94,11 +85,11 @@ const navigateJs = computed(() => {
 
 const mealsCount = computed(() => {
 
-  if (!props.system?.db || typeof props.system?.db?.query !== "function") {
+  if (!system?.db || typeof system?.db?.query !== "function") {
     return 0
   }
 
-  const result = props.system?.db.query(sqlQuery.value).results?.[0]?.count
+  const result = system?.db.query(sqlQuery.value).results?.[0]?.count
   //const result = 0
 
   return result || 0
@@ -111,22 +102,6 @@ const renderedHtml = computed(() => {
 })
 
 /* 11. Methods */
-function openEditor() {
-  draftSqlQuery.value = sqlQuery.value
-  draftHtmlTemplate.value = htmlTemplate.value
-  emit('openModal', {
-    componentId: 'stats-meals',
-    htmlTemplate: draftHtmlTemplate.value,
-    sqlQuery: draftSqlQuery.value
-  })
-}
-
-function applyChanges(data: { htmlTemplate: string, sqlQuery: string }) {
-  draftSqlQuery.value = data.sqlQuery
-  draftHtmlTemplate.value = data.htmlTemplate
-  // Optionally, update ComponentHandler here if needed
-}
-
 function navigate() {
   if (highlightStore.isHighlightMode) {
     return
@@ -140,9 +115,6 @@ function navigate() {
 // none
 
 /* 13. defineExpose (if needed) */
-defineExpose({
-  applyChanges
-})
 </script>
 
 <style scoped>

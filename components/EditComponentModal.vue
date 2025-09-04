@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showEditor" class="modal-overlay">
+  <div class="modal-overlay">
     <div class="modal">
       <div class="editor-container">
         <template v-if="htmlTemplate">
@@ -41,7 +41,7 @@
           @mouseleave="applyButtonHover = false">
           {{ t('apply') }}
         </UButton>
-        <UButton @click="onClose" :style="getCloseButtonStyle()"
+        <UButton @click="closeModal" :style="getCloseButtonStyle()"
           class="close-button"
           @mouseover="closeButtonHover = true"
           @mouseleave="closeButtonHover = false">
@@ -59,11 +59,15 @@ import type { InformationSystem } from '~/model/InformationSystem'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 import { useComponentCodeStore } from '#imports'
+import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
+import { useHighlightStore } from '#imports'
+import type { Component } from '~/model/Component'
 
 /* 2. Stores */
 const informationSystemStore = useInformationSystemStore()
 const selectedSystemStore = useSelectedSystemStore()
 const componentCodeStore = useComponentCodeStore()
+const highlightStore = useHighlightStore()
 
 /* 4. Constants (non-reactive) */
 const selectedSystem = informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
@@ -72,37 +76,24 @@ const availableTables: string[] = selectedSystem?.db?.getAllTableNames() || []
 
 
 /* 5. Props */
-const props = defineProps<{
-  showEditor: boolean
-  draftHtmlTemplate: string
-  draftSqlQuery: string
-  draftJsCode: string
-  componentId: string
-}>()
+
 
 /* 6. Emits */
-const emit = defineEmits<{
-  (e: 'update:showEditor', value: boolean): void
-}>()
 
 /* 8. Local state (ref, reactive) */
+const editedComponent: Component | null = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '') ?? null;
+console.log("Edited Component:", editedComponent, "for ID:", highlightStore.selectedComponentId);
 const sqlValid = ref(true)
-const htmlTemplate = ref(props.draftHtmlTemplate)
-const sqlQuery = ref(props.draftSqlQuery)
-const jsCode = ref(props.draftJsCode)
+const htmlTemplate = ref(editedComponent.html['default'] || '')
+const sqlQuery = ref(editedComponent.sql['default'] || '')
+const jsCode = ref(editedComponent.js['default'] || '' || '')
 const applyButtonHover = ref(false)
 const closeButtonHover = ref(false)
 const showTables = ref(false)
+const showEditor: boolean = highlightStore.isEditModeActive
+
 
 /* 10. Watchers */
-watch(() => props.showEditor, (val) => {
-  if (val) {
-    // reset editors to props when opening
-    htmlTemplate.value = props.draftHtmlTemplate
-    sqlQuery.value = props.draftSqlQuery
-    jsCode.value = props.draftJsCode
-  }
-})
 
 /* 11. Methods */
 function getApplyButtonStyle() {
@@ -161,10 +152,10 @@ function onJsInput(event: Event) {
 }
 
 function onApplyChanges(event: MouseEvent) {
-  console.log("Applying changes to: ", props.componentId)
+  console.log("Applying changes to: ", highlightStore.selectedComponentId)
 
   // Get current component
-  const currentComponent = componentCodeStore.getComponentById(props.componentId)
+  const currentComponent = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '')
 
   if (currentComponent) {
     // Update the entire component object using updateComponent function
@@ -175,36 +166,41 @@ function onApplyChanges(event: MouseEvent) {
       js: { ...currentComponent.js, 'default': jsCode.value }
     }
 
-    componentCodeStore.updateComponent(props.componentId, updatedComponent)
+    componentCodeStore.updateComponent(highlightStore.selectedComponentId, updatedComponent)
 
     console.log("====== Changes applied ======")
     console.log("Component updated:", updatedComponent)
   } else {
     // Fallback to individual code updates if component not found
-    componentCodeStore.updateComponentCode(`${props.componentId}-html.vue`, htmlTemplate.value)
-    componentCodeStore.updateComponentCode(`${props.componentId}-sql.vue`, sqlQuery.value)
-    componentCodeStore.updateComponentCode(`${props.componentId}-js.vue`, jsCode.value)
+    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-html.vue`, htmlTemplate.value)
+    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-sql.vue`, sqlQuery.value)
+    componentCodeStore.updateComponentCode(`${highlightStore.selectedComponentId}-js.vue`, jsCode.value)
 
     console.log("====== Changes applied (fallback) ======")
-    console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${props.componentId}-html.vue`))
-    console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${props.componentId}-sql.vue`))
-    console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${props.componentId}-js.vue`))
+    console.log("NEW HTML Template:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-html.vue`))
+    console.log("NEW SQL Query:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-sql.vue`))
+    console.log("NEW JavaScript Code:", componentCodeStore.getComponentCode(`${highlightStore.selectedComponentId}-js.vue`))
+
   }
 
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'html', htmlTemplate.value)
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'sql', sqlQuery.value)
-  ComponentHandler.setVariableValue(`${props.componentId}.vue`, 'js', jsCode.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'html', htmlTemplate.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'sql', sqlQuery.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'js', jsCode.value)
 
-  emit('update:showEditor', false)
-}
+  closeModal()
 
-function onClose() {
-  emit('update:showEditor', false)
+
 }
 
 function toggleTables() {
   showTables.value = !showTables.value
 }
+
+function closeModal() {
+  highlightStore.selectedComponentId = ''
+  console.log("Edit mode deactivated", highlightStore.isEditModeActive)
+}
+
 </script>
 
 <style scoped>

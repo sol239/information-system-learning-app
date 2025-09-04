@@ -107,8 +107,8 @@ onMounted(() => {
 
 /* 11. Methods */
 async function handleHelperClick() {
-    console.log("Default:", componentCodeStore.defaultComponentMap)
-    console.log("Current:", componentCodeStore.actualComponentMap)
+    console.log(highlightStore.isEditModeActive);
+    console.log(highlightStore.selectedComponentId);
 }
 
 async function refreshComponents() {

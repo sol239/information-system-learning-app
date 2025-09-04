@@ -1,5 +1,5 @@
 <template>
-  <button class="edit-icon-btn" @click="emit('open')" title="Edit">
+  <button class="edit-icon-btn" @click="openEditor" title="Edit">
     <span class="edit-icon-bg yellow-bg">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
         <circle cx="10" cy="10" r="10" fill="#facc15" />
@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-// none
+import { useHighlightStore } from '#imports';
 
 /* 2. Stores */
-// none
+const highlightStore = useHighlightStore();
 
 /* 3. Context hooks */
 // none
@@ -25,10 +25,12 @@
 // none
 
 /* 5. Props */
-// none
+// pass here id of the component to edit
+const props = defineProps<{
+  componentId?: string
+}>()
 
 /* 6. Emits */
-const emit = defineEmits(['open'])
 
 /* 7. Template refs */
 // none
@@ -43,7 +45,11 @@ const emit = defineEmits(['open'])
 // none
 
 /* 11. Methods */
-// none
+function openEditor() {
+  highlightStore.isEditModeActive = true;
+  highlightStore.selectedComponentId = props.componentId ?? '';
+  console.log("EditComponentModalOpenButton.vue: Edit mode activated", highlightStore.isEditModeActive);
+}
 
 /* 12. Lifecycle */
 // none
