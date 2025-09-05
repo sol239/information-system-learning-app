@@ -121,10 +121,10 @@ navigateTo({
             id: "stats-meals",
             name: "Stats Meals",
             description: `Component for meals stats. SQL: ${statsMealsSql}`,
-            html: { "default": statsMealsHtml },
-            css: { "default": "" },
-            js: { "default": statsMealsNavigateJs },
-            sql: { "default": statsMealsSql },
+            html: { "html": statsMealsHtml },
+            css: { "css": "" },
+            js: { "js": statsMealsNavigateJs },
+            sql: { "sql": statsMealsSql },
             additionals: {}
         });
 
@@ -132,10 +132,10 @@ navigateTo({
             id: "stats-participants",
             name: "Stats Participants",
             description: `Component for participants stats. SQL: ${statsParticipantsSql}`,
-            html: { "default": statsParticipantsHtml },
-            css: { "default": "" },
-            js: { "default": statsParticipantsNavigateJs },
-            sql: { "default": statsParticipantsSql },
+            html: { "html": statsParticipantsHtml },
+            css: { "css": "" },
+            js: { "js": statsParticipantsNavigateJs },
+            sql: { "sql": statsParticipantsSql },
             additionals: {}
         });
 
@@ -143,10 +143,10 @@ navigateTo({
             id: "stats-sessions",
             name: "Stats Sessions",
             description: `Component for sessions stats. SQL: ${statsSessionsSql}`,
-            html: { "default": statsSessionsHtml },
-            css: { "default": "" },
-            js: { "default": statsSessionsNavigateJs },
-            sql: { "default": statsSessionsSql },
+            html: { "html": statsSessionsHtml },
+            css: { "css": "" },
+            js: { "js": statsSessionsNavigateJs },
+            sql: { "sql": statsSessionsSql },
             additionals: {}
         });
 
@@ -154,10 +154,10 @@ navigateTo({
             id: "stats-supervisors",
             name: "Stats Supervisors",
             description: `Component for supervisors stats. SQL: ${statsSupervisorsSql}`,
-            html: { "default": statsSupervisorsHtml },
-            css: { "default": "" },
-            js: { "default": statsSupervisorsNavigateJs },
-            sql: { "default": statsSupervisorsSql },
+            html: { "html": statsSupervisorsHtml },
+            css: { "css": "" },
+            js: { "js": statsSupervisorsNavigateJs },
+            sql: { "sql": statsSupervisorsSql },
             additionals: {}
         });
 
@@ -166,12 +166,12 @@ navigateTo({
             id: "participants-capacity-count",
             name: "Participants Capacity Count",
             description: `Badge showing the capacity count of the selected session.`,
-            html: { "default": "" },
-            css: { "default": "" },
-            js: { "default": `Math.round(currentCount / totalCapacity * 100)` },
+            html: { "html": "" },
+            css: { "css": "" },
+            js: { "js": `Math.round(currentCount / totalCapacity * 100)` },
             sql: {
-                "default-1": `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`,
-                "default-2": `
+                "sql-1": `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`,
+                "sql-2": `
             SELECT COUNT(*) as count
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
             JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id

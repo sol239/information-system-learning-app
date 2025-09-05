@@ -93,9 +93,9 @@ const errorHtml = isErrorComponent ? ComponentHandler.getVariableValue(highlight
 const errorSql = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'sql') : null  
 const errorJs = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'js') : null
 
-const htmlTemplate = ref(errorHtml || editedComponent?.html?.['default'] || '')
-const sqlQuery = ref(errorSql || editedComponent?.sql?.['default'] || '')
-const jsCode = ref(errorJs || editedComponent?.js?.['default'] || '')
+const htmlTemplate = ref(errorHtml || editedComponent?.html?.['html'] || editedComponent?.html?.['default'] || '')
+const sqlQuery = ref(errorSql || editedComponent?.sql?.['sql'] || editedComponent?.sql?.['default'] || '')
+const jsCode = ref(errorJs || editedComponent?.js?.['js'] || editedComponent?.js?.['default'] || '')
 const applyButtonHover = ref(false)
 const closeButtonHover = ref(false)
 const showTables = ref(false)
@@ -170,9 +170,9 @@ function onApplyChanges(event: MouseEvent) {
     // Update the entire component object using updateComponent function
     const updatedComponent = {
       ...currentComponent,
-      html: { ...currentComponent.html, 'default': htmlTemplate.value },
-      sql: { ...currentComponent.sql, 'default': sqlQuery.value },
-      js: { ...currentComponent.js, 'default': jsCode.value }
+      html: { ...currentComponent.html, 'html': htmlTemplate.value, 'default': htmlTemplate.value },
+      sql: { ...currentComponent.sql, 'sql': sqlQuery.value, 'default': sqlQuery.value },
+      js: { ...currentComponent.js, 'js': jsCode.value, 'default': jsCode.value }
     }
 
     componentCodeStore.updateComponent(highlightStore.selectedComponentId ?? '', updatedComponent)

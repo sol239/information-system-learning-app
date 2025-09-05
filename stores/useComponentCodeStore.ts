@@ -95,6 +95,41 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     }
   }
 
+  // New methods to get specific component code by type
+  function getComponentCodeByType(componentId: string, codeType: 'html' | 'css' | 'js' | 'sql', specificKey?: string): string {
+    const component = getComponentById(componentId) || getDefaultComponent(componentId)
+    if (!component) return ''
+    
+    const codeMap = component[codeType]
+    if (!codeMap) return ''
+    
+    // If specific key is provided, use it; otherwise try the codeType or 'default'
+    const key = specificKey || codeType || 'default'
+    return codeMap[key] || codeMap['default'] || ''
+  }
+
+  function updateComponentCodeByType(componentId: string, codeType: 'html' | 'css' | 'js' | 'sql', code: string, specificKey?: string) {
+    let component = getComponentById(componentId)
+    
+    if (!component) {
+      const defaultComponent = getDefaultComponent(componentId)
+      if (!defaultComponent) return
+      
+      // Create a copy of default component for actual use
+      component = {
+        ...defaultComponent,
+        html: { ...defaultComponent.html },
+        css: { ...defaultComponent.css },
+        js: { ...defaultComponent.js },
+        sql: { ...defaultComponent.sql }
+      }
+      actualComponentMap.push(component)
+    }
+    
+    const key = specificKey || codeType || 'default'
+    component[codeType][key] = code
+  }
+
   return {
     defaultComponentCodeMap,
     actualComponentCodeMap,
@@ -113,6 +148,8 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
     resetComponent,
     resetAllComponents,
     getComponentById,
-    updateComponent
+    updateComponent,
+    getComponentCodeByType,
+    updateComponentCodeByType
   }
 })

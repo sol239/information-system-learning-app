@@ -51,9 +51,9 @@ const sessionsComponent = computed(() => componentCodeStore.getComponentById(com
 // - 2. Get the correct attributes from the component. It is not mandatory to use all of them. It is up to you. Eg. You can just use the sql from the component.
 //   * It shall be computed because solving tasks might change the component code in the store and also editing the component in the editor shall update the displayed component
 // - Note: This is not mandatory also, you can just use component.value?.* code directly in the code below. But this way it is more explicit what you are using from the component.
-const correctSqlQuery = computed(() => sessionsComponent.value?.sql?.['default'] || '')
-const correctHtmlTemplate = computed(() => sessionsComponent.value?.html?.['default'] || '')
-const correctNavigateJs = computed(() => sessionsComponent.value?.js?.['default'] || '')
+const correctSqlQuery = computed(() => sessionsComponent.value?.sql?.['sql'] || sessionsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => sessionsComponent.value?.html?.['html'] || sessionsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => sessionsComponent.value?.js?.['js'] || sessionsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {

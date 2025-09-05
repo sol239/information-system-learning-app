@@ -23,7 +23,9 @@ export class ComponentHandler {
                             overrides[varName] = varValue as string;
                         }
                     }
-                    const def = new ComponentErrorDefinition(comp.id, overrides);
+                    // Support both 'id' and 'name' for component identification
+                    const componentId = comp.id || comp.name;
+                    const def = new ComponentErrorDefinition(componentId, overrides);
                     errorDefinitions.push(def);
 
                     // if store does not already contain the definition add it
@@ -53,6 +55,7 @@ export class ComponentHandler {
 
     public static setVariableValue(componentFilename: string, variableName: string, variableValue: string) {
         const errorComponentStore = useErrorComponentStore();
+        const componentCodeStore = useComponentCodeStore();
         const componentErrors = errorComponentStore.errorComponents;
         console.log("Setting new value. Filename: ", componentFilename, "| Variable: ", variableName)
 
@@ -61,6 +64,11 @@ export class ComponentHandler {
             if (component.componentId === componentFilename) {
                 console.log("Found component: ", component.componentId);
                 component.overrides[variableName] = variableValue;
+                
+                // Also update the component store with the new value
+                if (variableName === 'html' || variableName === 'css' || variableName === 'js' || variableName === 'sql') {
+                    componentCodeStore.updateComponentCodeByType(componentFilename, variableName as any, variableValue);
+                }
             }
         }
     }

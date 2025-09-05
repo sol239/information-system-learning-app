@@ -83,7 +83,7 @@
             "is_editable": true,
             "error-components": [
                 {
-                    "name": "stats-participants",
+                    "id": "stats-participants",
                     "variables": {
                         "html": "",
                         "sql": "SELECT COUNT(*) as count FROM vedoucí",
@@ -92,7 +92,7 @@
                     "error-component-name": ""
                 },
                 {
-                    "name": "stats-meals",
+                    "id": "stats-meals",
                     "variables": {
                         "html": "",
                         "sql": "SELECT COUNT(*) as count FROM turnusy",
@@ -117,7 +117,7 @@
             "is_editable": false,
             "error-components": [
                 {
-                    "name": "stats-supervisors",
+                    "id": "stats-supervisors",
                     "variables": {
                         "html": "",
                         "sql": "SELECT COUNT(*) as count FROM jídla",
@@ -142,7 +142,7 @@
             "round": 3,
             "error-components": [
                 {
-                    "name": "table-form-účastníci-alergeny",
+                    "id": "table-form-účastníci-alergeny",
                     "variables": {
                         "isMultiple": false
                     },
@@ -163,7 +163,7 @@
             "round": 1,
             "error-components": [
                 {
-                    "name": "stats-supervisors",
+                    "id": "stats-supervisors",
                     "variables": {
                         "html": "",
                         "sql": "SELECT COUNT(*) as count FROM alergeny",

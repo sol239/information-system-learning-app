@@ -1,5 +1,6 @@
 import { useComponentCodeStore } from "#imports";
 import { useSelectedSystemStore } from "#imports";
+import { ComponentHandler } from "~/composables/ComponentHandler";
 
 export class TaskAnswerEval {
 
@@ -70,8 +71,24 @@ export class TaskAnswerEval {
             console.log("Component ID: ", componentId);
             console.log("Expected Value: ", expectedAnswer);
 
-            if (componentId.includes("sql")) {
-                const actualSql = await componentCodeStore.getComponentCode(componentId);
+            if (componentId.includes("sql") || componentId.endsWith("-sql")) {
+                // Handle both old format (stats-meals-sql) and new format (stats-meals with sql type)
+                let actualSql: string;
+                if (componentId.endsWith("-sql")) {
+                    // Old format: extract component id and get sql code
+                    const baseComponentId = componentId.replace("-sql", "");
+                    
+                    // First check if there's an error component with overridden SQL
+                    if (ComponentHandler.isInErrorComponents(baseComponentId)) {
+                        const errorSql = ComponentHandler.getVariableValue(baseComponentId, "sql");
+                        actualSql = errorSql || componentCodeStore.getComponentCodeByType(baseComponentId, 'sql');
+                    } else {
+                        actualSql = componentCodeStore.getComponentCodeByType(baseComponentId, 'sql');
+                    }
+                } else {
+                    // New format: direct sql component reference
+                    actualSql = await componentCodeStore.getComponentCode(componentId);
+                }
                 console.log("Component ID contains SQL: ", actualSql);
 
                 if (expectedAnswer === actualSql) {
@@ -126,6 +143,56 @@ export class TaskAnswerEval {
                 
 
                 // Add table comparison logic here if needed
+            } else if (componentId.includes("js") || componentId.endsWith("-js")) {
+                // Handle JS components
+                let actualJs: string;
+                if (componentId.endsWith("-js")) {
+                    const baseComponentId = componentId.replace("-js", "");
+                    
+                    // First check if there's an error component with overridden JS
+                    if (ComponentHandler.isInErrorComponents(baseComponentId)) {
+                        const errorJs = ComponentHandler.getVariableValue(baseComponentId, "js");
+                        actualJs = errorJs || componentCodeStore.getComponentCodeByType(baseComponentId, 'js');
+                    } else {
+                        actualJs = componentCodeStore.getComponentCodeByType(baseComponentId, 'js');
+                    }
+                } else {
+                    actualJs = await componentCodeStore.getComponentCode(componentId);
+                }
+                
+                if (expectedAnswer === actualJs) {
+                    console.log("JS code matches!");
+                    continue;
+                } else {
+                    console.log("JS code does not match expected value.");
+                    areAnswersCorrect = false;
+                    break;
+                }
+            } else if (componentId.includes("html") || componentId.endsWith("-html")) {
+                // Handle HTML components
+                let actualHtml: string;
+                if (componentId.endsWith("-html")) {
+                    const baseComponentId = componentId.replace("-html", "");
+                    
+                    // First check if there's an error component with overridden HTML
+                    if (ComponentHandler.isInErrorComponents(baseComponentId)) {
+                        const errorHtml = ComponentHandler.getVariableValue(baseComponentId, "html");
+                        actualHtml = errorHtml || componentCodeStore.getComponentCodeByType(baseComponentId, 'html');
+                    } else {
+                        actualHtml = componentCodeStore.getComponentCodeByType(baseComponentId, 'html');
+                    }
+                } else {
+                    actualHtml = await componentCodeStore.getComponentCode(componentId);
+                }
+                
+                if (expectedAnswer === actualHtml) {
+                    console.log("HTML code matches!");
+                    continue;
+                } else {
+                    console.log("HTML code does not match expected value.");
+                    areAnswersCorrect = false;
+                    break;
+                }
             } else if (componentId.includes("js")) {
                 // Add JS comparison logic here if needed
             } else if (componentId.includes("opt")) {

@@ -47,9 +47,9 @@ const system = selectedSystemStore.selectedSystem;
 // Use a component object for supervisors, similar to meals/participants/sessions
 const supervisorsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-const correctSqlQuery = computed(() => supervisorsComponent.value?.sql?.['default'] || '')
-const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html?.['default'] || '')
-const correctNavigateJs = computed(() => supervisorsComponent.value?.js?.['default'] || '')
+const correctSqlQuery = computed(() => supervisorsComponent.value?.sql?.['sql'] || supervisorsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html?.['html'] || supervisorsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => supervisorsComponent.value?.js?.['js'] || supervisorsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {

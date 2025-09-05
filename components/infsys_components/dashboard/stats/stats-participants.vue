@@ -47,9 +47,9 @@ const system = selectedSystemStore.selectedSystem;
 // Use a component object for participants, similar to meals
 const participantsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-const correctSqlQuery = computed(() => participantsComponent.value?.sql?.['default'] || '')
-const correctHtmlTemplate = computed(() => participantsComponent.value?.html?.['default'] || '')
-const correctNavigateJs = computed(() => participantsComponent.value?.js?.['default'] || '')
+const correctSqlQuery = computed(() => participantsComponent.value?.sql?.['sql'] || participantsComponent.value?.sql?.['default'] || '')
+const correctHtmlTemplate = computed(() => participantsComponent.value?.html?.['html'] || participantsComponent.value?.html?.['default'] || '')
+const correctNavigateJs = computed(() => participantsComponent.value?.js?.['js'] || participantsComponent.value?.js?.['default'] || '')
 
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {
