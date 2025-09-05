@@ -62,6 +62,7 @@ import { useComponentCodeStore } from '#imports'
 import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
 import { useHighlightStore } from '#imports'
 import type { Component } from '~/model/Component'
+import { ComponentHandler } from '~/composables/ComponentHandler'
 
 /* 2. Stores */
 const informationSystemStore = useInformationSystemStore()
@@ -85,9 +86,16 @@ const toast = useToast()
 const editedComponent: Component | null = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '') ?? null;
 console.log("Edited Component:", editedComponent, "for ID:", highlightStore.selectedComponentId);
 const sqlValid = ref(true)
-const htmlTemplate = ref(editedComponent.html['default'] || '')
-const sqlQuery = ref(editedComponent.sql['default'] || '')
-const jsCode = ref(editedComponent.js['default'] || '' || '')
+
+// Check if component is in error components and load error code if available
+const isErrorComponent = ComponentHandler.isInErrorComponents(highlightStore.selectedComponentId ?? '')
+const errorHtml = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'html') : null
+const errorSql = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'sql') : null  
+const errorJs = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'js') : null
+
+const htmlTemplate = ref(errorHtml || editedComponent?.html?.['default'] || '')
+const sqlQuery = ref(errorSql || editedComponent?.sql?.['default'] || '')
+const jsCode = ref(errorJs || editedComponent?.js?.['default'] || '')
 const applyButtonHover = ref(false)
 const closeButtonHover = ref(false)
 const showTables = ref(false)
