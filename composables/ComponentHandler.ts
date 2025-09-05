@@ -2,6 +2,8 @@ import { useErrorComponentStore } from "#imports";
 import { ComponentErrorDefinition } from "~/model/ComponentErrorDefinition";
 import { VariableError } from "~/model/VariableError";
 import { useComponentCodeStore } from "#imports";
+import { TaskQueue } from "~/composables/TaskQueue";
+import { useSelectedTaskStore } from "#imports";
 
 export class ComponentHandler {
     public static getComponentMap(round: number): ComponentErrorDefinition[] {
@@ -22,7 +24,7 @@ export class ComponentHandler {
                             variableErrors.push(new VariableError(varName, varValue as string));
                         }
                     }
-                    const def = new ComponentErrorDefinition(comp.name, variableErrors);
+                    const def = new ComponentErrorDefinition(comp.id, variableErrors);
                     errorDefinitions.push(def);
 
                     // if store does not already contain the definition add it
@@ -76,7 +78,7 @@ export class ComponentHandler {
         const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
         const isInErrorComponents = getNotCompletedTasks.some(task => {
             return Array.isArray(task.errorComponents) &&
-                task.errorComponents.some(ec => ec.name === componentFilename)
+                task.errorComponents.some(ec => ec.id === componentFilename)
         })
         return isInErrorComponents
     }

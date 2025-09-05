@@ -107,8 +107,7 @@ onMounted(() => {
 
 /* 11. Methods */
 async function handleHelperClick() {
-    console.log(highlightStore.isEditModeActive);
-    console.log(highlightStore.selectedComponentId);
+    console.log(ComponentHandler.isInErrorComponents("stats-meals"));
 }
 
 async function refreshComponents() {

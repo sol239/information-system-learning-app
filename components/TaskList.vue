@@ -329,6 +329,9 @@ function selectTask(id: number) {
     console.log("CURRENT TASK:", currentTask)
 
     selectedTaskStore.setSelectedTask(currentTask || null)
+    if (currentTask) {
+      selectedTaskStore.setCurrentRound(currentTask.round)
+    }
     console.log("Selected task:", selectedTaskStore.selectedTask)
     const selectedTaskId = selectedTaskStore.selectedId;
     const systemId = selectedSystemStore.selectedId;
@@ -371,7 +374,7 @@ async function handleSubmit() {
           const toRepair: string[] = ["sql", "html", "js"]
 
           for (const section of toRepair) {
-            componentCodeStore.resetComponentCode(id + "-" + section + ".vue")
+            componentCodeStore.resetComponentCode(id + "-" + section)
           }
         }
       }

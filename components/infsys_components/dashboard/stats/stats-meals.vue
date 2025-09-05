@@ -1,15 +1,15 @@
 <template>
-  <div class="highlightable" :id="componentId" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
+  <div class="highlightable" :id="componentId"
+    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
     <!-- Rendered Stat Card -->
-    <div class="stat-card-wrapper" >
+    <div class="stat-card-wrapper">
       <div id="stats-meals" @click="navigate" class="cursor-pointer" v-html="renderedHtml"></div>
-
       <!-- Edit Icon Button -->
       <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId" />
-
     </div>
+
   </div>
-    <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId"/>
+  <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
 
 </template>
 
@@ -57,9 +57,6 @@ const correctNavigateJs = computed(() => mealsComponent.value?.js?.['default'] |
 const sqlQuery = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {
     const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
-    if (mealsComponent.value) {
-      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, sql: { ...mealsComponent.value.sql, 'default': errorSql } })
-    }
     return errorSql
   }
   return correctSqlQuery.value
@@ -68,9 +65,6 @@ const sqlQuery = computed(() => {
 const htmlTemplate = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {
     const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
-    if (mealsComponent.value) {
-      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, html: { ...mealsComponent.value.html, 'default': errorHtml } })
-    }
     return errorHtml
   }
   return correctHtmlTemplate.value
@@ -79,9 +73,6 @@ const htmlTemplate = computed(() => {
 const navigateJs = computed(() => {
   if (ComponentHandler.isInErrorComponents(componentId)) {
     const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
-    if (mealsComponent.value) {
-      componentCodeStore.updateComponent(componentId, { ...mealsComponent.value, js: { ...mealsComponent.value.js, 'default': errorJs } })
-    }
     return errorJs
   }
   return correctNavigateJs.value

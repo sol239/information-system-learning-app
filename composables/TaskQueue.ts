@@ -34,6 +34,6 @@ export class TaskQueue {
             return [];
         }
         const errorComponents = selectedTask.errorComponents ?? [];
-        return errorComponents.map(comp => comp.name);
+        return errorComponents.map(comp => comp.id);
     }
 }

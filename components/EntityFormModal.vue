@@ -45,7 +45,7 @@ const modalOpen = computed({
 
 
 const menuType = computed(() => {
-  if (ComponentHandler.isInErrorComponents("table-form-účastníci-alergeny.vue")) {
+  if (ComponentHandler.isInErrorComponents("table-form-účastníci-alergeny")) {
     const errorSql = ComponentHandler.getVariableValue("table-form-účastníci-alergeny", "isMultiple")
     return typeof errorSql === 'boolean' ? errorSql : true
   }

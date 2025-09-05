@@ -180,9 +180,9 @@ function onApplyChanges(event: MouseEvent) {
     })
   }
 
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'html', htmlTemplate.value)
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'sql', sqlQuery.value)
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}.vue`, 'js', jsCode.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'html', htmlTemplate.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'sql', sqlQuery.value)
+  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'js', jsCode.value)
 
   closeModal()
 
