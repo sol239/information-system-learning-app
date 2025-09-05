@@ -51,29 +51,11 @@ const correctSqlQuery = computed(() => participantsComponent.value?.sql?.['sql']
 const correctHtmlTemplate = computed(() => participantsComponent.value?.html?.['html'] || participantsComponent.value?.html?.['default'] || '')
 const correctNavigateJs = computed(() => participantsComponent.value?.js?.['js'] || participantsComponent.value?.js?.['default'] || '')
 
-const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
-    return errorSql
-  }
-  return correctSqlQuery.value
-})
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
 
-const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
-    return errorHtml
-  }
-  return correctHtmlTemplate.value
-})
+const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 
-const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
-    return errorJs
-  }
-  return correctNavigateJs.value
-})
+const navigateJs = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctNavigateJs.value))
 
 const participantsCount = computed(() => {
   if (!system?.db || typeof system?.db?.query !== "function") {

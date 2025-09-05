@@ -51,29 +51,11 @@ const correctSqlQuery = computed(() => supervisorsComponent.value?.sql?.['sql'] 
 const correctHtmlTemplate = computed(() => supervisorsComponent.value?.html?.['html'] || supervisorsComponent.value?.html?.['default'] || '')
 const correctNavigateJs = computed(() => supervisorsComponent.value?.js?.['js'] || supervisorsComponent.value?.js?.['default'] || '')
 
-const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
-    return errorSql
-  }
-  return correctSqlQuery.value
-})
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
 
-const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
-    return errorHtml
-  }
-  return correctHtmlTemplate.value
-})
+const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 
-const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
-    return errorJs
-  }
-  return correctNavigateJs.value
-})
+const navigateJs = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctNavigateJs.value))
 
 const supervisorsCount = computed(() => {
   if (!system?.db || typeof system?.db?.query !== "function") {

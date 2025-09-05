@@ -48,36 +48,14 @@ const system = selectedSystemStore.selectedSystem;
 //   * It shall be computed because solving tasks might change the component code in the store and also editing the component in the editor shall update the displayed component
 const sessionsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-// - 2. Get the correct attributes from the component. It is not mandatory to use all of them. It is up to you. Eg. You can just use the sql from the component.
-//   * It shall be computed because solving tasks might change the component code in the store and also editing the component in the editor shall update the displayed component
-// - Note: This is not mandatory also, you can just use component.value?.* code directly in the code below. But this way it is more explicit what you are using from the component.
+// - 2. Get the correct attributes from the component. Simplified by directly accessing with fallbacks.
 const correctSqlQuery = computed(() => sessionsComponent.value?.sql?.['sql'] || sessionsComponent.value?.sql?.['default'] || '')
 const correctHtmlTemplate = computed(() => sessionsComponent.value?.html?.['html'] || sessionsComponent.value?.html?.['default'] || '')
 const correctNavigateJs = computed(() => sessionsComponent.value?.js?.['js'] || sessionsComponent.value?.js?.['default'] || '')
 
-const sqlQuery = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorSql = ComponentHandler.getVariableValue(componentId, "sql") || correctSqlQuery.value
-    return errorSql
-  }
-  return correctSqlQuery.value
-})
-
-const htmlTemplate = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorHtml = ComponentHandler.getVariableValue(componentId, "html") || correctHtmlTemplate.value
-    return errorHtml
-  }
-  return correctHtmlTemplate.value
-})
-
-const navigateJs = computed(() => {
-  if (ComponentHandler.isInErrorComponents(componentId)) {
-    const errorJs = ComponentHandler.getVariableValue(componentId, "js") || correctNavigateJs.value
-    return errorJs
-  }
-  return correctNavigateJs.value
-})
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
+const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
+const navigateJs = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctNavigateJs.value))
 
 const sessionsCount = computed(() => {
   if (!system?.db || typeof system?.db?.query !== "function") {

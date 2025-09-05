@@ -77,4 +77,11 @@ export class ComponentHandler {
         const errorComponentStore = useErrorComponentStore();
         return errorComponentStore.errorComponents.some(ec => ec.componentId === componentFilename);
     }
+
+    public static getComponentValue(componentId: string, key: string, defaultValue: string): string {
+        if (ComponentHandler.isInErrorComponents(componentId)) {
+            return ComponentHandler.getVariableValue(componentId, key) || defaultValue;
+        }
+        return defaultValue;
+    }
 }
