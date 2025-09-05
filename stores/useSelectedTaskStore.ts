@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Task } from '~/model/Task'
+import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useSelectedSystemStore } from './useSelectedSystemStore'
 
 export const useSelectedTaskStore = defineStore('selectedTask', () => {
   // State
@@ -28,6 +30,15 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
 
   function setCurrentRound(round: number) {
     currentRound.value = round
+    // Automatically load error components when round changes
+    loadErrorComponentsForCurrentRound()
+  }
+
+  function loadErrorComponentsForCurrentRound() {
+    const selectedSystemStore = useSelectedSystemStore()
+    if (selectedSystemStore.selectedId !== null) {
+      ComponentHandler.getComponentMap(currentRound.value)
+    }
   }
 
   function clearCurrentRound() {
@@ -49,6 +60,11 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
 
   const componentsToFind = computed(() => selectedTask.value?.componentsIdsToFind || [])
 
+  // Watch for round changes and load error components automatically
+  watch(currentRound, (newRound) => {
+    loadErrorComponentsForCurrentRound()
+  })
+
 
   return {
     selectedId,
@@ -63,6 +79,7 @@ export const useSelectedTaskStore = defineStore('selectedTask', () => {
     clearSelectedTask,
     setSelectedTaskComponentsToFind,
     componentsToFind,
-    resetTasks
+    resetTasks,
+    loadErrorComponentsForCurrentRound
   }
 })

@@ -1,16 +1,13 @@
-import type { VariableError } from "./VariableError";
-
 export class ComponentErrorDefinition {
-    public componentFilename: string;
-    public variableError: VariableError[];
+    public componentId: string;
+    public overrides: Record<string, string>;
 
-    constructor(componentFilename: string, variableError: VariableError[]) {
-        this.componentFilename = componentFilename;
-        this.variableError = variableError;
+    constructor(componentId: string, overrides: Record<string, string>) {
+        this.componentId = componentId;
+        this.overrides = overrides;
     }
 
-    public addVariableError(variableError: VariableError) {
-        this.variableError.push(variableError);
+    public setOverride(variableName: string, value: string) {
+        this.overrides[variableName] = value;
     }
-
 }

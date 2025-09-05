@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { InformationSystem } from '~/model/InformationSystem'
+import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useSelectedTaskStore } from './useSelectedTaskStore'
 
 export const useSelectedSystemStore = defineStore('selectedSystem', () => {
   // State
@@ -10,6 +12,15 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
   // Actions
   function select(id: number) {
     selectedId.value = id
+    // Automatically load error components when system is selected
+    loadErrorComponents()
+  }
+
+  function loadErrorComponents() {
+    if (selectedId.value !== null) {
+      const selectedTaskStore = useSelectedTaskStore()
+      ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
+    }
   }
 
   function clear() {
@@ -18,6 +29,8 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
 
   function setSelectedSystem(system: InformationSystem) {
     selectedSystem.value = system
+    // Load error components when system is set
+    loadErrorComponents()
   }
 
   async function initializeDb() {
@@ -26,6 +39,8 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
       const dbHandler = await InformationSystem.databaseInitStatic(selectedSystem.value.configData);
       selectedSystem.value.db = dbHandler;
       console.log("Selected system database initialized:", selectedSystem.value.db.query("SELECT * FROM účastníci").results);
+      // Load error components after database initialization
+      loadErrorComponents()
     }
   }
 
@@ -35,7 +50,8 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     clear,
     setSelectedSystem,
     selectedSystem,
-    initializeDb
+    initializeDb,
+    loadErrorComponents
   }
 }, {
   persist: {

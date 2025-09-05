@@ -13,7 +13,7 @@ export const useErrorComponentStore = defineStore('errorComponent', () => {
   function removeErrorComponent(componentName: string) {
     console.log('Removing error component:', componentName)
     console.log("BEFORE:",errorComponents.value)
-    errorComponents.value = errorComponents.value.filter(component => component.componentFilename !== componentName)
+    errorComponents.value = errorComponents.value.filter(component => component.componentId !== componentName)
     console.log('Updated error components:', errorComponents.value)
   }
 

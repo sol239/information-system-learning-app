@@ -332,6 +332,8 @@ function selectTask(id: number) {
     if (currentTask) {
       selectedTaskStore.setCurrentRound(currentTask.round)
     }
+
+    
     console.log("Selected task:", selectedTaskStore.selectedTask)
     const selectedTaskId = selectedTaskStore.selectedId;
     const systemId = selectedSystemStore.selectedId;

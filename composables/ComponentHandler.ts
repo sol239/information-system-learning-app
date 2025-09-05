@@ -1,6 +1,5 @@
 import { useErrorComponentStore } from "#imports";
 import { ComponentErrorDefinition } from "~/model/ComponentErrorDefinition";
-import { VariableError } from "~/model/VariableError";
 import { useComponentCodeStore } from "#imports";
 import { TaskQueue } from "~/composables/TaskQueue";
 import { useSelectedTaskStore } from "#imports";
@@ -15,20 +14,20 @@ export class ComponentHandler {
 
         const errorDefinitions: ComponentErrorDefinition[] = [];
         for (const task of notCompletedTasks) {
-            const errorComps = task.errorComponents ?? task['error-components'] ?? [];
+            const errorComps = task.errorComponents ?? [];
             if (Array.isArray(errorComps) && errorComps.length > 0) {
                 for (const comp of errorComps) {
-                    const variableErrors: VariableError[] = [];
+                    const overrides: Record<string, string> = {};
                     if (comp.variables && typeof comp.variables === 'object') {
                         for (const [varName, varValue] of Object.entries(comp.variables)) {
-                            variableErrors.push(new VariableError(varName, varValue as string));
+                            overrides[varName] = varValue as string;
                         }
                     }
-                    const def = new ComponentErrorDefinition(comp.id, variableErrors);
+                    const def = new ComponentErrorDefinition(comp.id, overrides);
                     errorDefinitions.push(def);
 
                     // if store does not already contain the definition add it
-                    if (!errorComponentStore.errorComponents.some(existingComp => existingComp.componentFilename === def.componentFilename)) {
+                    if (!errorComponentStore.errorComponents.some(existingComp => existingComp.componentId === def.componentId)) {
                         errorComponentStore.addErrorComponent(def);
                     }
                 }
@@ -44,13 +43,9 @@ export class ComponentHandler {
         console.log("ERROR COMPONENTS:", componentErrors)
         console.log("Filename: ", componentFilename, "| Variable: ", variableName)
         for (const component of componentErrors) {
-            if (component.componentFilename === componentFilename) {
-                console.log("Found component: ", component.componentFilename)
-                const variableError = component.variableError.find(v => v.variableName === variableName);
-                if (variableError) {
-                    console.log("Found variable: ", variableError.variableName, "| Value: ", variableError.variableValue);
-                    return variableError.variableValue;
-                }
+            if (component.componentId === componentFilename) {
+                console.log("Found component: ", component.componentId)
+                return component.overrides[variableName];
             }
         }
         return undefined;
@@ -62,24 +57,16 @@ export class ComponentHandler {
         console.log("Setting new value. Filename: ", componentFilename, "| Variable: ", variableName)
 
         for (const component of componentErrors) {
-            console.log("Checking component: ", component.componentFilename);
-            if (component.componentFilename === componentFilename) {
-                console.log("Found component: ", component.componentFilename);
-                const variableError = component.variableError.find(v => v.variableName === variableName);
-                if (variableError) {
-                    variableError.variableValue = variableValue;
-                }
+            console.log("Checking component: ", component.componentId);
+            if (component.componentId === componentFilename) {
+                console.log("Found component: ", component.componentId);
+                component.overrides[variableName] = variableValue;
             }
         }
     }
 
     public static isInErrorComponents(componentFilename: string): boolean {
-        const selectedTaskStore = useSelectedTaskStore();
-        const getNotCompletedTasks = TaskQueue.getNotCompletedTasks(selectedTaskStore.currentRound)
-        const isInErrorComponents = getNotCompletedTasks.some(task => {
-            return Array.isArray(task.errorComponents) &&
-                task.errorComponents.some(ec => ec.id === componentFilename)
-        })
-        return isInErrorComponents
+        const errorComponentStore = useErrorComponentStore();
+        return errorComponentStore.errorComponents.some(ec => ec.componentId === componentFilename);
     }
 }
