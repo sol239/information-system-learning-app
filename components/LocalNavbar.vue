@@ -12,6 +12,7 @@ import { useSettingsStore } from '#imports'
 import { useInformationSystemStore } from '#imports'
 import { useComponentCodeStore } from '#imports'
 import type { InformationSystem } from '~/model/InformationSystem'
+import SettingsDrawer from '~/components/SettingsDrawer.vue'
 
 /* 2. Stores */
 const highlightStore = useHighlightStore()
@@ -257,6 +258,9 @@ async function stayInSystem() {
                 :label="highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit')" color="yellow"
                 :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" style="margin-left: 10px"
                 @click="highlightStore.toggleEdit" />
+            
+            <SettingsDrawer />
+            
             <UPopover v-model:open="resetPopoverOpen" arrow>
                 <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle"
                     style="margin-left: 10px" />
