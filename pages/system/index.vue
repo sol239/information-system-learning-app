@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* 1. Imports */
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { navigateTo } from '#app'
 import { FileHandler } from '~/composables/FileHandler'
 import { InformationSystem } from '~/model/InformationSystem'
@@ -27,7 +27,7 @@ let systems: InformationSystem[] = FileHandler.getInformationSystems()
 // none
 
 /* 8. Local state (ref, reactive) */
-// none
+const isReloading = ref(false)
 
 /* 9. Computed */
 // none
@@ -59,8 +59,10 @@ function initializeSystems() {
 }
 
 function reloadSystems() {
+  isReloading.value = true
   systems = FileHandler.getInformationSystems()
   informationSystemStore.systems = systems
+  isReloading.value = false
 }
 
 /* 12. Lifecycle */
@@ -87,8 +89,7 @@ onMounted(() => {
             {{ t('enter_system') }}
           </UButton>
 
-          <!-- TODO: Add loading animation -->
-          <UButton icon="heroicons-outline:refresh" color="primary" variant="solid" @click="reloadSystems">
+          <UButton :loading="isReloading" icon="heroicons-outline:refresh" color="primary" variant="solid" @click="reloadSystems">
             Reload
           </UButton>
 

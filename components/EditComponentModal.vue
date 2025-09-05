@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay">
+  <div v-if="showEditor" class="modal-overlay">
     <div class="modal">
       <div class="editor-container">
         <template v-if="htmlTemplate">
@@ -78,9 +78,19 @@ const toast = useToast()
 
 
 /* 5. Props */
-
+const props = defineProps<{
+  showEditor: boolean
+  draftHtmlTemplate: string
+  draftSqlQuery: string
+}>()
 
 /* 6. Emits */
+const emit = defineEmits<{
+  'update:showEditor': [value: boolean]
+  'update:draftHtmlTemplate': [value: string]
+  'update:draftSqlQuery': [value: string]
+  'applyChanges': []
+}>()
 
 /* 8. Local state (ref, reactive) */
 const editedComponent: Component | null = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '') ?? null;
@@ -99,7 +109,7 @@ const jsCode = ref(errorJs || editedComponent?.js?.['js'] || editedComponent?.js
 const applyButtonHover = ref(false)
 const closeButtonHover = ref(false)
 const showTables = ref(false)
-const showEditor: boolean = highlightStore.isEditModeActive
+const showEditor = computed(() => props.showEditor)
 
 
 /* 10. Watchers */
@@ -203,6 +213,7 @@ function toggleTables() {
 
 function closeModal() {
   highlightStore.selectedComponentId = ''
+  emit('update:showEditor', false)
   console.log("Edit mode deactivated", highlightStore.isEditModeActive)
 }
 
