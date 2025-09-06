@@ -185,5 +185,7 @@
     "stay_in_system": "Zůstat v systému",
     "save_success": "Výsledek úspěšně uložen",
     "changes_applied_successfully": "Změny úspěšně aplikovány",
-    "error_applying_changes": "Chyba při aplikování změn"
+    "error_applying_changes": "Chyba při aplikování změn",
+    "session_deleted_success": "Turnus úspěšně smazán",
+    "session_deleted_error": "Chyba při mazání turnusu"
 }

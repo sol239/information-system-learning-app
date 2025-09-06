@@ -48,6 +48,7 @@
                                         TO-DO
                                     </UButton>
                                 </div>
+                                <SessionDeleteButton :sessionId="session.id" />
                             </div>
                         </div>
                     </div>
@@ -87,6 +88,7 @@ import SessionDayCountBadge from '~/components/infsys_components/sessions/Sessio
 import SessionCapacitySection from '~/components/infsys_components/sessions/SessionCapacitySection.vue'
 import SessionParticipantsSection from '~/components/infsys_components/sessions/SessionParticipantsSection.vue'
 import SessionSupervisorsSection from '~/components/infsys_components/sessions/SessionSupervisorsSection.vue'
+import SessionDeleteButton from '~/components/infsys_components/sessions/SessionDeleteButton.vue'
 import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
