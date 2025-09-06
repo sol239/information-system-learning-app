@@ -72,9 +72,6 @@ const currentSort = ref<{
     order: null
 })
 const editingColumn = ref<string | null>(null)
-const showEditor = ref(false)
-const draftSqlQuery = ref('')
-const draftHtmlTemplate = ref('')
 
 /* 8. Computed */
 const data = computed(() => {
@@ -155,10 +152,6 @@ watch(globalFilter, (newFilter) => {
 }, { debounce: 300 })
 
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
-
-watch(showEditor, (newValue) => {
-    console.log('Editor visibility changed:', newValue)
-})
 
 /* 10. Methods */
 // Add these new helper methods
@@ -315,31 +308,14 @@ function addMethod() {
 
 function openEditorForColumn(col: any) {
     editingColumn.value = col.accessorKey || col.id
-    draftHtmlTemplate.value = ''
-    if (props.selectedTableName && editingColumn.value) {
-        // Add ORDER BY if this column is currently sorted
-        let orderClause = ''
-        if (
-            currentSort.value.field === editingColumn.value &&
-            currentSort.value.order
-        ) {
-            orderClause = ` ORDER BY "${editingColumn.value}" ${currentSort.value.order.toUpperCase()}`
-        }
-        draftSqlQuery.value = `SELECT "${editingColumn.value}" FROM ${props.selectedTableName}${orderClause}`
-    } else {
-        draftSqlQuery.value = ''
-    }
-    showEditor.value = true
+    // Instead of using showEditor, we'll use the highlightStore approach
+    // The EditComponentModal will be shown based on highlightStore.isEditModeActive && highlightStore.selectedComponentId
     emit('open-editor', col)
 }
 
 function applyChanges() {
-    showEditor.value = false
-    console.log('Changes applied:', {
-        draftSqlQuery: draftSqlQuery.value,
-        draftHtmlTemplate: draftHtmlTemplate.value,
-        show: showEditor.value
-    })
+    // The applyChanges logic is now handled by the EditComponentModal component itself
+    console.log('Changes applied via EditComponentModal')
 }
 
 function handleTableSelect(tableName: string) {
@@ -499,10 +475,7 @@ defineExpose({
             </tbody>
         </table>
 
-        <EditComponentModal :showEditor="showEditor" :draftHtmlTemplate="draftHtmlTemplate"
-            :draftSqlQuery="draftSqlQuery" @update:showEditor="showEditor = $event"
-            @update:draftHtmlTemplate="draftHtmlTemplate = $event" @update:draftSqlQuery="draftSqlQuery = $event"
-            @applyChanges="applyChanges" />
+        <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
     </div>
 </template>
 
