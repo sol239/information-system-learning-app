@@ -1,11 +1,11 @@
 <template>
-    <div v-if="session" class="participants-section mb-6 highlightable" :id="'sessions-participants-' + session.id"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
+    <div v-if="participantsData" class="participants-section mb-6 highlightable" :id="'sessions-participants-' + props.sessionId"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + props.sessionId, $event)">
         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <UIcon name="i-heroicons-users" />
-            {{ t('participants') }} ({{ session.participants.length }})
+            {{ t('participants') }} ({{ participantsData.length }})
         </h4>
-        <div v-if="session.participants.length > 0" class="space-y-2">
+        <div v-if="participantsData.length > 0" class="space-y-2">
             <div v-for="participant in getDisplayedParticipants()" :key="participant.id"
                 class="participant-item">
                 <div class="participant-avatar">
@@ -16,12 +16,12 @@
                     <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
                 </div>
             </div>
-            <div v-if="session.participants.length > 3 && !isParticipantsExpanded()"
+            <div v-if="participantsData.length > 3 && !isParticipantsExpanded()"
                 class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
                 @click="toggleParticipantsExpanded()">
-                + {{ session.participants.length - 3 }} {{ t('more_participants') }}
+                + {{ participantsData.length - 3 }} {{ t('more_participants') }}
             </div>
-            <div v-if="session.participants.length > 3 && isParticipantsExpanded()"
+            <div v-if="participantsData.length > 3 && isParticipantsExpanded()"
                 class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
                 @click="toggleParticipantsExpanded()">
                 {{ t('show_less') }}
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
@@ -48,15 +48,40 @@ const { t } = useI18n()
 const highlightStore = useHighlightStore()
 const selectedSystemStore = useSelectedSystemStore()
 
-const session = computed(() => selectedSystemStore.sessions.find(s => s.id === props.sessionId))
+const participantsData = ref<any[] | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
 
-const getDisplayedParticipants = (): any[] => {
-    if (!session.value) return []
-    if (isParticipantsExpanded()) {
-        return session.value.participants
+const loadParticipants = () => {
+    if (!selectedSystemStore.selectedSystem?.db) {
+        console.error('Database not available')
+        return
     }
-    return session.value.participants.slice(0, 3)
+
+    try {
+        const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
+        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
+
+        const query = selectedSystemStore.selectedSystem.db.query(
+            `SELECT p.* FROM ${participantsTable} p
+             JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
+             WHERE sp.session_id = ?`,
+            [props.sessionId]
+        )
+
+        if (query.success) {
+            participantsData.value = query.results
+        }
+    } catch (error) {
+        console.error('Error loading participants:', error)
+    }
+}
+
+const getDisplayedParticipants = (): any[] => {
+    if (!participantsData.value) return []
+    if (isParticipantsExpanded()) {
+        return participantsData.value
+    }
+    return participantsData.value.slice(0, 3)
 }
 
 const isParticipantsExpanded = (): boolean => {
@@ -74,6 +99,10 @@ const toggleParticipantsExpanded = () => {
 const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
 }
+
+onMounted(() => {
+    loadParticipants()
+})
 </script>
 
 <style scoped>
