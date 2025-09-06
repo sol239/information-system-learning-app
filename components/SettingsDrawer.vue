@@ -1,13 +1,16 @@
 <template>
   <UDrawer v-model:open="isOpen" direction="right">
-    <UButton color="sky" variant="outline" @click="openDrawer" icon="i-heroicons-cog-6-tooth">
+    <UButton color="sky" variant="outline" @click="openDrawer" icon="i-heroicons-cog-6-tooth" style="margin-left: 10px">
       {{ t('settings') }}
     </UButton>
 
     <template #content>
       <UCard class="p-4 min-w-96">
         <template #header>
-          <h3 class="text-lg font-semibold">{{ t('settings') }}</h3>
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold">{{ t('settings') }}</h3>
+            <UButton icon="i-lucide-x" color="neutral" variant="ghost" @click="isOpen = false" />
+          </div>
         </template>
 
         <SettingsComponent />

@@ -197,5 +197,7 @@
     "session_added_success": "Turnus úspěšně přidán",
     "error_adding_session": "Chyba při přidávání turnusu",
     "session_updated_success": "Turnus úspěšně aktualizován",
-    "error_updating_session": "Chyba při aktualizování turnusu"
+    "error_updating_session": "Chyba při aktualizování turnusu",
+    "teacher": "Učitel",
+    "student": "Student"
 }

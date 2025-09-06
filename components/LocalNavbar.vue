@@ -1,3 +1,123 @@
+
+<template>
+    <div class="flex items-center w-full justify-between">
+        <!-- Navigation Menu on the left -->
+        <UNavigationMenu orientation="horizontal" :items="localItems" class="data-[orientation=vertical]:w-48" />
+
+        <!-- Right side items grouped together -->
+        <div class="flex items-center">
+            <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
+
+            <UBadge color="red" variant="outline" size="xl" style="margin-right: 10px;">
+                {{ $t('score') }}: {{ scoreStore.score }}
+            </UBadge>
+
+            <!-- Tasks Popover -->
+            <UPopover v-model:open="tasksPopoverOpen" arrow>
+                <UButton icon="i-lucide-list-todo" :label="selectedTaskStore.selectedTask?.title || $t('tasks')"
+                    color="primary" variant="subtle" />
+
+                <template #content>
+                    <TaskList />
+                </template>
+            </UPopover>
+            <UButton :icon="highlightStore.isHighlightMode ? 'i-lucide-lightbulb' : 'i-lucide-lightbulb-off'"
+                :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" color="lime"
+                :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" style="margin-left: 10px"
+                @click="highlightStore.toggleHighlight" />
+            <UButton :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
+                :label="highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit')" color="yellow"
+                :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" style="margin-left: 10px"
+                @click="highlightStore.toggleEdit" />
+
+            <!-- Teacher Drawer -->
+            <UDrawer v-model:open="teacherDrawerOpen" direction="right">
+                <UButton color="violet" variant="outline" @click="teacherDrawerOpen = true" icon="i-lucide-school" style="margin-left: 10px">
+                    {{ $t('teacher') }}
+                </UButton>
+
+                <template #content>
+                    <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
+                        <template #header>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">Teacher</h3>
+                                <UButton icon="i-lucide-x" color="neutral" variant="ghost"
+                                    @click="teacherDrawerOpen = false" />
+                            </div>
+                        </template>
+
+                        <TeacherComponent />
+                    </UCard>
+                </template>
+            </UDrawer>
+
+            <!-- Student Drawer -->
+            <UDrawer v-model:open="studentDrawerOpen" direction="right" >
+                <UButton color="sky" variant="outline" @click="studentDrawerOpen = true" icon="i-lucide-graduation-cap" style="margin-left: 10px">
+                    {{ $t('student') }}
+                </UButton>
+
+                <template #content>
+                    <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
+                        <template #header>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">Student</h3>
+                                <UButton icon="i-lucide-x" color="neutral" variant="ghost"
+                                    @click="studentDrawerOpen = false" />
+                            </div>
+                        </template>
+
+                        <StudentComponent />
+                    </UCard>
+                </template>
+            </UDrawer>
+
+            <SettingsDrawer />
+
+            <UPopover v-model:open="resetPopoverOpen" arrow>
+                <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle"
+                    style="margin-left: 10px" />
+
+                <template #content>
+                    <UCard>
+                        <div class="flex flex-col gap-2">
+                            <UButton :label="$t('refresh_components')" color="primary" variant="outline"
+                                icon="i-heroicons-arrow-path" @click="refreshComponents" />
+                            <UButton :label="$t('refresh_database')" color="lime" variant="outline"
+                                icon="i-heroicons-arrow-path" @click="refreshDatabase" />
+                            <UButton :label="$t('refresh_tasks')" color="sky" variant="outline"
+                                icon="i-heroicons-arrow-path" @click="refreshTasks" />
+
+                        </div>
+                    </UCard>
+                </template>
+            </UPopover>
+
+            <!-- Exit System Popover -->
+            <UPopover v-model:open="exitPopoverOpen" arrow>
+                <UButton icon="i-heroicons-arrow-right-on-rectangle" :label="$t('exit_system')" color="red"
+                    variant="subtle" style="margin-left: 10px" />
+
+                <template #content>
+                    <UCard>
+                        <div class="flex flex-col gap-2">
+                            <UButton :label="$t('leave_system')" color="red" variant="outline"
+                                icon="i-heroicons-arrow-right-on-rectangle" @click="leaveSystem" />
+                            <!-- TODO: Implement saving -->
+                            <UButton disabled :label="$t('leave_and_save')" color="yellow" variant="outline"
+                                icon="i-heroicons-document-check" @click="leaveAndSave" />
+                            <UButton :label="$t('stay_in_system')" color="neutral" variant="outline"
+                                icon="i-heroicons-x-mark" @click="stayInSystem" />
+                        </div>
+                    </UCard>
+                </template>
+            </UPopover>
+        </div>
+    </div>
+
+
+</template>
+
 <script setup lang="ts">
 /* 1. Imports */
 import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -244,122 +364,3 @@ async function stayInSystem() {
 /* 13. defineExpose */
 // none
 </script>
-
-<template>
-    <div class="flex items-center w-full justify-between">
-        <!-- Navigation Menu on the left -->
-        <UNavigationMenu orientation="horizontal" :items="localItems" class="data-[orientation=vertical]:w-48" />
-
-        <!-- Right side items grouped together -->
-        <div class="flex items-center">
-            <UButton style="margin-right: 10px ;" label="Helper" @click="handleHelperClick"></UButton>
-
-            <UBadge color="red" variant="outline" size="xl" style="margin-right: 10px;">
-                {{ $t('score') }}: {{ scoreStore.score }}
-            </UBadge>
-
-            <!-- Tasks Popover -->
-            <UPopover v-model:open="tasksPopoverOpen" arrow>
-                <UButton icon="i-lucide-list-todo" :label="selectedTaskStore.selectedTask?.title || $t('tasks')"
-                    color="primary" variant="subtle" />
-
-                <template #content>
-                    <TaskList />
-                </template>
-            </UPopover>
-            <UButton :icon="highlightStore.isHighlightMode ? 'i-lucide-lightbulb' : 'i-lucide-lightbulb-off'"
-                :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" color="lime"
-                :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" style="margin-left: 10px"
-                @click="highlightStore.toggleHighlight" />
-            <UButton :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
-                :label="highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit')" color="yellow"
-                :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" style="margin-left: 10px"
-                @click="highlightStore.toggleEdit" />
-
-            <!-- Teacher Drawer -->
-            <UDrawer v-model:open="teacherDrawerOpen" direction="right">
-                <UButton color="violet" variant="outline" @click="teacherDrawerOpen = true" icon="i-lucide-school">
-                    Teacher
-                </UButton>
-
-                <template #content>
-                    <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold">Teacher</h3>
-                                <UButton icon="i-lucide-x" color="neutral" variant="ghost"
-                                    @click="teacherDrawerOpen = false" />
-                            </div>
-                        </template>
-
-                        <TeacherComponent />
-                    </UCard>
-                </template>
-            </UDrawer>
-
-            <!-- Student Drawer -->
-            <UDrawer v-model:open="studentDrawerOpen" direction="right">
-                <UButton color="sky" variant="outline" @click="studentDrawerOpen = true" icon="i-lucide-graduation-cap">
-                    Student
-                </UButton>
-
-                <template #content>
-                    <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold">Student</h3>
-                                <UButton icon="i-lucide-x" color="neutral" variant="ghost"
-                                    @click="studentDrawerOpen = false" />
-                            </div>
-                        </template>
-
-                        <StudentComponent />
-                    </UCard>
-                </template>
-            </UDrawer>
-
-            <SettingsDrawer />
-
-            <UPopover v-model:open="resetPopoverOpen" arrow>
-                <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle"
-                    style="margin-left: 10px" />
-
-                <template #content>
-                    <UCard>
-                        <div class="flex flex-col gap-2">
-                            <UButton :label="$t('refresh_components')" color="primary" variant="outline"
-                                icon="i-heroicons-arrow-path" @click="refreshComponents" />
-                            <UButton :label="$t('refresh_database')" color="lime" variant="outline"
-                                icon="i-heroicons-arrow-path" @click="refreshDatabase" />
-                            <UButton :label="$t('refresh_tasks')" color="sky" variant="outline"
-                                icon="i-heroicons-arrow-path" @click="refreshTasks" />
-
-                        </div>
-                    </UCard>
-                </template>
-            </UPopover>
-
-            <!-- Exit System Popover -->
-            <UPopover v-model:open="exitPopoverOpen" arrow>
-                <UButton icon="i-heroicons-arrow-right-on-rectangle" :label="$t('exit_system')" color="red"
-                    variant="subtle" style="margin-left: 10px" />
-
-                <template #content>
-                    <UCard>
-                        <div class="flex flex-col gap-2">
-                            <UButton :label="$t('leave_system')" color="red" variant="outline"
-                                icon="i-heroicons-arrow-right-on-rectangle" @click="leaveSystem" />
-                            <!-- TODO: Implement saving -->
-                            <UButton disabled :label="$t('leave_and_save')" color="yellow" variant="outline"
-                                icon="i-heroicons-document-check" @click="leaveAndSave" />
-                            <UButton :label="$t('stay_in_system')" color="neutral" variant="outline"
-                                icon="i-heroicons-x-mark" @click="stayInSystem" />
-                        </div>
-                    </UCard>
-                </template>
-            </UPopover>
-        </div>
-    </div>
-
-
-</template>

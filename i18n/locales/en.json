@@ -191,5 +191,7 @@
     "session_added_success": "Session added successfully",
     "error_adding_session": "Error adding session",
     "session_updated_success": "Session updated successfully",
-    "error_updating_session": "Error updating session"
+    "error_updating_session": "Error updating session",
+    "teacher": "Teacher",
+    "student": "Student"
 }
