@@ -9,20 +9,13 @@
             <div class="dashboard-content-row">
                 <div class="dashboard-content-main">
                     <div id="stats">
-                        <!-- <dashboardStatsError v-if="!isElementTaskCompleted('stats')" :system-id="system?.id" /> -->
                         <dashboardStats :system-id="system?.id" />
+                        <UCard>
+                            <DashboardTableCountBadge :system="system" />
+                        </UCard>
                     </div>
 
                 </div>
-                <!-- Custom Calendar -->
-                <!--
-                <div id="calendar" class="highlightable dashboard-calendar-side"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('calendar', $event)">
-                    <dashboardCalendar :monthNames="monthNames" :currentMonth="currentMonth" :currentYear="currentYear"
-                        :previousMonth="previousMonth" :nextMonth="nextMonth" :goToToday="goToToday" :weekDays="weekDays"
-                        :calendarDays="calendarDays" :getSessionsForDate="getSessionsForDate"
-                        :sessionColorMap="sessionColorMap" />
-                </div>-->
             </div>
         </main>
     </div>
@@ -36,11 +29,11 @@ import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useHighlightStore } from '~/stores/useHighlightStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
-import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
-import { ComponentManager, usePersistentStorageTestStore} from "#imports"
+import DashboardTableCountBadge from '~/components/infsys_components/dashboard/TableCountBadge.vue'
+import { ComponentManager, usePersistentStorageTestStore } from "#imports"
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
-import { Component } from '~/model/Component'
+import { InformationSystem } from '~/model/InformationSystem'
 
 /* 2. Stores */
 const store = useInformationSystemStore()
@@ -74,12 +67,13 @@ const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 /* 8. State */
 const systems = store.systems
-const system = ref<InformationSystem | null>(null)
 const repairedElement = ref<string | null>(null)
 const currentDate = ref(new Date())
 
 /* 9. Computed */
-system.value = systems.find(function (sys) { return sys.id === parseInt(systemId as string, 10) }) || null
+const system = computed<InformationSystem | null>(() => {
+    return systems.find(function (sys) { return sys.id === parseInt(systemId as string, 10) }) || null
+})
 const sessions = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'sessions' })?.data || [] })
 const participants = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'participants' })?.data || [] })
 const supervisors = computed(function () { return system.value?.tables.find(function (t) { return t.name === 'supervisors' })?.data || [] })
@@ -202,7 +196,7 @@ function isElementTaskCompleted(elementId: string): boolean {
 
 /* 12. Lifecycle */
 onMounted(() => {
-    if(!ComponentManager.areComponentsInitialized()) {
+    if (!ComponentManager.areComponentsInitialized()) {
         ComponentManager.initializeComponents();
     }
 })
@@ -533,5 +527,16 @@ onMounted(() => {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+}
+
+.c-table-count-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 </style>

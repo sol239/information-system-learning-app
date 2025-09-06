@@ -184,5 +184,6 @@
     "session_deleted_error": "Error deleting session",
     "add_session": "Add Session",
     "from_date": "From Date",
-    "to_date": "To Date"
+    "to_date": "To Date",
+    "table_count": "Table Count"
 }

@@ -190,5 +190,6 @@
     "session_deleted_error": "Chyba při mazání turnusu",
     "add_session": "Přidat turnus",
     "from_date": "Od data",
-    "to_date": "Do data"
+    "to_date": "Do data",
+    "table_count": "Počet tabulek"
 }
