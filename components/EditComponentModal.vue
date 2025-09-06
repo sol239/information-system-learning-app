@@ -1,36 +1,25 @@
 <template>
-  <div v-if="showEditor" class="modal-overlay">
+  <div class="modal-overlay">
     <div class="modal">
       <div class="editor-container">
-        <template v-if="htmlTemplate">
-          <div class="editor-section">
-            <h3 class="editor-label html-label">{{ t('html_template') }}</h3>
-            <textarea :value="htmlTemplate" @input="onHtmlInput" class="code-editor html-editor" spellcheck="false" />
+        <div v-for="section in availableSections" :key="section.key" class="editor-section">
+          <div class="title-row">
+            <h3 class="editor-label" :class="getSectionLabelClass(section.key)">{{ getSectionLabel(section.key) }}</h3>
+            <UButton v-if="section.key === 'sql'" @click="toggleTables" class="tables-button">
+              Tables: {{ availableTables.length }}
+            </UButton>
           </div>
-        </template>
-
-        <template v-if="sqlQuery">
-          <div class="editor-section">
-            <div class="title-row">
-              <h3 class="editor-label sql-label">{{ t('sql_query') }}</h3>
-              <UButton @click="toggleTables" class="tables-button">
-                Tables: {{ availableTables.length }}
-              </UButton>
-            </div>
-            <ul v-if="showTables" class="tables-list">
-              <li v-for="table in availableTables" :key="table">{{ table }}</li>
-            </ul>
-            <textarea :value="sqlQuery" @input="onSqlInput" class="code-editor sql-editor"
-              :class="{ 'invalid-sql': !sqlValid }" spellcheck="false" />
-          </div>
-        </template>
-
-        <template v-if="jsCode">
-          <div class="editor-section">
-            <h3 class="editor-label js-label">{{ t('js_code') }}</h3>
-            <textarea :value="jsCode" @input="onJsInput" class="code-editor js-editor" spellcheck="false" />
-          </div>
-        </template>
+          <ul v-if="section.key === 'sql' && showTables" class="tables-list">
+            <li v-for="table in availableTables" :key="table">{{ table }}</li>
+          </ul>
+          <textarea 
+            :value="section.value" 
+            @input="(event) => onSectionInput(event, section.key)" 
+            class="code-editor" 
+            :class="[getSectionEditorClass(section.key), { 'invalid-sql': section.key === 'sql' && !sqlValid }]"
+            spellcheck="false" 
+          />
+        </div>
       </div>
 
       <div class="modal-actions">
@@ -54,7 +43,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
@@ -78,43 +67,114 @@ const toast = useToast()
 
 
 /* 5. Props */
-const props = defineProps<{
-  showEditor: boolean
-  draftHtmlTemplate: string
-  draftSqlQuery: string
-}>()
+
 
 /* 6. Emits */
-const emit = defineEmits<{
-  'update:showEditor': [value: boolean]
-  'update:draftHtmlTemplate': [value: string]
-  'update:draftSqlQuery': [value: string]
-  'applyChanges': []
-}>()
 
 /* 8. Local state (ref, reactive) */
 const editedComponent: Component | null = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '') ?? null;
 console.log("Edited Component:", editedComponent, "for ID:", highlightStore.selectedComponentId);
+console.log("Edited Component JSON:", JSON.stringify(editedComponent, null, 2));
 const sqlValid = ref(true)
 
 // Check if component is in error components and load error code if available
 const isErrorComponent = ComponentHandler.isInErrorComponents(highlightStore.selectedComponentId ?? '')
-const errorHtml = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'html') : null
-const errorSql = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'sql') : null  
-const errorJs = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', 'js') : null
 
-const htmlTemplate = ref(errorHtml || editedComponent?.html?.['html'] || editedComponent?.html?.['default'] || '')
-const sqlQuery = ref(errorSql || editedComponent?.sql?.['sql'] || editedComponent?.sql?.['default'] || '')
-const jsCode = ref(errorJs || editedComponent?.js?.['js'] || editedComponent?.js?.['default'] || '')
+// Dynamic section handling
+const sectionValues = ref<Record<string, string>>({})
+
+// Initialize section values from component or error components
+const initializeSectionValues = () => {
+  const sections = ['html', 'css', 'js', 'sql', 'additionals']
+  sections.forEach(section => {
+    const errorValue = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', section) : null
+    const componentValue = editedComponent?.[section as keyof Component] as Record<string, string>
+    
+    // Try multiple possible keys: section name, 'default', or first available key
+    let value = ''
+    if (componentValue) {
+      value = componentValue[section] || componentValue['default'] || Object.values(componentValue)[0] || ''
+    }
+    
+    sectionValues.value[section] = errorValue || value
+    console.log(`Initialized ${section}:`, sectionValues.value[section])
+  })
+}
+
+initializeSectionValues()
+
+// Computed property to get available sections (only those with content)
+const availableSections = computed(() => {
+  return Object.entries(sectionValues.value)
+    .filter(([key, value]) => value.trim() !== '')
+    .map(([key, value]) => ({ key, value }))
+})
+
 const applyButtonHover = ref(false)
 const closeButtonHover = ref(false)
 const showTables = ref(false)
-const showEditor = computed(() => props.showEditor)
+const showEditor: boolean = highlightStore.isEditModeActive
 
 
 /* 10. Watchers */
 
 /* 11. Methods */
+function getSectionLabel(section: string): string {
+  const labels: Record<string, string> = {
+    html: t('html_template'),
+    css: t('css_styles') || 'CSS Styles',
+    js: t('js_code'),
+    sql: t('sql_query'),
+    additionals: t('additionals') || 'Additional Code'
+  }
+  return labels[section] || section.toUpperCase()
+}
+
+function getSectionLabelClass(section: string): string {
+  const classes: Record<string, string> = {
+    html: 'html-label',
+    css: 'css-label',
+    js: 'js-label',
+    sql: 'sql-label',
+    additionals: 'additionals-label'
+  }
+  return classes[section] || 'default-label'
+}
+
+function getSectionEditorClass(section: string): string {
+  const classes: Record<string, string> = {
+    html: 'html-editor',
+    css: 'css-editor',
+    js: 'js-editor',
+    sql: 'sql-editor',
+    additionals: 'additionals-editor'
+  }
+  return classes[section] || 'default-editor'
+}
+
+function onSectionInput(event: Event, section: string) {
+  const value = (event.target as HTMLTextAreaElement)?.value || ''
+  sectionValues.value[section] = value
+  console.log(`Current ${section.toUpperCase()}:`, value)
+
+  // Special handling for SQL validation
+  if (section === 'sql') {
+    try {
+      if (selectedSystem && typeof selectedSystem.db?.validateSql === 'function') {
+        console.log('Validating SQL: >', value, "<")
+        const isSqlValid = selectedSystem.db.validateSql(value)
+        sqlValid.value = isSqlValid
+        console.log('SQL Valid:', isSqlValid)
+      } else {
+        sqlValid.value = true
+        console.warn('selectedSystem or validateSql is not available')
+      }
+    } catch (err) {
+      sqlValid.value = true
+      console.error('Error validating SQL:', err)
+    }
+  }
+}
 function getApplyButtonStyle() {
   const baseColor = !sqlValid.value ? '#ef4444' : '#3b82f6'
   const hoverColor = !sqlValid.value ? '#dc2626' : '#2563eb'
@@ -138,36 +198,18 @@ function getCloseButtonStyle() {
   }
 }
 function onSqlInput(event: Event) {
-  const value = (event.target as HTMLTextAreaElement)?.value || ''
-  sqlQuery.value = value
-  console.log('Current SQL Query:', value)
-
-  try {
-    if (selectedSystem && typeof selectedSystem.db?.validateSql === 'function') {
-      console.log('Validating SQL: >', value, "<")
-      const isSqlValid = selectedSystem.db.validateSql(value)
-      sqlValid.value = isSqlValid
-      console.log('SQL Valid:', isSqlValid)
-    } else {
-      sqlValid.value = true
-      console.warn('selectedSystem or validateSql is not available')
-    }
-  } catch (err) {
-    sqlValid.value = true
-    console.error('Error validating SQL:', err)
-  }
+  // This function is kept for backward compatibility but redirects to onSectionInput
+  onSectionInput(event, 'sql')
 }
 
 function onHtmlInput(event: Event) {
-  const value = (event.target as HTMLTextAreaElement)?.value || ''
-  htmlTemplate.value = value
-  console.log('Current HTML Template:', value)
+  // This function is kept for backward compatibility but redirects to onSectionInput
+  onSectionInput(event, 'html')
 }
 
 function onJsInput(event: Event) {
-  const value = (event.target as HTMLTextAreaElement)?.value || ''
-  jsCode.value = value
-  console.log('Current JS Code:', value)
+  // This function is kept for backward compatibility but redirects to onSectionInput
+  onSectionInput(event, 'js')
 }
 
 function onApplyChanges(event: MouseEvent) {
@@ -177,12 +219,28 @@ function onApplyChanges(event: MouseEvent) {
   const currentComponent = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '')
 
   if (currentComponent) {
+    // Helper function to preserve the original key structure
+    const updateSection = (sectionData: Record<string, string>, sectionKey: string, newValue: string) => {
+      // If the section already has data, use the existing key structure
+      if (Object.keys(sectionData).length > 0) {
+        const existingKey = sectionData[sectionKey] !== undefined ? sectionKey : 
+                           sectionData['default'] !== undefined ? 'default' : 
+                           Object.keys(sectionData)[0]
+        return { ...sectionData, [existingKey]: newValue }
+      } else {
+        // If no existing data, use 'default' key
+        return { 'default': newValue }
+      }
+    }
+
     // Update the entire component object using updateComponent function
     const updatedComponent = {
       ...currentComponent,
-      html: { ...currentComponent.html, 'html': htmlTemplate.value, 'default': htmlTemplate.value },
-      sql: { ...currentComponent.sql, 'sql': sqlQuery.value, 'default': sqlQuery.value },
-      js: { ...currentComponent.js, 'js': jsCode.value, 'default': jsCode.value }
+      html: updateSection(currentComponent.html, 'html', sectionValues.value.html || ''),
+      css: updateSection(currentComponent.css, 'css', sectionValues.value.css || ''),
+      js: updateSection(currentComponent.js, 'js', sectionValues.value.js || ''),
+      sql: updateSection(currentComponent.sql, 'sql', sectionValues.value.sql || ''),
+      additionals: updateSection(currentComponent.additionals, 'additionals', sectionValues.value.additionals || '')
     }
 
     componentCodeStore.updateComponent(highlightStore.selectedComponentId ?? '', updatedComponent)
@@ -198,13 +256,12 @@ function onApplyChanges(event: MouseEvent) {
     })
   }
 
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'html', htmlTemplate.value)
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'sql', sqlQuery.value)
-  ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, 'js', jsCode.value)
+  // Update ComponentHandler for all sections
+  Object.entries(sectionValues.value).forEach(([section, value]) => {
+    ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, section, value)
+  })
 
   closeModal()
-
-
 }
 
 function toggleTables() {
@@ -213,7 +270,6 @@ function toggleTables() {
 
 function closeModal() {
   highlightStore.selectedComponentId = ''
-  emit('update:showEditor', false)
   console.log("Edit mode deactivated", highlightStore.isEditModeActive)
 }
 
@@ -272,12 +328,20 @@ function closeModal() {
   color: #38bdf8;
 }
 
+.css-label {
+  color: #f97316;
+}
+
 .sql-label {
   color: #facc15;
 }
 
 .js-label {
   color: #10b981;
+}
+
+.additionals-label {
+  color: #a855f7;
 }
 
 .code-editor {
@@ -306,12 +370,20 @@ function closeModal() {
   border-color: #38bdf8;
 }
 
+.css-editor:focus {
+  border-color: #f97316;
+}
+
 .sql-editor:focus {
   border-color: #facc15;
 }
 
 .js-editor:focus {
   border-color: #10b981;
+}
+
+.additionals-editor:focus {
+  border-color: #a855f7;
 }
 
 .modal-actions {

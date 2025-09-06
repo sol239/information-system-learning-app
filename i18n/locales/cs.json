@@ -86,6 +86,8 @@
     "how_to_desc": "TODO - Je potřeba dodělat",
     "js_code": "JavaScript kód",
     "html_template": "HTML šablona",
+    "css_styles": "CSS styly",
+    "additionals": "Další kód",
     "database": "Databáze",
     "feedback": "Zpětná vazba",
     "open_taskview": "Zobrazit úkoly",
