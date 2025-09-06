@@ -13,13 +13,6 @@
                         <dashboardStats :system-id="system?.id" />
                     </div>
 
-                    <!-- Sessions Progress Pillows -->
-                    <UCard style="border: 2px solid; border-color: #05df72;">
-                        <h1 class="dashboard-section-title">{{ t('dashboard_session_progress_title') }}</h1>
-                        <div id="dashboard-pillows">
-                            <dashboardPillows :sessionProgress="sessionProgress" />
-                        </div>
-                    </UCard>
                 </div>
                 <!-- Custom Calendar -->
                 <!--
@@ -44,7 +37,6 @@ import { useHighlightStore } from '~/stores/useHighlightStore'
 import { useSelectedComponentStore } from '~/stores/useSelectedComponentStore'
 import dashboardStats from '~/components/infsys_components/dashboard/stats.vue'
 import dashboardCalendar from '~/components/infsys_components/dashboard/dashboard-calendar.vue'
-import dashboardPillows from '~/components/infsys_components/dashboard/dashboard-pillows.vue'
 import { ComponentManager, usePersistentStorageTestStore} from "#imports"
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
@@ -98,31 +90,6 @@ const sessionColorMap = computed(function () {
         map.set(session.id, sessionColors[index % sessionColors.length])
     })
     return map
-})
-const sessionProgress = computed(() => {
-    if (!system.value?.db || typeof system?.value?.db?.query !== "function") {
-        return []
-    }
-    
-    try {
-        const result = system.value.db.query(`SELECT * FROM ${system.value.tableNameMap.get('sessions')}`).results || []
-        return result.map((session, idx) => {
-            const countResult = system.value?.db.query(`SELECT COUNT(*) as count FROM ${system.value.tableNameMap.get('participants')} JOIN ${system.value.tableNameMap.get('meals_participants')} ON ${system.value.tableNameMap.get('participants')}.participant_id = ${system.value.tableNameMap.get('meals_participants')}.participant_id WHERE ${system.value.tableNameMap.get('meals_participants')}.meal_id IN (SELECT id FROM ${system.value.tableNameMap.get('meals')} WHERE session_id = ${session.id})`)
-            const count = countResult?.results?.[0]?.count || 0
-            const percent = session.kapacita ? Math.min(100, Math.round((count / session.kapacita) * 100)) : 0
-
-            return {
-                id: session.id,
-                name: `Turnus ${session.id}`,
-                color: sessionColors[idx % sessionColors.length],
-                count: count,
-                capacity: session.kapacita,
-                percent: percent
-            }
-        })
-    } catch (error) {
-        return []
-    }
 })
 
 const currentYear = computed(function () { return currentDate.value.getFullYear() })
@@ -271,7 +238,7 @@ onMounted(() => {
     align-items: flex-start;
 }
 
-/* Hlavní část (stats + pillows) */
+/* Hlavní část (stats) */
 .dashboard-content-main {
     flex: 2 1 0;
     min-width: 0;
@@ -420,70 +387,6 @@ onMounted(() => {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.sessions-progress {
-    margin-bottom: 2rem;
-}
-
-.progress-pillows {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-}
-
-.progress-pillow {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    padding: 1rem 1.5rem;
-    min-width: 220px;
-    max-width: 300px;
-    flex: 1 1 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid #e5e7eb;
-}
-
-.pillow-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.pillow-title {
-    font-weight: 600;
-    color: #374151;
-}
-
-.pillow-count {
-    font-size: 0.95rem;
-    color: #6b7280;
-}
-
-.pillow-bar-bg {
-    width: 100%;
-    height: 18px;
-    background: #f3f4f6;
-    border-radius: 9px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-    margin-top: 0.25rem;
-}
-
-.pillow-bar {
-    height: 100%;
-    border-radius: 9px 0 0 9px;
-    transition: width 0.4s cubic-bezier(.4, 0, .2, 1);
-}
-
-.pillow-percent {
-    font-size: 0.95rem;
-    color: #000000;
-    font-weight: 500;
-}
-
 /* Custom Calendar Styles */
 .calendar-section {
     margin-top: 2rem;
@@ -630,18 +533,5 @@ onMounted(() => {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-}
-
-.dashboard-section-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 1.2rem;
-    background: linear-gradient(90deg, #05df72 0%, #3b82f6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-    letter-spacing: 0.03em;
-    text-align: left;
 }
 </style>
