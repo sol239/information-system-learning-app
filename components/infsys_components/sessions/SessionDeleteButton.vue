@@ -1,21 +1,21 @@
 <template>
-    <UButton
-        size="sm"
-        color="red"
-        variant="solid"
-        :loading="isDeleting"
-        @click="handleDelete"
-        :id="'sessions-delete-' + sessionId"
-    >
-        <UIcon name="i-heroicons-trash" class="mr-1" />
-        {{ t('delete') }}
-    </UButton>
+    <div class="highlightable" :id="'sessions-delete-' + sessionId">
+        <UButton size="sm" color="red" variant="solid" :loading="isDeleting" 
+            @click="highlightStore.isHighlightMode
+                ? highlightStore.highlightHandler.selectElement('sessions-delete-' + sessionId, $event)
+                : handleDelete()"
+            :id="'sessions-delete-' + sessionId">
+            <UIcon name="i-heroicons-trash" class="mr-1" />
+            {{ t('delete') }}
+        </UButton>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSelectedSystemStore, useToast } from '#imports'
+import { useHighlightStore } from '#imports'
 
 interface Props {
     sessionId: number
@@ -26,6 +26,7 @@ const { t } = useI18n()
 const selectedSystemStore = useSelectedSystemStore()
 const toast = useToast()
 const isDeleting = ref(false)
+const highlightStore = useHighlightStore()
 
 const handleDelete = async () => {
     if (!selectedSystemStore.selectedSystem?.db) {
