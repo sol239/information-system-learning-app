@@ -67,7 +67,9 @@
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
                         <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
-                            size="sm" @click="highlightStore.isHighlightMode ? highlightStore.highlightHandler.selectElement('participants-filter-reset', $event) : resetFilter()" icon="i-lucide-rotate-ccw">
+                            size="sm"
+                            @click="highlightStore.isHighlightMode ? highlightStore.highlightHandler.selectElement('participants-filter-reset', $event) : resetFilter()"
+                            icon="i-lucide-rotate-ccw">
                         </UButton>
                         <div class="highlightable" id="participants-filter-input"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
@@ -170,50 +172,49 @@
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card">
-                    <!-- Participant Header -->
-                    <div class="participant-header">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-semibold text-gray-900">
-                                {{ participant.name }}
-                            </h3>
-                            <UBadge size="lg" color="sky" variant="soft">
-                                {{ t('age') }}: {{ participant.age }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
-                            <span>{{ participant.email }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Turnus Info -->
-                    <div class="turnus-section mb-4">
-                        <div v-if="participant.sessions.length > 0" class="space-y-1">
-                            <div v-for="sessionId in participant.sessions" :key="sessionId"
-                                class="text-sm text-gray-600">
-                                <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
-                                {{ getSessionName(sessionId) }}
+                    <div class="highlightable" :id="'participants-card-' + participant.id" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
+                        <!-- Participant Header -->
+                        <div class="participant-header">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-gray-900">
+                                    {{ participant.name }}
+                                </h3>
+                                <UBadge size="lg" color="sky" variant="soft">
+                                    {{ t('age') }}: {{ participant.age }}
+                                </UBadge>
+                            </div>
+                            <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
+                                <span>{{ participant.email }}</span>
                             </div>
                         </div>
-                        <div v-else class="text-sm text-gray-400 italic">
-                            <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
-                            {{ t('no_sessions') }}
-                        </div>
-                    </div>
 
-                    <!-- Contact Info -->
-                    <div class="contact-section mb-6 space-y-2">
-                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-phone" class="w-4 h-4" />
-                            <span>{{ participant.phone }}</span>
+                        <!-- Turnus Info -->
+                        <div class="turnus-section mb-4">
+                            <div v-if="participant.sessions.length > 0" class="space-y-1">
+                                <div v-for="sessionId in participant.sessions" :key="sessionId"
+                                    class="text-sm text-gray-600">
+                                    <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
+                                    {{ getSessionName(sessionId) }}
+                                </div>
+                            </div>
+                            <div v-else class="text-sm text-gray-400 italic">
+                                <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
+                                {{ t('no_sessions') }}
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
-                            <span>{{ participant.address }}</span>
-                        </div>
-                        <!-- Allergies Badge -->
-                        <div class="highlightable" :id="'participants-allergens-badge-' + participant.id"
-                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-allergens-badge-' + participant.id, $event)">
+
+                        <!-- Contact Info -->
+                        <div class="contact-section mb-6 space-y-2">
+                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <UIcon name="i-heroicons-phone" class="w-4 h-4" />
+                                <span>{{ participant.phone }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
+                                <span>{{ participant.address }}</span>
+                            </div>
+                            <!-- Allergies Badge -->
                             <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
                                 class="mt-2">
                                 {{ t("allergens") }}: {{ participant.allergens.length }}
@@ -222,7 +223,6 @@
                     </div>
 
                     <!-- Participant Actions -->
-
                     <div class="participant-actions mt-6 pt-4 border-t border-gray-200">
                         <div class="flex gap-2">
                             <!-- Edit Participant Button only -->
