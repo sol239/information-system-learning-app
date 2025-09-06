@@ -15,47 +15,23 @@
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ t('session') }} {{ session.id }}
                             </h3>
-                            <SessionStatusBadge
-                                :session="session"
-                                :get-session-status="getSessionStatus"
-                                :get-session-status-color="getSessionStatusColor"
-                            />
+                            <SessionStatusBadge :session="session" />
                         </div>
 
                         <!-- Date Range + Day Count Badge -->
                         <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                            <SessionDateRange
-                                :session="session"
-                                :format-date-range="formatDateRange"
-                            />
-                            <SessionDayCountBadge
-                                :session="session"
-                                :get-day-count="getDayCount"
-                            />
+                            <SessionDateRange :session="session" />
+                            <SessionDayCountBadge :session="session" />
                         </div>
 
                         <!-- Capacity Progress -->
-                        <SessionCapacitySection
-                            :session="session"
-                            :get-capacity-percentage="getCapacityPercentage"
-                            :get-capacity-color="getCapacityColor"
-                        />
+                        <SessionCapacitySection :session="session" />
 
                         <!-- Participants Section -->
-                        <SessionParticipantsSection
-                            :session="session"
-                            :get-displayed-participants="getDisplayedParticipants"
-                            :is-participants-expanded="isParticipantsExpanded"
-                            :toggle-participants-expanded="toggleParticipantsExpanded"
-                            :get-initials="getInitials"
-                        />
+                        <SessionParticipantsSection :session="session" />
 
                         <!-- Supervisors Section -->
-                        <SessionSupervisorsSection
-                            :session="session"
-                            :get-session-supervisors="getSessionSupervisors"
-                            :get-initials="getInitials"
-                        />
+                        <SessionSupervisorsSection :session="session" />
 
                         <!-- Session Actions -->
                         <div class="session-actions mt-6 pt-4 border-t border-gray-200">
@@ -163,11 +139,11 @@ const loadSessionsFromDatabase = () => {
 
     try {
         // Load sessions (turnusy)
-        const sessionsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions')
-        const participantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('participants')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions_participants')
-        const supervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('supervisors')
-        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.tableNameMap.get('sessions_supervisors')
+        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
+        const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
+        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('supervisors')
+        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_supervisors')
 
         const sessionsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsTable} ORDER BY session_id`)
         if (sessionsQuery.success) {

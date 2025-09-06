@@ -9,12 +9,12 @@
         </div>
         <div class="capacity-bar">
             <div class="capacity-fill" :style="{
-                width: getCapacityPercentage(session) + '%',
-                backgroundColor: getCapacityColor(session)
+                width: getCapacityPercentage() + '%',
+                backgroundColor: getCapacityColor()
             }"></div>
         </div>
         <div class="text-xs text-gray-500 mt-1">
-            {{ getCapacityPercentage(session) }}% {{ t('occupied') }}
+            {{ getCapacityPercentage() }}% {{ t('occupied') }}
         </div>
     </div>
 </template>
@@ -25,13 +25,22 @@ import { useHighlightStore } from '#imports'
 
 interface Props {
     session: any
-    getCapacityPercentage: (session: any) => number
-    getCapacityColor: (session: any) => string
 }
 
 const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+
+const getCapacityPercentage = (): number => {
+    return Math.round((props.session.participants.length / props.session.capacity) * 100)
+}
+
+const getCapacityColor = (): string => {
+    const percentage = getCapacityPercentage()
+    if (percentage >= 90) return '#ef4444' // red
+    if (percentage >= 70) return '#f59e0b' // amber
+    return '#10b981' // emerald
+}
 </script>
 
 <style scoped>

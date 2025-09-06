@@ -3,10 +3,10 @@
         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <UIcon name="i-heroicons-user-group" />
-            {{ t('supervisors') }} ({{ getSessionSupervisors(session.id).length }})
+            {{ t('supervisors') }} ({{ getSessionSupervisors().length }})
         </h4>
-        <div v-if="getSessionSupervisors(session.id).length > 0" class="space-y-2">
-            <div v-for="supervisor in getSessionSupervisors(session.id)" :key="supervisor.id"
+        <div v-if="getSessionSupervisors().length > 0" class="space-y-2">
+            <div v-for="supervisor in getSessionSupervisors()" :key="supervisor.id"
                 class="supervisor-item">
                 <div class="supervisor-avatar">
                     {{ getInitials(supervisor.name) }}
@@ -24,18 +24,72 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
+import { useSelectedSystemStore } from '#imports'
+import { Supervisor } from '~/model/Supervisor'
 
 interface Props {
     session: any
-    getSessionSupervisors: (sessionId: number) => any[]
-    getInitials: (name: string) => string
 }
 
 const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+const selectedSystemStore = useSelectedSystemStore()
+
+const supervisors = ref<Supervisor[]>([])
+
+const loadSupervisors = () => {
+    if (!selectedSystemStore.selectedSystem?.db) {
+        return
+    }
+
+    try {
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('supervisors')
+        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_supervisors')
+
+        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${supervisorsTable} ORDER BY supervisor_id`)
+        if (supervisorsQuery.success) {
+            const supervisorsData = supervisorsQuery.results.map((row: any) => new Supervisor(
+                row.supervisor_id,
+                row.name,
+                row.email,
+                row.personal_number,
+                row.phone,
+                row.address,
+                row.age
+            ))
+            supervisors.value = supervisorsData
+        }
+
+        // Load sessions-supervisors relationships
+        const sessionsSupervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsSupervisorsTable}`)
+        if (sessionsSupervisorsQuery.success) {
+            sessionsSupervisorsQuery.results.forEach((row: any) => {
+                const supervisor = supervisors.value.find(s => s.id === row.supervisor_id)
+                if (supervisor) {
+                    supervisor.sessions.push(row.session_id)
+                }
+            })
+        }
+    } catch (error) {
+        console.error('Error loading supervisors:', error)
+    }
+}
+
+const getSessionSupervisors = (): Supervisor[] => {
+    return supervisors.value.filter(s => s.sessions.includes(props.session.id))
+}
+
+const getInitials = (name: string): string => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase()
+}
+
+onMounted(() => {
+    loadSupervisors()
+})
 </script>
 
 <style scoped>

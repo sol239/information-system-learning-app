@@ -11,9 +11,14 @@ import { useHighlightStore } from '#imports'
 
 interface Props {
     session: any
-    formatDateRange: (fromDate: Date, toDate: Date) => string
 }
 
 const props = defineProps<Props>()
 const highlightStore = useHighlightStore()
+
+const formatDateRange = (fromDate: Date, toDate: Date): string => {
+    const from = fromDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' })
+    const to = toDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })
+    return `${from} - ${to}`
+}
 </script>

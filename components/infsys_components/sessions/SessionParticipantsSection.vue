@@ -6,7 +6,7 @@
             {{ t('participants') }} ({{ session.participants.length }})
         </h4>
         <div v-if="session.participants.length > 0" class="space-y-2">
-            <div v-for="participant in getDisplayedParticipants(session)" :key="participant.id"
+            <div v-for="participant in getDisplayedParticipants()" :key="participant.id"
                 class="participant-item">
                 <div class="participant-avatar">
                     {{ getInitials(participant.name) }}
@@ -16,14 +16,14 @@
                     <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
                 </div>
             </div>
-            <div v-if="session.participants.length > 3 && !isParticipantsExpanded(session.id)"
+            <div v-if="session.participants.length > 3 && !isParticipantsExpanded()"
                 class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
-                @click="toggleParticipantsExpanded(session.id)">
+                @click="toggleParticipantsExpanded()">
                 + {{ session.participants.length - 3 }} {{ t('more_participants') }}
             </div>
-            <div v-if="session.participants.length > 3 && isParticipantsExpanded(session.id)"
+            <div v-if="session.participants.length > 3 && isParticipantsExpanded()"
                 class="text-xs text-gray-500 cursor-pointer hover:text-gray-700"
-                @click="toggleParticipantsExpanded(session.id)">
+                @click="toggleParticipantsExpanded()">
                 {{ t('show_less') }}
             </div>
         </div>
@@ -34,20 +34,42 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
 
 interface Props {
     session: any
-    getDisplayedParticipants: (session: any) => any[]
-    isParticipantsExpanded: (sessionId: number) => boolean
-    toggleParticipantsExpanded: (sessionId: number) => void
-    getInitials: (name: string) => string
 }
 
 const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+
+const expandedParticipants = ref<Set<number>>(new Set())
+
+const getDisplayedParticipants = (): any[] => {
+    if (isParticipantsExpanded()) {
+        return props.session.participants
+    }
+    return props.session.participants.slice(0, 3)
+}
+
+const isParticipantsExpanded = (): boolean => {
+    return expandedParticipants.value.has(props.session.id)
+}
+
+const toggleParticipantsExpanded = () => {
+    if (expandedParticipants.value.has(props.session.id)) {
+        expandedParticipants.value.delete(props.session.id)
+    } else {
+        expandedParticipants.value.add(props.session.id)
+    }
+}
+
+const getInitials = (name: string): string => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase()
+}
 </script>
 
 <style scoped>

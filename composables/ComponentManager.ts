@@ -180,6 +180,7 @@ navigateTo({
       additionals: {}
     });
 
+    /*
     const participantsCapacityCountComponent = new Component({
       id: "participants-capacity-count",
       name: "Participants Capacity Count",
@@ -198,6 +199,8 @@ navigateTo({
       },
       additionals: {}
     });
+    */
+    
 
     // Store the instances into the store
     componentCodeStore.updateDefaultComponent(statsMealsComponent);
@@ -205,7 +208,7 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(statsSessionsComponent);
     componentCodeStore.updateDefaultComponent(statsSupervisorsComponent);
     componentCodeStore.updateDefaultComponent(participantsCapacityCountComponentAll);
-    componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
+    //componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
 
     // Reset
     componentCodeStore.resetComponent("stats-meals");
