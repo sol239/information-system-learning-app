@@ -115,10 +115,49 @@ async function handleHelperClick() {
     console.log(ComponentHandler.isInErrorComponents("stats-meals"));
 }
 
-async function refreshComponents() {
+// Core refresh methods without toasts
+async function refreshComponentsCore() {
     console.log("Refreshing components...");
+    componentCodeStore.resetAllComponentCodes();
+}
+
+async function refreshTasksCore() {
+    selectedTaskStore.resetTasks()
+    scoreStore.resetScore()
+    errorComponentStore.clearErrorComponents()
+    ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
+
+    for (let j = 0; j < informationSystemStore.systems.length; j++) {
+        const system = informationSystemStore.systems[j];
+        for (let i = 0; i < system.tasks.length; i++) {
+            system.tasks[i].completed = false;
+            system.tasks[i].componentsRepaired = false;
+        }
+    }
+}
+
+async function refreshDatabaseCore() {
+    console.log("Refreshing database...");
+    const systems: InformationSystem[] = FileHandler.getInformationSystems();
+
+    for (const system of systems) {
+        if (system.id === selectedSystemStore.selectedId) {
+            if (selectedSystemStore.selectedSystem) {
+                selectedSystemStore.selectedSystem.tables = system.tables;
+            }
+            break;
+        }
+    }
+
+    if (selectedSystemStore.selectedSystem) {
+        await selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData)
+    }
+}
+
+// Wrapper methods with toasts
+async function refreshComponents() {
     try {
-        componentCodeStore.resetAllComponentCodes();
+        await refreshComponentsCore();
         toast.add({
             title: t('component_refresh_success') || 'Component refresh successful',
             color: 'primary',
@@ -135,19 +174,7 @@ async function refreshComponents() {
 
 async function refreshTasks() {
     try {
-        selectedTaskStore.resetTasks()
-        scoreStore.resetScore()
-        errorComponentStore.clearErrorComponents()
-        ComponentHandler.getComponentMap(selectedTaskStore.currentRound)
-
-        for (let j = 0; j < informationSystemStore.systems.length; j++) {
-            const system = informationSystemStore.systems[j];
-            for (let i = 0; i < system.tasks.length; i++) {
-                system.tasks[i].completed = false;
-                system.tasks[i].componentsRepaired = false;
-            }
-        }
-
+        await refreshTasksCore();
         toast.add({
             title: t('refresh_tasks_success') || 'Tasks refreshed successfully',
             color: 'primary',
@@ -164,35 +191,12 @@ async function refreshTasks() {
 
 async function refreshDatabase() {
     try {
-        // This could involve reloading the current database state, resetting states, etc.
-        console.log("Refreshing database...");
-        const systems: InformationSystem[] = FileHandler.getInformationSystems();
-        console.log(selectedSystemStore.selectedId);
-        console.log(systems);
-
-        // from systems find system with current id as selectedSystemId and use its table
-
-        for (const system of systems) {
-            console.log("SYSTEM ID:", system.id);
-            console.log("SELECTED ID:", selectedSystemStore.selectedId);
-            if (system.id === selectedSystemStore.selectedId) {
-                if (selectedSystemStore.selectedSystem) {
-                    selectedSystemStore.selectedSystem.tables = system.tables;
-                }
-                console.log("UPDATED");
-                break;
-            }
-        }
-
-        if (selectedSystemStore.selectedSystem) {
-            await selectedSystemStore.selectedSystem.db.init(selectedSystemStore.selectedSystem.configData)
-            toast.add({
-                title: t('refresh_database_success') || 'Database refreshed successfully',
-                color: 'primary',
-                icon: 'i-lucide-check-circle'
-            })
-        }
-
+        await refreshDatabaseCore();
+        toast.add({
+            title: t('refresh_database_success') || 'Database refreshed successfully',
+            color: 'primary',
+            icon: 'i-lucide-check-circle'
+        })
     } catch {
         toast.add({
             title: t('refresh_database_error') || 'Database refresh error',
@@ -202,10 +206,19 @@ async function refreshDatabase() {
     }
 }
 
+async function refreshAll() {
+    await refreshComponents()
+    await refreshDatabase()
+    await refreshTasks()
+}
+
 async function leaveSystem() {
     // Navigate back to systems list
-    await navigateTo('/system')
-    exitPopoverOpen.value = false
+    await navigateTo('/system');
+    await refreshComponentsCore();
+    await refreshDatabaseCore();
+    await refreshTasksCore();
+    exitPopoverOpen.value = false;
 }
 
 async function leaveAndSave() {
