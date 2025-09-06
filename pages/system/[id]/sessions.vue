@@ -51,6 +51,13 @@
                                         TO-DO
                                     </UButton>
                                 </div>
+                                <div>
+                                    <UButton size="sm" color="sky" variant="solid" @click="editSession(session)"
+                                        class="flex-1" :id="'sessions-edit-' + session.id">
+                                        <UIcon name="i-heroicons-pencil" class="w-4 h-4 mr-1" />
+                                        {{ t('edit') }}
+                                    </UButton>
+                                </div>
                                 <SessionDeleteButton :sessionId="session.id" />
                             </div>
                         </div>
@@ -69,10 +76,11 @@
             </div>
         </div>
 
-        <!-- Session Detail Modal 
-        <SessionDetailModal v-model="showDetailModal" :session="selectedSession"
-            :supervisors="getSessionSupervisors(selectedSession?.id || 0)" @manage="manageSession" />
-            -->
+        <!-- Edit Session Modal -->
+        <EditSessionModal
+            :session-id="selectedSessionId || 0"
+            v-model="editModalOpen"
+        />
     </div>
 </template>
 
@@ -93,6 +101,7 @@ import SessionParticipantsSection from '~/components/infsys_components/sessions/
 import SessionSupervisorsSection from '~/components/infsys_components/sessions/SessionSupervisorsSection.vue'
 import SessionDeleteButton from '~/components/infsys_components/sessions/SessionDeleteButton.vue'
 import AddSessionButton from '~/components/infsys_components/sessions/AddSessionButton.vue'
+import EditSessionModal from '~/components/infsys_components/sessions/EditSessionModal.vue'
 import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
@@ -135,6 +144,8 @@ const supervisors = computed(() => selectedSystemStore.supervisors)
 const showDetailModal = ref(false)
 const selectedSession = ref<Session | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
+const selectedSessionId = ref<number | null>(null)
+const editModalOpen = ref(false)
 
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
@@ -209,6 +220,14 @@ const viewSessionDetails = (session: Session) => {
 const manageSession = (session: Session) => {
     // Implementation for managing session
     console.log('Managing session:', session.id)
+}
+
+const editSession = (session: Session) => {
+    console.log('Edit session clicked:', session)
+    console.log('Available sessions:', selectedSystemStore.sessions)
+    selectedSessionId.value = session.id
+    editModalOpen.value = true
+    console.log('Modal should open now, selectedSessionId:', selectedSessionId.value)
 }
 
 const getDisplayedParticipants = (session: Session): Participant[] => {
