@@ -6,7 +6,7 @@
 
             <!-- Sessions Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="session in sessions" :key="session.id" class="session-card">
+                <div v-for="session in sessions" :key="session.id" class="session-card" v-provide="{ session }">
 
                     <!-- Session Header -->
                     <div class="session-header">
@@ -15,23 +15,23 @@
                             <h3 class="text-xl font-semibold text-gray-900">
                                 {{ t('session') }} {{ session.id }}
                             </h3>
-                            <SessionStatusBadge :session="session" />
+                            <SessionStatusBadge :sessionId="session.id" />
                         </div>
 
                         <!-- Date Range + Day Count Badge -->
                         <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                            <SessionDateRange :session="session" />
-                            <SessionDayCountBadge :session="session" />
+                            <SessionDateRange :sessionId="session.id" />
+                            <SessionDayCountBadge :sessionId="session.id" />
                         </div>
 
                         <!-- Capacity Progress -->
-                        <SessionCapacitySection :session="session" />
+                        <SessionCapacitySection :sessionId="session.id" />
 
                         <!-- Participants Section -->
-                        <SessionParticipantsSection :session="session" />
+                        <SessionParticipantsSection :sessionId="session.id" />
 
                         <!-- Supervisors Section -->
-                        <SessionSupervisorsSection :session="session" />
+                        <SessionSupervisorsSection :sessionId="session.id" />
 
                         <!-- Session Actions -->
                         <div class="session-actions mt-6 pt-4 border-t border-gray-200">
@@ -124,91 +124,14 @@ const localItems = ref([
     }
 ])
 // Data from database
-const sessions = ref<Session[]>([])
-const supervisors = ref<Supervisor[]>([])
+const sessions = computed(() => selectedSystemStore.sessions)
+const supervisors = computed(() => selectedSystemStore.supervisors)
 const showDetailModal = ref(false)
 const selectedSession = ref<Session | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
 
 // Load data from database
-const loadSessionsFromDatabase = () => {
-    if (!selectedSystemStore.selectedSystem?.db) {
-        console.error('Database not available')
-        return
-    }
-
-    try {
-        // Load sessions (turnusy)
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-        const supervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('supervisors')
-        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_supervisors')
-
-        const sessionsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsTable} ORDER BY session_id`)
-        if (sessionsQuery.success) {
-            const sessionsData = sessionsQuery.results.map((row: any) => {
-                // Load participants for this session
-                const participantsQuery = selectedSystemStore.selectedSystem.db.query(
-                    `SELECT p.* FROM ${participantsTable} p
-                     JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
-                     WHERE sp.session_id = ?`,
-                    [row.session_id]
-                )
-
-                const participants = participantsQuery?.success ?
-                    participantsQuery.results.map((p: any) => new Participant(
-                        p.participant_id,
-                        p.name,
-                        p.email,
-                        p.personal_number,
-                        p.phone,
-                        p.address,
-                        p.age
-                    )) : []
-
-                return new Session(
-                    row.session_id,
-                    new Date(row.from_date),
-                    new Date(row.to_date),
-                    row.capacity,
-                    participants
-                )
-            })
-
-            sessions.value = sessionsData
-        }
-
-        // Load supervisors (vedoucí)
-        const supervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${supervisorsTable} ORDER BY supervisor_id`)
-        if (supervisorsQuery.success) {
-            const supervisorsData = supervisorsQuery.results.map((row: any) => new Supervisor(
-                row.supervisor_id,
-                row.name,
-                row.email,
-                row.personal_number,
-                row.phone,
-                row.address,
-                row.age
-            ))
-            supervisors.value = supervisorsData
-        }
-
-        // Load sessions-supervisors relationships
-        const sessionsSupervisorsQuery = selectedSystemStore.selectedSystem.db.query(`SELECT * FROM ${sessionsSupervisorsTable}`)
-        if (sessionsSupervisorsQuery.success) {
-            sessionsSupervisorsQuery.results.forEach((row: any) => {
-                const supervisor = supervisors.value.find(s => s.id === row.supervisor_id)
-                if (supervisor) {
-                    supervisor.sessions.push(row.session_id)
-                }
-            })
-        }
-
-    } catch (error) {
-        console.error('Error loading data from database:', error)
-    }
-}
+// Data is loaded in the store
 
 // Helper functions
 const getCapacityPercentage = (session: Session): number => {
@@ -297,7 +220,7 @@ function getDayCount(session: Session): number {
 }
 
 onMounted(() => {
-    loadSessionsFromDatabase()
+    // Data is loaded in the store
 })
 </script>
 

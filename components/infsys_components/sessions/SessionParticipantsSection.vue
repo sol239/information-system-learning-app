@@ -1,5 +1,5 @@
 <template>
-    <div class="participants-section mb-6 highlightable" :id="'sessions-participants-' + session.id"
+    <div v-if="session" class="participants-section mb-6 highlightable" :id="'sessions-participants-' + session.id"
         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-participants-' + session.id, $event)">
         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <UIcon name="i-heroicons-users" />
@@ -34,36 +34,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
+import { useSelectedSystemStore } from '#imports'
 
 interface Props {
-    session: any
+    sessionId: number
 }
 
 const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+const selectedSystemStore = useSelectedSystemStore()
 
+const session = computed(() => selectedSystemStore.sessions.find(s => s.id === props.sessionId))
 const expandedParticipants = ref<Set<number>>(new Set())
 
 const getDisplayedParticipants = (): any[] => {
+    if (!session.value) return []
     if (isParticipantsExpanded()) {
-        return props.session.participants
+        return session.value.participants
     }
-    return props.session.participants.slice(0, 3)
+    return session.value.participants.slice(0, 3)
 }
 
 const isParticipantsExpanded = (): boolean => {
-    return expandedParticipants.value.has(props.session.id)
+    return expandedParticipants.value.has(props.sessionId)
 }
 
 const toggleParticipantsExpanded = () => {
-    if (expandedParticipants.value.has(props.session.id)) {
-        expandedParticipants.value.delete(props.session.id)
+    if (expandedParticipants.value.has(props.sessionId)) {
+        expandedParticipants.value.delete(props.sessionId)
     } else {
-        expandedParticipants.value.add(props.session.id)
+        expandedParticipants.value.add(props.sessionId)
     }
 }
 

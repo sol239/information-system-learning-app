@@ -1,5 +1,5 @@
 <template>
-    <div class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
+    <div v-if="session" class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + session.id"
         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + session.id, $event)">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
@@ -20,22 +20,29 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
+import { useSelectedSystemStore } from '#imports'
 
 interface Props {
-    session: any
+    sessionId: number
 }
 
 const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+const selectedSystemStore = useSelectedSystemStore()
+
+const session = computed(() => selectedSystemStore.sessions.find(s => s.id === props.sessionId))
 
 const getCapacityPercentage = (): number => {
-    return Math.round((props.session.participants.length / props.session.capacity) * 100)
+    if (!session.value) return 0
+    return Math.round((session.value.participants.length / session.value.capacity) * 100)
 }
 
 const getCapacityColor = (): string => {
+    if (!session.value) return '#10b981'
     const percentage = getCapacityPercentage()
     if (percentage >= 90) return '#ef4444' // red
     if (percentage >= 70) return '#f59e0b' // amber
