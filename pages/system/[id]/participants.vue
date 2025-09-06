@@ -17,7 +17,8 @@
                     <!-- Session Capacity Count -->
                     <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
-                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{ selectedSessionInfo.totalCapacity}}
+                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{
+                        selectedSessionInfo.totalCapacity}}
                     </span>
 
                     <!-- Session Capacity Percentage -->
@@ -572,21 +573,47 @@ const selectedSessionInfo = computed(() => {
             isFull: currentCount >= totalCapacity,
             isNearFull: fillPercentage >= 80
         }
+    } else {
+        const sessionId = Number(value.value)
+
+        const totalCapacityQuery: string = `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ${sessionId}`;
+        const capacityResult = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery)?.results || [];
+        const totalCapacity = capacityResult[0]?.count || 0;
+
+        const currentCountQuery: string = `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
+            WHERE sp.session_id = ${sessionId}
+        `;
+
+        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery)?.results || [];
+        const currentCount = currentCountResult[0]?.count || 0;
+
+        console.log("Session Capacity:", totalCapacity)
+        console.log("Session Current:", currentCount)
+
+        const fillPercentageJs: string = `Math.round(currentCount / totalCapacity * 100)`;
+
+        let fillPercentage: number = 0;
+
+        try {
+            fillPercentage = eval(fillPercentageJs);
+            console.log("Session Fill percentage:", fillPercentage);
+        } catch (error) {
+            console.error("Error evaluating fillPercentageJs:", error);
+            fillPercentage = 0;
+        }
+
+        return {
+            currentCount,
+            totalCapacity,
+            fillPercentage,
+            isFull: currentCount >= totalCapacity,
+            isNearFull: fillPercentage >= 80
+        }
     }
 
-    const session = sessions.value.find(s => s.id === Number(value.value))
-    if (!session) return null
-
-    const currentCount = participants.value.filter(p => p.sessions.includes(session.id)).length
-    const fillPercentage = (currentCount / session.capacity) * 100
-
-    return {
-        currentCount,
-        totalCapacity: session.capacity,
-        fillPercentage,
-        isFull: currentCount >= session.capacity,
-        isNearFull: fillPercentage >= 80
-    }
 })
 
 // Reactive database monitoring using computed hash
