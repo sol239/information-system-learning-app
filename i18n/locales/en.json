@@ -181,5 +181,8 @@
     "changes_applied_successfully": "Changes applied successfully",
     "error_applying_changes": "Error applying changes",
     "session_deleted_success": "Session deleted successfully",
-    "session_deleted_error": "Error deleting session"
+    "session_deleted_error": "Error deleting session",
+    "add_session": "Add Session",
+    "from_date": "From Date",
+    "to_date": "To Date"
 }

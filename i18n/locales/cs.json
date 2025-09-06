@@ -187,5 +187,8 @@
     "changes_applied_successfully": "Změny úspěšně aplikovány",
     "error_applying_changes": "Chyba při aplikování změn",
     "session_deleted_success": "Turnus úspěšně smazán",
-    "session_deleted_error": "Chyba při mazání turnusu"
+    "session_deleted_error": "Chyba při mazání turnusu",
+    "add_session": "Přidat turnus",
+    "from_date": "Od data",
+    "to_date": "Do data"
 }

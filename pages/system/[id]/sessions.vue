@@ -3,6 +3,9 @@
         <LocalNavbar />
 
         <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-end mb-6">
+                <AddSessionButton />
+            </div>
 
             <!-- Sessions Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -89,6 +92,7 @@ import SessionCapacitySection from '~/components/infsys_components/sessions/Sess
 import SessionParticipantsSection from '~/components/infsys_components/sessions/SessionParticipantsSection.vue'
 import SessionSupervisorsSection from '~/components/infsys_components/sessions/SessionSupervisorsSection.vue'
 import SessionDeleteButton from '~/components/infsys_components/sessions/SessionDeleteButton.vue'
+import AddSessionButton from '~/components/infsys_components/sessions/AddSessionButton.vue'
 import LocalNavbar from '~/components/LocalNavbar.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
@@ -131,6 +135,8 @@ const supervisors = computed(() => selectedSystemStore.supervisors)
 const showDetailModal = ref(false)
 const selectedSession = ref<Session | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
+
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
 // Watch for database availability and load sessions
 watch(() => selectedSystemStore.selectedSystem?.db, (newDb) => {
