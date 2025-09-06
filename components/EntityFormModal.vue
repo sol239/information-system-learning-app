@@ -8,19 +8,28 @@ import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
 import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
 import { useComponentCodeStore } from '#imports'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 
 // TODO: Restructure
 
+/* Stores */
+const informationSystemStore = useInformationSystemStore()
+const selectedSystemStore = useSelectedSystemStore()
 
 /* Props */
 const props = defineProps<{
   open: boolean
-  selectedSystem: InformationSystem | null
   selectedTableName: string
   columnNames: string[]
   formState: Record<string, any>
   columnValuesMap: Record<string, string[]>
 }>()
+
+/* Computed */
+const selectedSystem = computed(() => {
+  return informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
+})
 
 /* Emits */
 const emit = defineEmits<{
@@ -88,7 +97,7 @@ async function onSubmit() {
       const sql = `INSERT INTO ${props.selectedTableName} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
             console.log("SQL Query: ", sql)
 
-      props.selectedSystem?.db.exec(sql)
+      selectedSystem.value?.db.exec(sql)
       toast.add({ title: t('add_toast_success'), color: 'primary' })
     } else {
       // Update the row if id is present
@@ -99,7 +108,7 @@ async function onSubmit() {
 
       const sql = `UPDATE ${props.selectedTableName} SET ${setClause} WHERE id = '${id}'`
       console.log("SQL Query: ", sql)
-      props.selectedSystem?.db.exec(sql)
+      selectedSystem.value?.db.exec(sql)
       toast.add({ title: t('edit_entity_toast_success'), color: 'primary' })
     }
 

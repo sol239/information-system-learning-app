@@ -10,10 +10,14 @@ import { usePropertyStore } from '#imports'
 import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
+import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
+import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 
 /* 2. Stores */
 const propertyStore = usePropertyStore()
 const highlightStore = useHighlightStore()
+const informationSystemStore = useInformationSystemStore()
+const selectedSystemStore = useSelectedSystemStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -27,7 +31,6 @@ const UDropdownMenu = resolveComponent('UDropdownMenu')
 
 /* 5. Props */
 const props = defineProps<{
-    system: InformationSystem | null
     tableNames: string[]
     selectedTableName: string
     selectedTableData: any[]
@@ -42,6 +45,11 @@ const props = defineProps<{
     onEdit?: (row: any) => void
     onDelete?: (row: any) => void
 }>()
+
+/* 6. Computed */
+const system = computed(() => {
+    return informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
+})
 
 /* 6. Emits */
 const emit = defineEmits<{

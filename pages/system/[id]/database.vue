@@ -180,9 +180,9 @@ async function fetchColumnValues(tableName: string, columns: string[]) {
             valueField = 'název'
         }
         try {
-            const res = system.value.db.query(`SELECT DISTINCT "${valueField}" FROM "${sourceTable}"`)
+            const res = system.value?.db.query(`SELECT DISTINCT "${valueField}" FROM "${sourceTable}"`)
             let values: string[] = []
-            res.results.forEach(row => {
+            res?.results?.forEach(row => {
                 const val = row[valueField]
                 if (Array.isArray(val)) {
                     values.push(...val)
@@ -325,7 +325,6 @@ onMounted(() => {
         <LocalNavbar/>
         
         <TableView
-            :system="system"
             :table-names="tableNames"
             :selected-table-name="selectedTableName"
             :selected-table-data="selectedTableData"
@@ -344,7 +343,6 @@ onMounted(() => {
 
         <EntityFormModal
             :open="editModalOpen"
-            :selectedSystem="system"
             :selectedTableName="selectedTableName"
             :columnNames="columnNames"
             :formState="formState"
