@@ -18,7 +18,7 @@
                     <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
                         {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{
-                        selectedSessionInfo.totalCapacity}}
+                            selectedSessionInfo.totalCapacity }}
                     </span>
 
                     <!-- Session Capacity Percentage -->
@@ -67,8 +67,7 @@
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
                         <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
-                            size="sm" @click="resetFilter" icon="i-lucide-rotate-ccw"
-                            @click.stop="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-reset', $event)">
+                            size="sm" @click="highlightStore.isHighlightMode ? highlightStore.highlightHandler.selectElement('participants-filter-reset', $event) : resetFilter()" icon="i-lucide-rotate-ccw">
                         </UButton>
                         <div class="highlightable" id="participants-filter-input"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
@@ -170,9 +169,7 @@
 
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="participant in paginatedParticipants" :key="participant.id"
-                    class="participant-card highlightable" :id="'participants-card-' + participant.id"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
+                <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card">
                     <!-- Participant Header -->
                     <div class="participant-header">
                         <div class="flex items-center justify-between mb-4">
@@ -215,10 +212,13 @@
                             <span>{{ participant.address }}</span>
                         </div>
                         <!-- Allergies Badge -->
-                        <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
-                            class="mt-2">
-                            {{ t("allergens") }}: {{ participant.allergens.length }}
-                        </UBadge>
+                        <div class="highlightable" :id="'participants-allergens-badge-' + participant.id"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-allergens-badge-' + participant.id, $event)">
+                            <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
+                                class="mt-2">
+                                {{ t("allergens") }}: {{ participant.allergens.length }}
+                            </UBadge>
+                        </div>
                     </div>
 
                     <!-- Participant Actions -->
@@ -232,9 +232,14 @@
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
-                            <UButton size="sm" color="red" variant="outline" @click="removeParticipant(participant)">
-                                {{ t('delete') }}
-                            </UButton>
+                            <div class="highlightable" :id="'participants-delete-button-' + participant.id" @click="highlightStore.isHighlightMode
+                                ? highlightStore.highlightHandler.selectElement('participants-delete-button-' + participant.id, $event)
+                                : removeParticipant(participant)">
+                                <UButton size="sm" color="red" variant="outline">
+                                    {{ t('delete') }}
+                                </UButton>
+                            </div>
+
                         </div>
                     </div>
                 </div>
