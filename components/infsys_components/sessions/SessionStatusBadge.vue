@@ -57,6 +57,8 @@ const loadStatusData = () => {
 
 const getCapacityPercentage = (): number => {
     if (!statusData.value) return 0
+    // Handle division by zero case
+    if (statusData.value.capacity === 0) return 0
     return Math.round((statusData.value.participantCount / statusData.value.capacity) * 100)
 }
 

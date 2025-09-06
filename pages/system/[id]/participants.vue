@@ -564,7 +564,12 @@ const selectedSessionInfo = computed(() => {
         let fillPercentage: number = 0;
 
         try {
-            fillPercentage = eval(fillPercentageJs);
+            // Handle division by zero case
+            if (totalCapacity === 0) {
+                fillPercentage = 0;
+            } else {
+                fillPercentage = eval(fillPercentageJs);
+            }
             console.log("Fill percentage:", fillPercentage);
         } catch (error) {
             console.error("Error evaluating fillPercentageJs:", error);
@@ -603,7 +608,12 @@ const selectedSessionInfo = computed(() => {
         let fillPercentage: number = 0;
 
         try {
-            fillPercentage = eval(fillPercentageJs);
+            // Handle division by zero case
+            if (totalCapacity === 0) {
+                fillPercentage = 0;
+            } else {
+                fillPercentage = eval(fillPercentageJs);
+            }
             console.log("Session Fill percentage:", fillPercentage);
         } catch (error) {
             console.error("Error evaluating fillPercentageJs:", error);

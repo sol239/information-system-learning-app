@@ -137,6 +137,8 @@ const expandedParticipants = ref<Set<number>>(new Set())
 
 // Helper functions
 const getCapacityPercentage = (session: Session): number => {
+    // Handle division by zero case
+    if (session.capacity === 0) return 0
     return Math.round((session.participants.length / session.capacity) * 100)
 }
 
