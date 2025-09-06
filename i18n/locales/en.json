@@ -185,5 +185,11 @@
     "add_session": "Add Session",
     "from_date": "From Date",
     "to_date": "To Date",
-    "table_count": "Table Count"
+    "table_count": "Table Count",
+    "edit_session": "Edit Session",
+    "update": "Update",
+    "session_added_success": "Session added successfully",
+    "error_adding_session": "Error adding session",
+    "session_updated_success": "Session updated successfully",
+    "error_updating_session": "Error updating session"
 }

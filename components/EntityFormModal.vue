@@ -8,13 +8,11 @@ import '~/assets/css/highlight.css'
 import { useHighlightStore } from '#imports'
 import { highlight } from '@nuxt/ui/runtime/utils/fuse.js'
 import { useComponentCodeStore } from '#imports'
-import { useInformationSystemStore } from '~/stores/useInformationSystemStore'
 import { useSelectedSystemStore } from '~/stores/useSelectedSystemStore'
 
 // TODO: Restructure
 
 /* Stores */
-const informationSystemStore = useInformationSystemStore()
 const selectedSystemStore = useSelectedSystemStore()
 
 /* Props */
@@ -25,11 +23,6 @@ const props = defineProps<{
   formState: Record<string, any>
   columnValuesMap: Record<string, string[]>
 }>()
-
-/* Computed */
-const selectedSystem = computed(() => {
-  return informationSystemStore.systems.find(s => s.id === selectedSystemStore.selectedId) || null
-})
 
 /* Emits */
 const emit = defineEmits<{
@@ -45,6 +38,7 @@ const propertyStore = usePropertyStore()
 const highlightStore = useHighlightStore()
 const componentCodeStore = useComponentCodeStore()
 /* Local state */
+const isSubmitting = ref(false)
 
 /* Computed */
 const modalOpen = computed({
@@ -74,18 +68,25 @@ function isArrayType(type: string) {
 }
 
 async function onSubmit() {
+  if (!selectedSystemStore.selectedSystem?.db) {
+    console.error('Database not available')
+    return
+  }
+
+  isSubmitting.value = true
   console.log('Form submitted with data:', localFormState.value)
 
-  // Transform array fields to JSON string before saving
-  props.columnNames.forEach(col => {
-    if (isArrayType(propertyStore.propertiesNameTypeMap[col]) && Array.isArray(localFormState.value[col])) {
-      localFormState.value[col] = JSON.stringify(localFormState.value[col])
-    }
-  })
-
-  const id = localFormState.value['id']
-
   try {
+    // Transform array fields to JSON string before saving
+    props.columnNames.forEach(col => {
+      if (isArrayType(propertyStore.propertiesNameTypeMap[col]) && Array.isArray(localFormState.value[col])) {
+        localFormState.value[col] = JSON.stringify(localFormState.value[col])
+      }
+    })
+
+    const id = localFormState.value['id']
+    let query = ''
+
     if (!id) {
       // Insert new row (skip 'id' column)
       const insertCols = props.columnNames.filter(col => col !== 'id')
@@ -94,11 +95,7 @@ async function onSubmit() {
           ? `'${localFormState.value[col].replace(/'/g, "''")}'`
           : localFormState.value[col]
       )
-      const sql = `INSERT INTO ${props.selectedTableName} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
-            console.log("SQL Query: ", sql)
-
-      selectedSystem.value?.db.exec(sql)
-      toast.add({ title: t('add_toast_success'), color: 'primary' })
+      query = `INSERT INTO ${selectedSystemStore.selectedSystem.db.getTableName(props.selectedTableName)} (${insertCols.join(', ')}) VALUES (${insertVals.join(', ')})`
     } else {
       // Update the row if id is present
       const setClause = props.columnNames
@@ -106,21 +103,32 @@ async function onSubmit() {
         .map(col => `${col} = ${typeof localFormState.value[col] === 'string' ? `'${localFormState.value[col].replace(/'/g, "''")}'` : localFormState.value[col]}`)
         .join(', ')
 
-      const sql = `UPDATE ${props.selectedTableName} SET ${setClause} WHERE id = '${id}'`
-      console.log("SQL Query: ", sql)
-      selectedSystem.value?.db.exec(sql)
-      toast.add({ title: t('edit_entity_toast_success'), color: 'primary' })
+      query = `UPDATE ${selectedSystemStore.selectedSystem.db.getTableName(props.selectedTableName)} SET ${setClause} WHERE id = '${id}'`
     }
 
-    modalOpen.value = false
-    emit('entitySaved')
+    console.log("SQL Query: ", query)
+    const result = selectedSystemStore.selectedSystem.db.query(query)
+
+    if (result.success) {
+      toast.add({
+        title: id ? t('edit_entity_toast_success') : t('add_toast_success'),
+        color: 'primary',
+        icon: 'i-heroicons-check'
+      })
+      modalOpen.value = false
+      emit('entitySaved')
+    } else {
+      throw new Error('Database operation failed')
+    }
   } catch (error) {
     console.error('Error saving entity:', error)
     toast.add({
       title: t('save_entity_error') || 'Error saving entity',
       color: 'red',
-      icon: 'i-lucide-alert-triangle'
+      icon: 'i-heroicons-exclamation-triangle'
     })
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>
@@ -154,8 +162,8 @@ async function onSubmit() {
             </div>
           </div>
           <div class="flex justify-end gap-2 mt-6">
-            <UButton type="submit" color="primary" :disabled="highlightStore.isHighlightMode">{{ t('save') }}</UButton>
-            <UButton variant="outline" @click="modalOpen = false" :disabled="highlightStore.isHighlightMode">{{ t('cancel') }}</UButton>
+            <UButton type="submit" color="primary" :loading="isSubmitting" :disabled="highlightStore.isHighlightMode">{{ t('save') }}</UButton>
+            <UButton variant="outline" @click="modalOpen = false" :disabled="highlightStore.isHighlightMode || isSubmitting">{{ t('cancel') }}</UButton>
           </div>
         </UForm>
       </UCard>

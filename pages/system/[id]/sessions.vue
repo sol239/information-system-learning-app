@@ -78,7 +78,7 @@
 
         <!-- Edit Session Modal -->
         <EditSessionModal
-            :session-id="selectedSessionId || 0"
+            :session="selectedSessionForEdit"
             v-model="editModalOpen"
         />
     </div>
@@ -146,6 +146,7 @@ const selectedSession = ref<Session | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
 const selectedSessionId = ref<number | null>(null)
 const editModalOpen = ref(false)
+const selectedSessionForEdit = ref<Session | null>(null)
 
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore);
 
@@ -225,9 +226,9 @@ const manageSession = (session: Session) => {
 const editSession = (session: Session) => {
     console.log('Edit session clicked:', session)
     console.log('Available sessions:', selectedSystemStore.sessions)
-    selectedSessionId.value = session.id
+    selectedSessionForEdit.value = session
     editModalOpen.value = true
-    console.log('Modal should open now, selectedSessionId:', selectedSessionId.value)
+    console.log('Modal should open now, selectedSessionForEdit:', selectedSessionForEdit.value)
 }
 
 const getDisplayedParticipants = (session: Session): Participant[] => {

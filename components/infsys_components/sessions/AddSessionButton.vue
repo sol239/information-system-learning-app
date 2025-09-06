@@ -1,13 +1,11 @@
 <template>
     <UDrawer v-model:open="addModalOpen" direction="right">
-    <div class="highlightable" :id="'sessions-add-button'">
-        <UButton color="sky" variant="outline" 
-            @click="handleButtonClick($event)" 
-            icon="i-heroicons-plus"
-            :id="'sessions-add-button'">
-            {{ t('add_session') }}
-        </UButton>
-    </div>
+        <div class="highlightable" :id="'sessions-add-button'">
+            <UButton color="sky" variant="outline" @click="handleButtonClick($event)" icon="i-heroicons-plus"
+                :id="'sessions-add-button'">
+                {{ t('add_session') }}
+            </UButton>
+        </div>
 
         <template #content>
             <UCard class="p-4 min-w-96">
@@ -15,26 +13,25 @@
                     <h3 class="text-lg font-semibold">{{ t('add_session') }}</h3>
                 </template>
 
-                <UForm :state="newSession" @submit="handleAddSession(newSession)"
-                    class="flex flex-col space-y-4">
+                <UForm :state="newSession" @submit="handleAddSession(newSession)" class="flex flex-col space-y-4">
                     <div class="highlightable" id="sessions-add-from_date"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-add-from_date', $event)">
-                        <label for="from_date"
-                            class="block text-sm font-medium text-white mb-1">{{ t('from_date') }}</label>
+                        <label for="from_date" class="block text-sm font-medium text-white mb-1">{{ t('from_date')
+                            }}</label>
                         <UInput color="sky" id="from_date" v-model="newSession.from_date" type="date"
                             :disabled="highlightStore.isHighlightMode" />
                     </div>
                     <div class="highlightable" id="sessions-add-to_date"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-add-to_date', $event)">
-                        <label for="to_date"
-                            class="block text-sm font-medium text-white mb-1">{{ t('to_date') }}</label>
+                        <label for="to_date" class="block text-sm font-medium text-white mb-1">{{ t('to_date')
+                            }}</label>
                         <UInput color="sky" id="to_date" v-model="newSession.to_date" type="date"
                             :disabled="highlightStore.isHighlightMode" />
                     </div>
                     <div class="highlightable" id="sessions-add-capacity"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-add-capacity', $event)">
-                        <label for="capacity"
-                            class="block text-sm font-medium text-white mb-1">{{ t('capacity') }}</label>
+                        <label for="capacity" class="block text-sm font-medium text-white mb-1">{{ t('capacity')
+                            }}</label>
                         <UInput color="sky" id="capacity" v-model="newSession.capacity" type="number" min="1"
                             placeholder="50" :disabled="highlightStore.isHighlightMode" />
                     </div>
