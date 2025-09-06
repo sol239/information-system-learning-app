@@ -1,12 +1,12 @@
 <template>
-    <div v-if="session" class="supervisors-section mb-6 highlightable" :id="'sessions-supervisors-' + session.id"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + session.id, $event)">
+    <div v-if="supervisorsData" class="supervisors-section mb-6 highlightable" :id="'sessions-supervisors-' + props.sessionId"
+        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-supervisors-' + props.sessionId, $event)">
         <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <UIcon name="i-heroicons-user-group" />
-            {{ t('supervisors') }} ({{ getSessionSupervisors().length }})
+            {{ t('supervisors') }} ({{ supervisorsData.length }})
         </h4>
-        <div v-if="getSessionSupervisors().length > 0" class="space-y-2">
-            <div v-for="supervisor in getSessionSupervisors()" :key="supervisor.id"
+        <div v-if="supervisorsData.length > 0" class="space-y-2">
+            <div v-for="supervisor in supervisorsData" :key="supervisor.id"
                 class="supervisor-item">
                 <div class="supervisor-avatar">
                     {{ getInitials(supervisor.name) }}
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
@@ -38,16 +38,40 @@ const { t } = useI18n()
 const highlightStore = useHighlightStore()
 const selectedSystemStore = useSelectedSystemStore()
 
-const session = computed(() => selectedSystemStore.sessions.find(s => s.id === props.sessionId))
+const supervisorsData = ref<any[] | null>(null)
 
-const getSessionSupervisors = (): any[] => {
-    if (!session.value) return []
-    return selectedSystemStore.supervisors.filter(s => s.sessions.includes(session.value!.id))
+const loadSupervisors = () => {
+    if (!selectedSystemStore.selectedSystem?.db) {
+        console.error('Database not available')
+        return
+    }
+
+    try {
+        const supervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('supervisors')
+        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_supervisors')
+
+        const query = selectedSystemStore.selectedSystem.db.query(
+            `SELECT s.* FROM ${supervisorsTable} s
+             JOIN ${sessionsSupervisorsTable} ss ON s.supervisor_id = ss.supervisor_id
+             WHERE ss.session_id = ?`,
+            [props.sessionId]
+        )
+
+        if (query.success) {
+            supervisorsData.value = query.results
+        }
+    } catch (error) {
+        console.error('Error loading supervisors:', error)
+    }
 }
 
 const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
 }
+
+onMounted(() => {
+    loadSupervisors()
+})
 </script>
 
 <style scoped>
