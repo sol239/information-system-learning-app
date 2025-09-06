@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useSelectedSystemStore } from '#imports'
 import { Session } from '~/model/Session'
 import { Participant } from '~/model/Participant'
@@ -131,6 +131,20 @@ const supervisors = computed(() => selectedSystemStore.supervisors)
 const showDetailModal = ref(false)
 const selectedSession = ref<Session | null>(null)
 const expandedParticipants = ref<Set<number>>(new Set())
+
+// Watch for database availability and load sessions
+watch(() => selectedSystemStore.selectedSystem?.db, (newDb) => {
+    if (newDb) {
+        selectedSystemStore.loadSessions()
+    }
+})
+
+// Watch for system changes and load sessions
+watch(() => selectedSystemStore.selectedSystem, (newSystem) => {
+    if (newSystem?.db) {
+        selectedSystemStore.loadSessions()
+    }
+})
 
 // Load data from database
 // Data is loaded in the store
@@ -224,7 +238,10 @@ function getDayCount(session: Session): number {
 }
 
 onMounted(() => {
-    // Data is loaded in the store
+    // Ensure sessions are loaded when page mounts
+    if (selectedSystemStore.selectedSystem?.db) {
+        selectedSystemStore.loadSessions()
+    }
 })
 </script>
 

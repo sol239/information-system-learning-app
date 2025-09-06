@@ -19,6 +19,10 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     selectedId.value = id
     // Automatically load error components when system is selected
     loadErrorComponents()
+    // Load sessions if system is already available
+    if (selectedSystem.value?.db) {
+      loadSessions()
+    }
   }
 
   function loadErrorComponents() {
@@ -36,6 +40,10 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     selectedSystem.value = system
     // Load error components when system is set
     loadErrorComponents()
+    // Load sessions when system is set
+    if (system.db) {
+      loadSessions()
+    }
   }
 
   async function initializeDb() {
