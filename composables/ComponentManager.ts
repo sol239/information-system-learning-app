@@ -257,7 +257,7 @@ navigateTo({
     font-size: 1.5rem;
   }
 ` },
-      js: { "js": `` },
+      js: { "js": `const timeDifference = end.getTime() - start.getTime(); return Math.ceil(timeDifference / (1000 * 3600 * 24)) + 1;` },
       sql: {
         "sql": `SELECT from_date, to_date FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
       },
@@ -341,7 +341,8 @@ navigateTo({
 ` },
       js: { "js": `if (capacity === 0) return 0; return Math.round((participantCount / capacity) * 100);` },
       sql: {
-        "sql": `SELECT capacity FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?; SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
+        "sql-1": `SELECT capacity FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?;`,
+        "sql-2": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
       },
       additionals: {}
     });

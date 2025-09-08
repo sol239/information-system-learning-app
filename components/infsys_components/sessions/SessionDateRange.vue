@@ -6,11 +6,8 @@
       <div v-html="renderedHtml" class="date-range-content"></div>
 
       <!-- Edit button positioned absolutely -->
-      <EditComponentModalOpenButton
-        v-if="highlightStore.isEditModeActive"
-        :componentId="componentId"
-        class="edit-button"
-      />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId"
+        class="edit-button" />
     </div>
   </div>
   <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
@@ -19,6 +16,7 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { computed, ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
 import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
@@ -27,10 +25,11 @@ import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 
 interface Props {
-    sessionId: number
+  sessionId: number
 }
 
 const props = defineProps<Props>()
+const { t } = useI18n()
 const highlightStore = useHighlightStore()
 const selectedSystemStore = useSelectedSystemStore()
 const componentCodeStore = useComponentCodeStore()
@@ -51,7 +50,20 @@ const htmlTemplate = computed(() => ComponentHandler.getComponentValue(component
 const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
 
 // Local state
-const dateRange = ref<{ fromDate: Date; toDate: Date } | null>(null)
+const dateRange = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return null
+  }
+  const queryResult = system?.db.query(sqlQuery.value, [props.sessionId])
+  if (queryResult?.success && queryResult.results.length > 0) {
+    const row = queryResult.results[0]
+    return {
+      fromDate: new Date(row.from_date),
+      toDate: new Date(row.to_date)
+    }
+  }
+  return null
+})
 
 // Computed properties
 const renderedHtml = computed(() => {
@@ -62,58 +74,32 @@ const renderedHtml = computed(() => {
     .replace('{{ dateRange }}', formattedRange)
     .replace('{{ fromDate }}', dateRange.value.fromDate.toISOString().split('T')[0])
     .replace('{{ toDate }}', dateRange.value.toDate.toISOString().split('T')[0])
-
+    .replace('{{ label }}', t('dateRange'))
   return `<style>${css.value}</style>${html}`;
 });
+
+
+const formatDateRange = (fromDate: Date, toDate: Date): string => {
+  const from = fromDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' })
+  const to = toDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })
+  return `${from} - ${to}`
+}
 
 // Watchers
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
-const loadDateRange = () => {
-    if (!selectedSystemStore.selectedSystem?.db) {
-        console.error('Database not available')
-        return
-    }
-
-    try {
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const query = selectedSystemStore.selectedSystem.db.query(
-            `SELECT from_date, to_date FROM ${sessionsTable} WHERE session_id = ?`,
-            [props.sessionId]
-        )
-
-        if (query.success && query.results.length > 0) {
-            const row = query.results[0]
-            dateRange.value = {
-                fromDate: new Date(row.from_date),
-                toDate: new Date(row.to_date)
-            }
-        }
-    } catch (error) {
-        console.error('Error loading date range:', error)
-    }
-}
-
-const formatDateRange = (fromDate: Date, toDate: Date): string => {
-    const from = fromDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' })
-    const to = toDate.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })
-    return `${from} - ${to}`
-}
-
-onMounted(() => {
-    loadDateRange()
-})
 </script>
 
 <style>
 .date-range-wrapper {
   position: relative; /* Needed for absolute positioning of the button */
   display: inline-block;
+  width: 100%;
 }
 
 .date-range-content {
   /* Optional: add padding so button doesn't overlap content */
-  padding: 0.25rem;
+  padding: 0.5rem;
 }
 
 .edit-button {
@@ -121,5 +107,9 @@ onMounted(() => {
   top: 0.25rem;   /* Adjust distance from top */
   right: 0.25rem; /* Adjust distance from right */
   z-index: 10;
+}
+
+.date-range-section {
+  margin-bottom: 1.5rem;
 }
 </style>

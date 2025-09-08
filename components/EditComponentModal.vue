@@ -214,6 +214,9 @@ function onJsInput(event: Event) {
 
 function onApplyChanges(event: MouseEvent) {
   console.log("Applying changes to: ", highlightStore.selectedComponentId)
+  console.log("DB NUMBER BEFORE INCREMENT: ", selectedSystemStore.dbNumber)
+  selectedSystemStore.incrementDbNumber()
+  console.log("DB NUMBER AFTER INCREMENT: ", selectedSystemStore.dbNumber)
 
   // Get current component
   const currentComponent = componentCodeStore.getComponentById(highlightStore.selectedComponentId ?? '')

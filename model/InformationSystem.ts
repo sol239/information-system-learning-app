@@ -19,7 +19,8 @@ export class InformationSystem {
     public description: string,
     public tables: Table[],
     public tasks: Task[] = [],
-    public configData: any
+    public configData: any,
+    public dbNumber: number = 0,
   ) {
     this.db = new DbHandler();
   }

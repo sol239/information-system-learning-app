@@ -13,6 +13,7 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
   const selectedSystem = ref<InformationSystem | null>(null)
   const sessions = ref<Session[]>([])
   const supervisors = ref<Supervisor[]>([])
+  const dbNumber = ref<number>(0)
 
   // Actions
   function select(id: number) {
@@ -23,6 +24,14 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     if (selectedSystem.value?.db) {
       loadSessions()
     }
+  }
+
+  function incrementDbNumber() {
+    dbNumber.value += 1
+  }
+
+  function getDbNumber() {
+    return dbNumber.value
   }
 
   function loadErrorComponents() {
@@ -143,7 +152,10 @@ export const useSelectedSystemStore = defineStore('selectedSystem', () => {
     loadErrorComponents,
     sessions,
     supervisors,
-    loadSessions
+    loadSessions,
+    dbNumber,
+    incrementDbNumber,
+    getDbNumber
   }
 }, {
   persist: {

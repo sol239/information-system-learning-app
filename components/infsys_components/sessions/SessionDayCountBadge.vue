@@ -6,11 +6,8 @@
       <div v-html="renderedHtml" class="badge-content"></div>
 
       <!-- Edit button positioned absolutely -->
-      <EditComponentModalOpenButton
-        v-if="highlightStore.isEditModeActive"
-        :componentId="componentId"
-        class="edit-button"
-      />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId"
+        class="edit-button" />
     </div>
   </div>
   <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
@@ -28,7 +25,7 @@ import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 
 interface Props {
-    sessionId: number
+  sessionId: number
 }
 
 const props = defineProps<Props>()
@@ -47,60 +44,48 @@ const sessionDayCountComponent = computed(() => componentCodeStore.getComponentB
 const correctSqlQuery = computed(() => sessionDayCountComponent.value?.sql?.['sql'] || '')
 const correctHtmlTemplate = computed(() => sessionDayCountComponent.value?.html?.['html'] || '')
 const correctCss = computed(() => sessionDayCountComponent.value?.css?.['css'] || '')
+const correctJs = computed(() => sessionDayCountComponent.value?.js?.['js'] || '')
 
 const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
 const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+const js = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctJs.value))
 
 // Local state
-const dayCount = ref<number | null>(null)
+const dayCount = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return 0
+  }
+  const queryResult = system?.db.query(sqlQuery.value, [props.sessionId])
+  if (queryResult?.success && queryResult.results.length > 0) {
+    const row = queryResult.results[0]
+    const start = new Date(row.from_date)
+    const end = new Date(row.to_date)
+    return dayCountFunction.value(start, end)
+  }
+  return 0
+})
 
 // Computed properties
 const renderedHtml = computed(() => {
   const html = htmlTemplate.value
-    .replace('{{ dayCount }}', String(dayCount.value || 0))
+    .replace('{{ dayCount }}', String(dayCount.value))
     .replace('{{ label }}', t('days_count'))
-
   return `<style>${css.value}</style>${html}`;
 });
+
+const dayCountFunction = computed(() => new Function('start', 'end', js.value))
 
 // Watchers
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
-const loadDayCount = () => {
-    if (!selectedSystemStore.selectedSystem?.db) {
-        console.error('Database not available')
-        return
-    }
-
-    try {
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const query = selectedSystemStore.selectedSystem.db.query(
-            `SELECT from_date, to_date FROM ${sessionsTable} WHERE session_id = ?`,
-            [props.sessionId]
-        )
-
-        if (query.success && query.results.length > 0) {
-            const row = query.results[0]
-            const start = new Date(row.from_date)
-            const end = new Date(row.to_date)
-            const diff = end.getTime() - start.getTime()
-            dayCount.value = Math.ceil(diff / (1000 * 3600 * 24)) + 1
-        }
-    } catch (error) {
-        console.error('Error loading day count:', error)
-    }
-}
-
-onMounted(() => {
-    loadDayCount()
-})
 </script>
 
 <style>
 .badge-wrapper {
   position: relative; /* Needed for absolute positioning of the button */
   display: inline-block;
+  width: 100%;
 }
 
 .badge-content {
@@ -113,5 +98,9 @@ onMounted(() => {
   top: 0.25rem;   /* Adjust distance from top */
   right: 0.25rem; /* Adjust distance from right */
   z-index: 10;
+}
+
+.badge-section {
+  margin-bottom: 1.5rem;
 }
 </style>
