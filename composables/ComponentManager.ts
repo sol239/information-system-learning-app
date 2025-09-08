@@ -317,7 +317,7 @@ navigateTo({
       <div class="capacity-bar">
         <div class="capacity-fill" style="width: {{ percentage }}%; background-color: {{ color }}"></div>
       </div>
-      <div class="text-xs text-gray-500 mt-1">{{ percentage }}% {{ occupied }}</div>
+      <div class="text-xs text-gray-500 mt-1"> {{ percentage }}% {{ occupied }}</div>
     </div>
     ` },
       css: {
@@ -339,7 +339,7 @@ navigateTo({
     border-radius: 9999px;
   }
 ` },
-      js: { "js": `` },
+      js: { "js": `if (capacity === 0) return 0; return Math.round((participantCount / capacity) * 100);` },
       sql: {
         "sql": `SELECT capacity FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?; SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
       },

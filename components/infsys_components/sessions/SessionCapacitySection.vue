@@ -47,10 +47,12 @@ const sessionCapacityComponent = computed(() => componentCodeStore.getComponentB
 const correctSqlQuery = computed(() => sessionCapacityComponent.value?.sql?.['sql'] || '')
 const correctHtmlTemplate = computed(() => sessionCapacityComponent.value?.html?.['html'] || '')
 const correctCss = computed(() => sessionCapacityComponent.value?.css?.['css'] || '')
+const correctJs = computed(() => sessionCapacityComponent.value?.js?.['js'] || '')
 
 const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
 const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+const js = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctJs.value))
 
 // Local state
 const capacityData = ref<{ capacity: number; participantCount: number } | null>(null)
@@ -59,18 +61,20 @@ const capacityData = ref<{ capacity: number; participantCount: number } | null>(
 const renderedHtml = computed(() => {
   if (!capacityData.value) return ''
 
-  const percentage = getCapacityPercentage()
+  const percentage = capacityPercentage()
   const color = getCapacityColor()
   const html = htmlTemplate.value
     .replace('{{ capacity }}', String(capacityData.value.capacity))
     .replace('{{ participantCount }}', String(capacityData.value.participantCount))
-    .replace('{{ percentage }}', String(percentage))
+    .replace(/{{ percentage }}/g, String(percentage))
     .replace('{{ color }}', color)
     .replace('{{ label }}', t('capacity'))
     .replace('{{ occupied }}', t('occupied'))
 
   return `<style>${css.value}</style>${html}`;
 });
+
+const capacityFunction = new Function('participantCount', 'capacity', js.value)
 
 // Watchers
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
@@ -107,16 +111,14 @@ const loadCapacityData = () => {
     }
 }
 
-const getCapacityPercentage = (): number => {
+const capacityPercentage = (): number => {
     if (!capacityData.value) return 0
-    // Handle division by zero case
-    if (capacityData.value.capacity === 0) return 0
-    return Math.round((capacityData.value.participantCount / capacityData.value.capacity) * 100)
+    return capacityFunction(capacityData.value.participantCount, capacityData.value.capacity)
 }
 
 const getCapacityColor = (): string => {
     if (!capacityData.value) return '#10b981'
-    const percentage = getCapacityPercentage()
+    const percentage = capacityPercentage()
     if (percentage >= 90) return '#ef4444' // red
     if (percentage >= 70) return '#f59e0b' // amber
     return '#10b981' // emerald
