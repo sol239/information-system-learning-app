@@ -6,34 +6,49 @@
             <div class="flex items-center gap-4 mb-6">
 
                 <!-- Session Select Menu-->
-                <USelect class="highlightable" :id="'participants-session-menu'"
-                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)"
-                    v-model="value" :items="filterSessionsItems" />
+                <div class="highlightable" :id="'participants-session-menu'"
+                    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)">
+                    <div class="component-wrapper">
+                        <USelect v-model="value" :items="filterSessionsItems" :disabled="highlightStore.isEditModeActive" />
+                        <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-session-menu'"
+                            class="edit-button" />
+                    </div>
+                </div>
 
                 <!-- Session Capacity Pillow -->
                 <div v-if="selectedSessionInfo" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <UIcon name="i-heroicons-users" class="w-4 h-4 text-gray-600" />
 
                     <!-- Session Capacity Count -->
-                    <span class="text-sm font-medium text-gray-700 highlightable" :id="'participants-capacity-count'"
+                    <div class="highlightable" :id="'participants-capacity-count'"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
-                        {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{
-                            selectedSessionInfo.totalCapacity }}
-                    </span>
+                        <div class="component-wrapper">
+                            <span class="text-sm font-medium text-gray-700">
+                                {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{
+                                    selectedSessionInfo.totalCapacity }}
+                            </span>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-capacity-count'"
+                                class="edit-button" />
+                        </div>
+                    </div>
 
                     <!-- Session Capacity Percentage -->
                     <div class="highlightable" :id="'participants-capacity-percentage'"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-percentage', $event)">
-                        <span :style="{
-                            color: darkenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.3),
-                            backgroundColor: lightenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.8),
-                            fontWeight: 'bold',
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            border: '1px solid rgba(0, 0, 0, 0.1)'
-                        }">
-                            {{ selectedSessionInfo.fillPercentage }}%
-                        </span>
+                        <div class="component-wrapper">
+                            <span :style="{
+                                color: darkenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.3),
+                                backgroundColor: lightenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.8),
+                                fontWeight: 'bold',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                border: '1px solid rgba(0, 0, 0, 0.1)'
+                            }">
+                                {{ selectedSessionInfo.fillPercentage }}%
+                            </span>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-capacity-percentage'"
+                                class="edit-button" />
+                        </div>
                     </div>
 
 
@@ -41,24 +56,38 @@
 
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="flex justify-center items-center gap-4">
-                    <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left" :disabled="currentPage === 1"
+                    <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left" :disabled="currentPage === 1 || highlightStore.isEditModeActive"
                         @click="currentPage--">
                         {{ t('previous') }}
                     </UButton>
 
                     <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600 highlightable" id="participants-page-count-1"
+                        <div class="highlightable" id="participants-page-count-1"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-1', $event)">
-                            {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
-                        </span>
-                        <span class="text-xs text-gray-500 highlightable" id="participants-page-count-2"
+                            <div class="component-wrapper">
+                                <span class="text-sm text-gray-600">
+                                    {{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}
+                                </span>
+                                <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-page-count-1'"
+                                    class="edit-button" />
+                            </div>
+                        </div>
+                        <!--
+                        <div class="highlightable" id="participants-page-count-2"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-page-count-2', $event)">
-                            ({{ filteredParticipants.length }} {{ t('participants') }})
-                        </span>
+                            <div class="component-wrapper">
+                                <span class="text-xs text-gray-500">
+                                    ({{ filteredParticipants.length }} {{ t('participants') }})
+                                </span>
+                                <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-page-count-2'"
+                                    class="edit-button" />
+                            </div>
+                        </div>
+                        -->
                     </div>
 
                     <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
-                        :disabled="currentPage === totalPages" @click="currentPage++">
+                        :disabled="currentPage === totalPages || highlightStore.isEditModeActive" @click="currentPage++">
                         {{ t('next') }}
                     </UButton>
                 </div>
@@ -66,21 +95,28 @@
                 <div class="ml-auto flex gap-4 items-start">
                     <!-- Filter Field and Reset Button (left) -->
                     <div class="flex gap-2 items-center">
-                        <UButton class="highlightable" id="participants-filter-reset" variant="outline" color="sky"
-                            size="sm"
-                            @click="highlightStore.isHighlightMode ? highlightStore.highlightHandler.selectElement('participants-filter-reset', $event) : resetFilter()"
-                            icon="i-lucide-rotate-ccw">
-                        </UButton>
+                        <div class="highlightable" id="participants-filter-reset" @click="highlightStore.isHighlightMode ? highlightStore.highlightHandler.selectElement('participants-filter-reset', $event) : resetFilter()">
+                            <div class="component-wrapper">
+                                <UButton variant="outline" color="sky"
+                                    size="sm"
+                                    icon="i-lucide-rotate-ccw" :disabled="highlightStore.isEditModeActive">
+                                </UButton>
+                            </div>
+                        </div>
                         <div class="highlightable" id="participants-filter-input"
                             @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-filter-input', $event)">
-                            <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')"
-                                size="sm" />
+                            <div class="component-wrapper">
+                                <UInput v-model="filterText" color="sky" :placeholder="t('filter_participants')"
+                                    size="sm" :disabled="highlightStore.isEditModeActive" />
+                                <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-filter-input'"
+                                    class="edit-button" />
+                            </div>
                         </div>
 
                     </div>
                     <!-- Add Participant Drawer (right) -->
                     <UDrawer v-model:open="addModalOpen" direction="right">
-                        <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
+                        <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus" :disabled="highlightStore.isEditModeActive">
                             {{ t('add_participant') }}
                         </UButton>
 
@@ -94,71 +130,103 @@
                                     class="flex flex-col space-y-4">
                                     <div class="highlightable" id="participants-add-name"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-name', $event)">
-                                        <label for="name"
-                                            class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                        <UInput color="sky" id="name" v-model="newParticipant.name"
-                                            placeholder="Zadejte jméno účastníka"
-                                            :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="name"
+                                                class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                            <UInput color="sky" id="name" v-model="newParticipant.name"
+                                                placeholder="Zadejte jméno účastníka"
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-name'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-email"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-email', $event)">
-                                        <label for="email"
-                                            class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                        <UInput color="sky" id="email" v-model="newParticipant.email" type="email"
-                                            placeholder="email@example.com"
-                                            :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="email"
+                                                class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                            <UInput color="sky" id="email" v-model="newParticipant.email" type="email"
+                                                placeholder="email@example.com"
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-email'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-personal_number"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-personal_number', $event)">
-                                        <label for="personal_number"
-                                            class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                        <UInput color="sky" id="personal_number"
-                                            v-model="newParticipant.personal_number" placeholder="123456/7890"
-                                            :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="personal_number"
+                                                class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
+                                            <UInput color="sky" id="personal_number"
+                                                v-model="newParticipant.personal_number" placeholder="123456/7890"
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-personal_number'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-phone"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-phone', $event)">
-                                        <label for="phone"
-                                            class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                        <UInput color="sky" id="phone" v-model="newParticipant.phone"
-                                            placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="phone"
+                                                class="block text-sm font-medium text-white mb-1">Telefon</label>
+                                            <UInput color="sky" id="phone" v-model="newParticipant.phone"
+                                                placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-phone'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-address"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-address', $event)">
-                                        <label for="address"
-                                            class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                        <UTextarea color="sky" id="address" v-model="newParticipant.address"
-                                            placeholder="Ulice číslo, město, PSČ" :rows="2"
-                                            :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="address"
+                                                class="block text-sm font-medium text-white mb-1">Adresa</label>
+                                            <UTextarea color="sky" id="address" v-model="newParticipant.address"
+                                                placeholder="Ulice číslo, město, PSČ" :rows="2"
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-address'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-age"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-age', $event)">
-                                        <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                        <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1"
-                                            max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
+                                            <UInput color="sky" id="age" v-model="newParticipant.age" type="number" min="1"
+                                                max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-age'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-session"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-session', $event)">
-                                        <label for="sessionId"
-                                            class="block text-sm font-medium text-white mb-1">Turnus</label>
+                                        <div class="component-wrapper">
+                                            <label for="sessionId"
+                                                class="block text-sm font-medium text-white mb-1">Turnus</label>
 
-                                        <USelect color="sky" id="sessionId" v-model="newParticipant.sessionId"
-                                            :items="sessionOptions" placeholder="Vyberte turnus" multiple
-                                            :disabled="highlightStore.isHighlightMode" />
+                                            <USelect color="sky" id="sessionId" v-model="newParticipant.sessionId"
+                                                :items="sessionOptions" placeholder="Vyberte turnus" multiple
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-session'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-allergens"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-allergens', $event)">
-                                        <label for="allergens"
-                                            class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                        <USelect color="sky" id="allergens" v-model="newParticipant.allergens"
-                                            :items="allergenOptions" multiple placeholder="Vyberte alergeny"
-                                            :disabled="highlightStore.isHighlightMode" />
+                                        <div class="component-wrapper">
+                                            <label for="allergens"
+                                                class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                            <USelect color="sky" id="allergens" v-model="newParticipant.allergens"
+                                                :items="allergenOptions" multiple placeholder="Vyberte alergeny"
+                                                :disabled="highlightStore.isHighlightMode" />
+                                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-add-allergens'"
+                                                class="edit-button" />
+                                        </div>
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
-                                        <UButton type="submit" color="sky" :loading="isSubmitting">
+                                        <UButton type="submit" color="sky" :loading="isSubmitting" :disabled="highlightStore.isEditModeActive">
                                             {{ t('add') }}
                                         </UButton>
-                                        <UButton variant="outline" color="sky" @click="resetForm">
+                                        <UButton variant="outline" color="sky" @click="resetForm" :disabled="highlightStore.isEditModeActive">
                                             {{ t('cancel') }}
                                         </UButton>
                                     </div>
@@ -173,52 +241,56 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card">
                     <div class="highlightable" :id="'participants-card-' + participant.id" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
-                        <!-- Participant Header -->
-                        <div class="participant-header">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-xl font-semibold text-gray-900">
-                                    {{ participant.name }}
-                                </h3>
-                                <UBadge size="lg" color="sky" variant="soft">
-                                    {{ t('age') }}: {{ participant.age }}
-                                </UBadge>
-                            </div>
-                            <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
-                                <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
-                                <span>{{ participant.email }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Turnus Info -->
-                        <div class="turnus-section mb-4">
-                            <div v-if="participant.sessions.length > 0" class="space-y-1">
-                                <div v-for="sessionId in participant.sessions" :key="sessionId"
-                                    class="text-sm text-gray-600">
-                                    <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
-                                    {{ getSessionName(sessionId) }}
+                        <div class="component-wrapper">
+                            <!-- Participant Header -->
+                            <div class="participant-header">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-900">
+                                        {{ participant.name }}
+                                    </h3>
+                                    <UBadge size="lg" color="sky" variant="soft">
+                                        {{ t('age') }}: {{ participant.age }}
+                                    </UBadge>
+                                </div>
+                                <div class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                    <UIcon name="i-heroicons-envelope" class="w-4 h-4" />
+                                    <span>{{ participant.email }}</span>
                                 </div>
                             </div>
-                            <div v-else class="text-sm text-gray-400 italic">
-                                <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
-                                {{ t('no_sessions') }}
-                            </div>
-                        </div>
 
-                        <!-- Contact Info -->
-                        <div class="contact-section mb-6 space-y-2">
-                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <UIcon name="i-heroicons-phone" class="w-4 h-4" />
-                                <span>{{ participant.phone }}</span>
+                            <!-- Turnus Info -->
+                            <div class="turnus-section mb-4">
+                                <div v-if="participant.sessions.length > 0" class="space-y-1">
+                                    <div v-for="sessionId in participant.sessions" :key="sessionId"
+                                        class="text-sm text-gray-600">
+                                        <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 inline mr-1" />
+                                        {{ getSessionName(sessionId) }}
+                                    </div>
+                                </div>
+                                <div v-else class="text-sm text-gray-400 italic">
+                                    <UIcon name="i-heroicons-calendar-x-mark" class="w-4 h-4 inline mr-1" />
+                                    {{ t('no_sessions') }}
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
-                                <span>{{ participant.address }}</span>
+
+                            <!-- Contact Info -->
+                            <div class="contact-section mb-6 space-y-2">
+                                <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                    <UIcon name="i-heroicons-phone" class="w-4 h-4" />
+                                    <span>{{ participant.phone }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                    <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
+                                    <span>{{ participant.address }}</span>
+                                </div>
+                                <!-- Allergies Badge -->
+                                <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
+                                    class="mt-2">
+                                    {{ t("allergens") }}: {{ participant.allergens.length }}
+                                </UBadge>
                             </div>
-                            <!-- Allergies Badge -->
-                            <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
-                                class="mt-2">
-                                {{ t("allergens") }}: {{ participant.allergens.length }}
-                            </UBadge>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-list'"
+                                class="edit-button" />
                         </div>
                     </div>
 
@@ -228,16 +300,20 @@
                             <!-- Edit Participant Button only -->
                             <div class="ml-auto">
                                 <UButton size="sm" color="sky" variant="solid"
-                                    @click="viewParticipantDetails(participant)" class="flex-1">
+                                    @click="viewParticipantDetails(participant)" class="flex-1" :disabled="highlightStore.isEditModeActive">
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
-                            <div class="highlightable" :id="'participants-delete-button-' + participant.id" @click="highlightStore.isHighlightMode
+                            <div class="highlightable" :id="'participants-delete-button-' + participant.id" @click="highlightStore.isHighlightMode || highlightStore.isEditModeActive
                                 ? highlightStore.highlightHandler.selectElement('participants-delete-button-' + participant.id, $event)
                                 : removeParticipant(participant)">
-                                <UButton size="sm" color="red" variant="outline">
-                                    {{ t('delete') }}
-                                </UButton>
+                                <div class="component-wrapper">
+                                    <UButton size="sm" color="red" variant="outline">
+                                        {{ t('delete') }}
+                                    </UButton>
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participant-delete'"
+                                        class="edit-button" />
+                                </div>
                             </div>
 
                         </div>
@@ -257,68 +333,100 @@
                             @submit="handleEditParticipant(selectedParticipant)" class="flex flex-col space-y-4">
                             <div class="highlightable" id="participants-edit-name"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-name', $event)">
-                                <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
-                                    placeholder="Zadejte jméno účastníka" :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                    <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
+                                        placeholder="Zadejte jméno účastníka" :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-name'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-email"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-email', $event)">
-                                <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                <UInput color="sky" id="edit-email" v-model="selectedParticipant.email" type="email"
-                                    placeholder="email@example.com" :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                    <UInput color="sky" id="edit-email" v-model="selectedParticipant.email" type="email"
+                                        placeholder="email@example.com" :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-email'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-personal_number"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-personal_number', $event)">
-                                <label for="edit-personal_number"
-                                    class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                <UInput color="sky" id="edit-personal_number"
-                                    v-model="selectedParticipant.personal_number" placeholder="123456/7890"
-                                    :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-personal_number"
+                                        class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
+                                    <UInput color="sky" id="edit-personal_number"
+                                        v-model="selectedParticipant.personal_number" placeholder="123456/7890"
+                                        :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-personal_number'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-phone"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-phone', $event)">
-                                <label for="edit-phone"
-                                    class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                <UInput color="sky" id="edit-phone" v-model="selectedParticipant.phone"
-                                    placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-phone"
+                                        class="block text-sm font-medium text-white mb-1">Telefon</label>
+                                    <UInput color="sky" id="edit-phone" v-model="selectedParticipant.phone"
+                                        placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-phone'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-address"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-address', $event)">
-                                <label for="edit-address"
-                                    class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                <UTextarea color="sky" id="edit-address" v-model="selectedParticipant.address"
-                                    placeholder="Ulice číslo, město, PSČ" :rows="2"
-                                    :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-address"
+                                        class="block text-sm font-medium text-white mb-1">Adresa</label>
+                                    <UTextarea color="sky" id="edit-address" v-model="selectedParticipant.address"
+                                        placeholder="Ulice číslo, město, PSČ" :rows="2"
+                                        :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-address'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-age"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-age', $event)">
-                                <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
-                                    min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
+                                    <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
+                                        min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-age'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <!-- Allergen Edit Field -->
                             <div class="highlightable" id="participants-edit-allergens"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-allergens', $event)">
-                                <label for="edit-allergens"
-                                    class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                <USelect color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
-                                    :items="allergenOptions" multiple placeholder="Vyberte alergeny"
-                                    :disabled="highlightStore.isHighlightMode" />
+                                <div class="component-wrapper">
+                                    <label for="edit-allergens"
+                                        class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                    <USelect color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
+                                        :items="allergenOptions" multiple placeholder="Vyberte alergeny"
+                                        :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-allergens'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="highlightable" id="participants-edit-sessions"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-sessions', $event)">
-                                <label for="edit-sessions"
-                                    class="block text-sm font-medium text-white mb-1">Turnus</label>
+                                <div class="component-wrapper">
+                                    <label for="edit-sessions"
+                                        class="block text-sm font-medium text-white mb-1">Turnus</label>
 
-                                <USelect color="sky" id="edit-sessions" v-model="selectedParticipant.sessions"
-                                    :items="sessionOptions" placeholder="Vyberte turnus" multiple
-                                    :disabled="highlightStore.isHighlightMode" />
+                                    <USelect color="sky" id="edit-sessions" v-model="selectedParticipant.sessions"
+                                        :items="sessionOptions" placeholder="Vyberte turnus" multiple
+                                        :disabled="highlightStore.isHighlightMode" />
+                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-edit-sessions'"
+                                        class="edit-button" />
+                                </div>
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
-                                <UButton type="submit" color="sky" :loading="isSubmitting">
+                                <UButton type="submit" color="sky" :loading="isSubmitting" :disabled="highlightStore.isEditModeActive">
                                     {{ t('save_changes') }}
                                 </UButton>
-                                <UButton variant="outline" color="sky" @click="resetForm">
+                                <UButton variant="outline" color="sky" @click="resetForm" :disabled="highlightStore.isEditModeActive">
                                     {{ t('cancel') }}
                                 </UButton>
                             </div>
@@ -339,18 +447,116 @@
 
         </div>
     </div>
+    <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useSelectedSystemStore } from '#imports'
 import { Participant } from '~/model/Participant'
 import { Session } from '~/model/Session'
 import { useHighlightStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import { ComponentHandler } from '~/composables/ComponentHandler'
+import { ComponentManager } from '~/composables/ComponentManager'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import { useToast } from '#imports'
+import EditComponentModal from '~/components/EditComponentModal.vue'
+import EditComponentModalOpenButton from '~/components/EditComponentModalOpenButton.vue'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
+const componentCodeStore = useComponentCodeStore()
+
+// Component definitions
+const participantsCapacityCountComponent = computed(() => componentCodeStore.getComponentById('participants-capacity-count') || componentCodeStore.getDefaultComponent('participants-capacity-count'))
+const participantsCapacityPercentageComponent = computed(() => componentCodeStore.getComponentById('participants-capacity-percentage') || componentCodeStore.getDefaultComponent('participants-capacity-percentage'))
+const participantsPageCount1Component = computed(() => componentCodeStore.getComponentById('participants-page-count-1') || componentCodeStore.getDefaultComponent('participants-page-count-1'))
+const participantsPageCount2Component = computed(() => componentCodeStore.getComponentById('participants-page-count-2') || componentCodeStore.getDefaultComponent('participants-page-count-2'))
+const participantsFilterResetComponent = computed(() => componentCodeStore.getComponentById('participants-filter-reset') || componentCodeStore.getDefaultComponent('participants-filter-reset'))
+const participantsFilterInputComponent = computed(() => componentCodeStore.getComponentById('participants-filter-input') || componentCodeStore.getDefaultComponent('participants-filter-input'))
+const participantsSessionMenuComponent = computed(() => componentCodeStore.getComponentById('participants-session-menu') || componentCodeStore.getDefaultComponent('participants-session-menu'))
+
+// Component values - Default values from component store
+const correctParticipantsCapacityCountSqlTotalAll = computed(() => participantsCapacityCountComponent.value?.sql?.['sql-total-all'] || '')
+const correctParticipantsCapacityCountSqlTotalSession = computed(() => participantsCapacityCountComponent.value?.sql?.['sql-total-session'] || '')
+const correctParticipantsCapacityCountSqlCurrentAll = computed(() => participantsCapacityCountComponent.value?.sql?.['sql-current-all'] || '')
+const correctParticipantsCapacityCountSqlCurrentSession = computed(() => participantsCapacityCountComponent.value?.sql?.['sql-current-session'] || '')
+const correctParticipantsCapacityPercentageJs = computed(() => participantsCapacityPercentageComponent.value?.js?.['js'] || 'Math.round(currentCount / totalCapacity * 100)')
+
+const correctParticipantsPageCount1Sql = computed(() => participantsPageCount1Component.value?.sql?.['sql'] || '')
+const correctParticipantsPageCount1Js = computed(() => participantsPageCount1Component.value?.js?.['js'] || '')
+const correctParticipantsPageCount1Html = computed(() => participantsPageCount1Component.value?.html?.['html'] || '')
+const correctParticipantsPageCount1Css = computed(() => participantsPageCount1Component.value?.css?.['css'] || '')
+
+const correctParticipantsPageCount2Sql = computed(() => participantsPageCount2Component.value?.sql?.['sql'] || '')
+const correctParticipantsPageCount2Js = computed(() => participantsPageCount2Component.value?.js?.['js'] || '')
+const correctParticipantsPageCount2Html = computed(() => participantsPageCount2Component.value?.html?.['html'] || '')
+const correctParticipantsPageCount2Css = computed(() => participantsPageCount2Component.value?.css?.['css'] || '')
+
+const correctParticipantsFilterResetSql = computed(() => participantsFilterResetComponent.value?.sql?.['sql'] || '')
+const correctParticipantsFilterResetJs = computed(() => participantsFilterResetComponent.value?.js?.['js'] || '')
+const correctParticipantsFilterResetHtml = computed(() => participantsFilterResetComponent.value?.html?.['html'] || '')
+const correctParticipantsFilterResetCss = computed(() => participantsFilterResetComponent.value?.css?.['css'] || '')
+
+const correctParticipantsFilterInputSql = computed(() => participantsFilterInputComponent.value?.sql?.['sql'] || '')
+const correctParticipantsFilterInputJs = computed(() => participantsFilterInputComponent.value?.js?.['js'] || `(p.name && p.name.toLowerCase().includes(text)) ||
+(p.email && p.email.toLowerCase().includes(text)) ||
+(p.phone && p.phone.toLowerCase().includes(text)) ||
+(p.address && p.address.toLowerCase().includes(text)) ||
+(p.sessions && getSessionNames(p.sessions).toLowerCase().includes(text))`)
+const correctParticipantsFilterInputHtml = computed(() => participantsFilterInputComponent.value?.html?.['html'] || '')
+const correctParticipantsFilterInputCss = computed(() => participantsFilterInputComponent.value?.css?.['css'] || '')
+
+const correctParticipantsSessionMenuSql = computed(() => participantsSessionMenuComponent.value?.sql?.['sql'] || '')
+const correctParticipantsSessionMenuJs = computed(() => participantsSessionMenuComponent.value?.js?.['js'] || '')
+const correctParticipantsSessionMenuHtml = computed(() => participantsSessionMenuComponent.value?.html?.['html'] || '')
+const correctParticipantsSessionMenuCss = computed(() => participantsSessionMenuComponent.value?.css?.['css'] || '')
+
+// Component values - Final getters using ComponentHandler
+const participantsCapacityCountSqlTotal = computed(() => {
+  if (value.value === 'all') {
+    return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-total-all', correctParticipantsCapacityCountSqlTotalAll.value)
+  } else {
+    return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-total-session', correctParticipantsCapacityCountSqlTotalSession.value)
+  }
+})
+const participantsCapacityCountSqlCurrent = computed(() => {
+  if (value.value === 'all') {
+    return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-current-all', correctParticipantsCapacityCountSqlCurrentAll.value)
+  } else {
+    return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-current-session', correctParticipantsCapacityCountSqlCurrentSession.value)
+  }
+})
+
+const participantsCapacityPercentageJs = computed(() => ComponentHandler.getComponentValue('participants-capacity-percentage', 'js', correctParticipantsCapacityPercentageJs.value))
+
+const participantsPageCount1Sql = computed(() => ComponentHandler.getComponentValue('participants-page-count-1', 'sql', correctParticipantsPageCount1Sql.value))
+const participantsPageCount1Js = computed(() => ComponentHandler.getComponentValue('participants-page-count-1', 'js', correctParticipantsPageCount1Js.value))
+const participantsPageCount1Html = computed(() => ComponentHandler.getComponentValue('participants-page-count-1', 'html', correctParticipantsPageCount1Html.value))
+const participantsPageCount1Css = computed(() => ComponentHandler.getComponentValue('participants-page-count-1', 'css', correctParticipantsPageCount1Css.value))
+
+const participantsPageCount2Sql = computed(() => ComponentHandler.getComponentValue('participants-page-count-2', 'sql', correctParticipantsPageCount2Sql.value))
+const participantsPageCount2Js = computed(() => ComponentHandler.getComponentValue('participants-page-count-2', 'js', correctParticipantsPageCount2Js.value))
+const participantsPageCount2Html = computed(() => ComponentHandler.getComponentValue('participants-page-count-2', 'html', correctParticipantsPageCount2Html.value))
+const participantsPageCount2Css = computed(() => ComponentHandler.getComponentValue('participants-page-count-2', 'css', correctParticipantsPageCount2Css.value))
+
+const participantsFilterResetSql = computed(() => ComponentHandler.getComponentValue('participants-filter-reset', 'sql', correctParticipantsFilterResetSql.value))
+const participantsFilterResetJs = computed(() => ComponentHandler.getComponentValue('participants-filter-reset', 'js', correctParticipantsFilterResetJs.value))
+const participantsFilterResetHtml = computed(() => ComponentHandler.getComponentValue('participants-filter-reset', 'html', correctParticipantsFilterResetHtml.value))
+const participantsFilterResetCss = computed(() => ComponentHandler.getComponentValue('participants-filter-reset', 'css', correctParticipantsFilterResetCss.value))
+
+const participantsFilterInputSql = computed(() => ComponentHandler.getComponentValue('participants-filter-input', 'sql', correctParticipantsFilterInputSql.value))
+const participantsFilterInputJs = computed(() => ComponentHandler.getComponentValue('participants-filter-input', 'js', correctParticipantsFilterInputJs.value))
+const participantsFilterInputHtml = computed(() => ComponentHandler.getComponentValue('participants-filter-input', 'html', correctParticipantsFilterInputHtml.value))
+const participantsFilterInputCss = computed(() => ComponentHandler.getComponentValue('participants-filter-input', 'css', correctParticipantsFilterInputCss.value))
+
+const participantsSessionMenuSql = computed(() => ComponentHandler.getComponentValue('participants-session-menu', 'sql', correctParticipantsSessionMenuSql.value))
+const participantsSessionMenuJs = computed(() => ComponentHandler.getComponentValue('participants-session-menu', 'js', correctParticipantsSessionMenuJs.value))
+const participantsSessionMenuHtml = computed(() => ComponentHandler.getComponentValue('participants-session-menu', 'html', correctParticipantsSessionMenuHtml.value))
+const participantsSessionMenuCss = computed(() => ComponentHandler.getComponentValue('participants-session-menu', 'css', correctParticipantsSessionMenuCss.value))
 const localItems = ref([
     {
         label: t('dashboard'),
@@ -508,7 +714,7 @@ function resetFilter() {
 }
 
 const allergenOptions = computed(() => {
-    const query: string = `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}`;
+    const query: string = componentCodeStore.getComponentCodeByType('participants-allergen-options', 'sql', 'sql') || ``;
     const result = selectedSystemStore.selectedSystem?.db?.query(query)?.results || [];
     return result.map(allergen => ({
         label: allergen.name,
@@ -522,13 +728,19 @@ const filteredParticipants = computed(() => {
 
     if (filterText.value) {
         const text = filterText.value.toLowerCase()
-        arr = arr.filter(p =>
-            (p.name && p.name.toLowerCase().includes(text)) ||
-            (p.email && p.email.toLowerCase().includes(text)) ||
-            (p.phone && p.phone.toLowerCase().includes(text)) ||
-            (p.address && p.address.toLowerCase().includes(text)) ||
-            (p.sessions && getSessionNames(p.sessions).toLowerCase().includes(text))
-        )
+
+        // Use component-managed filtering logic
+        const filterJs = participantsFilterInputJs.value
+        console.log("Applying filter JS:", filterJs)
+        if (filterJs) {
+            arr = arr.filter(p => {
+                    // Create a function that can access the current context
+                    const filterFunction = new Function('p', 'text', 'getSessionNames', `return ${filterJs}`)
+                    console.log("FILTER CODE:", filterJs)
+                    return filterFunction(p, text, getSessionNames)
+                    
+                })
+        }
     } else if (value.value !== 'all') {
         arr = arr.filter(p => p.sessions.includes(Number(value.value)))
     }
@@ -543,15 +755,11 @@ const toast = useToast()
 const selectedSessionInfo = computed(() => {
     if (value.value === 'all') {
 
-        const totalCapacityQuery: string = `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`;
+        const totalCapacityQuery: string = participantsCapacityCountSqlTotal.value;
         const result = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery)?.results || [];
         const totalCapacity = result[0]?.count || 0;
 
-        const currentCountQuery: string = `
-            SELECT COUNT(*) as count
-            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
-            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
-        `;
+        const currentCountQuery: string = participantsCapacityCountSqlCurrent.value;
 
         const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery)?.results || [];
         const currentCount = currentCountResult[0]?.count || 0;
@@ -559,7 +767,7 @@ const selectedSessionInfo = computed(() => {
         console.log("Capacity:", totalCapacity)
         console.log("Current:", currentCount)
 
-        const fillPercentageJs: string = `Math.round(currentCount / totalCapacity * 100)`;
+        const fillPercentageJs: string = `(function(currentCount, totalCapacity) { return ${participantsCapacityPercentageJs.value}; })(${currentCount}, ${totalCapacity})`;
 
         let fillPercentage: number = 0;
 
@@ -586,24 +794,19 @@ const selectedSessionInfo = computed(() => {
     } else {
         const sessionId = Number(value.value)
 
-        const totalCapacityQuery: string = `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ${sessionId}`;
-        const capacityResult = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery)?.results || [];
+        const totalCapacityQuery: string = participantsCapacityCountSqlTotal.value;
+        const capacityResult = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery, [sessionId])?.results || [];
         const totalCapacity = capacityResult[0]?.count || 0;
 
-        const currentCountQuery: string = `
-            SELECT COUNT(*) as count
-            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
-            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
-            WHERE sp.session_id = ${sessionId}
-        `;
+        const currentCountQuery: string = participantsCapacityCountSqlCurrent.value;
 
-        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery)?.results || [];
+        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery, [sessionId])?.results || [];
         const currentCount = currentCountResult[0]?.count || 0;
 
         console.log("Session Capacity:", totalCapacity)
         console.log("Session Current:", currentCount)
 
-        const fillPercentageJs: string = `Math.round(currentCount / totalCapacity * 100)`;
+        const fillPercentageJs: string = `(function(currentCount, totalCapacity) { return ${participantsCapacityPercentageJs.value}; })(${currentCount}, ${totalCapacity})`;
 
         let fillPercentage: number = 0;
 
@@ -639,15 +842,18 @@ const participantsDataHash = computed(() => {
         // Get participants count
         const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
         const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const participantsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${participantsTable}`)
+        const participantsCountQuery = componentCodeStore.getComponentCodeByType('participants-count', 'sql', 'sql') || ``;
+        const participantsCountRes = selectedSystemStore.selectedSystem.db.query(participantsCountQuery)
         const participantsCount = participantsCountRes?.results?.[0]?.count || 0
 
         // Get sessions count  
-        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query(`SELECT COUNT(*) as count FROM ${sessionsTable}`)
+        const sessionsCountQuery = componentCodeStore.getComponentCodeByType('sessions-count', 'sql', 'sql') || ``;
+        const sessionsCountRes = selectedSystemStore.selectedSystem.db.query(sessionsCountQuery)
         const sessionsCount = sessionsCountRes?.results?.[0]?.count || 0
 
         // Get sample of recent data to detect content changes - removed the trailing comma after email
-        const participantsSample = selectedSystemStore.selectedSystem.db.query(`SELECT participant_id, name, email FROM ${participantsTable} ORDER BY participant_id DESC LIMIT 3`)
+        const participantsSampleQuery = componentCodeStore.getComponentCodeByType('participants-sample', 'sql', 'sql') || ``;
+        const participantsSample = selectedSystemStore.selectedSystem.db.query(participantsSampleQuery)
         const sampleData = JSON.stringify(participantsSample?.results || [])
 
         return `p${participantsCount}-s${sessionsCount}-${sampleData.length}-${Date.now()}`
@@ -675,17 +881,7 @@ const loadParticipantsFromDatabase = () => {
 
     try {
 
-
-
-
-
-
-
-        const getParticipantsQuery: string = `
-            SELECT participant_id, name, email, personal_number, phone, address, age
-            FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')}
-            ORDER BY participant_id
-        `;
+        const getParticipantsQuery: string = componentCodeStore.getComponentCodeByType('participants-list', 'sql', 'sql') || ``;
 
         const participantsResult = selectedSystemStore.selectedSystem.db.query(getParticipantsQuery);
 
@@ -706,11 +902,7 @@ const loadParticipantsFromDatabase = () => {
         }
 
         // get participant's allergens
-        const getParticipantAllergensQuery: string = `
-            SELECT pa.participant_id, a.allergen_id
-            FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')} pa
-            JOIN ${selectedSystemStore.selectedSystem.db.getTableName('allergens')} a ON pa.allergen_id = a.allergen_id
-        `;
+        const getParticipantAllergensQuery: string = componentCodeStore.getComponentCodeByType('participants-allergens', 'sql', 'sql') || ``;
 
         const allergensResult = selectedSystemStore.selectedSystem.db.query(getParticipantAllergensQuery);
         // Build a map of allergen_id to label for easy lookup
@@ -731,11 +923,7 @@ const loadParticipantsFromDatabase = () => {
         }
 
         // get participant's sessions
-        const getParticipantSessionsQuery: string = `
-            SELECT ps.participant_id, s.session_id
-            FROM ${selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')} ps
-            JOIN ${selectedSystemStore.selectedSystem.db.getTableName('sessions')} s ON ps.session_id = s.session_id
-        `;
+        const getParticipantSessionsQuery: string = componentCodeStore.getComponentCodeByType('participants-sessions', 'sql', 'sql') || ``;
 
         const sessionsResult = selectedSystemStore.selectedSystem.db.query(getParticipantSessionsQuery);
         for (const row of sessionsResult?.results || []) {
@@ -762,11 +950,8 @@ const loadSessionsFromDatabase = () => {
     }
     try {
         const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const _sessions = selectedSystemStore.selectedSystem.db.query(`
-            SELECT session_id, from_date, to_date, capacity
-            FROM ${sessionsTable}
-            ORDER BY session_id
-        `).results || []
+        const sessionsQuery = componentCodeStore.getComponentCodeByType('sessions-list', 'sql', 'sql') || ``;
+        const _sessions = selectedSystemStore.selectedSystem.db.query(sessionsQuery).results || []
         sessions.value = _sessions.map(s => ({
             id: s.session_id,
             fromDate: new Date(s.from_date),
@@ -875,19 +1060,13 @@ const handleAddParticipant = async (data: any) => {
     isSubmitting.value = true
     try {
         // Insert participant first
-        const query = `
-            INSERT INTO ${selectedSystemStore.selectedSystem.db.getTableName('participants')} (name, email, personal_number, phone, address, age)
-            VALUES ('${data.name}', '${data.email}', '${data.personal_number}', '${data.phone}', '${data.address}', ${data.age})
-        `
-        const result = selectedSystemStore.selectedSystem.db.query(query)
+        const insertQuery = componentCodeStore.getComponentCodeByType('participant-insert', 'sql', 'sql') || ``;
+        const result = selectedSystemStore.selectedSystem.db.query(insertQuery, [data.name, data.email, data.personal_number, data.phone, data.address, data.age])
 
         if (result.success) {
             // Get the inserted participant ID
-            const participantId = selectedSystemStore.selectedSystem.db.query(`
-                SELECT participant_id FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')} 
-                WHERE name = '${data.name}' AND email = '${data.email}' 
-                ORDER BY participant_id DESC LIMIT 1
-            `).results[0]?.participant_id
+            const getIdQuery = componentCodeStore.getComponentCodeByType('participant-get-id', 'sql', 'sql') || ``;
+            const participantId = selectedSystemStore.selectedSystem.db.query(getIdQuery, [data.name, data.email]).results[0]?.participant_id
 
             if (participantId) {
                 // Add session associations
@@ -956,13 +1135,8 @@ const handleEditParticipant = async (data: any) => {
         console.log("EDIT DATA:", data)
 
         // Update participant basic info
-        const query = `
-            UPDATE ${selectedSystemStore.selectedSystem.db.getTableName('participants')} 
-            SET name = '${data.name}', email = '${data.email}', personal_number = '${data.personal_number}', 
-                phone = '${data.phone}', address = '${data.address}', age = ${data.age}
-            WHERE participant_id = '${selectedParticipant.value.id}'
-        `
-        const result = selectedSystemStore.selectedSystem.db.query(query)
+        const updateQuery = componentCodeStore.getComponentCodeByType('participant-update', 'sql', 'sql') || ``;
+        const result = selectedSystemStore.selectedSystem.db.query(updateQuery, [data.name, data.email, data.personal_number, data.phone, data.address, data.age, selectedParticipant.value.id])
 
         if (result.success) {
             // Update session associations
@@ -1033,7 +1207,8 @@ const removeParticipant = (participant: Participant) => {
         })
 
         // Then remove the participant
-        selectedSystemStore.selectedSystem?.db.query(`DELETE FROM ${selectedSystemStore.selectedSystem.db.getTableName('participants')} WHERE participant_id = ${participant.id}`)
+        const deleteQuery = componentCodeStore.getComponentCodeByType('participant-delete', 'sql', 'sql') || ``;
+        selectedSystemStore.selectedSystem?.db?.query(deleteQuery, [participant.id])
         loadParticipantsFromDatabase()
         toast.add({
             title: t('participant_deleted_success', { name: participant.name }),
@@ -1084,11 +1259,8 @@ const addParticipantToSessions = async (participantId: number, sessionIds: numbe
 
     for (const sessionId of sessionIds) {
         try {
-            const query = `
-                INSERT INTO ${sessionsParticipantsTable} (session_id, participant_id)
-                VALUES (${sessionId}, ${participantId})
-            `
-            selectedSystemStore.selectedSystem.db.query(query)
+            const insertQuery = componentCodeStore.getComponentCodeByType('session-participant-insert', 'sql', 'sql') || ``;
+            selectedSystemStore.selectedSystem.db.query(insertQuery, [sessionId, participantId])
         } catch (error) {
             console.error(`Error adding participant ${participantId} to session ${sessionId}:`, error)
         }
@@ -1102,11 +1274,8 @@ const removeParticipantFromSessions = async (participantId: number, sessionIds: 
 
     for (const sessionId of sessionIds) {
         try {
-            const query = `
-                DELETE FROM ${sessionsParticipantsTable} 
-                WHERE session_id = ${sessionId} AND participant_id = ${participantId}
-            `
-            selectedSystemStore.selectedSystem.db.query(query)
+            const deleteQuery = componentCodeStore.getComponentCodeByType('session-participant-delete', 'sql', 'sql') || ``;
+            selectedSystemStore.selectedSystem.db.query(deleteQuery, [sessionId, participantId])
         } catch (error) {
             console.error(`Error removing participant ${participantId} from session ${sessionId}:`, error)
         }
@@ -1134,12 +1303,8 @@ const getParticipantAllergenIds = async (participantId: number): Promise<number[
     const participantsAllergensTable = selectedSystemStore.selectedSystem.db.getTableName('participants_allergens')
 
     try {
-        const query = `
-            SELECT allergen_id 
-            FROM ${participantsAllergensTable} 
-            WHERE participant_id = ${participantId}
-        `
-        const result = selectedSystemStore.selectedSystem.db.query(query)
+        const query = componentCodeStore.getComponentCodeByType('participant-allergen-ids', 'sql', 'sql') || ``;
+        const result = selectedSystemStore.selectedSystem.db.query(query, [participantId])
         return result.results?.map(row => row.allergen_id) || []
     } catch (error) {
         console.error(`Error getting allergen IDs for participant ${participantId}:`, error)
@@ -1154,11 +1319,8 @@ const addParticipantAllergens = async (participantId: number, allergenIds: numbe
 
     for (const allergenId of allergenIds) {
         try {
-            const query = `
-                INSERT INTO ${participantsAllergensTable} (participant_id, allergen_id)
-                VALUES (${participantId}, ${allergenId})
-            `
-            selectedSystemStore.selectedSystem.db.query(query)
+            const insertQuery = componentCodeStore.getComponentCodeByType('participant-allergen-insert', 'sql', 'sql') || ``;
+            selectedSystemStore.selectedSystem.db.query(insertQuery, [participantId, allergenId])
         } catch (error) {
             console.error(`Error adding allergen ${allergenId} to participant ${participantId}:`, error)
         }
@@ -1172,11 +1334,8 @@ const removeParticipantAllergens = async (participantId: number, allergenIds: nu
 
     for (const allergenId of allergenIds) {
         try {
-            const query = `
-                DELETE FROM ${participantsAllergensTable} 
-                WHERE participant_id = ${participantId} AND allergen_id = ${allergenId}
-            `
-            selectedSystemStore.selectedSystem.db.query(query)
+            const deleteQuery = componentCodeStore.getComponentCodeByType('participant-allergen-delete', 'sql', 'sql') || ``;
+            selectedSystemStore.selectedSystem.db.query(deleteQuery, [participantId, allergenId])
         } catch (error) {
             console.error(`Error removing allergen ${allergenId} from participant ${participantId}:`, error)
         }
@@ -1198,6 +1357,9 @@ const updateParticipantAllergens = async (participantId: number, oldAllergenIds:
 }
 
 onMounted(() => {
+    if (!ComponentManager.areComponentsInitialized()) {
+        ComponentManager.initializeComponents()
+    }
     loadParticipantsFromDatabase()
 })
 </script>
@@ -1258,5 +1420,18 @@ onMounted(() => {
     .participant-card {
         padding: 1rem;
     }
+}
+
+.component-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.edit-button {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    z-index: 10;
 }
 </style>

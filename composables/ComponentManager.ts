@@ -496,17 +496,528 @@ navigateTo({
       css: { "css": "" },
       js: { "js": `Math.round(currentCount / totalCapacity * 100)` },
       sql: {
-        "sql-1": `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ${sessionId}`,
+        "sql-1": `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
         "sql-2": `
             SELECT COUNT(*) as count
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
             JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
-            WHERE sp.session_id = ${sessionId}
+            WHERE sp.session_id = ?
         `
       },
       additionals: {}
     });
     */
+
+    // Participants page components
+    const participantsCapacityCountComponent = new Component({
+      id: "participants-capacity-count",
+      name: "Participants Capacity Count",
+      description: `Component for displaying capacity count.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql-total-all": `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`,
+        "sql-current-all": `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
+        `,
+        "sql-total-session": `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
+        "sql-current-session": `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id
+            WHERE sp.session_id = ?
+        `
+      },
+      additionals: {}
+    });
+
+    const participantsCapacityPercentageComponent = new Component({
+      id: "participants-capacity-percentage",
+      name: "Participants Capacity Percentage",
+      description: `Component for displaying capacity percentage.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "Math.round(currentCount / totalCapacity * 100)" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsPageCount1Component = new Component({
+      id: "participants-page-count-1",
+      name: "Participants Page Count 1",
+      description: `Component for displaying page count.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsPageCount2Component = new Component({
+      id: "participants-page-count-2",
+      name: "Participants Page Count 2",
+      description: `Component for displaying participant count.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsFilterResetComponent = new Component({
+      id: "participants-filter-reset",
+      name: "Participants Filter Reset",
+      description: `Component for filter reset button.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsFilterInputComponent = new Component({
+      id: "participants-filter-input",
+      name: "Participants Filter Input",
+      description: `Component for filter input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "js": `(p.name && p.name.toLowerCase().includes(text)) ||
+               (p.email && p.email.toLowerCase().includes(text)) ||
+               (p.phone && p.phone.toLowerCase().includes(text)) ||
+               (p.address && p.address.toLowerCase().includes(text)) ||
+               (p.sessions && getSessionNames(p.sessions).toLowerCase().includes(text))`
+      },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddNameComponent = new Component({
+      id: "participants-add-name",
+      name: "Participants Add Name",
+      description: `Component for add name input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddEmailComponent = new Component({
+      id: "participants-add-email",
+      name: "Participants Add Email",
+      description: `Component for add email input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddPersonalNumberComponent = new Component({
+      id: "participants-add-personal_number",
+      name: "Participants Add Personal Number",
+      description: `Component for add personal number input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddPhoneComponent = new Component({
+      id: "participants-add-phone",
+      name: "Participants Add Phone",
+      description: `Component for add phone input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddAddressComponent = new Component({
+      id: "participants-add-address",
+      name: "Participants Add Address",
+      description: `Component for add address input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddAgeComponent = new Component({
+      id: "participants-add-age",
+      name: "Participants Add Age",
+      description: `Component for add age input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddSessionComponent = new Component({
+      id: "participants-add-session",
+      name: "Participants Add Session",
+      description: `Component for add session select.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsAddAllergensComponent = new Component({
+      id: "participants-add-allergens",
+      name: "Participants Add Allergens",
+      description: `Component for add allergens select.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsCardComponent = new Component({
+      id: "participants-card",
+      name: "Participants Card",
+      description: `Component for participant card.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsDeleteButtonComponent = new Component({
+      id: "participants-delete-button",
+      name: "Participants Delete Button",
+      description: `Component for delete button.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditNameComponent = new Component({
+      id: "participants-edit-name",
+      name: "Participants Edit Name",
+      description: `Component for edit name input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditEmailComponent = new Component({
+      id: "participants-edit-email",
+      name: "Participants Edit Email",
+      description: `Component for edit email input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditPersonalNumberComponent = new Component({
+      id: "participants-edit-personal_number",
+      name: "Participants Edit Personal Number",
+      description: `Component for edit personal number input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditPhoneComponent = new Component({
+      id: "participants-edit-phone",
+      name: "Participants Edit Phone",
+      description: `Component for edit phone input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditAddressComponent = new Component({
+      id: "participants-edit-address",
+      name: "Participants Edit Address",
+      description: `Component for edit address input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditAgeComponent = new Component({
+      id: "participants-edit-age",
+      name: "Participants Edit Age",
+      description: `Component for edit age input.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditAllergensComponent = new Component({
+      id: "participants-edit-allergens",
+      name: "Participants Edit Allergens",
+      description: `Component for edit allergens select.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsEditSessionsComponent = new Component({
+      id: "participants-edit-sessions",
+      name: "Participants Edit Sessions",
+      description: `Component for edit sessions select.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const participantsSessionMenuComponent = new Component({
+      id: "participants-session-menu",
+      name: "Participants Session Menu",
+      description: `Component for session select menu.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    // SQL Components for participants.vue
+    const participantsAllergenOptionsComponent = new Component({
+      id: "participants-allergen-options",
+      name: "Participants Allergen Options",
+      description: `SQL for getting allergen options.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}` },
+      additionals: {}
+    });
+
+    const participantsCountComponent = new Component({
+      id: "participants-count",
+      name: "Participants Count",
+      description: `SQL for counting participants.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}` },
+      additionals: {}
+    });
+
+    const sessionsCountComponent = new Component({
+      id: "sessions-count",
+      name: "Sessions Count",
+      description: `SQL for counting sessions.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}` },
+      additionals: {}
+    });
+
+    const participantsSampleComponent = new Component({
+      id: "participants-sample",
+      name: "Participants Sample",
+      description: `SQL for getting participants sample.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT participant_id, name, email FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} ORDER BY participant_id DESC LIMIT 3` },
+      additionals: {}
+    });
+
+    const participantsListComponent = new Component({
+      id: "participants-list",
+      name: "Participants List",
+      description: `SQL for getting all participants.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            SELECT participant_id, name, email, personal_number, phone, address, age
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
+            ORDER BY participant_id
+        ` },
+      additionals: {}
+    });
+
+    const participantsAllergensComponent = new Component({
+      id: "participants-allergens",
+      name: "Participants Allergens",
+      description: `SQL for getting participants allergens.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            SELECT pa.participant_id, a.allergen_id
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} pa
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')} a ON pa.allergen_id = a.allergen_id
+        ` },
+      additionals: {}
+    });
+
+    const participantsSessionsComponent = new Component({
+      id: "participants-sessions",
+      name: "Participants Sessions",
+      description: `SQL for getting participants sessions.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            SELECT ps.participant_id, s.session_id
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} ps
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} s ON ps.session_id = s.session_id
+        ` },
+      additionals: {}
+    });
+
+    const sessionsListComponent = new Component({
+      id: "sessions-list",
+      name: "Sessions List",
+      description: `SQL for getting all sessions.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            SELECT session_id, from_date, to_date, capacity
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}
+            ORDER BY session_id
+        ` },
+      additionals: {}
+    });
+
+    const participantInsertComponent = new Component({
+      id: "participant-insert",
+      name: "Participant Insert",
+      description: `SQL for inserting a participant.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} (name, email, personal_number, phone, address, age)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ` },
+      additionals: {}
+    });
+
+    const participantGetIdComponent = new Component({
+      id: "participant-get-id",
+      name: "Participant Get ID",
+      description: `SQL for getting participant ID after insert.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            SELECT participant_id FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
+            WHERE name = ? AND email = ?
+            ORDER BY participant_id DESC LIMIT 1
+        ` },
+      additionals: {}
+    });
+
+    const participantUpdateComponent = new Component({
+      id: "participant-update",
+      name: "Participant Update",
+      description: `SQL for updating a participant.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `
+            UPDATE ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
+            SET name = ?, email = ?, personal_number = ?, phone = ?, address = ?, age = ?
+            WHERE participant_id = ?
+        ` },
+      additionals: {}
+    });
+
+    const participantDeleteComponent = new Component({
+      id: "participant-delete",
+      name: "Participant Delete",
+      description: `SQL for deleting a participant.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} WHERE participant_id = ?` },
+      additionals: {}
+    });
+
+    const sessionParticipantInsertComponent = new Component({
+      id: "session-participant-insert",
+      name: "Session Participant Insert",
+      description: `SQL for inserting session-participant association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} (session_id, participant_id) VALUES (?, ?)` },
+      additionals: {}
+    });
+
+    const sessionParticipantDeleteComponent = new Component({
+      id: "session-participant-delete",
+      name: "Session Participant Delete",
+      description: `SQL for deleting session-participant association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ? AND participant_id = ?` },
+      additionals: {}
+    });
+
+    const participantAllergenIdsComponent = new Component({
+      id: "participant-allergen-ids",
+      name: "Participant Allergen IDs",
+      description: `SQL for getting participant allergen IDs.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT allergen_id FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} WHERE participant_id = ?` },
+      additionals: {}
+    });
+
+    const participantAllergenInsertComponent = new Component({
+      id: "participant-allergen-insert",
+      name: "Participant Allergen Insert",
+      description: `SQL for inserting participant-allergen association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} (participant_id, allergen_id) VALUES (?, ?)` },
+      additionals: {}
+    });
+
+    const participantAllergenDeleteComponent = new Component({
+      id: "participant-allergen-delete",
+      name: "Participant Allergen Delete",
+      description: `SQL for deleting participant-allergen association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} WHERE participant_id = ? AND allergen_id = ?` },
+      additionals: {}
+    });
 
 
     // Store the instances into the store
@@ -523,7 +1034,48 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(sessionSupervisorsSectionComponent);
     componentCodeStore.updateDefaultComponent(sessionDeleteButtonComponent);
     componentCodeStore.updateDefaultComponent(sessionStatusBadgeComponent);
-    //componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
+    componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
+    componentCodeStore.updateDefaultComponent(participantsCapacityPercentageComponent);
+    componentCodeStore.updateDefaultComponent(participantsPageCount1Component);
+    componentCodeStore.updateDefaultComponent(participantsPageCount2Component);
+    componentCodeStore.updateDefaultComponent(participantsFilterResetComponent);
+    componentCodeStore.updateDefaultComponent(participantsFilterInputComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddNameComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddEmailComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddPersonalNumberComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddPhoneComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddAddressComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddAgeComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddSessionComponent);
+    componentCodeStore.updateDefaultComponent(participantsAddAllergensComponent);
+    componentCodeStore.updateDefaultComponent(participantsCardComponent);
+    componentCodeStore.updateDefaultComponent(participantsDeleteButtonComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditNameComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditEmailComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditPersonalNumberComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditPhoneComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditAddressComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditAgeComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditAllergensComponent);
+    componentCodeStore.updateDefaultComponent(participantsEditSessionsComponent);
+    componentCodeStore.updateDefaultComponent(participantsSessionMenuComponent);
+    componentCodeStore.updateDefaultComponent(participantsAllergenOptionsComponent);
+    componentCodeStore.updateDefaultComponent(participantsCountComponent);
+    componentCodeStore.updateDefaultComponent(sessionsCountComponent);
+    componentCodeStore.updateDefaultComponent(participantsSampleComponent);
+    componentCodeStore.updateDefaultComponent(participantsListComponent);
+    componentCodeStore.updateDefaultComponent(participantsAllergensComponent);
+    componentCodeStore.updateDefaultComponent(participantsSessionsComponent);
+    componentCodeStore.updateDefaultComponent(sessionsListComponent);
+    componentCodeStore.updateDefaultComponent(participantInsertComponent);
+    componentCodeStore.updateDefaultComponent(participantGetIdComponent);
+    componentCodeStore.updateDefaultComponent(participantUpdateComponent);
+    componentCodeStore.updateDefaultComponent(participantDeleteComponent);
+    componentCodeStore.updateDefaultComponent(sessionParticipantInsertComponent);
+    componentCodeStore.updateDefaultComponent(sessionParticipantDeleteComponent);
+    componentCodeStore.updateDefaultComponent(participantAllergenIdsComponent);
+    componentCodeStore.updateDefaultComponent(participantAllergenInsertComponent);
+    componentCodeStore.updateDefaultComponent(participantAllergenDeleteComponent);
 
     // Reset
     componentCodeStore.resetComponent("stats-meals");
@@ -540,6 +1092,47 @@ navigateTo({
     componentCodeStore.resetComponent("session-supervisors-section");
     componentCodeStore.resetComponent("session-delete-button");
     componentCodeStore.resetComponent("session-status-badge");
+    componentCodeStore.resetComponent("participants-capacity-percentage");
+    componentCodeStore.resetComponent("participants-page-count-1");
+    componentCodeStore.resetComponent("participants-page-count-2");
+    componentCodeStore.resetComponent("participants-filter-reset");
+    componentCodeStore.resetComponent("participants-filter-input");
+    componentCodeStore.resetComponent("participants-add-name");
+    componentCodeStore.resetComponent("participants-add-email");
+    componentCodeStore.resetComponent("participants-add-personal_number");
+    componentCodeStore.resetComponent("participants-add-phone");
+    componentCodeStore.resetComponent("participants-add-address");
+    componentCodeStore.resetComponent("participants-add-age");
+    componentCodeStore.resetComponent("participants-add-session");
+    componentCodeStore.resetComponent("participants-add-allergens");
+    componentCodeStore.resetComponent("participants-card");
+    componentCodeStore.resetComponent("participants-delete-button");
+    componentCodeStore.resetComponent("participants-edit-name");
+    componentCodeStore.resetComponent("participants-edit-email");
+    componentCodeStore.resetComponent("participants-edit-personal_number");
+    componentCodeStore.resetComponent("participants-edit-phone");
+    componentCodeStore.resetComponent("participants-edit-address");
+    componentCodeStore.resetComponent("participants-edit-age");
+    componentCodeStore.resetComponent("participants-edit-allergens");
+    componentCodeStore.resetComponent("participants-edit-sessions");
+    componentCodeStore.resetComponent("participants-session-menu");
+    componentCodeStore.resetComponent("participants-allergen-options");
+    componentCodeStore.resetComponent("participants-count");
+    componentCodeStore.resetComponent("sessions-count");
+    componentCodeStore.resetComponent("participants-sample");
+    componentCodeStore.resetComponent("participants-list");
+    componentCodeStore.resetComponent("participants-allergens");
+    componentCodeStore.resetComponent("participants-sessions");
+    componentCodeStore.resetComponent("sessions-list");
+    componentCodeStore.resetComponent("participant-insert");
+    componentCodeStore.resetComponent("participant-get-id");
+    componentCodeStore.resetComponent("participant-update");
+    componentCodeStore.resetComponent("participant-delete");
+    componentCodeStore.resetComponent("session-participant-insert");
+    componentCodeStore.resetComponent("session-participant-delete");
+    componentCodeStore.resetComponent("participant-allergen-ids");
+    componentCodeStore.resetComponent("participant-allergen-insert");
+    componentCodeStore.resetComponent("participant-allergen-delete");
   }
 
   public static areComponentsInitialized(): boolean {

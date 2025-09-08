@@ -2,47 +2,9 @@ import { defineStore } from 'pinia'
 import type { Component } from '~/model/Component'
 
 export const useComponentCodeStore = defineStore('componentCode', () => {
-  const defaultComponentCodeMap = reactive<Record<string, string>>({})
-  const actualComponentCodeMap = reactive<Record<string, string>>({})
 
   const defaultComponentMap = reactive<Array<Component>>([])
-  const actualComponentMap = reactive<Array<Component>>([])
-
-  function updateDefaultComponentCode(componentName: string, code: string) {
-    defaultComponentCodeMap[componentName] = code
-  }
-
-  function getDefaultComponentCode(componentName: string) {
-    return defaultComponentCodeMap[componentName]
-  }
-
-  function updateComponentCode(componentName: string, code: string) {
-    console.log("Updating component code for:", componentName)
-    console.log(":")
-    console.log("New code:", code)
-    actualComponentCodeMap[componentName] = code
-  }
-
-  function getComponentCode(componentName: string) {
-    return actualComponentCodeMap[componentName]
-  }
-
-  function resetComponentCode(componentName: string) {
-    actualComponentCodeMap[componentName] = defaultComponentCodeMap[componentName]
-  }
-
-  function resetAllComponentCodes() {
-
-    // TODO make modal to reset individual parts of the system
-
-    // Component code reset
-    for (const componentName in actualComponentCodeMap) {
-      resetComponentCode(componentName)
-    }
-
-    // DB reset
-    // const tasks = TaskQueue.getTasks();
-  }
+  let actualComponentMap = reactive<Array<Component>>([])
 
   // New methods for Component instances
   function updateDefaultComponent(component: Component) {
@@ -83,7 +45,8 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
   }
 
   function resetAllComponents() {
-    actualComponentMap.splice(0, actualComponentMap.length, ...defaultComponentMap)
+    actualComponentMap.splice(0, actualComponentMap.length);
+    actualComponentMap.push(...defaultComponentMap);
   }
 
   function updateComponent(id: string, component: Component) {
@@ -131,14 +94,6 @@ export const useComponentCodeStore = defineStore('componentCode', () => {
   }
 
   return {
-    defaultComponentCodeMap,
-    actualComponentCodeMap,
-    updateDefaultComponentCode,
-    getDefaultComponentCode,
-    updateComponentCode,
-    getComponentCode,
-    resetComponentCode,
-    resetAllComponentCodes,
     defaultComponentMap,
     actualComponentMap,
     updateDefaultComponent,

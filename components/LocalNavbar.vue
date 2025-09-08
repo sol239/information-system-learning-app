@@ -238,7 +238,7 @@ async function handleHelperClick() {
 // Core refresh methods without toasts
 async function refreshComponentsCore() {
     console.log("Refreshing components...");
-    componentCodeStore.resetAllComponentCodes();
+    componentCodeStore.resetAllComponents();
 }
 
 async function refreshTasksCore() {
