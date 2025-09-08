@@ -10,7 +10,7 @@
                     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-session-menu', $event)">
                     <div class="component-wrapper">
                         <USelect v-model="value" :items="filterSessionsItems" :disabled="highlightStore.isEditModeActive" />
-                        <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-session-menu'"
+                        <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'sessions-list'"
                             class="edit-button" />
                     </div>
                 </div>
