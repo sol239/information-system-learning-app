@@ -117,6 +117,7 @@ const handleEditSession = async (data: any) => {
     }
 
     isSubmitting.value = true
+    selectedSystemStore.incrementDbNumber()
     try {
         const query = `
             UPDATE ${selectedSystemStore.selectedSystem.db.getTableName('sessions')}

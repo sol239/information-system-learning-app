@@ -24,8 +24,7 @@
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-count', $event)">
                         <div class="component-wrapper">
                             <span class="text-sm font-medium text-gray-700">
-                                {{ t('capacity') }}: {{ selectedSessionInfo.currentCount }}/{{
-                                    selectedSessionInfo.totalCapacity }}
+                                {{ t('capacity') }}: {{ currentCount }}/{{ totalCapacity }}
                             </span>
                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-capacity-count'"
                                 class="edit-button" />
@@ -37,14 +36,14 @@
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-capacity-percentage', $event)">
                         <div class="component-wrapper">
                             <span :style="{
-                                color: darkenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.3),
-                                backgroundColor: lightenColor(getCapacityBadgeColor(selectedSessionInfo.fillPercentage), 0.8),
+                                color: darkenColor(getCapacityBadgeColor(fillPercentage), 0.3),
+                                backgroundColor: lightenColor(getCapacityBadgeColor(fillPercentage), 0.8),
                                 fontWeight: 'bold',
                                 padding: '2px 8px',
                                 borderRadius: '6px',
                                 border: '1px solid rgba(0, 0, 0, 0.1)'
                             }">
-                                {{ selectedSessionInfo.fillPercentage }}%
+                                {{ fillPercentage }}%
                             </span>
                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="'participants-capacity-percentage'"
                                 class="edit-button" />
@@ -722,6 +721,7 @@ function resetFilter() {
 }
 
 const allergenOptions = computed(() => {
+    const _ = selectedSystemStore.dbNumber
     const query: string = componentCodeStore.getComponentCodeByType('participants-allergen-options', 'sql', 'sql') || ``;
     const result = selectedSystemStore.selectedSystem?.db?.query(query)?.results || [];
     return result.map(allergen => ({
@@ -732,6 +732,7 @@ const allergenOptions = computed(() => {
 
 
 const filteredParticipants = computed(() => {
+    const _ = selectedSystemStore.dbNumber
     let arr = participants.value
 
     if (filterText.value) {
@@ -760,90 +761,84 @@ const filteredParticipants = computed(() => {
 
 const toast = useToast()
 
-const selectedSessionInfo = computed(() => {
+// Individual computed properties for capacity pillow
+const totalCapacity = computed(() => {
+    const _ = selectedSystemStore.dbNumber  // Dependency tracking
+  if (!selectedSystemStore.selectedSystem?.db || typeof selectedSystemStore.selectedSystem?.db?.query !== "function") {
+    return 0
+  }
+  
+  const totalCapacityQuery = participantsCapacityCountSqlTotal.value;
+  if (!totalCapacityQuery) return 0;
+  
+  try {
     if (value.value === 'all') {
-
-        const totalCapacityQuery: string = participantsCapacityCountSqlTotal.value;
-        const result = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery)?.results || [];
-        const totalCapacity = result[0]?.count || 0;
-
-        const currentCountQuery: string = participantsCapacityCountSqlCurrent.value;
-
-        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery)?.results || [];
-        const currentCount = currentCountResult[0]?.count || 0;
-
-        console.log("Capacity:", totalCapacity)
-        console.log("Current:", currentCount)
-
-        const fillPercentageJs: string = `(function(currentCount, totalCapacity) { return ${participantsCapacityPercentageJs.value}; })(${currentCount}, ${totalCapacity})`;
-
-        let fillPercentage: number = 0;
-
-        try {
-            // Handle division by zero case
-            if (totalCapacity === 0) {
-                fillPercentage = 0;
-            } else {
-                fillPercentage = eval(fillPercentageJs);
-            }
-            console.log("Fill percentage:", fillPercentage);
-        } catch (error) {
-            console.error("Error evaluating fillPercentageJs:", error);
-            fillPercentage = 0;
-        }
-
-        return {
-            currentCount,
-            totalCapacity,
-            fillPercentage,
-            isFull: currentCount >= totalCapacity,
-            isNearFull: fillPercentage >= 80
-        }
+      const result = selectedSystemStore.selectedSystem.db.query(totalCapacityQuery)?.results || [];
+      return result[0]?.count || 0;
     } else {
-        const sessionId = Number(value.value)
-
-        const totalCapacityQuery: string = participantsCapacityCountSqlTotal.value;
-        const capacityResult = selectedSystemStore.selectedSystem?.db?.query(totalCapacityQuery, [sessionId])?.results || [];
-        const totalCapacity = capacityResult[0]?.count || 0;
-
-        const currentCountQuery: string = participantsCapacityCountSqlCurrent.value;
-
-        const currentCountResult = selectedSystemStore.selectedSystem?.db?.query(currentCountQuery, [sessionId])?.results || [];
-        const currentCount = currentCountResult[0]?.count || 0;
-
-        console.log("Session Capacity:", totalCapacity)
-        console.log("Session Current:", currentCount)
-
-        const fillPercentageJs: string = `(function(currentCount, totalCapacity) { return ${participantsCapacityPercentageJs.value}; })(${currentCount}, ${totalCapacity})`;
-
-        let fillPercentage: number = 0;
-
-        try {
-            // Handle division by zero case
-            if (totalCapacity === 0) {
-                fillPercentage = 0;
-            } else {
-                fillPercentage = eval(fillPercentageJs);
-            }
-            console.log("Session Fill percentage:", fillPercentage);
-        } catch (error) {
-            console.error("Error evaluating fillPercentageJs:", error);
-            fillPercentage = 0;
-        }
-
-        return {
-            currentCount,
-            totalCapacity,
-            fillPercentage,
-            isFull: currentCount >= totalCapacity,
-            isNearFull: fillPercentage >= 80
-        }
+      const sessionId = Number(value.value);
+      const result = selectedSystemStore.selectedSystem.db.query(totalCapacityQuery, [sessionId])?.results || [];
+      return result[0]?.count || 0;
     }
-
+  } catch (error) {
+    console.error('Error querying total capacity:', error);
+    return 0;
+  }
 })
+
+const currentCount = computed(() => {
+    const _ = selectedSystemStore.dbNumber
+  if (!selectedSystemStore.selectedSystem?.db || typeof selectedSystemStore.selectedSystem?.db?.query !== "function") {
+    return 0
+  }
+  
+  const currentCountQuery = participantsCapacityCountSqlCurrent.value;
+  if (!currentCountQuery) return 0;
+  
+  try {
+    if (value.value === 'all') {
+      const result = selectedSystemStore.selectedSystem.db.query(currentCountQuery)?.results || [];
+      return result[0]?.count || 0;
+    } else {
+      const sessionId = Number(value.value);
+      const result = selectedSystemStore.selectedSystem.db.query(currentCountQuery, [sessionId])?.results || [];
+      return result[0]?.count || 0;
+    }
+  } catch (error) {
+    console.error('Error querying current count:', error);
+    return 0;
+  }
+})
+
+const fillPercentage = computed(() => {
+    const _ = selectedSystemStore.dbNumber
+  if (totalCapacity.value === 0) {
+    return 0;
+  }
+  
+  const fillPercentageJs = participantsCapacityPercentageJs.value;
+  if (!fillPercentageJs) return 0;
+  
+  try {
+    const fillPercentageFunction = new Function('currentCount', 'totalCapacity', `return ${fillPercentageJs}`);
+    return fillPercentageFunction(currentCount.value, totalCapacity.value);
+  } catch (error) {
+    console.error('Error evaluating fillPercentageJs:', error);
+    return 0;
+  }
+})
+
+const selectedSessionInfo = computed(() => ({
+  currentCount: currentCount.value,
+  totalCapacity: totalCapacity.value,
+  fillPercentage: fillPercentage.value,
+  isFull: currentCount.value >= totalCapacity.value,
+  isNearFull: fillPercentage.value >= 80
+}))
 
 // Reactive database monitoring using computed hash
 const participantsDataHash = computed(() => {
+    const _ = selectedSystemStore.dbNumber
     if (!selectedSystemStore.selectedSystem?.db) return ''
 
     try {
@@ -1218,6 +1213,7 @@ const removeParticipant = (participant: Participant) => {
         const deleteQuery = componentCodeStore.getComponentCodeByType('participant-delete', 'sql', 'sql') || ``;
         selectedSystemStore.selectedSystem?.db?.query(deleteQuery, [participant.id])
         loadParticipantsFromDatabase()
+        selectedSystemStore.incrementDbNumber() // Trigger DB change detection
         toast.add({
             title: t('participant_deleted_success', { name: participant.name }),
             color: 'primary',
