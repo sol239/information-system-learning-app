@@ -11,7 +11,7 @@
                     <div id="stats">
                         <dashboardStats :system-id="system?.id" />
                         <UCard>
-                            <DashboardTableCountBadge :system="system" />
+                            <DashboardTableCountBadge/>
                         </UCard>
                     </div>
 

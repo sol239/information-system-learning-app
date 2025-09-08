@@ -1,29 +1,31 @@
 <template>
-    <div v-if="capacityData" class="capacity-section mb-6 highlightable" :id="'sessions-capacity-' + props.sessionId"
-        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-capacity-' + props.sessionId, $event)">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-gray-700">{{ t('capacity') }}</span>
-            <span class="text-sm text-gray-600">
-                {{ capacityData.participantCount }}/{{ capacityData.capacity }}
-            </span>
-        </div>
-        <div class="capacity-bar">
-            <div class="capacity-fill" :style="{
-                width: getCapacityPercentage() + '%',
-                backgroundColor: getCapacityColor()
-            }"></div>
-        </div>
-        <div class="text-xs text-gray-500 mt-1">
-            {{ getCapacityPercentage() }}% {{ t('occupied') }}
-        </div>
+  <div class="highlightable" :id="componentId"
+    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
+    <div class="capacity-wrapper">
+      <!-- Rendered HTML -->
+      <div v-html="renderedHtml" class="capacity-content"></div>
+
+      <!-- Edit button positioned absolutely -->
+      <EditComponentModalOpenButton
+        v-if="highlightStore.isEditModeActive"
+        :componentId="componentId"
+        class="edit-button"
+      />
     </div>
+  </div>
+  <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+/* 1. Imports */
+import { computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHighlightStore } from '#imports'
 import { useSelectedSystemStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import '~/assets/css/highlight.css'
 
 interface Props {
     sessionId: number
@@ -33,8 +35,45 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
 const selectedSystemStore = useSelectedSystemStore()
+const componentCodeStore = useComponentCodeStore()
 
+// Constants
+const componentId = 'session-capacity-section'
+const system = selectedSystemStore.selectedSystem
+
+// Component code from store
+const sessionCapacityComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
+
+const correctSqlQuery = computed(() => sessionCapacityComponent.value?.sql?.['sql'] || '')
+const correctHtmlTemplate = computed(() => sessionCapacityComponent.value?.html?.['html'] || '')
+const correctCss = computed(() => sessionCapacityComponent.value?.css?.['css'] || '')
+
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
+const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
+const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+
+// Local state
 const capacityData = ref<{ capacity: number; participantCount: number } | null>(null)
+
+// Computed properties
+const renderedHtml = computed(() => {
+  if (!capacityData.value) return ''
+
+  const percentage = getCapacityPercentage()
+  const color = getCapacityColor()
+  const html = htmlTemplate.value
+    .replace('{{ capacity }}', String(capacityData.value.capacity))
+    .replace('{{ participantCount }}', String(capacityData.value.participantCount))
+    .replace('{{ percentage }}', String(percentage))
+    .replace('{{ color }}', color)
+    .replace('{{ label }}', t('capacity'))
+    .replace('{{ occupied }}', t('occupied'))
+
+  return `<style>${css.value}</style>${html}`;
+});
+
+// Watchers
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
 const loadCapacityData = () => {
     if (!selectedSystemStore.selectedSystem?.db) {
@@ -88,7 +127,25 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style>
+.capacity-wrapper {
+  position: relative; /* Needed for absolute positioning of the button */
+  display: inline-block;
+  width: 100%;
+}
+
+.capacity-content {
+  /* Optional: add padding so button doesn't overlap content */
+  padding: 0.5rem;
+}
+
+.edit-button {
+  position: absolute;
+  top: 0.25rem;   /* Adjust distance from top */
+  right: 0.25rem; /* Adjust distance from right */
+  z-index: 10;
+}
+
 .capacity-section {
     margin-bottom: 1.5rem;
 }

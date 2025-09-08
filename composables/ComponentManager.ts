@@ -180,6 +180,172 @@ navigateTo({
       additionals: {}
     });
 
+    const tableCountBadgeComponent = new Component({
+      id: "dashboard-table-count-badge",
+      name: "Dashboard Table Count Badge",
+      description: `Badge showing the count of all tables.`,
+      html: {
+        "html": `
+        <div class="badge primary large">
+      <span class="icon">🗃️</span>
+      <span>{{ label }}: {{ tableCount }}</span>
+    </div>
+    ` },
+      css: {
+        "css": `.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .badge.primary {
+    background-color: #3b82f6; /* Blue */
+    color: white;
+  }
+
+  .badge.large {
+    font-size: 1.25rem;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';`,
+      },
+      additionals: {}
+    });
+
+    const sessionDayCountBadgeComponent = new Component({
+      id: "session-day-count-badge",
+      name: "Session Day Count Badge",
+      description: `Badge showing the count of days for a session.`,
+      html: {
+        "html": `
+        <div class="badge primary large">
+      <span class="icon">📅</span>
+      <span>{{ label }}: {{ dayCount }}</span>
+    </div>
+    ` },
+      css: {
+        "css": `.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .badge.primary {
+    background-color: #10b981; /* Green */
+    color: white;
+  }
+
+  .badge.large {
+    font-size: 1.25rem;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT from_date, to_date FROM sessions WHERE session_id = ?`,
+      },
+      additionals: {}
+    });
+
+    const sessionDateRangeComponent = new Component({
+      id: "session-date-range",
+      name: "Session Date Range",
+      description: `Component showing the date range for a session.`,
+      html: {
+        "html": `
+        <div class="date-range">
+      <span class="calendar-icon">📅</span>
+      <span class="date-text">{{ dateRange }}</span>
+    </div>
+    ` },
+      css: {
+        "css": `.date-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    background-color: #f3f4f6;
+  }
+
+  .calendar-icon {
+    font-size: 1rem;
+  }
+
+  .date-text {
+    white-space: nowrap;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT from_date, to_date FROM sessions WHERE session_id = ?`,
+      },
+      additionals: {}
+    });
+
+    const sessionCapacitySectionComponent = new Component({
+      id: "session-capacity-section",
+      name: "Session Capacity Section",
+      description: `Component showing the capacity and participant count for a session with a progress bar.`,
+      html: {
+        "html": `
+        <div class="capacity-section">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-gray-700">{{ label }}</span>
+        <span class="text-sm text-gray-600">{{ participantCount }}/{{ capacity }}</span>
+      </div>
+      <div class="capacity-bar">
+        <div class="capacity-fill" style="width: {{ percentage }}%; background-color: {{ color }}"></div>
+      </div>
+      <div class="text-xs text-gray-500 mt-1">{{ percentage }}% {{ occupied }}</div>
+    </div>
+    ` },
+      css: {
+        "css": `.capacity-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .capacity-bar {
+    width: 100%;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    height: 0.5rem;
+    overflow: hidden;
+  }
+
+  .capacity-fill {
+    height: 100%;
+    transition: all 0.5s ease-out;
+    border-radius: 9999px;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT capacity FROM sessions WHERE session_id = ?; SELECT COUNT(*) as count FROM sessions_participants WHERE session_id = ?`,
+      },
+      additionals: {}
+    });
+
     /*
     const participantsCapacityCountComponent = new Component({
       id: "participants-capacity-count",
@@ -200,7 +366,7 @@ navigateTo({
       additionals: {}
     });
     */
-    
+
 
     // Store the instances into the store
     componentCodeStore.updateDefaultComponent(statsMealsComponent);
@@ -208,6 +374,10 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(statsSessionsComponent);
     componentCodeStore.updateDefaultComponent(statsSupervisorsComponent);
     componentCodeStore.updateDefaultComponent(participantsCapacityCountComponentAll);
+    componentCodeStore.updateDefaultComponent(tableCountBadgeComponent);
+    componentCodeStore.updateDefaultComponent(sessionDayCountBadgeComponent);
+    componentCodeStore.updateDefaultComponent(sessionDateRangeComponent);
+    componentCodeStore.updateDefaultComponent(sessionCapacitySectionComponent);
     //componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
 
     // Reset
@@ -217,6 +387,10 @@ navigateTo({
     componentCodeStore.resetComponent("stats-supervisors");
     componentCodeStore.resetComponent("participants-capacity-count-all");
     componentCodeStore.resetComponent("participants-capacity-count");
+    componentCodeStore.resetComponent("dashboard-table-count-badge");
+    componentCodeStore.resetComponent("session-day-count-badge");
+    componentCodeStore.resetComponent("session-date-range");
+    componentCodeStore.resetComponent("session-capacity-section");
   }
 
   public static areComponentsInitialized(): boolean {
