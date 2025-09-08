@@ -3,7 +3,25 @@
     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
     <div class="participants-wrapper">
       <!-- Rendered HTML -->
-      <div v-html="renderedHtml" class="participants-content"></div>
+     <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <UIcon name="i-heroicons-users" />
+            {{ t('participants') }} ({{ participantCount }})
+        </h4>
+        <div v-if="participantCount > 0" class="participants-list space-y-2">
+            <div v-for="participant in participantsData" :key="participant.id"
+                class="participant-item">
+                <div class="participant-avatar">
+                    {{ getInitials(participant.name) }}
+                </div>
+                <div class="participant-info">
+                    <div class="participant-name">{{ participant.name }}</div>
+                    <div class="participant-details">{{ t('age') }}: {{ participant.age }}</div>
+                </div>
+            </div>
+        </div>
+        <div v-else class="text-sm text-gray-500 italic">
+            {{ t('no_participants') }}
+        </div>
 
       <!-- Edit button positioned absolutely -->
       <EditComponentModalOpenButton
@@ -44,114 +62,38 @@ const system = selectedSystemStore.selectedSystem
 // Component code from store
 const sessionParticipantsComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-const correctSqlQuery = computed(() => sessionParticipantsComponent.value?.sql?.['sql'] || '')
-const correctHtmlTemplate = computed(() => sessionParticipantsComponent.value?.html?.['html'] || '')
-const correctCss = computed(() => sessionParticipantsComponent.value?.css?.['css'] || '')
+const correctSqlQuery = computed(() => sessionParticipantsComponent.value?.sql?.['sql-1'] || ``)
 
-const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
-const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
-const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+const correctCountQuery = computed(() => sessionParticipantsComponent.value?.sql?.['sql-2'] || ``)
 
-// Local state
-const participantsData = ref<any[] | null>(null)
-const expandedParticipants = ref<Set<number>>(new Set())
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-1', correctSqlQuery.value))
+const countQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-2', correctCountQuery.value))
 
-// Computed properties
-const renderedHtml = computed(() => {
-  if (!participantsData.value) return ''
+// Computed participants fetched with SQL query
+const participantsData = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return []
+  }
+  const result = system?.db.query(sqlQuery.value, [props.sessionId])?.results || []
+  return result
+})
 
-  const displayedParticipants = getDisplayedParticipants()
-  const participantsHtml = displayedParticipants.map(participant => `
-    <div class="participant-item">
-      <div class="participant-avatar">${getInitials(participant.name)}</div>
-      <div class="participant-info">
-        <div class="participant-name">${participant.name}</div>
-        <div class="participant-details">${t('age')}: ${participant.age}</div>
-      </div>
-    </div>
-  `).join('')
+// Computed participant count using sql-2 query
+const participantCount = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return 0
+  }
+  const result = system?.db.query(countQuery.value, [props.sessionId])?.results?.[0]?.count || 0
+  return result
+})
 
-  const moreLink = participantsData.value.length > 3 && !isParticipantsExpanded()
-    ? `<div class="text-xs text-gray-500 cursor-pointer hover:text-gray-700" onclick="toggleParticipantsExpanded()">
-        + ${participantsData.value.length - 3} ${t('more_participants')}
-       </div>`
-    : ''
-
-  const lessLink = participantsData.value.length > 3 && isParticipantsExpanded()
-    ? `<div class="text-xs text-gray-500 cursor-pointer hover:text-gray-700" onclick="toggleParticipantsExpanded()">
-        ${t('show_less')}
-       </div>`
-    : ''
-
-  const noParticipants = participantsData.value.length === 0
-    ? `<div class="text-sm text-gray-500 italic">${t('no_participants')}</div>`
-    : ''
-
-  const html = htmlTemplate.value
-    .replace('{{ participantsTitle }}', `${t('participants')} (${participantsData.value.length})`)
-    .replace('{{ participantsList }}', participantsHtml)
-    .replace('{{ moreLink }}', moreLink)
-    .replace('{{ lessLink }}', lessLink)
-    .replace('{{ noParticipants }}', noParticipants)
-
-  return `<style>${css.value}</style>${html}`;
-});
 
 // Watchers
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
-const loadParticipants = () => {
-    if (!selectedSystemStore.selectedSystem?.db) {
-        console.error('Database not available')
-        return
-    }
-
-    try {
-        const participantsTable = selectedSystemStore.selectedSystem.db.getTableName('participants')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-
-        const query = selectedSystemStore.selectedSystem.db.query(
-            `SELECT p.* FROM ${participantsTable} p
-             JOIN ${sessionsParticipantsTable} sp ON p.participant_id = sp.participant_id
-             WHERE sp.session_id = ?`,
-            [props.sessionId]
-        )
-
-        if (query.success) {
-            participantsData.value = query.results
-        }
-    } catch (error) {
-        console.error('Error loading participants:', error)
-    }
-}
-
-const getDisplayedParticipants = (): any[] => {
-    if (!participantsData.value) return []
-    if (isParticipantsExpanded()) {
-        return participantsData.value
-    }
-    return participantsData.value.slice(0, 3)
-}
-
-const isParticipantsExpanded = (): boolean => {
-    return expandedParticipants.value.has(props.sessionId)
-}
-
-const toggleParticipantsExpanded = () => {
-    if (expandedParticipants.value.has(props.sessionId)) {
-        expandedParticipants.value.delete(props.sessionId)
-    } else {
-        expandedParticipants.value.add(props.sessionId)
-    }
-}
-
 const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
 }
-
-onMounted(() => {
-    loadParticipants()
-})
 </script>
 
 <style>
@@ -173,8 +115,33 @@ onMounted(() => {
   z-index: 10;
 }
 
-.participants-section {
-    margin-bottom: 1rem;
+.participants-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Modern custom scrollbar */
+.participants-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.participants-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.participants-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+.participants-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.participants-list::-webkit-scrollbar-thumb:active {
+  background: #64748b;
 }
 
 .participant-item {
