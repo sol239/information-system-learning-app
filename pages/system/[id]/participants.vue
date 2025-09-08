@@ -172,7 +172,8 @@
             <!-- Participants Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="participant in paginatedParticipants" :key="participant.id" class="participant-card">
-                    <div class="highlightable" :id="'participants-card-' + participant.id" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
+                    <div class="highlightable" :id="'participants-card-' + participant.id"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-card-' + participant.id, $event)">
                         <!-- Participant Header -->
                         <div class="participant-header">
                             <div class="flex items-center justify-between mb-4">
@@ -214,12 +215,18 @@
                                 <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
                                 <span>{{ participant.address }}</span>
                             </div>
-                            <!-- Allergies Badge -->
-                            <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
-                                class="mt-2">
-                                {{ t("allergens") }}: {{ participant.allergens.length }}
-                            </UBadge>
+
                         </div>
+                    </div>
+
+
+                    <div class="highlightable" :id="'participants-allergens-badge-' + participant.id"
+                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-allergens-badge-' + participant.id, $event)">
+                        <!-- Allergies Badge -->
+                        <UBadge size="sm" :color="participant.allergens.length > 0 ? 'red' : 'green'" variant="soft"
+                            class="mt-2">
+                            {{ t("allergens") }}: {{ participant.allergens.length }}
+                        </UBadge>
                     </div>
 
                     <!-- Participant Actions -->
