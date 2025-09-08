@@ -87,9 +87,17 @@ watch(() => props.session, (newSession) => {
     }
 }, { immediate: true })
 
-// Watch for modal open to reset if no session
+// Watch for modal open/close to handle form state
 watch(() => props.modelValue, (open) => {
-    if (!open) {
+    if (open && props.session) {
+        // When modal opens, populate form with session data
+        editSession.value = {
+            from_date: props.session.fromDate.toISOString().split('T')[0],
+            to_date: props.session.toDate.toISOString().split('T')[0],
+            capacity: props.session.capacity
+        }
+    } else if (!open) {
+        // When modal closes, reset form
         editSession.value = {
             from_date: '',
             to_date: '',
