@@ -346,6 +346,277 @@ navigateTo({
       additionals: {}
     });
 
+    const sessionParticipantsSectionComponent = new Component({
+      id: "session-participants-section",
+      name: "Session Participants Section",
+      description: `Component showing the list of participants for a session with avatars and details.`,
+      html: {
+        "html": `
+        <div class="participants-section">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <span class="text-lg">👥</span>
+        {{ participantsTitle }}
+      </h4>
+      <div class="space-y-2">
+        {{ participantsList }}
+        {{ moreLink }}
+        {{ lessLink }}
+        {{ noParticipants }}
+      </div>
+    </div>
+    ` },
+      css: {
+        "css": `.participants-section {
+    margin-bottom: 1rem;
+  }
+
+  .participant-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .participant-item:hover {
+    background-color: #f9fafb;
+  }
+
+  .participant-avatar {
+    width: 2rem;
+    height: 2rem;
+    background-color: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .participant-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .participant-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .participant-details {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 768px) {
+    .participant-item {
+      padding: 0.25rem;
+    }
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT p.* FROM participants p JOIN sessions_participants sp ON p.participant_id = sp.participant_id WHERE sp.session_id = ?`,
+      },
+      additionals: {}
+    });
+
+    const sessionSupervisorsSectionComponent = new Component({
+      id: "session-supervisors-section",
+      name: "Session Supervisors Section",
+      description: `Component showing the list of supervisors for a session with avatars and contact details.`,
+      html: {
+        "html": `
+        <div class="supervisors-section">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <span class="text-lg">👨‍🏫</span>
+        {{ supervisorsTitle }}
+      </h4>
+      <div class="space-y-2">
+        {{ supervisorsList }}
+        {{ noSupervisors }}
+      </div>
+    </div>
+    ` },
+      css: {
+        "css": `.supervisors-section {
+    margin-bottom: 1rem;
+  }
+
+  .supervisor-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .supervisor-item:hover {
+    background-color: #f9fafb;
+  }
+
+  .supervisor-avatar {
+    width: 2rem;
+    height: 2rem;
+    background-color: #e9d5ff;
+    color: #7c3aed;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .supervisor-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .supervisor-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .supervisor-details {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 768px) {
+    .supervisor-item {
+      padding: 0.25rem;
+    }
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT s.* FROM supervisors s JOIN sessions_supervisors ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
+      },
+      additionals: {}
+    });
+
+    const sessionDeleteButtonComponent = new Component({
+      id: "session-delete-button",
+      name: "Session Delete Button",
+      description: `Button component for deleting a session with confirmation and proper cleanup.`,
+      html: {
+        "html": `
+        <button class="delete-button" onclick="handleDelete()">
+      <span class="delete-icon">🗑️</span>
+      <span class="delete-text">{{ deleteLabel }}</span>
+    </button>
+    ` },
+      css: {
+        "css": `.delete-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .delete-button:hover {
+    background-color: #b91c1c;
+  }
+
+  .delete-icon {
+    font-size: 1rem;
+  }
+
+  .delete-text {
+    white-space: nowrap;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `DELETE FROM sessions_participants WHERE session_id = ?; DELETE FROM sessions_supervisors WHERE session_id = ?; DELETE FROM sessions WHERE session_id = ?`,
+      },
+      additionals: {}
+    });
+
+    const sessionStatusBadgeComponent = new Component({
+      id: "session-status-badge",
+      name: "Session Status Badge",
+      description: `Badge component showing the status of a session based on capacity and participant count.`,
+      html: {
+        "html": `
+        <div class="status-badge status-{{ color }}">
+      <span class="status-text">{{ status }}</span>
+    </div>
+    ` },
+      css: {
+        "css": `.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-badge.status-red {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+
+  .status-badge.status-yellow {
+    background-color: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fde68a;
+  }
+
+  .status-badge.status-green {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+
+  .status-badge.status-neutral {
+    background-color: #f9fafb;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+  }
+
+  .status-text {
+    white-space: nowrap;
+  }
+` },
+      js: { "js": `` },
+      sql: {
+        "sql": `SELECT capacity FROM sessions WHERE session_id = ?; SELECT COUNT(*) as count FROM sessions_participants WHERE session_id = ?`,
+      },
+      additionals: {}
+    });
+
     /*
     const participantsCapacityCountComponent = new Component({
       id: "participants-capacity-count",
@@ -378,6 +649,10 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(sessionDayCountBadgeComponent);
     componentCodeStore.updateDefaultComponent(sessionDateRangeComponent);
     componentCodeStore.updateDefaultComponent(sessionCapacitySectionComponent);
+    componentCodeStore.updateDefaultComponent(sessionParticipantsSectionComponent);
+    componentCodeStore.updateDefaultComponent(sessionSupervisorsSectionComponent);
+    componentCodeStore.updateDefaultComponent(sessionDeleteButtonComponent);
+    componentCodeStore.updateDefaultComponent(sessionStatusBadgeComponent);
     //componentCodeStore.updateDefaultComponent(participantsCapacityCountComponent);
 
     // Reset
@@ -391,6 +666,10 @@ navigateTo({
     componentCodeStore.resetComponent("session-day-count-badge");
     componentCodeStore.resetComponent("session-date-range");
     componentCodeStore.resetComponent("session-capacity-section");
+    componentCodeStore.resetComponent("session-participants-section");
+    componentCodeStore.resetComponent("session-supervisors-section");
+    componentCodeStore.resetComponent("session-delete-button");
+    componentCodeStore.resetComponent("session-status-badge");
   }
 
   public static areComponentsInitialized(): boolean {

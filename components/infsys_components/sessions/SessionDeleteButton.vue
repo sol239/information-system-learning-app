@@ -1,21 +1,31 @@
 <template>
-    <div class="highlightable" :id="'sessions-delete-' + sessionId">
-        <UButton size="sm" color="red" variant="solid" :loading="isDeleting" 
-            @click="highlightStore.isHighlightMode
-                ? highlightStore.highlightHandler.selectElement('sessions-delete-' + sessionId, $event)
-                : handleDelete()"
-            :id="'sessions-delete-' + sessionId">
-            <UIcon name="i-heroicons-trash" class="mr-1" />
-            {{ t('delete') }}
-        </UButton>
+  <div class="highlightable" :id="componentId"
+    @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
+    <div class="delete-button-wrapper">
+      <!-- Rendered HTML -->
+      <div v-html="renderedHtml" class="delete-button-content"></div>
+
+      <!-- Edit button positioned absolutely -->
+      <EditComponentModalOpenButton
+        v-if="highlightStore.isEditModeActive"
+        :componentId="componentId"
+        class="edit-button"
+      />
     </div>
+  </div>
+  <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+/* 1. Imports */
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSelectedSystemStore, useToast } from '#imports'
 import { useHighlightStore } from '#imports'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
+import { ComponentHandler } from '~/composables/ComponentHandler'
+import { useHighlightWatchers } from '~/composables/highlightWatchers'
+import '~/assets/css/highlight.css'
 
 interface Props {
     sessionId: number
@@ -27,6 +37,33 @@ const selectedSystemStore = useSelectedSystemStore()
 const toast = useToast()
 const isDeleting = ref(false)
 const highlightStore = useHighlightStore()
+const componentCodeStore = useComponentCodeStore()
+
+// Constants
+const componentId = 'session-delete-button'
+
+// Component code from store
+const sessionDeleteButtonComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
+
+const correctSqlQuery = computed(() => sessionDeleteButtonComponent.value?.sql?.['sql'] || '')
+const correctHtmlTemplate = computed(() => sessionDeleteButtonComponent.value?.html?.['html'] || '')
+const correctCss = computed(() => sessionDeleteButtonComponent.value?.css?.['css'] || '')
+
+const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
+const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
+const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+
+// Computed properties
+const renderedHtml = computed(() => {
+  const html = htmlTemplate.value
+    .replace('{{ deleteLabel }}', t('delete'))
+    .replace('{{ sessionId }}', String(props.sessionId))
+
+  return `<style>${css.value}</style>${html}`;
+});
+
+// Watchers
+useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
 const handleDelete = async () => {
     if (!selectedSystemStore.selectedSystem?.db) {
@@ -75,3 +112,22 @@ const handleDelete = async () => {
     }
 }
 </script>
+
+<style>
+.delete-button-wrapper {
+  position: relative; /* Needed for absolute positioning of the button */
+  display: inline-block;
+}
+
+.delete-button-content {
+  /* Optional: add padding so button doesn't overlap content */
+  padding: 0.25rem;
+}
+
+.edit-button {
+  position: absolute;
+  top: 0.25rem;   /* Adjust distance from top */
+  right: 0.25rem; /* Adjust distance from right */
+  z-index: 10;
+}
+</style>
