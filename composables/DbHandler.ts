@@ -608,7 +608,8 @@ export default class DbHandler {
         try {
             const stmt = this.db.prepare(sql);
 
-            if (params) {
+            // Only bind parameters if the SQL contains placeholders and params are provided
+            if (params && params.length > 0 && sql.includes('?')) {
                 stmt.bind(params);
             }
 
@@ -637,14 +638,15 @@ export default class DbHandler {
             throw new Error('Database not initialized');
         }
 
-        if (params && params.length > 0) {
-            // Use prepared statement when parameters are provided
+        // Only use prepared statement if the SQL contains placeholders and parameters are provided
+        if (params && params.length > 0 && sql.includes('?')) {
+            // Use prepared statement when parameters are provided and SQL has placeholders
             const stmt = this.db.prepare(sql);
             stmt.run(params);
             stmt.free();
             console.log("EXEC SQL WITH PARAMS: ", sql, params);
         } else {
-            // Use direct exec for statements without parameters
+            // Use direct exec for statements without parameters or placeholders
             this.db.exec(sql);
             console.log("EXEC SQL: ", sql);
         }

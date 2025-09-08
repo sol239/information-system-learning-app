@@ -298,14 +298,14 @@
                         </div>
                     </div>
 
-                    <div class="highlightable" :id="'participant-allergens'" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participant-allergens', $event)">
+                    <div class="highlightable relative" :id="'participant-allergens'" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participant-allergens', $event)">
                         <!-- Allergies Badge -->
                         <UBadge size="sm" :color="getParticipantAllergenCount(participant.id) > 0 ? 'red' : 'green'" variant="soft"
                             class="mt-2">
                             {{ t("allergens") }}: {{ getParticipantAllergenCount(participant.id) }}
                         </UBadge>
                         <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                :componentId="'participant-allergen-count'" class="" />
+                                :componentId="'participant-allergen-count'" class="absolute -top-1 -right-1 z-10" />
                     </div>
 
                     <!-- Participant Actions -->
@@ -536,7 +536,7 @@ const correctParticipantsSessionMenuJs = computed(() => participantsSessionMenuC
 const correctParticipantsSessionMenuHtml = computed(() => participantsSessionMenuComponent.value?.html?.['html'] || '')
 const correctParticipantsSessionMenuCss = computed(() => participantsSessionMenuComponent.value?.css?.['css'] || '')
 
-const correctParticipantAllergenCountSql = computed(() => participantAllergenCountComponent.value?.sql?.['sql'] || 'SELECT COUNT(*) as count FROM participant_allergens WHERE participant_id = ?')
+const correctParticipantAllergenCountSql = computed(() => participantAllergenCountComponent.value?.sql?.['sql'] || '')
 const participantsCapacityCountSqlTotal = computed(() => {
     if (value.value === 'all') {
         return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-total-all', correctParticipantsCapacityCountSqlTotalAll.value)
@@ -1050,10 +1050,12 @@ const getParticipantAllergenCount = (participantId: number): number => {
     }
 
     const allergenCountQuery = participantAllergenCountSql.value;
+    console.log("QUERY: ", allergenCountQuery)
     if (!allergenCountQuery) return 0;
 
     try {
         const result = selectedSystemStore.selectedSystem.db.query(allergenCountQuery, [participantId])?.results || [];
+        console.log("RESULT: ", result )
         return result[0]?.count || 0;
     } catch (error) {
         console.error('Error querying allergen count:', error);

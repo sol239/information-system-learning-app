@@ -1087,6 +1087,7 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(participantAllergenIdsComponent);
     componentCodeStore.updateDefaultComponent(participantAllergenInsertComponent);
     componentCodeStore.updateDefaultComponent(participantAllergenDeleteComponent);
+    componentCodeStore.updateDefaultComponent(participantAllergenCountComponent);
     componentCodeStore.updateActualComponent(participantAllergenCountComponent);
 
     // Reset
@@ -1129,7 +1130,6 @@ navigateTo({
     componentCodeStore.resetComponent("participants-edit-sessions");
     componentCodeStore.resetComponent("participants-session-menu");
     componentCodeStore.resetComponent("participants-allergen-options");
-    componentCodeStore.resetComponent("participant-allergen-count");
     componentCodeStore.resetComponent("participants-count");
     componentCodeStore.resetComponent("sessions-count");
     componentCodeStore.resetComponent("participants-sample");
