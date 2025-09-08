@@ -686,7 +686,15 @@ const participantSchema = {
 // Pagination
 const currentPage = ref(1)
 const itemsPerPage = ref(6) // 3x3 grid
-const totalPages = computed(() => Math.ceil(filteredParticipants.value.length / itemsPerPage.value))
+const totalPages = computed(() => {
+    const pageCount = pageCountFunction.value(filteredParticipants.value.length, itemsPerPage.value)
+    console.log("Total pages:", pageCount, "for", filteredParticipants.value.length, "items with", itemsPerPage.value, "per page")
+    console.log("JS: ", correctParticipantsPageCount1Js.value)
+    return pageCount;
+})
+
+const pageCountFunction = computed(() => new Function('totalItems', 'itemsPerPage', `return ${correctParticipantsPageCount1Js.value}`))
+
 
 const paginatedParticipants = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value

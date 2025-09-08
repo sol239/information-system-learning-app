@@ -551,7 +551,7 @@ navigateTo({
       description: `Component for displaying page count.`,
       html: { "html": "" },
       css: { "css": "" },
-      js: { "js": "" },
+      js: { "js": "Math.ceil(totalItems / itemsPerPage)" },
       sql: { "sql": "" },
       additionals: {}
     });
