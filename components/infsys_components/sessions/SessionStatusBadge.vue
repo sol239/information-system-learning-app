@@ -1,16 +1,13 @@
 <template>
   <div class="highlightable" :id="componentId"
     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
-    <div class="status-badge-wrapper">
+    <div class="capacity-wrapper">
       <!-- Rendered HTML -->
-      <div v-html="renderedHtml" class="status-badge-content"></div>
+      <div v-html="renderedHtml" class="capacity-content"></div>
 
       <!-- Edit button positioned absolutely -->
-      <EditComponentModalOpenButton
-        v-if="highlightStore.isEditModeActive"
-        :componentId="componentId"
-        class="edit-button"
-      />
+      <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive" :componentId="componentId"
+        class="edit-button" />
     </div>
   </div>
   <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
@@ -28,7 +25,7 @@ import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import '~/assets/css/highlight.css'
 
 interface Props {
-    sessionId: number
+  sessionId: number
 }
 
 const props = defineProps<Props>()
@@ -42,114 +39,122 @@ const componentId = 'session-status-badge'
 const system = selectedSystemStore.selectedSystem
 
 // Component code from store
-const sessionStatusBadgeComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
+const sessionCapacityComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-const correctSqlQuery = computed(() => sessionStatusBadgeComponent.value?.sql?.['sql'] || '')
-const correctHtmlTemplate = computed(() => sessionStatusBadgeComponent.value?.html?.['html'] || '')
-const correctCss = computed(() => sessionStatusBadgeComponent.value?.css?.['css'] || '')
+const correctCapacityQuery = computed(() => sessionCapacityComponent.value?.sql?.['sql-1'] || '')
+const correctParticipantCountQuery = computed(() => sessionCapacityComponent.value?.sql?.['sql-2'] || '')
+const correctHtmlTemplate = computed(() => sessionCapacityComponent.value?.html?.['html'] || '')
+const correctCss = computed(() => sessionCapacityComponent.value?.css?.['css'] || '')
+const correctJs = computed(() => sessionCapacityComponent.value?.js?.['js'] || '')
 
-const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
+const participantCountQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-2', correctParticipantCountQuery.value))
+const capacityQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-1', correctCapacityQuery.value))
 const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
+const js = computed(() => ComponentHandler.getComponentValue(componentId, 'js', correctJs.value))
 
 // Local state
-const statusData = ref<{ capacity: number; participantCount: number } | null>(null)
+const capacityData = computed(() => ({
+  capacity: capacity.value,
+  participantCount: participantCount.value
+}))
 
 // Computed properties
 const renderedHtml = computed(() => {
-  if (!statusData.value) return ''
+  if (!capacityData.value) return ''
 
+  const percentage = capacityPercentage()
+  const color = getCapacityColor()
   const status = getSessionStatus()
-  const color = getSessionStatusColor()
   const html = htmlTemplate.value
     .replace('{{ status }}', status)
     .replace('{{ color }}', color)
-    .replace('{{ capacity }}', String(statusData.value.capacity))
-    .replace('{{ participantCount }}', String(statusData.value.participantCount))
-
   return `<style>${css.value}</style>${html}`;
 });
+
+const capacityFunction = computed(() => new Function('participantCount', 'capacity', js.value))
+
+const participantCount = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return 0
+  }
+  const result = system?.db.query(participantCountQuery.value, [props.sessionId])?.results?.[0]?.count || 0
+  return result;
+})
+
+const capacity = computed(() => {
+  if (!system?.db || typeof system?.db?.query !== "function") {
+    return 0
+  }
+  const queryResult = system?.db.query(capacityQuery.value, [props.sessionId]).results?.[0]?.capacity
+  return queryResult || 0
+})
+
+const capacityPercentage = (): number => {
+  if (!capacityData.value) return 0
+  return capacityFunction.value(capacityData.value.participantCount, capacityData.value.capacity)
+}
+
+const getCapacityColor = (): string => {
+  if (!capacityData.value) return 'neutral'
+  const percentage = capacityPercentage()
+  if (percentage >= 90 || capacityData.value.participantCount >= capacityData.value.capacity) return 'red'
+  if (percentage >= 70) return 'yellow'
+  if (percentage > 0) return 'green'
+  return 'neutral'
+}
+
+const getSessionStatus = (): string => {
+  if (!capacityData.value) return ''
+  if (capacityData.value.participantCount >= capacityData.value.capacity) return t('full')
+  const percentage = capacityPercentage()
+  if (percentage >= 70) return t('almost_full')
+  if (percentage > 0) return t('available')
+  return t('empty')
+}
 
 // Watchers
 useHighlightWatchers(highlightStore.highlightHandler, highlightStore)
 
-const loadStatusData = () => {
-    if (!selectedSystemStore.selectedSystem?.db) {
-        console.error('Database not available')
-        return
-    }
-
-    try {
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-
-        // Get session capacity
-        const sessionQuery = selectedSystemStore.selectedSystem.db.query(
-            `SELECT capacity FROM ${sessionsTable} WHERE session_id = ?`,
-            [props.sessionId]
-        )
-
-        // Get participant count
-        const participantQuery = selectedSystemStore.selectedSystem.db.query(
-            `SELECT COUNT(*) as count FROM ${sessionsParticipantsTable} WHERE session_id = ?`,
-            [props.sessionId]
-        )
-
-        if (sessionQuery.success && sessionQuery.results.length > 0 && participantQuery.success) {
-            const capacity = sessionQuery.results[0].capacity
-            const participantCount = participantQuery.results[0].count
-            statusData.value = { capacity, participantCount }
-        }
-    } catch (error) {
-        console.error('Error loading status data:', error)
-    }
-}
-
-const getCapacityPercentage = (): number => {
-    if (!statusData.value) return 0
-    // Handle division by zero case
-    if (statusData.value.capacity === 0) return 0
-    return Math.round((statusData.value.participantCount / statusData.value.capacity) * 100)
-}
-
-const getSessionStatus = (): string => {
-    if (!statusData.value) return ''
-    if (statusData.value.participantCount >= statusData.value.capacity) return t('full')
-    const percentage = getCapacityPercentage()
-    if (percentage >= 70) return t('almost_full')
-    if (percentage > 0) return t('available')
-    return t('empty')
-}
-
-const getSessionStatusColor = (): 'red' | 'yellow' | 'green' | 'neutral' => {
-    if (!statusData.value) return 'neutral'
-    if (statusData.value.participantCount >= statusData.value.capacity) return 'red'
-    const percentage = getCapacityPercentage()
-    if (percentage >= 70) return 'yellow'
-    if (percentage > 0) return 'green'
-    return 'neutral'
-}
-
-onMounted(() => {
-    loadStatusData()
-})
 </script>
 
 <style>
-.status-badge-wrapper {
-  position: relative; /* Needed for absolute positioning of the button */
+.capacity-wrapper {
+  position: relative;
+  /* Needed for absolute positioning of the button */
   display: inline-block;
+  width: 100%;
 }
 
-.status-badge-content {
+.capacity-content {
   /* Optional: add padding so button doesn't overlap content */
-  padding: 0.25rem;
+  padding: 0.5rem;
 }
 
 .edit-button {
   position: absolute;
-  top: 0.25rem;   /* Adjust distance from top */
-  right: 0.25rem; /* Adjust distance from right */
+  top: 0.25rem;
+  /* Adjust distance from top */
+  right: 0.25rem;
+  /* Adjust distance from right */
   z-index: 10;
+}
+
+.capacity-section {
+  margin-bottom: 1.5rem;
+}
+
+.capacity-bar {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.5rem;
+  overflow: hidden;
+}
+
+.capacity-fill {
+  height: 100%;
+  transition: all 0.5s ease-out;
+  border-radius: 9999px;
 }
 </style>
