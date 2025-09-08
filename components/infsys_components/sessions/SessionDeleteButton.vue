@@ -3,7 +3,7 @@
     @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement(componentId, $event)">
     <div class="delete-button-wrapper">
       <!-- Rendered HTML -->
-      <div v-html="renderedHtml" class="delete-button-content"></div>
+      <div v-html="renderedHtml" class="delete-button-content" @click.stop="handleDelete"></div>
 
       <!-- Edit button positioned absolutely -->
       <EditComponentModalOpenButton
@@ -45,11 +45,15 @@ const componentId = 'session-delete-button'
 // Component code from store
 const sessionDeleteButtonComponent = computed(() => componentCodeStore.getComponentById(componentId) || componentCodeStore.getDefaultComponent(componentId))
 
-const correctSqlQuery = computed(() => sessionDeleteButtonComponent.value?.sql?.['sql'] || '')
+const correctSqlQuery1 = computed(() => sessionDeleteButtonComponent.value?.sql?.['sql-1'] || '')
+const correctSqlQuery2 = computed(() => sessionDeleteButtonComponent.value?.sql?.['sql-2'] || '')
+const correctSqlQuery3 = computed(() => sessionDeleteButtonComponent.value?.sql?.['sql-3'] || '')
 const correctHtmlTemplate = computed(() => sessionDeleteButtonComponent.value?.html?.['html'] || '')
 const correctCss = computed(() => sessionDeleteButtonComponent.value?.css?.['css'] || '')
 
-const sqlQuery = computed(() => ComponentHandler.getComponentValue(componentId, 'sql', correctSqlQuery.value))
+const sqlQuery1 = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-1', correctSqlQuery1.value))
+const sqlQuery2 = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-2', correctSqlQuery2.value))
+const sqlQuery3 = computed(() => ComponentHandler.getComponentValue(componentId, 'sql-3', correctSqlQuery3.value))
 const htmlTemplate = computed(() => ComponentHandler.getComponentValue(componentId, 'html', correctHtmlTemplate.value))
 const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css', correctCss.value))
 
@@ -58,6 +62,7 @@ const renderedHtml = computed(() => {
   const html = htmlTemplate.value
     .replace('{{ deleteLabel }}', t('delete'))
     .replace('{{ sessionId }}', String(props.sessionId))
+    .replace('onclick="handleDelete()"', '')
 
   return `<style>${css.value}</style>${html}`;
 });
@@ -74,23 +79,10 @@ const handleDelete = async () => {
     isDeleting.value = true
 
     try {
-        const sessionsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions')
-        const sessionsParticipantsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_participants')
-        const sessionsSupervisorsTable = selectedSystemStore.selectedSystem.db.getTableName('sessions_supervisors')
-
-        // Delete related records first (due to foreign key constraints)
-        selectedSystemStore.selectedSystem.db.exec(
-            `DELETE FROM ${sessionsParticipantsTable} WHERE session_id = ${props.sessionId}`
-        )
-
-        selectedSystemStore.selectedSystem.db.exec(
-            `DELETE FROM ${sessionsSupervisorsTable} WHERE session_id = ${props.sessionId}`
-        )
-
-        // Delete the session
-        selectedSystemStore.selectedSystem.db.exec(
-            `DELETE FROM ${sessionsTable} WHERE session_id = ${props.sessionId}`
-        )
+        // Execute SQL statements in order (due to foreign key constraints)
+        selectedSystemStore.selectedSystem.db.exec(sqlQuery1.value, [props.sessionId])
+        selectedSystemStore.selectedSystem.db.exec(sqlQuery2.value, [props.sessionId])
+        selectedSystemStore.selectedSystem.db.exec(sqlQuery3.value, [props.sessionId])
 
         // Refresh the sessions data in the store
         selectedSystemStore.loadSessions()

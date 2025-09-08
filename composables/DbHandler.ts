@@ -632,11 +632,22 @@ export default class DbHandler {
     }
 
 
-    public exec(sql: string): void {
+    public exec(sql: string, params?: any[]): void {
         if (!this.db) {
             throw new Error('Database not initialized');
         }
-        this.db.exec(sql);
+
+        if (params && params.length > 0) {
+            // Use prepared statement when parameters are provided
+            const stmt = this.db.prepare(sql);
+            stmt.run(params);
+            stmt.free();
+            console.log("EXEC SQL WITH PARAMS: ", sql, params);
+        } else {
+            // Use direct exec for statements without parameters
+            this.db.exec(sql);
+            console.log("EXEC SQL: ", sql);
+        }
     }
 
     public validateSql(sql: string): boolean {

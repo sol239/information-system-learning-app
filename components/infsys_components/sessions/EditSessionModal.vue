@@ -118,13 +118,13 @@ const handleEditSession = async (data: any) => {
         const result = selectedSystemStore.selectedSystem.db.query(query)
 
         if (result.success) {
+            selectedSystemStore.loadSessions()
             toast.add({
                 title: t('session_updated_success'),
                 color: 'primary',
                 icon: 'i-heroicons-check'
             })
             closeModal()
-            selectedSystemStore.loadSessions()
         } else {
             throw new Error('Database update failed')
         }

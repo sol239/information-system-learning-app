@@ -17,7 +17,7 @@ export class ComponentManager {
     </div>
   </div>
 `
-    const statsMealsSql = `SELECT COUNT(*) as count FROM jídla`
+    const statsMealsSql = `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('meals')}`
 
     const statsMealsNavigateJs = `
 selectedTableStore.select('jídla');
@@ -58,7 +58,7 @@ navigateTo({
     </div>
   </div>
 `
-    const statsParticipantsSql = `SELECT COUNT(*) as count FROM účastníci`
+    const statsParticipantsSql = `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}`
 
     const statsSessionsHtml = `
   <div class="stat-card">
@@ -69,7 +69,7 @@ navigateTo({
     </div>
   </div>
 `
-    const statsSessionsSql = `SELECT COUNT(*) as count FROM turnusy`
+    const statsSessionsSql = `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`
 
     const statsSupervisorsHtml = `
   <div class="stat-card">
@@ -80,7 +80,7 @@ navigateTo({
     </div>
   </div>
 `
-    const statsSupervisorsSql = `SELECT COUNT(*) as count FROM vedoucí`
+    const statsSupervisorsSql = `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')}`
 
     /*
     componentCodeStore.updateDefaultComponentCode("stats-meals-html.vue", statsMealsHtml)
@@ -259,7 +259,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT from_date, to_date FROM sessions WHERE session_id = ?`,
+        "sql": `SELECT from_date, to_date FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
       },
       additionals: {}
     });
@@ -298,7 +298,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT from_date, to_date FROM sessions WHERE session_id = ?`,
+        "sql": `SELECT from_date, to_date FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
       },
       additionals: {}
     });
@@ -341,7 +341,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT capacity FROM sessions WHERE session_id = ?; SELECT COUNT(*) as count FROM sessions_participants WHERE session_id = ?`,
+        "sql": `SELECT capacity FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?; SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
       },
       additionals: {}
     });
@@ -426,7 +426,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT p.* FROM participants p JOIN sessions_participants sp ON p.participant_id = sp.participant_id WHERE sp.session_id = ?`,
+        "sql": `SELECT p.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id WHERE sp.session_id = ?`,
       },
       additionals: {}
     });
@@ -509,7 +509,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT s.* FROM supervisors s JOIN sessions_supervisors ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
+        "sql": `SELECT s.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
       },
       additionals: {}
     });
@@ -555,7 +555,9 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `DELETE FROM sessions_participants WHERE session_id = ?; DELETE FROM sessions_supervisors WHERE session_id = ?; DELETE FROM sessions WHERE session_id = ?`,
+        "sql-1": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
+        "sql-2": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} WHERE session_id = ?`,
+        "sql-3": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
       },
       additionals: {}
     });
@@ -612,7 +614,7 @@ navigateTo({
 ` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT capacity FROM sessions WHERE session_id = ?; SELECT COUNT(*) as count FROM sessions_participants WHERE session_id = ?`,
+        "sql": `SELECT capacity FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?; SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} WHERE session_id = ?`,
       },
       additionals: {}
     });
