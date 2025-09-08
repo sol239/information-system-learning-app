@@ -352,79 +352,11 @@ navigateTo({
       name: "Session Participants Section",
       description: `Component showing the list of participants for a session with avatars and details.`,
       html: {
-        "html": `
-        <div class="participants-section">
-      <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-        <span class="text-lg">👥</span>
-        {{ participantsTitle }}
-      </h4>
-      <div class="space-y-2">
-        {{ participantsList }}
-        {{ moreLink }}
-        {{ lessLink }}
-        {{ noParticipants }}
-      </div>
-    </div>
-    ` },
+        "html": ``
+      },
       css: {
-        "css": `.participants-section {
-    margin-bottom: 1rem;
-  }
-
-  .participant-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-  }
-
-  .participant-item:hover {
-    background-color: #f9fafb;
-  }
-
-  .participant-avatar {
-    width: 2rem;
-    height: 2rem;
-    background-color: #dbeafe;
-    color: #2563eb;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .participant-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .participant-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .participant-details {
-    font-size: 0.75rem;
-    color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  @media (max-width: 768px) {
-    .participant-item {
-      padding: 0.25rem;
-    }
-  }
-` },
+        "css": ``
+      },
       js: { "js": `` },
       sql: {
         "sql-1": `SELECT p.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} p JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} sp ON p.participant_id = sp.participant_id WHERE sp.session_id = ?`,
@@ -438,80 +370,13 @@ navigateTo({
       name: "Session Supervisors Section",
       description: `Component showing the list of supervisors for a session with avatars and contact details.`,
       html: {
-        "html": `
-        <div class="supervisors-section">
-      <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-        <span class="text-lg">👨‍🏫</span>
-        {{ supervisorsTitle }}
-      </h4>
-      <div class="space-y-2">
-        {{ supervisorsList }}
-        {{ noSupervisors }}
-      </div>
-    </div>
-    ` },
+        "html": `` },
       css: {
-        "css": `.supervisors-section {
-    margin-bottom: 1rem;
-  }
-
-  .supervisor-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-  }
-
-  .supervisor-item:hover {
-    background-color: #f9fafb;
-  }
-
-  .supervisor-avatar {
-    width: 2rem;
-    height: 2rem;
-    background-color: #e9d5ff;
-    color: #7c3aed;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .supervisor-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .supervisor-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .supervisor-details {
-    font-size: 0.75rem;
-    color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  @media (max-width: 768px) {
-    .supervisor-item {
-      padding: 0.25rem;
-    }
-  }
-` },
+        "css": `` },
       js: { "js": `` },
       sql: {
-        "sql": `SELECT s.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
+        "sql-1": `SELECT s.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
+        "sql-2": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
       },
       additionals: {}
     });
