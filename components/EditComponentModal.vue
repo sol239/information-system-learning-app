@@ -5,20 +5,53 @@
         <div v-for="section in availableSections" :key="section.key" class="editor-section">
           <div class="title-row">
             <h3 class="editor-label" :class="getSectionLabelClass(section.key)">{{ getSectionLabel(section.key) }}</h3>
+
+            <!-- SQL specific buttons -->
+            <div v-if="section.key === 'sql' && section.entries.length > 1" class="sql-buttons">
+              <button
+                v-for="(entry, index) in section.entries"
+                :key="entry.key"
+                @click="selectSqlEntry(entry.key)"
+                :class="['sql-button', { 'active': selectedSqlKey === entry.key }]"
+                :title="entry.key">
+                {{ index + 1 }}
+              </button>
+            </div>
+
             <UButton v-if="section.key === 'sql'" @click="toggleTables" class="tables-button">
               Tables: {{ availableTables.length }}
             </UButton>
           </div>
+
           <ul v-if="section.key === 'sql' && showTables" class="tables-list">
             <li v-for="table in availableTables" :key="table">{{ table }}</li>
           </ul>
-          <textarea 
-            :value="section.value" 
-            @input="(event) => onSectionInput(event, section.key)" 
-            class="code-editor" 
-            :class="[getSectionEditorClass(section.key), { 'invalid-sql': section.key === 'sql' && !sqlValid }]"
-            spellcheck="false" 
-          />
+
+          <!-- Show all entries for non-SQL sections -->
+          <div v-if="section.key !== 'sql'" class="entries-container">
+            <div v-for="entry in section.entries" :key="entry.key" class="entry-section">
+              <div v-if="section.entries.length > 1" class="entry-title">{{ entry.key }}</div>
+              <textarea
+                :value="entry.value"
+                @input="(event) => onEntryInput(event, section.key, entry.key)"
+                class="code-editor"
+                :class="getSectionEditorClass(section.key)"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <!-- Show selected SQL entry -->
+          <div v-else-if="section.key === 'sql'" class="sql-editor-container">
+            <div class="current-sql-key">{{ selectedSqlKey }}</div>
+            <textarea
+              :value="getSelectedSqlValue()"
+              @input="(event) => onEntryInput(event, section.key, selectedSqlKey)"
+              class="code-editor"
+              :class="[getSectionEditorClass(section.key), { 'invalid-sql': !sqlValid }]"
+              spellcheck="false"
+            />
+          </div>
         </div>
       </div>
 
@@ -80,34 +113,52 @@ const sqlValid = ref(true)
 // Check if component is in error components and load error code if available
 const isErrorComponent = ComponentHandler.isInErrorComponents(highlightStore.selectedComponentId ?? '')
 
-// Dynamic section handling
-const sectionValues = ref<Record<string, string>>({})
+// Dynamic section handling with multiple entries
+const sectionEntries = ref<Record<string, Record<string, string>>>({})
+const selectedSqlKey = ref<string>('')
 
-// Initialize section values from component or error components
-const initializeSectionValues = () => {
+// Initialize section entries from component or error components
+const initializeSectionEntries = () => {
   const sections = ['html', 'css', 'js', 'sql', 'additionals']
   sections.forEach(section => {
     const errorValue = isErrorComponent ? ComponentHandler.getVariableValue(highlightStore.selectedComponentId ?? '', section) : null
     const componentValue = editedComponent?.[section as keyof Component] as Record<string, string>
-    
-    // Try multiple possible keys: section name, 'default', or first available key
-    let value = ''
-    if (componentValue) {
-      value = componentValue[section] || componentValue['default'] || Object.values(componentValue)[0] || ''
+
+    sectionEntries.value[section] = {}
+
+    // If there's error value, use it for the first/default key
+    if (errorValue) {
+      sectionEntries.value[section]['default'] = errorValue
     }
-    
-    sectionValues.value[section] = errorValue || value
-    console.log(`Initialized ${section}:`, sectionValues.value[section])
+    // Otherwise use component values
+    else if (componentValue && Object.keys(componentValue).length > 0) {
+      sectionEntries.value[section] = { ...componentValue }
+    }
+
+    console.log(`Initialized ${section} entries:`, sectionEntries.value[section])
   })
+
+  // Set default SQL key
+  if (sectionEntries.value['sql'] && Object.keys(sectionEntries.value['sql']).length > 0) {
+    selectedSqlKey.value = Object.keys(sectionEntries.value['sql'])[0]
+  }
 }
 
-initializeSectionValues()
+initializeSectionEntries()
 
-// Computed property to get available sections (only those with content)
+// Computed property to get available sections with entries (excluding empty ones)
 const availableSections = computed(() => {
-  return Object.entries(sectionValues.value)
-    .filter(([key, value]) => value.trim() !== '')
-    .map(([key, value]) => ({ key, value }))
+  return Object.entries(sectionEntries.value)
+    .map(([key, entries]) => ({
+      key,
+      entries: Object.entries(entries)
+        .filter(([entryKey, entryValue]) => entryValue && entryValue.trim() !== '')
+        .map(([entryKey, entryValue]) => ({
+          key: entryKey,
+          value: entryValue
+        }))
+    }))
+    .filter(section => section.entries.length > 0)
 })
 
 const applyButtonHover = ref(false)
@@ -152,10 +203,10 @@ function getSectionEditorClass(section: string): string {
   return classes[section] || 'default-editor'
 }
 
-function onSectionInput(event: Event, section: string) {
+function onEntryInput(event: Event, section: string, entryKey: string) {
   const value = (event.target as HTMLTextAreaElement)?.value || ''
-  sectionValues.value[section] = value
-  console.log(`Current ${section.toUpperCase()}:`, value)
+  sectionEntries.value[section][entryKey] = value
+  console.log(`Current ${section.toUpperCase()} ${entryKey}:`, value)
 
   // Special handling for SQL validation
   if (section === 'sql') {
@@ -174,6 +225,14 @@ function onSectionInput(event: Event, section: string) {
       console.error('Error validating SQL:', err)
     }
   }
+}
+
+function selectSqlEntry(entryKey: string) {
+  selectedSqlKey.value = entryKey
+}
+
+function getSelectedSqlValue(): string {
+  return sectionEntries.value['sql'][selectedSqlKey.value] || ''
 }
 function getApplyButtonStyle() {
   const baseColor = !sqlValid.value ? '#ef4444' : '#3b82f6'
@@ -198,18 +257,18 @@ function getCloseButtonStyle() {
   }
 }
 function onSqlInput(event: Event) {
-  // This function is kept for backward compatibility but redirects to onSectionInput
-  onSectionInput(event, 'sql')
+  // This function is kept for backward compatibility but redirects to onEntryInput
+  onEntryInput(event, 'sql', selectedSqlKey.value)
 }
 
 function onHtmlInput(event: Event) {
-  // This function is kept for backward compatibility but redirects to onSectionInput
-  onSectionInput(event, 'html')
+  // This function is kept for backward compatibility but redirects to onEntryInput
+  onEntryInput(event, 'html', 'html')
 }
 
 function onJsInput(event: Event) {
-  // This function is kept for backward compatibility but redirects to onSectionInput
-  onSectionInput(event, 'js')
+  // This function is kept for backward compatibility but redirects to onEntryInput
+  onEntryInput(event, 'js', 'js')
 }
 
 function onApplyChanges(event: MouseEvent) {
@@ -223,27 +282,18 @@ function onApplyChanges(event: MouseEvent) {
 
   if (currentComponent) {
     // Helper function to preserve the original key structure
-    const updateSection = (sectionData: Record<string, string>, sectionKey: string, newValue: string) => {
-      // If the section already has data, use the existing key structure
-      if (Object.keys(sectionData).length > 0) {
-        const existingKey = sectionData[sectionKey] !== undefined ? sectionKey : 
-                           sectionData['default'] !== undefined ? 'default' : 
-                           Object.keys(sectionData)[0]
-        return { ...sectionData, [existingKey]: newValue }
-      } else {
-        // If no existing data, use 'default' key
-        return { 'default': newValue }
-      }
+    const updateSection = (sectionData: Record<string, string>, newEntries: Record<string, string>) => {
+      return { ...sectionData, ...newEntries }
     }
 
     // Update the entire component object using updateComponent function
     const updatedComponent = {
       ...currentComponent,
-      html: updateSection(currentComponent.html, 'html', sectionValues.value.html || ''),
-      css: updateSection(currentComponent.css, 'css', sectionValues.value.css || ''),
-      js: updateSection(currentComponent.js, 'js', sectionValues.value.js || ''),
-      sql: updateSection(currentComponent.sql, 'sql', sectionValues.value.sql || ''),
-      additionals: updateSection(currentComponent.additionals, 'additionals', sectionValues.value.additionals || '')
+      html: updateSection(currentComponent.html, sectionEntries.value.html || {}),
+      css: updateSection(currentComponent.css, sectionEntries.value.css || {}),
+      js: updateSection(currentComponent.js, sectionEntries.value.js || {}),
+      sql: updateSection(currentComponent.sql, sectionEntries.value.sql || {}),
+      additionals: updateSection(currentComponent.additionals, sectionEntries.value.additionals || {})
     }
 
     componentCodeStore.updateComponent(highlightStore.selectedComponentId ?? '', updatedComponent)
@@ -259,9 +309,11 @@ function onApplyChanges(event: MouseEvent) {
     })
   }
 
-  // Update ComponentHandler for all sections
-  Object.entries(sectionValues.value).forEach(([section, value]) => {
-    ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}`, section, value)
+  // Update ComponentHandler for all sections and entries
+  Object.entries(sectionEntries.value).forEach(([section, entries]) => {
+    Object.entries(entries).forEach(([entryKey, value]) => {
+      ComponentHandler.setVariableValue(`${highlightStore.selectedComponentId}-${entryKey}`, section, value)
+    })
   })
 
   closeModal()
@@ -394,6 +446,85 @@ function closeModal() {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 1.2rem;
+}
+
+/* New styles for multiple entries */
+.entries-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.entry-section {
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px;
+  background: #1e293b;
+}
+
+.entry-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sql-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.sql-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #38bdf8;
+  background: transparent;
+  color: #38bdf8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sql-button:hover {
+  background: #38bdf8;
+  color: #0f172b;
+  transform: scale(1.1);
+}
+
+.sql-button.active {
+  background: #38bdf8;
+  color: #0f172b;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.sql-editor-container {
+  position: relative;
+}
+
+.current-sql-key {
+  position: absolute;
+  top: -25px;
+  right: 10px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  background: #1e293b;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #334155;
+}
+
+.invalid-sql {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
 }
 
 .sql-editor.invalid-sql {
