@@ -879,6 +879,17 @@ navigateTo({
       additionals: {}
     });
 
+    const participantAllergenCountComponent = new Component({
+      id: "participant-allergen-count",
+      name: "Participant Allergen Count",
+      description: `SQL for counting participant allergens.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} WHERE participant_id = ?` },
+      additionals: {}
+    });
+
     const participantsSessionsComponent = new Component({
       id: "participants-sessions",
       name: "Participants Sessions",
@@ -1076,6 +1087,7 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(participantAllergenIdsComponent);
     componentCodeStore.updateDefaultComponent(participantAllergenInsertComponent);
     componentCodeStore.updateDefaultComponent(participantAllergenDeleteComponent);
+    componentCodeStore.updateActualComponent(participantAllergenCountComponent);
 
     // Reset
     componentCodeStore.resetComponent("stats-meals");
@@ -1117,6 +1129,7 @@ navigateTo({
     componentCodeStore.resetComponent("participants-edit-sessions");
     componentCodeStore.resetComponent("participants-session-menu");
     componentCodeStore.resetComponent("participants-allergen-options");
+    componentCodeStore.resetComponent("participant-allergen-count");
     componentCodeStore.resetComponent("participants-count");
     componentCodeStore.resetComponent("sessions-count");
     componentCodeStore.resetComponent("participants-sample");
@@ -1133,6 +1146,7 @@ navigateTo({
     componentCodeStore.resetComponent("participant-allergen-ids");
     componentCodeStore.resetComponent("participant-allergen-insert");
     componentCodeStore.resetComponent("participant-allergen-delete");
+    componentCodeStore.resetComponent("participant-allergen-count");
   }
 
   public static areComponentsInitialized(): boolean {
