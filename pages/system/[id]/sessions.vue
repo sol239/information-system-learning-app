@@ -77,11 +77,10 @@
         </div>
 
         <!-- Edit Session Modal -->
-        <EditSessionModal
-            :session="selectedSessionForEdit"
-            v-model="editModalOpen"
-        />
+        <EditSessionModal :session="selectedSessionForEdit" v-model="editModalOpen" />
     </div>
+    <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
+
 </template>
 
 <script setup lang="ts">

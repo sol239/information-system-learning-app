@@ -31,7 +31,6 @@
       />
     </div>
   </div>
-  <EditComponentModal v-if="highlightStore.isEditModeActive && highlightStore.selectedComponentId" />
 </template>
 
 <script setup lang="ts">
