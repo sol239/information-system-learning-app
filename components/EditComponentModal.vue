@@ -342,7 +342,7 @@ function closeModal() {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
+  z-index: 5000;
 }
 
 .modal {
@@ -353,7 +353,7 @@ function closeModal() {
   max-width: 1200px;
   border-radius: 8px;
   box-shadow: 0 0 10px black;
-  z-index: 3001;
+  z-index: 5001;
   overflow-y: auto;
   max-height: 90%;
 }

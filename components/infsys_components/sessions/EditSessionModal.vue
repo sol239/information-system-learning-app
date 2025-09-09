@@ -1,72 +1,79 @@
 <template>
-    <UDrawer :ui="{ header: 'flex items-center justify-between' }" :modal="false" :handle="false" :dismissible="false" :overlay="false" v-model:open="isOpen" direction="right">
-        <template #content>
-            <UCard class="p-4 min-w-96">
-                <template #header>
-                    <h3 class="text-lg font-semibold">{{ t('edit_session') }}</h3>
-                </template>
+    <!-- Custom Drawer Implementation -->
+    <div v-if="isOpen" class="custom-drawer-overlay" @click="closeModal" style="z-index: 5000;">
+        <div class="custom-drawer" :class="{ 'open': isOpen }" @click.stop>
+            <div class="drawer-content">
+                <UCard class="p-4 min-w-96">
+                    <template #header>
+                        <h3 class="text-lg font-semibold">{{ t('edit_session') }}</h3>
+                    </template>
 
-                <UForm :state="editSession" @submit="handleEditSession(editSession)" class="flex flex-col space-y-4">
-                    <div class="highlightable" id="sessions-edit-from_date"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-from_date', $event)">
-                        <div class="component-wrapper">
-                            <label for="from_date" class="block text-sm font-medium text-white mb-1">{{ t('from_date')
-                                }}</label>
-                            <input
-                                :class="['form-input', { 'border-red-500': !editSessionFromDateComputed, 'border-sky-500': editSessionFromDateComputed }]"
-                                id="from_date" v-model="editSession.from_date" type="date"
-                                :disabled="highlightStore.isHighlightMode" />
-                            <div v-if="editSessionFromDateError" class="text-red-500 text-sm mt-1 font-bold">
-                                {{ editSessionFromDateError }}
-                            </div>
+                    <UForm :state="editSession" @submit="handleEditSession(editSession)" class="flex flex-col space-y-4">
+                        <div class="highlightable" id="sessions-edit-from_date"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-from_date', $event)">
+                            <div class="component-wrapper">
+                                <label for="from_date" class="block text-sm font-medium text-white mb-1">{{ t('from_date')
+                                    }}</label>
+                                <input
+                                    :class="['form-input', { 'border-red-500': !editSessionFromDateComputed, 'border-sky-500': editSessionFromDateComputed }]"
+                                    id="from_date" v-model="editSession.from_date" type="date"
+                                    :disabled="highlightStore.isHighlightMode" />
+                                <div v-if="editSessionFromDateError" class="text-red-500 text-sm mt-1 font-bold">
+                                    {{ editSessionFromDateError }}
+                                </div>
 
-                        </div>
-                    </div>
-                    <div class="highlightable" id="sessions-edit-to_date"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-to_date', $event)">
-                        <div class="component-wrapper">
-                            <label for="to_date" class="block text-sm font-medium text-white mb-1">{{ t('to_date')
-                                }}</label>
-                            <input
-                                :class="['form-input', { 
-                                    'border-red-500': !editSessionToDateComputed || !editSessionDateRangeComputed, 
-                                    'border-sky-500': editSessionToDateComputed && editSessionDateRangeComputed 
-                                }]"
-                                id="to_date" v-model="editSession.to_date" type="date"
-                                :disabled="highlightStore.isHighlightMode" />
-                            <div v-if="editSessionToDateError" class="text-red-500 text-sm mt-1 font-bold">
-                                {{ editSessionToDateError }}
-                            </div>
-                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                :componentId="'validation-date-range'" class="edit-button" />
-                        </div>
-                    </div>
-                    <div class="highlightable" id="sessions-edit-capacity"
-                        @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-capacity', $event)">
-                        <div class="component-wrapper">
-                            <label for="capacity" class="block text-sm font-medium text-white mb-1">{{ t('capacity')
-                                }}</label>
-                            <input
-                                :class="['form-input', { 'border-red-500': !editSessionCapacityComputed, 'border-sky-500': editSessionCapacityComputed }]"
-                                id="capacity" v-model="editSession.capacity" type="number" min="1"
-                                placeholder="50" :disabled="highlightStore.isHighlightMode" />
-                            <div v-if="editSessionCapacityError" class="text-red-500 text-sm mt-1 font-bold">
-                                {{ editSessionCapacityError }}
                             </div>
                         </div>
-                    </div>
-                    <div class="flex flex-col gap-3 pt-4">
-                        <UButton type="submit" color="sky" :loading="isSubmitting" :disabled="hasValidationErrors">
-                            {{ t('update') }}
-                        </UButton>
-                        <UButton variant="outline" color="sky" @click="closeModal">
-                            {{ t('cancel') }}
-                        </UButton>
-                    </div>
-                </UForm>
-            </UCard>
-        </template>
-    </UDrawer>
+                        <div class="highlightable" id="sessions-edit-to_date"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-to_date', $event)">
+                            <div class="component-wrapper">
+                                <label for="to_date" class="block text-sm font-medium text-white mb-1">{{ t('to_date')
+                                    }}</label>
+                                <input
+                                    :class="['form-input', { 
+                                        'border-red-500': !editSessionToDateComputed || !editSessionDateRangeComputed, 
+                                        'border-sky-500': editSessionToDateComputed && editSessionDateRangeComputed 
+                                    }]"
+                                    id="to_date" v-model="editSession.to_date" type="date"
+                                    :disabled="highlightStore.isHighlightMode" />
+                                <div v-if="editSessionToDateError" class="text-red-500 text-sm mt-1 font-bold">
+                                    {{ editSessionToDateError }}
+                                </div>
+                                <div v-if="highlightStore.isEditModeActive">
+                                    <EditComponentModalOpenButton 
+                                        :componentId="'validation-date-range'" 
+                                        class="edit-button" 
+                                        @click.stop />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="highlightable" id="sessions-edit-capacity"
+                            @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-capacity', $event)">
+                            <div class="component-wrapper">
+                                <label for="capacity" class="block text-sm font-medium text-white mb-1">{{ t('capacity')
+                                    }}</label>
+                                <input
+                                    :class="['form-input', { 'border-red-500': !editSessionCapacityComputed, 'border-sky-500': editSessionCapacityComputed }]"
+                                    id="capacity" v-model="editSession.capacity" type="number" min="1"
+                                    placeholder="50" :disabled="highlightStore.isHighlightMode" />
+                                <div v-if="editSessionCapacityError" class="text-red-500 text-sm mt-1 font-bold">
+                                    {{ editSessionCapacityError }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 pt-4">
+                            <UButton type="submit" color="sky" :loading="isSubmitting" :disabled="hasValidationErrors">
+                                {{ t('update') }}
+                            </UButton>
+                            <UButton variant="outline" color="sky" @click="closeModal">
+                                {{ t('cancel') }}
+                            </UButton>
+                        </div>
+                    </UForm>
+                </UCard>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -130,6 +137,7 @@ const validationDateRangeComponent = computed(() => componentCodeStore.getCompon
 
 // Component-based validation function using loaded JS
 const isValidDateRangeFromComponent = (fromDate: string, toDate: string): boolean => {
+    // First try to use component-based validation
     try {
         const jsCode = validationDateRangeComponent.value?.js?.['isValidDateRange'] || ''
         if (jsCode) {
@@ -140,6 +148,9 @@ const isValidDateRangeFromComponent = (fromDate: string, toDate: string): boolea
     } catch (error) {
         console.error('Error loading isValidDateRange function:', error)
     }
+
+    // Fallback to built-in validation
+    return isValidDateRange(fromDate, toDate)
 }
 
 // Computed properties for validated fields
@@ -302,5 +313,41 @@ const handleEditSession = async (data: any) => {
     top: 0.25rem;
     right: 0.25rem;
     z-index: 10;
+}
+
+/* Custom Drawer Styles */
+.custom-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 5000;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    transition: opacity 0.3s ease;
+}
+
+.custom-drawer {
+    width: 400px;
+    max-width: 90vw;
+    background: #1e293b;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    border-left: 1px solid #334155;
+    z-index: 5001;
+}
+
+.custom-drawer.open {
+    transform: translateX(0);
+}
+
+.drawer-content {
+    padding: 1rem;
+    height: 100%;
 }
 </style>

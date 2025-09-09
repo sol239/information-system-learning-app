@@ -1,5 +1,5 @@
 <template>
-  <button class="edit-icon-btn" @click="openEditor" title="Edit">
+  <button class="edit-icon-btn" @click="openEditor" title="Edit" type="button">
     <span class="edit-icon-bg yellow-bg">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
         <circle cx="10" cy="10" r="10" fill="#facc15" />
