@@ -370,9 +370,11 @@ navigateTo({
       name: "Session Supervisors Section",
       description: `Component showing the list of supervisors for a session with avatars and contact details.`,
       html: {
-        "html": `` },
+        "html": ``
+      },
       css: {
-        "css": `` },
+        "css": ``
+      },
       js: { "js": `` },
       sql: {
         "sql-1": `SELECT s.* FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id WHERE ss.session_id = ?`,
@@ -856,7 +858,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             SELECT participant_id, name, email, personal_number, phone, address, age
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
             ORDER BY participant_id
@@ -871,7 +874,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             SELECT pa.participant_id, a.allergen_id
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants_allergens')} pa
             JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')} a ON pa.allergen_id = a.allergen_id
@@ -897,7 +901,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             SELECT ps.participant_id, s.session_id
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_participants')} ps
             JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} s ON ps.session_id = s.session_id
@@ -912,7 +917,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             SELECT session_id, from_date, to_date, capacity
             FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}
             ORDER BY session_id
@@ -927,7 +933,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')} (name, email, personal_number, phone, address, age)
             VALUES (?, ?, ?, ?, ?, ?)
         ` },
@@ -941,7 +948,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             SELECT participant_id FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
             WHERE name = ? AND email = ?
             ORDER BY participant_id DESC LIMIT 1
@@ -956,7 +964,8 @@ navigateTo({
       html: { "html": "" },
       css: { "css": "" },
       js: { "js": "" },
-      sql: { "sql": `
+      sql: {
+        "sql": `
             UPDATE ${selectedSystemStore.selectedSystem?.db?.getTableName('participants')}
             SET name = ?, email = ?, personal_number = ?, phone = ?, address = ?, age = ?
             WHERE participant_id = ?
@@ -1030,6 +1039,78 @@ navigateTo({
       additionals: {}
     });
 
+    const validationNameComponent = new Component({
+      id: "validation-name",
+      name: "Name Validation",
+      description: `Validation function for participant/supervisor names. Ensures first and last name are provided.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "isValidName": `const isValidName = (name) => {
+    if (!name || name.trim().length === 0) return false
+    // Must have at least one space (first and last name)
+    return name.trim().split(' ').length >= 2
+}`
+      },
+      sql: { "sql": `` },
+      additionals: {}
+    });
+
+    const validationEmailComponent = new Component({
+      id: "validation-email",
+      name: "Email Validation",
+      description: `Validation function for email addresses using regex pattern.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "isValidEmail": `const isValidEmail = (email) => {
+    if (!email || email.trim().length === 0) return false
+    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/
+    return emailRegex.test(email.trim())
+}`
+      },
+      sql: { "sql": `` },
+      additionals: {}
+    });
+
+    const validationPersonalNumberComponent = new Component({
+      id: "validation-personal-number",
+      name: "Personal Number Validation",
+      description: `Validation function for Czech personal numbers. Format: xxxxxx/xxxx (6 digits, slash, 4 digits).`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "isValidPersonalNumber": `const isValidPersonalNumber = (personalNumber) => {
+    if (!personalNumber || personalNumber.trim().length === 0) return false
+    // Format: xxxxxx/xxxx (6 digits, slash, 4 digits)
+    const personalNumberRegex = /^\\d{6}\\/\\d{4}$/
+    return personalNumberRegex.test(personalNumber.trim())
+}`
+      },
+      sql: { "sql": `` },
+      additionals: {}
+    });
+
+    const validationPhoneComponent = new Component({
+      id: "validation-phone",
+      name: "Phone Validation",
+      description: `Validation function for Czech phone numbers. Supports multiple formats including +420 prefix.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "isValidPhone": `const isValidPhone = (phone) => {
+    if (!phone || phone.trim().length === 0) return false
+    // Czech phone number regex: supports multiple formats
+    // +420 xxx xxx xxx, +420xxxxxxxxx, xxx xxx xxx, xxxxxxxxx
+    const phoneRegex = /^(\\+420\\s?)?(\\d{3}\\s?\\d{3}\\s?\\d{3}|\\d{9})$/
+    const cleanPhone = phone.trim().replace(/\\s+/g, '')
+    return phoneRegex.test(cleanPhone)
+}`
+      },
+      sql: { "sql": `` },
+      additionals: {}
+    });
+
 
     // Store the instances into the store
     componentCodeStore.updateDefaultComponent(statsMealsComponent);
@@ -1089,6 +1170,10 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(participantAllergenDeleteComponent);
     componentCodeStore.updateDefaultComponent(participantAllergenCountComponent);
     componentCodeStore.updateActualComponent(participantAllergenCountComponent);
+    componentCodeStore.updateDefaultComponent(validationNameComponent);
+    componentCodeStore.updateDefaultComponent(validationEmailComponent);
+    componentCodeStore.updateDefaultComponent(validationPersonalNumberComponent);
+    componentCodeStore.updateDefaultComponent(validationPhoneComponent);
 
     // Reset
     componentCodeStore.resetComponent("stats-meals");
@@ -1147,6 +1232,10 @@ navigateTo({
     componentCodeStore.resetComponent("participant-allergen-insert");
     componentCodeStore.resetComponent("participant-allergen-delete");
     componentCodeStore.resetComponent("participant-allergen-count");
+    componentCodeStore.resetComponent("validation-name");
+    componentCodeStore.resetComponent("validation-email");
+    componentCodeStore.resetComponent("validation-personal-number");
+    componentCodeStore.resetComponent("validation-phone");
   }
 
   public static areComponentsInitialized(): boolean {

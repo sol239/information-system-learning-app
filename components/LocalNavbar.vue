@@ -1,6 +1,6 @@
 
 <template>
-    <div class="w-full">
+    <div class="w-full" style="z-index: 1000;">
         <!-- Main navbar container with flex wrap -->
         <div class="flex flex-wrap items-center justify-between gap-2 py-2">
 

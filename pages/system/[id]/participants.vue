@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LocalNavbar />
+        <LocalNavbar class="navbar-area" />
 
         <div class="container mx-auto px-4 py-8">
             <div class="flex items-center gap-4 mb-6">
@@ -57,7 +57,7 @@
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="flex justify-center items-center gap-4">
                     <UButton variant="outline" color="sky" icon="i-heroicons-chevron-left"
-                        :disabled="currentPage === 1 || highlightStore.isEditModeActive" @click="currentPage--">
+                        :disabled="currentPage === 1" @click="currentPage--">
                         {{ t('previous') }}
                     </UButton>
 
@@ -87,7 +87,7 @@
                     </div>
 
                     <UButton variant="outline" color="sky" icon="i-heroicons-chevron-right"
-                        :disabled="currentPage === totalPages || highlightStore.isEditModeActive"
+                        :disabled="currentPage === totalPages"
                         @click="currentPage++">
                         {{ t('next') }}
                     </UButton>
@@ -116,9 +116,8 @@
 
                     </div>
                     <!-- Add Participant Drawer (right) -->
-                    <UDrawer v-model:open="addModalOpen" direction="right">
-                        <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus"
-                            :disabled="highlightStore.isEditModeActive">
+                    <UDrawer :ui="{ header: 'flex items-center justify-between' }" :modal="false" :handle="false" :dismissible="false" :overlay="false" class="ml-auto edit-drawer" style="max-width: 400px;" v-model:open="addModalOpen" direction="right">
+                        <UButton color="sky" variant="outline" @click="createNewParticipant" icon="i-heroicons-plus">
                             {{ t('add_participant') }}
                         </UButton>
 
@@ -128,64 +127,83 @@
                                     <h3 class="text-lg font-semibold">{{ t('add_participant') }}</h3>
                                 </template>
 
-                                <UForm :state="newParticipant" @submit="handleAddParticipant(newParticipant)"
-                                    class="flex flex-col space-y-4">
+                                <form @submit.prevent="handleAddParticipant(newParticipant)" class="flex flex-col space-y-4">
                                     <div class="highlightable" id="participants-add-name"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-name', $event)">
                                         <div class="component-wrapper">
-                                            <label for="name"
-                                                class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                            <UInput color="sky" id="name" v-model="newParticipant.name"
-                                                placeholder="Zadejte jméno účastníka"
+                                            <label for="name" class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                            <input
+                                                :class="['form-input', { 'border-red-500': !newParticipantNameComputed, 'border-sky-500': newParticipantNameComputed }]"
+                                                id="name" v-model="newParticipant.name"
+                                                placeholder="Zadejte jméno účastníka" type="text"
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantNameError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantNameError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                                :componentId="'participants-add-name'" class="edit-button" />
+                                                :componentId="'validation-name'" class="edit-button" />
                                         </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-email"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-email', $event)">
                                         <div class="component-wrapper">
-                                            <label for="email"
-                                                class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                            <UInput color="sky" id="email" v-model="newParticipant.email" type="email"
-                                                placeholder="email@example.com"
+                                            <label for="email" class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                            <input
+                                                :class="['form-input', { 'border-red-500': !newParticipantEmailComputed, 'border-sky-500': newParticipantEmailComputed }]"
+                                                id="email" v-model="newParticipant.email" type="email"
+                                                placeholder="email@example.com" 
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantEmailError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantEmailError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                                :componentId="'participants-add-email'" class="edit-button" />
+                                                :componentId="'validation-email'" class="edit-button" />
                                         </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-personal_number"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-personal_number', $event)">
                                         <div class="component-wrapper">
-                                            <label for="personal_number"
-                                                class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                            <UInput color="sky" id="personal_number"
-                                                v-model="newParticipant.personal_number" placeholder="123456/7890"
+                                            <label for="personal_number" class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
+                                            <input
+                                                :class="['form-input', { 'border-red-500': !newParticipantPersonalNumberComputed, 'border-sky-500': newParticipantPersonalNumberComputed }]"
+                                                id="personal_number" v-model="newParticipant.personal_number"
+                                                placeholder="123456/7890" type="text"
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantPersonalNumberError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantPersonalNumberError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                                :componentId="'participants-add-personal_number'" class="edit-button" />
+                                                :componentId="'validation-personal-number'" class="edit-button" />
                                         </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-phone"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-phone', $event)">
                                         <div class="component-wrapper">
-                                            <label for="phone"
-                                                class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                            <UInput color="sky" id="phone" v-model="newParticipant.phone"
+                                            <label for="phone" class="block text-sm font-medium text-white mb-1">Telefon</label>
+                                            <input
+                                                :class="['form-input', { 'border-red-500': !newParticipantPhoneComputed, 'border-sky-500': newParticipantPhoneComputed }]"
+                                                id="phone" v-model="newParticipant.phone" type="tel"
                                                 placeholder="+420 123 456 789"
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantPhoneError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantPhoneError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                                :componentId="'participants-add-phone'" class="edit-button" />
+                                                :componentId="'validation-phone'" class="edit-button" />
                                         </div>
                                     </div>
                                     <div class="highlightable" id="participants-add-address"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-address', $event)">
                                         <div class="component-wrapper">
-                                            <label for="address"
-                                                class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                            <UTextarea color="sky" id="address" v-model="newParticipant.address"
-                                                placeholder="Ulice číslo, město, PSČ" :rows="2"
-                                                :disabled="highlightStore.isHighlightMode" />
+                                            <label for="address" class="block text-sm font-medium text-white mb-1">Adresa</label>
+                                            <textarea
+                                                :class="['form-textarea', { 'border-red-500': !newParticipantAddressComputed, 'border-sky-500': newParticipantAddressComputed }]"
+                                                id="address" v-model="newParticipant.address"
+                                                placeholder="Ulice číslo, město, PSČ" rows="2"
+                                                :disabled="highlightStore.isHighlightMode"></textarea>
+                                            <div v-if="newParticipantAddressError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantAddressError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
                                                 :componentId="'participants-add-address'" class="edit-button" />
                                         </div>
@@ -193,11 +211,15 @@
                                     <div class="highlightable" id="participants-add-age"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-age', $event)">
                                         <div class="component-wrapper">
-                                            <label for="age"
-                                                class="block text-sm font-medium text-white mb-1">Věk</label>
-                                            <UInput color="sky" id="age" v-model="newParticipant.age" type="number"
+                                            <label for="age" class="block text-sm font-medium text-white mb-1">Věk</label>
+                                            <input
+                                                :class="['form-input', { 'border-red-500': !newParticipantAgeComputed, 'border-sky-500': newParticipantAgeComputed }]"
+                                                id="age" v-model="newParticipant.age" type="number"
                                                 min="1" max="100" placeholder="18"
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantAgeError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantAgeError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
                                                 :componentId="'participants-add-age'" class="edit-button" />
                                         </div>
@@ -205,12 +227,13 @@
                                     <div class="highlightable" id="participants-add-session"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-session', $event)">
                                         <div class="component-wrapper">
-                                            <label for="sessionId"
-                                                class="block text-sm font-medium text-white mb-1">Turnus</label>
-
-                                            <USelect color="sky" id="sessionId" v-model="newParticipant.sessionId"
+                                            <label for="sessionId" class="block text-sm font-medium text-white mb-1">Turnus</label>
+                                            <USelect :color="newParticipantSessionIdComputed ? 'sky' : 'red'" id="sessionId" v-model="newParticipant.sessionId"
                                                 :items="sessionOptions" placeholder="Vyberte turnus" multiple
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantSessionIdError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantSessionIdError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
                                                 :componentId="'participants-add-session'" class="edit-button" />
                                         </div>
@@ -218,26 +241,26 @@
                                     <div class="highlightable" id="participants-add-allergens"
                                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-add-allergens', $event)">
                                         <div class="component-wrapper">
-                                            <label for="allergens"
-                                                class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                            <USelect color="sky" id="allergens" v-model="newParticipant.allergens"
+                                            <label for="allergens" class="block text-sm font-medium text-white mb-1">Alergeny</label>
+                                            <USelect :color="newParticipantAllergensComputed ? 'sky' : 'red'" id="allergens" v-model="newParticipant.allergens"
                                                 :items="allergenOptions" multiple placeholder="Vyberte alergeny"
                                                 :disabled="highlightStore.isHighlightMode" />
+                                            <div v-if="newParticipantAllergensError" class="text-red-500 text-sm mt-1 font-bold">
+                                                {{ newParticipantAllergensError }}
+                                            </div>
                                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
                                                 :componentId="'participants-add-allergens'" class="edit-button" />
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-3 pt-4">
-                                        <UButton type="submit" color="sky" :loading="isSubmitting"
-                                            :disabled="highlightStore.isEditModeActive">
+                                        <UButton type="submit" color="sky" :loading="isSubmitting">
                                             {{ t('add') }}
                                         </UButton>
-                                        <UButton variant="outline" color="sky" @click="resetForm"
-                                            :disabled="highlightStore.isEditModeActive">
+                                        <UButton variant="outline" color="sky" @click="resetForm">
                                             {{ t('cancel') }}
                                         </UButton>
                                     </div>
-                                </UForm>
+                                </form>
                             </UCard>
                         </template>
                     </UDrawer>
@@ -300,7 +323,7 @@
 
                     <div class="highlightable relative" :id="'participant-allergens'" @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participant-allergens', $event)">
                         <!-- Allergies Badge -->
-                        <UBadge size="sm" :color="getParticipantAllergenCount(participant.id) > 0 ? 'red' : 'green'" variant="soft"
+                        <UBadge size="lg" :color="getParticipantAllergenCount(participant.id) > 0 ? 'red' : 'green'" variant="soft"
                             class="mt-2">
                             {{ t("allergens") }}: {{ getParticipantAllergenCount(participant.id) }}
                         </UBadge>
@@ -314,8 +337,7 @@
                             <!-- Edit Participant Button only -->
                             <div class="ml-auto">
                                 <UButton size="sm" color="sky" variant="solid"
-                                    @click="viewParticipantDetails(participant)" class="flex-1"
-                                    :disabled="highlightStore.isEditModeActive">
+                                    @click="viewParticipantDetails(participant)" class="flex-1">
                                     {{ t('view_details') }}
                                 </UButton>
                             </div>
@@ -337,81 +359,102 @@
             </div>
 
             <!-- Edit Participant Drawer outside v-for -->
-            <UDrawer class="ml-auto" v-model:open="editModalOpen" direction="right">
+            <UDrawer :ui="{ header: 'flex items-center justify-between' }" :modal="false" :handle="false" :dismissible="false" :overlay="false" class="ml-auto edit-drawer" style="max-width: 400px;" v-model:open="editModalOpen" direction="right">
                 <template #content>
                     <UCard class="p-4 min-w-96">
                         <template #header>
                             <h3 class="text-lg font-semibold">{{ t('participant_details') }}</h3>
                         </template>
 
-                        <UForm v-if="selectedParticipant" :state="selectedParticipant"
-                            @submit="handleEditParticipant(selectedParticipant)" class="flex flex-col space-y-4">
+                        <form v-if="selectedParticipant" @submit.prevent="handleEditParticipant(selectedParticipant)" class="flex flex-col space-y-4">
                             <div class="highlightable" id="participants-edit-name"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-name', $event)">
                                 <div class="component-wrapper">
-                                    <label for="edit-name"
-                                        class="block text-sm font-medium text-white mb-1">Jméno</label>
-                                    <UInput color="sky" id="edit-name" v-model="selectedParticipant.name"
-                                        placeholder="Zadejte jméno účastníka"
+                                    <label for="edit-name" class="block text-sm font-medium text-white mb-1">Jméno</label>
+                                    <input
+                                        :class="['form-input', { 'border-red-500': !editParticipantNameComputed, 'border-sky-500': editParticipantNameComputed }]"
+                                        id="edit-name" v-model="selectedParticipant.name"
+                                        placeholder="Zadejte jméno účastníka" type="text"
                                         :disabled="highlightStore.isHighlightMode" />
+                                    <div v-if="editParticipantNameError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantNameError }}
+                                    </div>
                                     <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-name'" class="edit-button" />
+                                        :componentId="'validation-name'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-email"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-email', $event)">
                                 <div class="component-wrapper">
-                                    <label for="edit-email"
-                                        class="block text-sm font-medium text-white mb-1">E-mail</label>
-                                    <UInput color="sky" id="edit-email" v-model="selectedParticipant.email" type="email"
+                                    <label for="edit-email" class="block text-sm font-medium text-white mb-1">E-mail</label>
+                                    <input
+                                        :class="['form-input', { 'border-red-500': !editParticipantEmailComputed, 'border-sky-500': editParticipantEmailComputed }]"
+                                        id="edit-email" v-model="selectedParticipant.email" type="email"
                                         placeholder="email@example.com" :disabled="highlightStore.isHighlightMode" />
+                                    <div v-if="editParticipantEmailError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantEmailError }}
+                                    </div>
                                     <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-email'" class="edit-button" />
+                                        :componentId="'validation-email'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-personal_number"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-personal_number', $event)">
                                 <div class="component-wrapper">
-                                    <label for="edit-personal_number"
-                                        class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
-                                    <UInput color="sky" id="edit-personal_number"
-                                        v-model="selectedParticipant.personal_number" placeholder="123456/7890"
+                                    <label for="edit-personal_number" class="block text-sm font-medium text-white mb-1">Rodné číslo</label>
+                                    <input
+                                        :class="['form-input', { 'border-red-500': !editParticipantPersonalNumberComputed, 'border-sky-500': editParticipantPersonalNumberComputed }]"
+                                        id="edit-personal_number" v-model="selectedParticipant.personal_number"
+                                        placeholder="123456/7890" type="text"
                                         :disabled="highlightStore.isHighlightMode" />
+                                    <div v-if="editParticipantPersonalNumberError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantPersonalNumberError }}
+                                    </div>
                                     <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-personal_number'" class="edit-button" />
+                                        :componentId="'validation-personal-number'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-phone"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-phone', $event)">
                                 <div class="component-wrapper">
-                                    <label for="edit-phone"
-                                        class="block text-sm font-medium text-white mb-1">Telefon</label>
-                                    <UInput color="sky" id="edit-phone" v-model="selectedParticipant.phone"
+                                    <label for="edit-phone" class="block text-sm font-medium text-white mb-1">Telefon</label>
+                                    <input
+                                        :class="['form-input', { 'border-red-500': !editParticipantPhoneComputed, 'border-sky-500': editParticipantPhoneComputed }]"
+                                        id="edit-phone" v-model="selectedParticipant.phone" type="tel"
                                         placeholder="+420 123 456 789" :disabled="highlightStore.isHighlightMode" />
+                                    <div v-if="editParticipantPhoneError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantPhoneError }}
+                                    </div>
                                     <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-phone'" class="edit-button" />
+                                        :componentId="'validation-phone'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-address"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-address', $event)">
                                 <div class="component-wrapper">
-                                    <label for="edit-address"
-                                        class="block text-sm font-medium text-white mb-1">Adresa</label>
-                                    <UTextarea color="sky" id="edit-address" v-model="selectedParticipant.address"
-                                        placeholder="Ulice číslo, město, PSČ" :rows="2"
-                                        :disabled="highlightStore.isHighlightMode" />
-                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-address'" class="edit-button" />
+                                    <label for="edit-address" class="block text-sm font-medium text-white mb-1">Adresa</label>
+                                    <textarea
+                                        :class="['form-textarea', { 'border-red-500': !editParticipantAddressComputed, 'border-sky-500': editParticipantAddressComputed }]"
+                                        id="edit-address" v-model="selectedParticipant.address"
+                                        placeholder="Ulice číslo, město, PSČ" rows="2"
+                                        :disabled="highlightStore.isHighlightMode"></textarea>
+                                    <div v-if="editParticipantAddressError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantAddressError }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-age"
                                 @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('participants-edit-age', $event)">
                                 <div class="component-wrapper">
                                     <label for="edit-age" class="block text-sm font-medium text-white mb-1">Věk</label>
-                                    <UInput color="sky" id="edit-age" v-model="selectedParticipant.age" type="number"
-                                        min="1" max="100" placeholder="18" :disabled="highlightStore.isHighlightMode" />
-                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-age'" class="edit-button" />
+                                    <input
+                                        :class="['form-input', { 'border-red-500': !editParticipantAgeComputed, 'border-sky-500': editParticipantAgeComputed }]"
+                                        id="edit-age" v-model="selectedParticipant.age" type="number"
+                                        min="1" max="100" placeholder="18"
+                                        :disabled="highlightStore.isHighlightMode" />
+                                    <div v-if="editParticipantAgeError" class="text-red-500 text-sm mt-1 font-bold">
+                                        {{ editParticipantAgeError }}
+                                    </div>
                                 </div>
                             </div>
                             <!-- Allergen Edit Field -->
@@ -420,11 +463,9 @@
                                 <div class="component-wrapper">
                                     <label for="edit-allergens"
                                         class="block text-sm font-medium text-white mb-1">Alergeny</label>
-                                    <USelect color="sky" id="edit-allergens" v-model="selectedParticipant.allergens"
+                                    <USelect :color="editParticipantAllergensComputed ? 'sky' : 'red'" id="edit-allergens" v-model="selectedParticipant.allergens"
                                         :items="allergenOptions" multiple placeholder="Vyberte alergeny"
                                         :disabled="highlightStore.isHighlightMode" />
-                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-allergens'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="highlightable" id="participants-edit-sessions"
@@ -433,24 +474,20 @@
                                     <label for="edit-sessions"
                                         class="block text-sm font-medium text-white mb-1">Turnus</label>
 
-                                    <USelect color="sky" id="edit-sessions" v-model="selectedParticipant.sessions"
+                                    <USelect :color="editParticipantSessionsComputed ? 'sky' : 'red'" id="edit-sessions" v-model="selectedParticipant.sessions"
                                         :items="sessionOptions" placeholder="Vyberte turnus" multiple
                                         :disabled="highlightStore.isHighlightMode" />
-                                    <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                        :componentId="'participants-edit-sessions'" class="edit-button" />
                                 </div>
                             </div>
                             <div class="flex flex-col gap-3 pt-4">
-                                <UButton type="submit" color="sky" :loading="isSubmitting"
-                                    :disabled="highlightStore.isEditModeActive">
+                                <UButton type="submit" color="sky" :loading="isSubmitting">
                                     {{ t('save_changes') }}
                                 </UButton>
-                                <UButton variant="outline" color="sky" @click="resetForm"
-                                    :disabled="highlightStore.isEditModeActive">
+                                <UButton variant="outline" color="sky" @click="resetForm">
                                     {{ t('cancel') }}
                                 </UButton>
                             </div>
-                        </UForm>
+                        </form>
                     </UCard>
                 </template>
             </UDrawer>
@@ -484,6 +521,7 @@ import { useHighlightWatchers } from '~/composables/highlightWatchers'
 import { useToast } from '#imports'
 import EditComponentModal from '~/components/EditComponentModal.vue'
 import EditComponentModalOpenButton from '~/components/EditComponentModalOpenButton.vue'
+import { UsedValueState } from 'ajv/dist/compile/codegen/scope'
 
 const selectedSystemStore = useSelectedSystemStore()
 const { t } = useI18n()
@@ -692,19 +730,8 @@ const newParticipant = ref({
 
 
 
-const participantSchema = {
-    type: 'object',
-    properties: {
-        name: { type: 'string', minLength: 1 },
-        email: { type: 'string', format: 'email' },
-        personal_number: { type: 'string', minLength: 1 },
-        phone: { type: 'string', minLength: 1 },
-        address: { type: 'string', minLength: 1 },
-        age: { type: 'number', minimum: 1, maximum: 100 },
-        sessionId: { type: 'number' }
-    },
-    required: ['name', 'email', 'personal_number', 'phone', 'address', 'age', 'sessionId']
-}
+// Validation functions are now handled by computed properties for color-based validation
+
 
 // Pagination
 const currentPage = ref(1)
@@ -1165,6 +1192,13 @@ const resetForm = () => {
         sessionId: [],
         allergens: []
     }
+    // Reset colors to default
+    Object.keys(newParticipantColors.value).forEach(key => {
+        newParticipantColors.value[key] = 'sky'
+    })
+    Object.keys(editParticipantColors.value).forEach(key => {
+        editParticipantColors.value[key] = 'sky'
+    })
     // Hide drawers
     addModalOpen.value = false
     editModalOpen.value = false
@@ -1408,6 +1442,352 @@ const updateParticipantAllergens = async (participantId: number, oldAllergenIds:
     }
 }
 
+// Reactive colors for form fields
+const newParticipantColors = ref<Record<string, string>>({
+    name: 'sky',
+    email: 'sky',
+    personal_number: 'sky',
+    phone: 'sky',
+    address: 'sky',
+    age: 'sky',
+    sessionId: 'sky',
+    allergens: 'sky'
+})
+
+const editParticipantColors = ref<Record<string, string>>({
+    name: 'sky',
+    email: 'sky',
+    personal_number: 'sky',
+    phone: 'sky',
+    address: 'sky',
+    age: 'sky',
+    sessions: 'sky',
+    allergens: 'sky'
+})
+
+// Get validation components
+const validationNameComponent = computed(() => componentCodeStore.getComponentById('validation-name') || componentCodeStore.getDefaultComponent('validation-name'))
+const validationEmailComponent = computed(() => componentCodeStore.getComponentById('validation-email') || componentCodeStore.getDefaultComponent('validation-email'))
+const validationPersonalNumberComponent = computed(() => componentCodeStore.getComponentById('validation-personal-number') || componentCodeStore.getDefaultComponent('validation-personal-number'))
+const validationPhoneComponent = computed(() => componentCodeStore.getComponentById('validation-phone') || componentCodeStore.getDefaultComponent('validation-phone'))
+
+// Validation functions using component validation logic
+const isValidName = (name: string): boolean => {
+    try {
+        const jsCode = validationNameComponent.value?.js?.['isValidName'] || ''
+        if (jsCode) {
+            // Create a function that returns the isValidName function
+            const func = new Function(`${jsCode}; return isValidName;`)
+            const validatorFn = func()
+            return validatorFn(name)
+        }
+    } catch (error) {
+        console.error('Error loading isValidName function:', error)
+    }
+    return false
+}
+
+const isValidEmail = (email: string): boolean => {
+    try {
+        const jsCode = validationEmailComponent.value?.js?.['isValidEmail'] || ''
+        if (jsCode) {
+            const func = new Function(`${jsCode}; return isValidEmail;`)
+            const validatorFn = func()
+            return validatorFn(email)
+        }
+    } catch (error) {
+        console.error('Error loading isValidEmail function:', error)
+    }
+    return false
+}
+
+
+const isValidPersonalNumber = (personalNumber: string): boolean => {
+    try {
+        const jsCode = validationPersonalNumberComponent.value?.js?.['isValidPersonalNumber'] || ''
+        if (jsCode) {
+            const func = new Function(`${jsCode}; return isValidPersonalNumber;`)
+            const validatorFn = func()
+            return validatorFn(personalNumber)
+        }
+    } catch (error) {
+        console.error('Error loading isValidPersonalNumber function:', error)
+    }
+    return false
+}
+
+const isValidPhone = (phone: string): boolean => {
+    try {
+        const jsCode = validationPhoneComponent.value?.js?.['isValidPhone'] || ''
+        if (jsCode) {
+            const func = new Function(`${jsCode}; return isValidPhone;`)
+            const validatorFn = func()
+            return validatorFn(phone)
+        }
+    } catch (error) {
+        console.error('Error loading isValidPhone function:', error)
+    }
+    return false
+}
+
+// Computed properties for validated fields using component validation functions
+const newParticipantNameComputed = computed(() => {
+    const value = newParticipant.value.name
+    return isValidName(value)
+})
+
+const newParticipantEmailComputed = computed(() => {
+    const value = newParticipant.value.email
+    return isValidEmail(value)
+})
+
+const newParticipantPersonalNumberComputed = computed(() => {
+    const value = newParticipant.value.personal_number
+    console.log("JS code: ", validationPersonalNumberComponent.value?.js?.['isValidPersonalNumber'])
+    console.log("Personal number: ", value, " is valid:", isValidPersonalNumber(value))
+    return isValidPersonalNumber(value)
+})
+
+const newParticipantPhoneComputed = computed(() => {
+    const value = newParticipant.value.phone
+    return isValidPhone(value)
+})
+
+const newParticipantAddressComputed = computed(() => {
+    // TODO: Add computed logic for address field
+    const value = newParticipant.value.address
+    return value && value.trim().length > 0
+})
+
+const newParticipantAgeComputed = computed(() => {
+    // TODO: Add computed logic for age field
+    const value = newParticipant.value.age
+    return value && value >= 1 && value <= 100
+})
+
+const newParticipantSessionIdComputed = computed(() => {
+    // Sessions are optional - always return true
+    return true
+})
+
+const newParticipantAllergensComputed = computed(() => {
+    // Allergens are optional - always return true
+    return true
+})
+
+// Error message computed properties for new participant form
+const newParticipantNameError = computed(() => {
+    const value = newParticipant.value.name
+    if (!value) {
+        return 'Jméno je povinné'
+    } else if (!isValidName(value)) {
+        return 'Jméno musí obsahovat křestní jméno a příjmení (alespoň jedna mezera)'
+    }
+    return ''
+})
+
+const newParticipantEmailError = computed(() => {
+    const value = newParticipant.value.email
+    if (!value) {
+        return 'E-mail je povinný'
+    } else if (!isValidEmail(value)) {
+        return 'Zadejte platnou e-mailovou adresu'
+    }
+    return ''
+})
+
+const newParticipantPersonalNumberError = computed(() => {
+    const value = newParticipant.value.personal_number
+    if (!value) {
+        return 'Rodné číslo je povinné'
+    } else if (!isValidPersonalNumber(value)) {
+        return 'Rodné číslo musí být ve formátu xxxxxx/xxxx (např. 123456/7890)'
+    }
+    return ''
+})
+
+const newParticipantPhoneError = computed(() => {
+    const value = newParticipant.value.phone
+    if (!value) {
+        return 'Telefon je povinný'
+    } else if (!isValidPhone(value)) {
+        return 'Zadejte platné telefonní číslo (např. +420 123 456 789 nebo 123456789)'
+    }
+    return ''
+})
+
+const newParticipantAddressError = computed(() => {
+    const value = newParticipant.value.address
+    if (!value) {
+        return 'Adresa je povinná'
+    }
+    return ''
+})
+
+const newParticipantAgeError = computed(() => {
+    const value = newParticipant.value.age
+    if (!value) {
+        return 'Věk je povinný'
+    } else if (value < 1 || value > 100) {
+        return 'Věk musí být mezi 1 a 100'
+    }
+    return ''
+})
+
+const newParticipantSessionIdError = computed(() => {
+    // Sessions are optional - no error for empty selection
+    return ''
+})
+
+const newParticipantAllergensError = computed(() => {
+    // Allergens are optional - no error for empty selection
+    return ''
+})
+
+// Empty computed properties for edit form validated fields
+const editParticipantNameComputed = computed(() => {
+    // TODO: Add computed logic for edit name field
+    const value = selectedParticipant.value?.name
+    return isValidName(value)
+})
+
+const editParticipantEmailComputed = computed(() => {
+    // TODO: Add computed logic for edit email field
+    const value = selectedParticipant.value?.email
+    return isValidEmail(value)
+})
+
+const editParticipantPersonalNumberComputed = computed(() => {
+    // TODO: Add computed logic for edit personal number field
+    const value = selectedParticipant.value?.personal_number
+    return isValidPersonalNumber(value)
+})
+
+const editParticipantPhoneComputed = computed(() => {
+    // TODO: Add computed logic for edit phone field
+    const value = selectedParticipant.value?.phone
+    return isValidPhone(value)
+})
+
+const editParticipantAddressComputed = computed(() => {
+    // TODO: Add computed logic for edit address field
+    const value = selectedParticipant.value?.address
+    return value && value.trim().length > 0
+})
+
+const editParticipantAgeComputed = computed(() => {
+    // TODO: Add computed logic for edit age field
+    const value = selectedParticipant.value?.age
+    return value && value >= 1 && value <= 100
+})
+
+const editParticipantSessionsComputed = computed(() => {
+    // Sessions are optional - always return true
+    return true
+})
+
+const editParticipantAllergensComputed = computed(() => {
+    // Allergens are optional - always return true
+    return true
+})
+
+// Error message computed properties for edit participant form
+const editParticipantNameError = computed(() => {
+    const value = selectedParticipant.value?.name
+    if (!value) {
+        return 'Jméno je povinné'
+    } else if (!isValidName(value)) {
+        return 'Jméno musí obsahovat křestní jméno a příjmení (alespoň jedna mezera)'
+    }
+    return ''
+})
+
+const editParticipantEmailError = computed(() => {
+    const value = selectedParticipant.value?.email
+    if (!value ) {
+        return 'E-mail je povinný'
+    } else if (!isValidEmail(value)) {
+        return 'Zadejte platnou e-mailovou adresu'
+    }
+    return ''
+})
+
+const editParticipantPersonalNumberError = computed(() => {
+    const value = selectedParticipant.value?.personal_number
+    if (!value ) {
+        return 'Rodné číslo je povinné'
+    } else if (!isValidPersonalNumber(value)) {
+        return 'Rodné číslo musí být ve formátu xxxxxx/xxxx (např. 123456/7890)'
+    }
+    return ''
+})
+
+const editParticipantPhoneError = computed(() => {
+    const value = selectedParticipant.value?.phone
+    if (!UsedValueState) {
+        return 'Telefon je povinný'
+    } else if (!isValidPhone(value)) {
+        return 'Zadejte platné telefonní číslo (např. +420 123 456 789 nebo 123456789)'
+    }
+    return ''
+})
+
+const editParticipantAddressError = computed(() => {
+    const value = selectedParticipant.value?.address
+    if (!value || value.trim().length === 0) {
+        return 'Adresa je povinná'
+    }
+    return ''
+})
+
+const editParticipantAgeError = computed(() => {
+    const value = selectedParticipant.value?.age
+    if (!value) {
+        return 'Věk je povinný'
+    } else if (value < 1 || value > 100) {
+        return 'Věk musí být mezi 1 a 100'
+    }
+    return ''
+})
+
+const editParticipantSessionsError = computed(() => {
+    // Sessions are optional - no error for empty selection
+    return ''
+})
+
+const editParticipantAllergensError = computed(() => {
+    // Allergens are optional - no error for empty selection
+    return ''
+})
+
+// Computed properties to check if forms have any validation errors
+const hasNewParticipantErrors = computed(() => {
+    return !!(
+        newParticipantNameError.value ||
+        newParticipantEmailError.value ||
+        newParticipantPersonalNumberError.value ||
+        newParticipantPhoneError.value ||
+        newParticipantAddressError.value ||
+        newParticipantAgeError.value ||
+        newParticipantSessionIdError.value ||
+        newParticipantAllergensError.value
+    )
+})
+
+const hasEditParticipantErrors = computed(() => {
+    return !!(
+        editParticipantNameError.value ||
+        editParticipantEmailError.value ||
+        editParticipantPersonalNumberError.value ||
+        editParticipantPhoneError.value ||
+        editParticipantAddressError.value ||
+        editParticipantAgeError.value ||
+        editParticipantSessionsError.value ||
+        editParticipantAllergensError.value
+    )
+})
+
+
 onMounted(() => {
     if (!ComponentManager.areComponentsInitialized()) {
         ComponentManager.initializeComponents()
@@ -1485,5 +1865,115 @@ onMounted(() => {
     top: 0.25rem;
     right: 0.25rem;
     z-index: 10;
+}
+
+/* Form styles */
+.form-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    color: #111827;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    color: #111827;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    resize: vertical;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    color: #111827;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-select:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.form-select option {
+    padding: 0.5rem;
+}
+
+/* Validation colors */
+.border-red-500 {
+    border-color: #ef4444 !important;
+    border-width: 3px !important;
+}
+
+.border-sky-500 {
+    border-color: #0ea5e9 !important;
+    border-width: 3px !important;
+}
+
+/* Ensure edit drawer doesn't interfere with navbar */
+.edit-drawer {
+    z-index: 10 !important;
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    max-width: 400px !important;
+}
+
+.edit-drawer .drawer-content {
+    z-index: 10 !important;
+    position: relative !important;
+}
+
+/* Ensure navbar area remains clickable */
+.navbar-area {
+    z-index: 20 !important;
+    position: relative !important;
 }
 </style>
