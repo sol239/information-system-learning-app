@@ -74,6 +74,9 @@ const renderedHtml = computed(() => {
 const capacityFunction = computed(() => new Function('participantCount', 'capacity', js.value))
 
 const participantCount = computed(() => {
+
+  const _ = selectedSystemStore.dbNumber;
+
   if (!system?.db || typeof system?.db?.query !== "function") {
     return 0
   }
@@ -82,6 +85,9 @@ const participantCount = computed(() => {
 })
 
 const capacity = computed(() => {
+  const _ = selectedSystemStore.dbNumber;
+
+
   if (!system?.db || typeof system?.db?.query !== "function") {
     return 0
   }

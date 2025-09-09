@@ -52,6 +52,9 @@ const js = computed(() => ComponentHandler.getComponentValue(componentId, 'js', 
 
 // Local state
 const dayCount = computed(() => {
+
+  const _ = selectedSystemStore.dbNumber;
+
   if (!system?.db || typeof system?.db?.query !== "function") {
     return 0
   }

@@ -1,5 +1,5 @@
 <template>
-    <UDrawer v-model:open="isOpen" direction="right">
+    <UDrawer :ui="{ header: 'flex items-center justify-between' }" :modal="false" :handle="false" :dismissible="false" :overlay="false" v-model:open="isOpen" direction="right">
         <template #content>
             <UCard class="p-4 min-w-96">
                 <template #header>
@@ -9,27 +9,57 @@
                 <UForm :state="editSession" @submit="handleEditSession(editSession)" class="flex flex-col space-y-4">
                     <div class="highlightable" id="sessions-edit-from_date"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-from_date', $event)">
-                        <label for="from_date" class="block text-sm font-medium text-white mb-1">{{ t('from_date')
-                            }}</label>
-                        <UInput color="sky" id="from_date" v-model="editSession.from_date" type="date"
-                            :disabled="highlightStore.isHighlightMode" />
+                        <div class="component-wrapper">
+                            <label for="from_date" class="block text-sm font-medium text-white mb-1">{{ t('from_date')
+                                }}</label>
+                            <input
+                                :class="['form-input', { 'border-red-500': !editSessionFromDateComputed, 'border-sky-500': editSessionFromDateComputed }]"
+                                id="from_date" v-model="editSession.from_date" type="date"
+                                :disabled="highlightStore.isHighlightMode" />
+                            <div v-if="editSessionFromDateError" class="text-red-500 text-sm mt-1 font-bold">
+                                {{ editSessionFromDateError }}
+                            </div>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
+                                :componentId="'sessions-edit-from_date'" class="edit-button" />
+                        </div>
                     </div>
                     <div class="highlightable" id="sessions-edit-to_date"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-to_date', $event)">
-                        <label for="to_date" class="block text-sm font-medium text-white mb-1">{{ t('to_date')
-                            }}</label>
-                        <UInput color="sky" id="to_date" v-model="editSession.to_date" type="date"
-                            :disabled="highlightStore.isHighlightMode" />
+                        <div class="component-wrapper">
+                            <label for="to_date" class="block text-sm font-medium text-white mb-1">{{ t('to_date')
+                                }}</label>
+                            <input
+                                :class="['form-input', { 
+                                    'border-red-500': !editSessionToDateComputed || !editSessionDateRangeComputed, 
+                                    'border-sky-500': editSessionToDateComputed && editSessionDateRangeComputed 
+                                }]"
+                                id="to_date" v-model="editSession.to_date" type="date"
+                                :disabled="highlightStore.isHighlightMode" />
+                            <div v-if="editSessionToDateError" class="text-red-500 text-sm mt-1 font-bold">
+                                {{ editSessionToDateError }}
+                            </div>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
+                                :componentId="'sessions-edit-to_date'" class="edit-button" />
+                        </div>
                     </div>
                     <div class="highlightable" id="sessions-edit-capacity"
                         @click="highlightStore.isHighlightMode && highlightStore.highlightHandler.selectElement('sessions-edit-capacity', $event)">
-                        <label for="capacity" class="block text-sm font-medium text-white mb-1">{{ t('capacity')
-                            }}</label>
-                        <UInput color="sky" id="capacity" v-model="editSession.capacity" type="number" min="1"
-                            placeholder="50" :disabled="highlightStore.isHighlightMode" />
+                        <div class="component-wrapper">
+                            <label for="capacity" class="block text-sm font-medium text-white mb-1">{{ t('capacity')
+                                }}</label>
+                            <input
+                                :class="['form-input', { 'border-red-500': !editSessionCapacityComputed, 'border-sky-500': editSessionCapacityComputed }]"
+                                id="capacity" v-model="editSession.capacity" type="number" min="1"
+                                placeholder="50" :disabled="highlightStore.isHighlightMode" />
+                            <div v-if="editSessionCapacityError" class="text-red-500 text-sm mt-1 font-bold">
+                                {{ editSessionCapacityError }}
+                            </div>
+                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
+                                :componentId="'sessions-edit-capacity'" class="edit-button" />
+                        </div>
                     </div>
                     <div class="flex flex-col gap-3 pt-4">
-                        <UButton type="submit" color="sky" :loading="isSubmitting">
+                        <UButton type="submit" color="sky" :loading="isSubmitting" :disabled="hasValidationErrors">
                             {{ t('update') }}
                         </UButton>
                         <UButton variant="outline" color="sky" @click="closeModal">
@@ -47,6 +77,7 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSelectedSystemStore, useToast } from '#imports'
 import { useHighlightStore } from '#imports'
+import EditComponentModalOpenButton from '~/components/EditComponentModalOpenButton.vue'
 import { Session } from '~/model/Session'
 
 const props = defineProps<{
@@ -87,23 +118,70 @@ watch(() => props.session, (newSession) => {
     }
 }, { immediate: true })
 
-// Watch for modal open/close to handle form state
-watch(() => props.modelValue, (open) => {
-    if (open && props.session) {
-        // When modal opens, populate form with session data
-        editSession.value = {
-            from_date: props.session.fromDate.toISOString().split('T')[0],
-            to_date: props.session.toDate.toISOString().split('T')[0],
-            capacity: props.session.capacity
-        }
-    } else if (!open) {
-        // When modal closes, reset form
-        editSession.value = {
-            from_date: '',
-            to_date: '',
-            capacity: null
-        }
+// Validation functions for date comparison
+const isValidDateRange = (fromDate: string, toDate: string): boolean => {
+    if (!fromDate || !toDate) return true // Allow empty dates for now
+    const from = new Date(fromDate)
+    const to = new Date(toDate)
+    return to >= from
+}
+
+// Computed properties for validated fields
+const editSessionFromDateComputed = computed(() => {
+    const value = editSession.value.from_date
+    return value && value.trim().length > 0
+})
+
+const editSessionToDateComputed = computed(() => {
+    const value = editSession.value.to_date
+    return value && value.trim().length > 0
+})
+
+const editSessionDateRangeComputed = computed(() => {
+    const fromDate = editSession.value.from_date
+    const toDate = editSession.value.to_date
+    return isValidDateRange(fromDate, toDate)
+})
+
+// Error message computed properties for edit session form
+const editSessionFromDateError = computed(() => {
+    const value = editSession.value.from_date
+    if (!value) {
+        return 'Datum začátku je povinné'
     }
+    return ''
+})
+
+const editSessionToDateError = computed(() => {
+    const value = editSession.value.to_date
+    if (!value) {
+        return 'Datum konce je povinné'
+    } else if (!isValidDateRange(editSession.value.from_date, value)) {
+        return 'Datum konce musí být stejné nebo pozdější než datum začátku'
+    }
+    return ''
+})
+
+const editSessionCapacityComputed = computed(() => {
+    const value = editSession.value.capacity
+    return value && value > 0
+})
+
+const editSessionCapacityError = computed(() => {
+    const value = editSession.value.capacity
+    if (!value || value <= 0) {
+        return 'Kapacita musí být větší než 0'
+    }
+    return ''
+})
+
+// Computed property to check if there are any validation errors
+const hasValidationErrors = computed(() => {
+    return !!(
+        editSessionFromDateError.value ||
+        editSessionToDateError.value ||
+        editSessionCapacityError.value
+    )
 })
 
 const closeModal = () => {
@@ -111,6 +189,16 @@ const closeModal = () => {
 }
 
 const handleEditSession = async (data: any) => {
+    // Check for validation errors before submitting
+    if (editSessionFromDateError.value || editSessionToDateError.value || editSessionCapacityError.value) {
+        toast.add({
+            title: 'Opravte chyby ve formuláři',
+            color: 'red',
+            icon: 'i-heroicons-exclamation-triangle'
+        })
+        return
+    }
+
     if (!selectedSystemStore.selectedSystem?.db) {
         console.error('Database not available')
         return
@@ -149,3 +237,54 @@ const handleEditSession = async (data: any) => {
     }
 }
 </script>
+
+<style scoped>
+/* Form styles */
+.form-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    color: #111827;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Validation colors */
+.border-red-500 {
+    border-color: #ef4444 !important;
+    border-width: 3px !important;
+}
+
+.border-sky-500 {
+    border-color: #0ea5e9 !important;
+    border-width: 3px !important;
+}
+
+.component-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.edit-button {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    z-index: 10;
+}
+</style>

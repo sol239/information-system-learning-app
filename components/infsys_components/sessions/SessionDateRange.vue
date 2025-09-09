@@ -50,6 +50,10 @@ const css = computed(() => ComponentHandler.getComponentValue(componentId, 'css'
 
 // Local state
 const dateRange = computed(() => {
+
+    const _ = selectedSystemStore.dbNumber;
+
+
   if (!system?.db || typeof system?.db?.query !== "function") {
     return null
   }

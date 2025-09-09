@@ -1,5 +1,5 @@
 <template>
-    <UDrawer :open="modalOpen" @update:open="updateModalOpen" direction="right">
+    <UDrawer :ui="{ header: 'flex items-center justify-between' }" :modal="false" :handle="false" :dismissible="false" :overlay="false" :open="modalOpen" @update:open="updateModalOpen" direction="right">
         <template #content>
             <UCard class="p-4 min-w-96">
                 <template #header>

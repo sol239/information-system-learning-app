@@ -1,7 +1,6 @@
 <template>
-    <div class="highlightable" :id="'sessions-add-button'">
-        <UButton color="sky" variant="outline" @click="handleButtonClick($event)" icon="i-heroicons-plus"
-            :id="'sessions-add-button'">
+    <div>
+        <UButton color="sky" variant="outline" @click="handleButtonClick($event)" icon="i-heroicons-plus">
             {{ t('add_session') }}
         </UButton>
     </div>
