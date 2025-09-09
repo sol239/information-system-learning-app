@@ -19,8 +19,7 @@
                             <div v-if="editSessionFromDateError" class="text-red-500 text-sm mt-1 font-bold">
                                 {{ editSessionFromDateError }}
                             </div>
-                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                :componentId="'sessions-edit-from_date'" class="edit-button" />
+
                         </div>
                     </div>
                     <div class="highlightable" id="sessions-edit-to_date"
@@ -39,7 +38,7 @@
                                 {{ editSessionToDateError }}
                             </div>
                             <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                :componentId="'sessions-edit-to_date'" class="edit-button" />
+                                :componentId="'validation-date-range'" class="edit-button" />
                         </div>
                     </div>
                     <div class="highlightable" id="sessions-edit-capacity"
@@ -54,8 +53,6 @@
                             <div v-if="editSessionCapacityError" class="text-red-500 text-sm mt-1 font-bold">
                                 {{ editSessionCapacityError }}
                             </div>
-                            <EditComponentModalOpenButton v-if="highlightStore.isEditModeActive"
-                                :componentId="'sessions-edit-capacity'" class="edit-button" />
                         </div>
                     </div>
                     <div class="flex flex-col gap-3 pt-4">
@@ -78,6 +75,7 @@ import { useI18n } from 'vue-i18n'
 import { useSelectedSystemStore, useToast } from '#imports'
 import { useHighlightStore } from '#imports'
 import EditComponentModalOpenButton from '~/components/EditComponentModalOpenButton.vue'
+import { useComponentCodeStore } from '~/stores/useComponentCodeStore'
 import { Session } from '~/model/Session'
 
 const props = defineProps<{
@@ -93,6 +91,7 @@ const { t } = useI18n()
 const selectedSystemStore = useSelectedSystemStore()
 const toast = useToast()
 const highlightStore = useHighlightStore()
+const componentCodeStore = useComponentCodeStore()
 const isSubmitting = ref(false)
 
 // Edit session form
@@ -120,10 +119,27 @@ watch(() => props.session, (newSession) => {
 
 // Validation functions for date comparison
 const isValidDateRange = (fromDate: string, toDate: string): boolean => {
-    if (!fromDate || !toDate) return true // Allow empty dates for now
+    if (!fromDate || !toDate) return true
     const from = new Date(fromDate)
     const to = new Date(toDate)
     return to >= from
+}
+
+// Get validation components
+const validationDateRangeComponent = computed(() => componentCodeStore.getComponentById('validation-date-range') || componentCodeStore.getDefaultComponent('validation-date-range'))
+
+// Component-based validation function using loaded JS
+const isValidDateRangeFromComponent = (fromDate: string, toDate: string): boolean => {
+    try {
+        const jsCode = validationDateRangeComponent.value?.js?.['isValidDateRange'] || ''
+        if (jsCode) {
+            const func = new Function(`${jsCode}; return isValidDateRange;`)
+            const validatorFn = func()
+            return validatorFn(fromDate, toDate)
+        }
+    } catch (error) {
+        console.error('Error loading isValidDateRange function:', error)
+    }
 }
 
 // Computed properties for validated fields
@@ -140,7 +156,7 @@ const editSessionToDateComputed = computed(() => {
 const editSessionDateRangeComputed = computed(() => {
     const fromDate = editSession.value.from_date
     const toDate = editSession.value.to_date
-    return isValidDateRange(fromDate, toDate)
+    return isValidDateRangeFromComponent(fromDate, toDate)
 })
 
 // Error message computed properties for edit session form
@@ -156,7 +172,7 @@ const editSessionToDateError = computed(() => {
     const value = editSession.value.to_date
     if (!value) {
         return 'Datum konce je povinné'
-    } else if (!isValidDateRange(editSession.value.from_date, value)) {
+    } else if (!isValidDateRangeFromComponent(editSession.value.from_date, value)) {
         return 'Datum konce musí být stejné nebo pozdější než datum začátku'
     }
     return ''

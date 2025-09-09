@@ -1111,6 +1111,24 @@ navigateTo({
       additionals: {}
     });
 
+    const validationDateRangeComponent = new Component({
+      id: "validation-date-range",
+      name: "Date Range Validation",
+      description: `Validation function for date ranges. Ensures to_date is greater than or equal to from_date.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "isValidDateRange": `const isValidDateRange = (fromDate, toDate) => {
+    if (!fromDate || !toDate) return true
+    const from = new Date(fromDate)
+    const to = new Date(toDate)
+    return to >= from
+}`
+      },
+      sql: { "sql": `` },
+      additionals: {}
+    });
+
 
     // Store the instances into the store
     componentCodeStore.updateDefaultComponent(statsMealsComponent);
@@ -1174,6 +1192,7 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(validationEmailComponent);
     componentCodeStore.updateDefaultComponent(validationPersonalNumberComponent);
     componentCodeStore.updateDefaultComponent(validationPhoneComponent);
+    componentCodeStore.updateDefaultComponent(validationDateRangeComponent);
 
     // Reset
     componentCodeStore.resetComponent("stats-meals");
@@ -1236,6 +1255,7 @@ navigateTo({
     componentCodeStore.resetComponent("validation-email");
     componentCodeStore.resetComponent("validation-personal-number");
     componentCodeStore.resetComponent("validation-phone");
+    componentCodeStore.resetComponent("validation-date-range");
   }
 
   public static areComponentsInitialized(): boolean {
