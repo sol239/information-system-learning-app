@@ -1194,6 +1194,359 @@ navigateTo({
     componentCodeStore.updateDefaultComponent(validationPhoneComponent);
     componentCodeStore.updateDefaultComponent(validationDateRangeComponent);
 
+    // Supervisors page components (mirroring participants)
+    const supervisorsCapacityCountComponent = new Component({
+      id: "supervisors-capacity-count",
+      name: "Supervisors Capacity Count",
+      description: `Component for displaying supervisors count vs capacity.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql-total-all": `SELECT SUM(capacity) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')}`,
+        "sql-current-all": `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id
+        `,
+        "sql-total-session": `SELECT capacity as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} WHERE session_id = ?`,
+        "sql-current-session": `
+            SELECT COUNT(*) as count
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} s
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss ON s.supervisor_id = ss.supervisor_id
+            WHERE ss.session_id = ?
+        `
+      },
+      additionals: {}
+    });
+
+    const supervisorsCapacityPercentageComponent = new Component({
+      id: "supervisors-capacity-percentage",
+      name: "Supervisors Capacity Percentage",
+      description: `Component for displaying supervisors capacity percentage.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "Math.round(currentCount / totalCapacity * 100)" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const supervisorsPageCount1Component = new Component({
+      id: "supervisors-page-count-1",
+      name: "Supervisors Page Count 1",
+      description: `Component for displaying page count for supervisors.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "Math.ceil(totalItems / itemsPerPage)" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const supervisorsPageCount2Component = new Component({
+      id: "supervisors-page-count-2",
+      name: "Supervisors Page Count 2",
+      description: `Component for displaying supervisor count.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const supervisorsFilterResetComponent = new Component({
+      id: "supervisors-filter-reset",
+      name: "Supervisors Filter Reset",
+      description: `Component for filter reset button (supervisors).`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const supervisorsFilterInputComponent = new Component({
+      id: "supervisors-filter-input",
+      name: "Supervisors Filter Input",
+      description: `Component for filter input (supervisors).`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: {
+        "js": `(p.name && p.name.toLowerCase().includes(text)) ||
+               (p.email && p.email.toLowerCase().includes(text)) ||
+               (p.phone && p.phone.toLowerCase().includes(text)) ||
+               (p.address && p.address.toLowerCase().includes(text)) ||
+               (p.sessions && getSessionNames(p.sessions).toLowerCase().includes(text))`
+      },
+      sql: { "sql": "" },
+      additionals: {}
+    });
+
+    const supervisorsSessionMenuComponent = new Component({
+      id: "supervisors-session-menu",
+      name: "Supervisors Session Menu",
+      description: `Component for session select menu (supervisors).`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": "SELECT *" },
+      additionals: {}
+    });
+
+    const supervisorAllergenCountComponent = new Component({
+      id: "supervisor-allergen-count",
+      name: "Supervisor Allergen Count",
+      description: `SQL for counting supervisor allergens.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors_allergens')} WHERE supervisor_id = ?` },
+      additionals: {}
+    });
+
+    const supervisorsAllergenOptionsComponent = new Component({
+      id: "supervisors-allergen-options",
+      name: "Supervisors Allergen Options",
+      description: `SQL for getting allergen options (same table).`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT allergen_id, name from ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')}` },
+      additionals: {}
+    });
+
+    const supervisorsCountComponent = new Component({
+      id: "supervisors-count",
+      name: "Supervisors Count",
+      description: `SQL for counting supervisors.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT COUNT(*) as count FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')}` },
+      additionals: {}
+    });
+
+    const supervisorsSampleComponent = new Component({
+      id: "supervisors-sample",
+      name: "Supervisors Sample",
+      description: `SQL for getting supervisors sample.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT supervisor_id, name, email FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} ORDER BY supervisor_id DESC LIMIT 3` },
+      additionals: {}
+    });
+
+    const supervisorsListComponent = new Component({
+      id: "supervisors-list",
+      name: "Supervisors List",
+      description: `SQL for getting all supervisors.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            SELECT supervisor_id, name, email, personal_number, phone, address, age
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')}
+            ORDER BY supervisor_id
+        ` },
+      additionals: {}
+    });
+
+    const supervisorsAllergensComponent = new Component({
+      id: "supervisors-allergens",
+      name: "Supervisors Allergens",
+      description: `SQL for getting supervisors allergens.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            SELECT sa.supervisor_id, a.allergen_id
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors_allergens')} sa
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('allergens')} a ON sa.allergen_id = a.allergen_id
+        ` },
+      additionals: {}
+    });
+
+    const supervisorsSessionsComponent = new Component({
+      id: "supervisors-sessions",
+      name: "Supervisors Sessions",
+      description: `SQL for getting supervisors sessions.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            SELECT ss.supervisor_id, s.session_id
+            FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} ss
+            JOIN ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions')} s ON ss.session_id = s.session_id
+        ` },
+      additionals: {}
+    });
+
+    const supervisorInsertComponent = new Component({
+      id: "supervisor-insert",
+      name: "Supervisor Insert",
+      description: `SQL for inserting a supervisor.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} (name, email, personal_number, phone, address, age)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ` },
+      additionals: {}
+    });
+
+    const supervisorGetIdComponent = new Component({
+      id: "supervisor-get-id",
+      name: "Supervisor Get ID",
+      description: `SQL for getting supervisor ID after insert.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            SELECT supervisor_id FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')}
+            WHERE name = ? AND email = ?
+            ORDER BY supervisor_id DESC LIMIT 1
+        ` },
+      additionals: {}
+    });
+
+    const supervisorUpdateComponent = new Component({
+      id: "supervisor-update",
+      name: "Supervisor Update",
+      description: `SQL for updating a supervisor.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: {
+        "sql": `
+            UPDATE ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')}
+            SET name = ?, email = ?, personal_number = ?, phone = ?, address = ?, age = ?
+            WHERE supervisor_id = ?
+        ` },
+      additionals: {}
+    });
+
+    const supervisorDeleteComponent = new Component({
+      id: "supervisor-delete",
+      name: "Supervisor Delete",
+      description: `SQL for deleting a supervisor.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors')} WHERE supervisor_id = ?` },
+      additionals: {}
+    });
+
+    const sessionSupervisorInsertComponent = new Component({
+      id: "session-supervisor-insert",
+      name: "Session Supervisor Insert",
+      description: `SQL for inserting session-supervisor association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} (session_id, supervisor_id) VALUES (?, ?)` },
+      additionals: {}
+    });
+
+    const sessionSupervisorDeleteComponent = new Component({
+      id: "session-supervisor-delete",
+      name: "Session Supervisor Delete",
+      description: `SQL for deleting session-supervisor association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('sessions_supervisors')} WHERE session_id = ? AND supervisor_id = ?` },
+      additionals: {}
+    });
+
+    const supervisorAllergenIdsComponent = new Component({
+      id: "supervisor-allergen-ids",
+      name: "Supervisor Allergen IDs",
+      description: `SQL for getting supervisor allergen IDs.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `SELECT allergen_id FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors_allergens')} WHERE supervisor_id = ?` },
+      additionals: {}
+    });
+
+    const supervisorAllergenInsertComponent = new Component({
+      id: "supervisor-allergen-insert",
+      name: "Supervisor Allergen Insert",
+      description: `SQL for inserting supervisor-allergen association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `INSERT INTO ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors_allergens')} (supervisor_id, allergen_id) VALUES (?, ?)` },
+      additionals: {}
+    });
+
+    const supervisorAllergenDeleteComponent = new Component({
+      id: "supervisor-allergen-delete",
+      name: "Supervisor Allergen Delete",
+      description: `SQL for deleting supervisor-allergen association.`,
+      html: { "html": "" },
+      css: { "css": "" },
+      js: { "js": "" },
+      sql: { "sql": `DELETE FROM ${selectedSystemStore.selectedSystem?.db?.getTableName('supervisors_allergens')} WHERE supervisor_id = ? AND allergen_id = ?` },
+      additionals: {}
+    });
+
+    // Register defaults for supervisors
+    componentCodeStore.updateDefaultComponent(supervisorsCapacityCountComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsCapacityPercentageComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsPageCount1Component);
+    componentCodeStore.updateDefaultComponent(supervisorsPageCount2Component);
+    componentCodeStore.updateDefaultComponent(supervisorsFilterResetComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsFilterInputComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsSessionMenuComponent);
+    componentCodeStore.updateDefaultComponent(supervisorAllergenCountComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsAllergenOptionsComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsCountComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsSampleComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsListComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsAllergensComponent);
+    componentCodeStore.updateDefaultComponent(supervisorsSessionsComponent);
+    componentCodeStore.updateDefaultComponent(supervisorInsertComponent);
+    componentCodeStore.updateDefaultComponent(supervisorGetIdComponent);
+    componentCodeStore.updateDefaultComponent(supervisorUpdateComponent);
+    componentCodeStore.updateDefaultComponent(supervisorDeleteComponent);
+    componentCodeStore.updateDefaultComponent(sessionSupervisorInsertComponent);
+    componentCodeStore.updateDefaultComponent(sessionSupervisorDeleteComponent);
+    componentCodeStore.updateDefaultComponent(supervisorAllergenIdsComponent);
+    componentCodeStore.updateDefaultComponent(supervisorAllergenInsertComponent);
+    componentCodeStore.updateDefaultComponent(supervisorAllergenDeleteComponent);
+
+    // Reset to defaults so they are available
+    componentCodeStore.resetComponent("supervisors-capacity-count");
+    componentCodeStore.resetComponent("supervisors-capacity-percentage");
+    componentCodeStore.resetComponent("supervisors-page-count-1");
+    componentCodeStore.resetComponent("supervisors-page-count-2");
+    componentCodeStore.resetComponent("supervisors-filter-reset");
+    componentCodeStore.resetComponent("supervisors-filter-input");
+    componentCodeStore.resetComponent("supervisors-session-menu");
+    componentCodeStore.resetComponent("supervisor-allergen-count");
+    componentCodeStore.resetComponent("supervisors-allergen-options");
+    componentCodeStore.resetComponent("supervisors-count");
+    componentCodeStore.resetComponent("supervisors-sample");
+    componentCodeStore.resetComponent("supervisors-list");
+    componentCodeStore.resetComponent("supervisors-allergens");
+    componentCodeStore.resetComponent("supervisors-sessions");
+    componentCodeStore.resetComponent("supervisor-insert");
+    componentCodeStore.resetComponent("supervisor-get-id");
+    componentCodeStore.resetComponent("supervisor-update");
+    componentCodeStore.resetComponent("supervisor-delete");
+    componentCodeStore.resetComponent("session-supervisor-insert");
+    componentCodeStore.resetComponent("session-supervisor-delete");
+    componentCodeStore.resetComponent("supervisor-allergen-ids");
+    componentCodeStore.resetComponent("supervisor-allergen-insert");
+    componentCodeStore.resetComponent("supervisor-allergen-delete");
+
     // Reset
     componentCodeStore.resetComponent("stats-meals");
     componentCodeStore.resetComponent("stats-participants");
