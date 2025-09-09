@@ -14,7 +14,9 @@
 
                 <!-- First row of items -->
                 <div class="flex items-center gap-2 flex-wrap">
-                    <UButton label="Helper" @click="handleHelperClick" size="sm" />
+                    <UButton label="Helper" @click="handleHelperClick" size="sm">
+                        <span class="mobile-hidden">Helper</span>
+                    </UButton>
 
                     <UBadge color="red" variant="outline" size="lg">
                         {{ $t('score') }}: {{ scoreStore.score }}
@@ -23,7 +25,9 @@
                     <!-- Tasks Popover -->
                     <UPopover v-model:open="tasksPopoverOpen" arrow>
                         <UButton icon="i-lucide-list-todo" :label="selectedTaskStore.selectedTask?.title || $t('tasks')"
-                            color="primary" variant="subtle" size="sm" />
+                            color="primary" variant="subtle" size="sm">
+                            <span class="mobile-hidden">{{ selectedTaskStore.selectedTask?.title || $t('tasks') }}</span>
+                        </UButton>
                         <template #content>
                             <TaskList />
                         </template>
@@ -35,12 +39,16 @@
                     <UButton :icon="highlightStore.isHighlightMode ? 'i-lucide-lightbulb' : 'i-lucide-lightbulb-off'"
                         :label="highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight')" color="lime"
                         :variant="highlightStore.isHighlightMode ? 'solid' : 'subtle'" size="sm"
-                        @click="highlightStore.toggleHighlight" />
+                        @click="highlightStore.toggleHighlight">
+                        <span class="mobile-hidden">{{ highlightStore.isHighlightMode ? $t('disable_highlight') : $t('enable_highlight') }}</span>
+                    </UButton>
 
                     <UButton :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
                         :label="highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit')" color="yellow"
                         :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" size="sm"
-                        @click="highlightStore.toggleEdit" />
+                        @click="highlightStore.toggleEdit">
+                        <span class="mobile-hidden">{{ highlightStore.isEditModeActive ? $t('disable_edit') : $t('enable_edit') }}</span>
+                    </UButton>
                 </div>
 
                 <!-- Third row of items -->
@@ -48,7 +56,7 @@
                     <!-- Teacher Drawer -->
                     <UDrawer v-model:open="teacherDrawerOpen" direction="right">
                         <UButton color="violet" variant="outline" @click="teacherDrawerOpen = true" icon="i-lucide-school" size="sm">
-                            {{ $t('teacher') }}
+                            <span class="mobile-hidden">{{ $t('teacher') }}</span>
                         </UButton>
                         <template #content>
                             <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
@@ -67,7 +75,7 @@
                     <!-- Student Drawer -->
                     <UDrawer v-model:open="studentDrawerOpen" direction="right" >
                         <UButton color="sky" variant="outline" @click="studentDrawerOpen = true" icon="i-lucide-graduation-cap" size="sm">
-                            {{ $t('student') }}
+                            <span class="mobile-hidden">{{ $t('student') }}</span>
                         </UButton>
                         <template #content>
                             <UCard class="p-4 min-w-96 max-h-screen overflow-y-auto">
@@ -89,7 +97,9 @@
                 <!-- Fourth row of items -->
                 <div class="flex items-center gap-2 flex-wrap">
                     <UPopover v-model:open="resetPopoverOpen" arrow>
-                        <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle" size="sm" />
+                        <UButton icon="i-heroicons-arrow-path" :label="$t('refresh_system')" color="primary" variant="subtle" size="sm">
+                            <span class="mobile-hidden">{{ $t('refresh_system') }}</span>
+                        </UButton>
                         <template #content>
                             <UCard>
                                 <div class="flex flex-col gap-2">
@@ -107,7 +117,9 @@
                     <!-- Exit System Popover -->
                     <UPopover v-model:open="exitPopoverOpen" arrow>
                         <UButton icon="i-heroicons-arrow-right-on-rectangle" :label="$t('exit_system')" color="red"
-                            variant="subtle" size="sm" />
+                            variant="subtle" size="sm">
+                            <span class="mobile-hidden">{{ $t('exit_system') }}</span>
+                        </UButton>
                         <template #content>
                             <UCard>
                                 <div class="flex flex-col gap-2">
@@ -127,6 +139,15 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Hide button labels on mobile screens */
+@media (max-width: 639px) {
+    .mobile-hidden {
+        display: none;
+    }
+}
+</style>
 
 <script setup lang="ts">
 /* 1. Imports */

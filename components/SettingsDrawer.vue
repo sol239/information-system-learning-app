@@ -1,7 +1,7 @@
 <template>
   <UDrawer v-model:open="isOpen" direction="right">
     <UButton color="sky" variant="outline" @click="openDrawer" icon="i-heroicons-cog-6-tooth" style="margin-left: 10px">
-      {{ t('settings') }}
+      <span class="mobile-hidden">{{ t('settings') }}</span>
     </UButton>
 
     <template #content>
@@ -55,4 +55,10 @@ function openDrawer() {
 </script>
 
 <style scoped>
+/* Hide button labels on mobile screens */
+@media (max-width: 639px) {
+    .mobile-hidden {
+        display: none;
+    }
+}
 </style>
