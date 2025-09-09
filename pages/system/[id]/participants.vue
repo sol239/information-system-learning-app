@@ -581,7 +581,7 @@ const participantsCapacityCountSqlTotal = computed(() => {
     } else {
         return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-total-session', correctParticipantsCapacityCountSqlTotalSession.value)
     }
-})
+})  
 const participantsCapacityCountSqlCurrent = computed(() => {
     if (value.value === 'all') {
         return ComponentHandler.getComponentValue('participants-capacity-count', 'sql-current-all', correctParticipantsCapacityCountSqlCurrentAll.value)
