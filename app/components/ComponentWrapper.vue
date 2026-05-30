@@ -379,7 +379,7 @@ function applyStyle(css: string) {
     el.id = styleId;
     document.head.appendChild(el);
   }
-  const resolvedCss = HtmlHandler.ReplaceTextForVariables(resolvedVariables.value, css);
+  const resolvedCss = HtmlHandler.ReplaceCssForVariables(resolvedVariables.value, css);
   el.textContent = resolvedCss;
 }
 

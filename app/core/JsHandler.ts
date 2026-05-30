@@ -33,12 +33,12 @@ export class JsHandler {
 
             if (isArray && (variable as any[]).length === 1) {
                 // Single-item array: emit a scalar variable
-                result += `let ${key}: ${tsType} = ${formatValue((variable as any[])[0])};\n`;
+                result += `const ${key}: ${tsType} = ${formatValue((variable as any[])[0])};\n`;
             } else if (isArray) {
                 const valuesStr = (variable as any[]).map(formatValue).join(", ");
-                result += `let ${key}: ${tsType}[] = [${valuesStr}];\n`;
+                result += `const ${key}: ${tsType}[] = [${valuesStr}];\n`;
             } else {
-                result += `let ${key}: ${tsType} = ${formatValue(variable)};\n`;
+                result += `const ${key}: ${tsType} = ${formatValue(variable)};\n`;
             }
         }
         return result;

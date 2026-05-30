@@ -9,6 +9,10 @@ export class HtmlHandler {
         return this.replaceBareVariables(variables, text, false);
     }
 
+    public static ReplaceCssForVariables(variables: ComponentVariables, css: string): string {
+        return this.replaceMustacheVariables(variables, css);
+    }
+
     private static replaceMustacheVariables(variables: ComponentVariables, source: string): string {
         if (!source) return "";
 
