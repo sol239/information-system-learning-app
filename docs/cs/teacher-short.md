@@ -1,58 +1,49 @@
 # Stručná příručka pro učitele
 
+Tato aplikace slouží k procvičování práce s informačními systémy na konkrétních úkolech. Učitel může připravit nebo upravit ukázkový systém, nastavit v něm chyby, otázky a kontroly splnění a studenti potom ve studentské verzi hledají problémy, opravují komponenty, pracují s daty a odpovídají na zadané otázky.
+
 Tento návod popisuje nejjednodušší způsob použití aplikace: učitel vezme předpřipravený systém, upraví nebo vytvoří úkoly a potom nasadí studentskou verzi aplikace, kterou pošle studentům. Není potřeba vytvářet celý informační systém od začátku, typický postup je upravit připravený systém `Školní tábor Pálava` podle vlastní výuky.
 
-## 1 Základní myšlenka
+## 1) Základní myšlenka
 
 Aplikace má dvě verze:
 
-- `TEACHER`: učitelská verze, ve které připravujete systém a úkoly.
-- `STUDENT`: studentská verze, ve které studenti úkoly řeší.
+- `STUDENT`: studentská verze, ve které studenti úkoly řeší. Webovou aplikaci se studentskou verzí si můžete vyzkoušet zde: https://zeverou.github.io/information-system-learning-app-student
+- `TEACHER`: učitelská verze, ve které připravujete systém a úkoly a zároveň se z ní lze přepnout do studentské verze a zpět. Webovou aplikaci s učitelskou verzí si můžete vyzkoušet zde: https://zeverou.github.io/information-system-learning-app-teacher
 
-Pro běžné použití stačí pracovat s učitelskou verzí, upravit úkoly v předpřipraveném systému a poté nasadit studentskou verzi. Studenti pak otevřou odkaz, vstoupí do systému a řeší úkoly postupně podle úrovní.
+## 2) Nasazení studentské a učitelské verze
 
-## 2 Příprava aplikace pro úpravy
+### Nasazení přes GitHub Pages
 
-Nejprve si stáhněte projekt do počítače:
+Nejjednodušší způsob, jak nasadit studentskou a učitelskou verzi, je použít GitHub Pages. Pro rychlé nasazení stačí použít fork repozitáře s aplikací:
 
-```bash
-git clone https://github.com/sol239/information-system-learning-app.git
-cd information-system-learning-app
-npm install
+1. Přihlaste se na GitHub a otevřete repozitář aplikace: https://github.com/sol239/information-system-learning-app
+
+2. Klikněte na tlačítko `Fork` a vytvořte kopii repozitáře pod svým GitHub účtem. Repozitář nechte veřejný (`public`), aby šel jednoduše publikovat přes GitHub Pages.
+
+3. V novém forku přejděte do `Settings` -> `Pages` a v části `Source` vyberte `GitHub Actions`.
+
+4. V nastavení repozitáře přejděte do `Secrets and variables` -> `Actions` -> `Variables` a vytvořte dvě proměnné:
+   - `NUXT_PUBLIC_APP_MODE` s hodnotou `TEACHER` pro učitelskou verzi, nebo `STUDENT` pro studentskou verzi,
+   - `NUXT_APP_BASE_URL` s hodnotou `/<nazev-repozitare>`, například `/information-system-learning-app`.
+
+5. Spusťte nasazení ručně v záložce `Actions`. Otevřete workflow `deploy.yml`, klikněte na `Run workflow`, vyberte větev `main` a potvrďte spuštění.
+
+6. Po dokončení nasazení bude aplikace dostupná na adrese:
+
+```text
+https://<vase-github-uzivatelske-jmeno>.github.io/<nazev-repozitare>/
 ```
 
-V souboru `.env` nastavte učitelský režim:
+Pokud chcete mít studentskou i učitelskou verzi dostupnou současně, je potřeba mít dva samostatné repozitáře, například `information-system-learning-app-teacher` a `information-system-learning-app-student`. GitHub neumožňuje vytvořit dva forky stejného repozitáře pod jedním účtem. V jednom repozitáři nastavte `NUXT_PUBLIC_APP_MODE` na `TEACHER`, ve druhém na `STUDENT`.
 
-```env
-NUXT_PUBLIC_APP_MODE=TEACHER
-```
+Pokud používáte jen jeden repozitář, můžete mezi verzemi přepínat změnou proměnné `NUXT_PUBLIC_APP_MODE`. Po každé změně je potřeba znovu spustit workflow `deploy.yml` přes `Run workflow`.
 
-Poté spusťte aplikaci:
+Podrobnější návod k nasazení je v dokumentu [`teacher.md`](./teacher.md).
 
-```bash
-npm run dev
-```
 
-Aplikace bude dostupná v prohlížeči, obvykle na adrese `http://localhost:3000/information-system-learning-app`. Pokud je port obsazený, terminál vypíše jinou adresu.
 
-## 3 Úprava předpřipraveného systému
-
-Po otevření učitelské verze přejděte na stránku se systémy. Zde můžete přidat systém a vybrat předpřipravený systém `Školní tábor Pálava`. Tento systém je připravený jako ukázka a dá se upravit pro vlastní výuku.
-
-Po vstupu do systému uvidíte vlevo samotný informační systém a vpravo učitelské ovládání. Pro úpravu úkolů použijte tlačítko `Návrhář`, které otevře stránku `/designer`.
-
-Na stránce návrháře můžete:
-
-- upravit existující úkoly,
-- vytvořit nový úkol,
-- smazat nepotřebné úkoly,
-- nastavit úrovně úkolů,
-- vybrat stránky, které student při úkolu uvidí,
-- nastavit bodování, zpětnou vazbu a kontroly splnění.
-
-Hotový systém si můžete stáhnout jako `.zip` pomocí tlačítka `Stáhnout systém`. Tento ZIP lze později znovu nahrát nebo použít jako připravený systém pro studentskou verzi.
-
-## 4 Jak fungují úkoly
+## 3) Jak fungují úkoly
 
 Každý úkol má dvě části: **Aktivitu** a **Dokončení**.
 
@@ -75,57 +66,66 @@ Typy dokončení:
 
 Při tvorbě úkolu je důležité napsat studentovi jasné zadání, nastavit správnou kontrolu a přidat zpětnou vazbu, aby po vyřešení věděl, co bylo cílem.
 
-## 5 Nasazení studentské verze
+Podrobnější návod k tvorbě a fungování úkolů je v dokumentu [`teacher.md`](./teacher.md).
 
-Nejjednodušší způsob nasazení je přes GitHub Pages. Doporučený praktický postup je mít samostatný veřejný repozitář pro studentskou verzi, například `information-system-learning-app-student`.
+## 4) Úprava předpřipraveného systému
 
-V nastavení repozitáře na GitHubu:
+Po otevření učitelské verze přejděte na stránku se systémy. Zde můžete přidat systém a vybrat předpřipravený systém `Školní tábor Pálava`. Tento systém je připravený jako ukázka a dá se upravit pro vlastní výuku.
 
-1. V části `Settings` -> `Pages` nastavte `Source` na `GitHub Actions`.
-2. V části `Settings` -> `Secrets and variables` -> `Actions` -> `Variables` vytvořte proměnné:
+Po vstupu do systému uvidíte vlevo samotný informační systém a vpravo učitelské ovládání. Pro úpravu úkolů použijte tlačítko `Návrhář`, které otevře stránku `/designer`.
 
-```env
-NUXT_PUBLIC_APP_MODE=STUDENT
-NUXT_APP_BASE_URL=/nazev-repozitare
-```
+Na stránce návrháře můžete:
 
-Například:
+- upravit existující úkoly,
+- vytvořit nový úkol,
+- smazat nepotřebné úkoly,
+- nastavit úrovně úkolů,
+- vybrat stránky, které student při úkolu uvidí,
+- nastavit bodování, zpětnou vazbu a kontroly splnění.
 
-```env
-NUXT_PUBLIC_APP_MODE=STUDENT
-NUXT_APP_BASE_URL=/information-system-learning-app-student
-```
+Hotový systém si můžete stáhnout jako `.zip` pomocí tlačítka `Stáhnout systém`. Tento ZIP lze později znovu nahrát nebo použít jako připravený systém pro studentskou verzi.
 
-Do složky `public/systems` vložte připravený systém. Může to být buď adresář systému, nebo `.zip` soubor. Poté zkontrolujte, že je uvedený v manifestu systémů, aby ho aplikace při spuštění našla.
+Předpřipravený systém `Školní tábor Pálava` obsahuje tyto ukázkové úkoly:
 
-Příklad:
+- `Nejstarší účastník`: student má určit věk nejstaršího účastníka.
+- `Množství různých jídel v systému`: student má najít komponentu, která chybně zobrazuje počet jídel v systému.
+- `Alergeny účastníka`: student má opravit alergeny účastnice Denisy Kolmanové tak, aby obsahovaly sezam i mléko.
+- `Barva štítku alergenů`: student má opravit barvu štítku podle toho, zda má účastník uvedený alergen.
+- `Seřazení účastníků podle příjmení`: student má seřadit účastníky podle příjmení.
+- `Délka turnusu`: student má určit, kolik dní trvá srpnový turnus.
+- `Naplnění turnusu`: student má zjistit, kdy má turnus dostat stav `SKORO PLNO`.
+- `Jméno vedoucího`: student má upravit jméno vedoucího na `Tomáš Garrigue Masaryk`.
+
+## 5) Nahrání systému
+
+Pokud chcete, aby byl upravený systém dostupný jako předpřipravený systém přímo v nasazené aplikaci, je potřeba ho přidat do repozitáře aplikace. Systém stažený v kroku 4 pomocí tlačítka `Stáhnout systém` můžete vložit do adresáře `public/systems` buď jako rozbalenou složku, nebo přímo jako `.zip` archiv.
+
+Rozbalená složka systému by měla obsahovat soubory jako `config.json`, `create_schema.sql` a `system_components.json`. Název složky nebo souboru `.zip` musíte zapsat do souboru `public/systems/manifest.json`, aby se systém studentovi spustil.
+
+Například, pokud jste stáhli systém `muj-system.zip` a vložili ho do `public/systems`, přidejte do `manifest.json` tento záznam:
 
 ```json
 {
   "systems": [
-    "skolni-tabor-palava"
+    "muj-system.zip"
   ]
 }
 ```
 
-Nakonec změny nahrajte do GitHub repozitáře. Po doběhnutí GitHub Actions bude studentská verze dostupná na adrese:
+Alternativně, pokud jste rozbalili systém do složky `muj-system`, přidejte tento záznam:
 
-```text
-https://<vase-github-uzivatelske-jmeno>.github.io/<nazev-repozitare>/
+```json
+{
+  "systems": [
+    "muj-system"
+  ]
+}
 ```
 
-Tento odkaz pošlete studentům.
+Buď si repozitář klonujte a upravte lokálně, nebo použijte GitHub webové rozhraní pro úpravu souborů.
 
-## 6 Doporučený jednoduchý workflow
+Důležité: v souboru `manifest.json` musí být uveden pouze jeden systém, ne více systémů najednou. Aplikace nepodporuje, aby si student mohl vybrat z více systémů, proto musí být v manifestu vždy jen jeden záznam.
 
-1. Spusťte aplikaci lokálně v režimu `TEACHER`.
-2. Otevřete předpřipravený systém `Školní tábor Pálava`.
-3. Upravte nebo vytvořte úkoly v návrháři.
-4. Vyzkoušejte si úkoly přepnutím do studentského pohledu.
-5. Stáhněte připravený systém jako `.zip`.
-6. Vložte systém do studentské verze v `public/systems`.
-7. Nastavte `NUXT_PUBLIC_APP_MODE=STUDENT`.
-8. Nahrajte změny na GitHub a počkejte na nasazení.
-9. Pošlete studentům odkaz na GitHub Pages.
+## 7) Poznámky
 
-Tento postup je nejrychlejší, protože nevyžaduje tvorbu systému od nuly. Učitel se soustředí hlavně na úkoly: co mají studenti najít, opravit nebo ověřit.
+Podrobnější příručka pro učitele je v dokumentu [`teacher.md`](./teacher.md). Obsahuje detailnější popis nasazení, konfigurace aplikace, tvorby systémů a práce s úkoly.
