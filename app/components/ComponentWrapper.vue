@@ -738,10 +738,12 @@ onBeforeUnmount(() => {
 .component-wrapper {
   width: fit-content;
   max-width: 100%;
+  min-width: 0;
   display: block;
   transition: all 0.2s ease-in-out;
   border-radius: 8px;
   cursor: default;
+  box-sizing: border-box;
 }
 
 .highlight-active {
@@ -762,7 +764,10 @@ onBeforeUnmount(() => {
 .content-container {
   position: relative;
   width: fit-content;
+  max-width: 100%;
+  min-width: 0;
   cursor: initial;
+  box-sizing: border-box;
 }
 
 .edit-icon {
@@ -806,6 +811,36 @@ onBeforeUnmount(() => {
 
 .component-html {
   display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.component-html :deep(*) {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.component-html :deep(img),
+.component-html :deep(video),
+.component-html :deep(canvas),
+.component-html :deep(svg) {
+  max-width: 100%;
+  height: auto;
+}
+
+.component-html :deep(table) {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.component-html :deep(input),
+.component-html :deep(select),
+.component-html :deep(textarea),
+.component-html :deep(button) {
+  max-width: 100%;
 }
 
 .content-interaction-disabled {
