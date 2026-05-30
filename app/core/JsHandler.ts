@@ -20,7 +20,8 @@ export class JsHandler {
             const firstValue = samples[0];
             let tsType = "string";
 
-            if (typeof firstValue === "number") tsType = "number";
+            if (firstValue === null) tsType = "null";
+            else if (typeof firstValue === "number") tsType = "number";
             else if (typeof firstValue === "boolean") tsType = "boolean";
             else if (firstValue instanceof Date) tsType = "Date";
 
@@ -31,13 +32,13 @@ export class JsHandler {
             };
 
             if (isArray && (variable as any[]).length === 1) {
-                // Single-item array — emit a scalar constant
-                result += `const ${key}: ${tsType} = ${formatValue((variable as any[])[0])};\n`;
+                // Single-item array: emit a scalar variable
+                result += `let ${key}: ${tsType} = ${formatValue((variable as any[])[0])};\n`;
             } else if (isArray) {
                 const valuesStr = (variable as any[]).map(formatValue).join(", ");
-                result += `const ${key}: ${tsType}[] = [${valuesStr}];\n`;
+                result += `let ${key}: ${tsType}[] = [${valuesStr}];\n`;
             } else {
-                result += `const ${key}: ${tsType} = ${formatValue(variable)};\n`;
+                result += `let ${key}: ${tsType} = ${formatValue(variable)};\n`;
             }
         }
         return result;
@@ -77,11 +78,11 @@ export class JsHandler {
 
             let finalValue: VariableType | VariableType[];
 
-            if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean' || value instanceof Date) {
+            if (value === null || typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean' || value instanceof Date) {
                 finalValue = value;
             } else if (Array.isArray(value)) {
                 finalValue = (value as any[]).filter(v =>
-                    typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v instanceof Date
+                    v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v instanceof Date
                 ) as VariableType[];
             } else {
                 finalValue = String(value);

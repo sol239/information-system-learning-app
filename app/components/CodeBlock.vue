@@ -207,6 +207,13 @@ const editorOptions = computed(() => ({
   readOnly: props.readOnly,
   roundedSelection: true,
   padding: { top: 12, bottom: 12 },
+  quickSuggestions: false,
+  suggestOnTriggerCharacters: false,
+  acceptSuggestionOnEnter: "off" as const,
+  tabCompletion: "off" as const,
+  wordBasedSuggestions: "off" as const,
+  parameterHints: { enabled: false },
+  inlineSuggest: { enabled: false },
 }));
 
 function onCodeChange(value: string | undefined) {

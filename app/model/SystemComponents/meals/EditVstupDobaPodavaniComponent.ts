@@ -10,9 +10,9 @@ export const editVstupDobaPodavaniKomponenta = new Component({
 <div class="form-radek">
   <label>Doba podávání:</label>
   <select id="system-edit_vstup_doba_podavani">
-    <option value="snídaně" snidane_selected>Snídaně</option>
-    <option value="oběd" obed_selected>Oběd</option>
-    <option value="večeře" vecere_selected>Večeře</option>
+    <option value="snídaně" {{ snidane_selected }}>Snídaně</option>
+    <option value="oběd" {{ obed_selected }}>Oběd</option>
+    <option value="večeře" {{ vecere_selected }}>Večeře</option>
   </select>
 </div>
 `,

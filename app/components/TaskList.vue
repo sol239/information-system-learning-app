@@ -12,7 +12,7 @@
       >
         {{ t('back_to_tasks') }}
       </UButton>
-      <TaskStudentDetail :task="selectedTask" />
+      <TaskStudentDetail :task="selectedTask" :title="selectedTaskTitle" />
       <UButton
         icon="i-lucide-arrow-left"
         variant="ghost"
@@ -26,6 +26,33 @@
     </div>
 
     <!-- Task list view -->
+    <div v-else-if="showStudentIntro" class="flex flex-col p-4 gap-4">
+      <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-start">
+            <div class="min-w-0">
+              <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                {{ t('student_welcome_modal_title') }}
+              </h3>
+              <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                {{ t('student_welcome_sidebar_description', { count: taskCount, points: totalTaskPoints }) }}
+              </p>
+            </div>
+          </div>
+
+          <UButton
+            color="primary"
+            icon="i-lucide-rotate-cw"
+            block
+            :loading="isStartingTasks"
+            @click="startTaskSolving"
+          >
+            {{ t('student_welcome_sidebar_start_button') }}
+          </UButton>
+        </div>
+      </div>
+    </div>
+
     <div v-else class="flex flex-col p-4 gap-2">
       <button
         v-if="globalSettings.teacherMode"
@@ -77,7 +104,7 @@
           >
             <div class="flex items-start justify-between gap-2">
               <div class="flex min-w-0 flex-col gap-1">
-                <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ task.title }}</span>
+                <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
               </div>
               <span
                 v-if="showTaskCompletion"
@@ -107,7 +134,7 @@
         >
           <div class="flex items-start justify-between gap-2">
             <div class="flex min-w-0 flex-col gap-1">
-              <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ task.title }}</span>
+              <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
             </div>
             <span
               v-if="showTaskCompletion"
@@ -145,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { Task } from '~/model/Task/Task'
 import type { GUID } from '~/model/GUID'
@@ -157,6 +184,7 @@ const { t } = useI18n()
 const systemsStore = useSystemsStore()
 const globalSettings = useGlobalSettingsStore()
 const route = useRoute()
+const { isStartingTasks, startTaskSolving } = useStartTaskSolving()
 
 const selectedTask = computed(() => {
   if (globalSettings.teacherMode) return null
@@ -168,6 +196,15 @@ const selectedTask = computed(() => {
 })
 
 const currentRound = computed(() => systemsStore.selectedSystem?.currentRound ?? 1)
+const taskCount = computed(() => tasks.value.length)
+const totalTaskPoints = computed(() =>
+  tasks.value.reduce((sum, task) => sum + Number(task.pointsReward ?? 0), 0)
+)
+const showStudentIntro = computed(() =>
+  !globalSettings.teacherMode
+  && !!systemsStore.selectedSystemId
+  && !globalSettings.hasStartedTasks(systemsStore.selectedSystemId)
+)
 
 
 const tasks = computed(() =>
@@ -179,6 +216,13 @@ const tasks = computed(() =>
     })
     .map(({ task }) => task)
 )
+const selectedTaskTitle = computed(() => {
+  const task = selectedTask.value
+  if (!task) return undefined
+
+  const index = tasks.value.findIndex(item => item.id === task.id)
+  return taskDisplayTitle(task, index)
+})
 const showTaskCompletion = computed(() => !globalSettings.teacherMode)
 const levelsWithVisiblePagesConflict = computed(() => {
   const system = systemsStore.selectedSystem
@@ -201,6 +245,12 @@ function isFirstTaskOfLevel(index: number, task: Task): boolean {
 
 function levelHasVisiblePagesConflict(round: unknown): boolean {
   return globalSettings.teacherMode && levelsWithVisiblePagesConflict.value.has(normalizeTaskRound(round))
+}
+
+function taskDisplayTitle(task: Task, index: number): string {
+  const taskNumber = index >= 0 ? index + 1 : tasks.value.findIndex(item => item.id === task.id) + 1
+  const title = task.title || t('task_untitled')
+  return taskNumber > 0 ? `${taskNumber}. ${title}` : title
 }
 
 async function openTask(task: Task) {

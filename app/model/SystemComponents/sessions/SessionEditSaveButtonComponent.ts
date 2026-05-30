@@ -7,7 +7,7 @@ export const editTlacitkoUlozitKomponenta = new Component({
   description: "Tlačítko pro uložení změn existujícího turnusu. Vyžaduje generalVariable: idTurnusu.",
 
   html: `
-<button id="system-edit_btn_ulozit" class="btn-uspech" stav_tlacitka>Upravit turnus</button>
+<button id="system-edit_btn_ulozit" class="btn-uspech" {{ stav_tlacitka }}>Upravit turnus</button>
 `,
 
   css: `

@@ -11,7 +11,7 @@
         <UInput
           v-model.number="systemLevelCount"
           type="number"
-          min="1"
+          :min="minimumLevelCount"
           class="w-[8rem] max-w-full"
         />
       </UFormField>
@@ -85,14 +85,27 @@
     <div class="flex flex-col gap-2">
       <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ t('tasks') }}</span>
       <div class="flex flex-wrap gap-2">
-        <UBadge
-          v-for="task in tasks"
+        <span
+          v-for="task in sortedTasks"
           :key="task.id"
-          color="neutral"
-          :variant="selectedTask?.id === task.id ? 'solid' : 'subtle'"
-          class="flex items-center gap-2 px-3 py-1 transition"
+          role="button"
+          tabindex="0"
+          class="inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-medium ring-1 ring-inset transition"
+          :class="selectedTask?.id === task.id
+            ? 'bg-gray-950 text-white ring-gray-950 dark:bg-white dark:text-gray-950 dark:ring-white'
+            : 'bg-gray-50 text-gray-900 ring-gray-200 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:ring-gray-700 dark:hover:bg-gray-800'"
           @click="toggleSelectedTask(task)"
+          @keydown.enter.prevent="toggleSelectedTask(task)"
+          @keydown.space.prevent="toggleSelectedTask(task)"
         >
+          <span
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
+            :class="selectedTask?.id === task.id
+              ? 'bg-white/20 text-white'
+              : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-100'"
+          >
+            {{ normalizeTaskLevel(task.round) }}
+          </span>
           <span class="cursor-pointer">
             {{ task.title || t('task_untitled') }}
           </span>
@@ -106,7 +119,7 @@
               @click.stop="deleteTask(task.id)"
             />
           </HoverHint>
-        </UBadge>
+        </span>
       </div>
     </div>
 
@@ -230,6 +243,12 @@ const globalSettings = useGlobalSettingsStore()
 const selectedTask = ref<Task | null>(null)
 const systemLevelCount = ref(1)
 const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? [])
+const sortedTasks = computed(() =>
+  [...tasks.value].sort((a, b) => normalizeTaskLevel(a.round) - normalizeTaskLevel(b.round))
+)
+const minimumLevelCount = computed(() =>
+  tasks.value.reduce((maxLevel, task) => Math.max(maxLevel, normalizeTaskLevel(task.round)), 1)
+)
 let persistSystemTimeout: ReturnType<typeof setTimeout> | null = null
 
 watch(selectedTask, (task) => {
@@ -248,6 +267,12 @@ watch(
   },
   { immediate: true }
 )
+
+watch(minimumLevelCount, (minimum) => {
+  if (systemLevelCount.value < minimum) {
+    systemLevelCount.value = minimum
+  }
+})
 
 watch(systemLevelCount, (levelCount) => {
   handleLevelCountUpdate(levelCount)
@@ -381,15 +406,17 @@ const handleLevelCountUpdate = (levelCount: number) => {
   }
 
   const normalizedLevelCount = normalizeLevelCount(levelCount)
+  if (systemLevelCount.value !== normalizedLevelCount) {
+    systemLevelCount.value = normalizedLevelCount
+    return
+  }
+
   if (system.levelCount === normalizedLevelCount) {
     return
   }
 
   system.levelCount = normalizedLevelCount
   system.currentRound = Math.min(system.currentRound, system.levelCount)
-  system.tasks.forEach((task) => {
-    task.round = Math.min(normalizeTaskLevel(task.round), system.levelCount)
-  })
 
   queueSystemPersist(system)
 }
@@ -437,7 +464,8 @@ async function persistSystemNow(system: InformationSystem) {
 
 function normalizeLevelCount(value: unknown): number {
   const parsed = Number(value)
-  return Number.isFinite(parsed) ? Math.max(1, Math.floor(parsed)) : 1
+  const normalized = Number.isFinite(parsed) ? Math.max(1, Math.floor(parsed)) : 1
+  return Math.max(minimumLevelCount.value, normalized)
 }
 
 function normalizeTaskLevel(value: unknown): number {

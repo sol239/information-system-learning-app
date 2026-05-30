@@ -9,8 +9,8 @@ export const sessionStatusBadgeComponent = new Component({
   html: `
 <div class="obal-stavu-turnusu">
   <span class="stitek-stavu-turnusu" 
-        style="color: s_barva_textu; background-color: s_barva_pozadi; border-color: s_barva_textu;">
-    text_stavu
+        style="color: {{ s_barva_textu }}; background-color: {{ s_barva_pozadi }}; border-color: {{ s_barva_textu }};">
+    {{ text_stavu }}
   </span>
 </div>
 `,

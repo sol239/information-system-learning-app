@@ -9,7 +9,7 @@ export const editVstupVekVedoucihoKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Věk:</label>
-  <input type="number" id="system-edit_vstup_vek_vedouciho" min="1" max="99" value="edit_vstup_vek_vedouciho" style="border: 4px solid barva_ramecku" />
+  <input type="number" id="system-edit_vstup_vek_vedouciho" min="1" max="99" value="{{ edit_vstup_vek_vedouciho }}" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

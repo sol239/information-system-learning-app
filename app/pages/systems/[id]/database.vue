@@ -163,6 +163,9 @@ const canExecuteQuery = computed(() => {
     if (globalSettings.teacherMode) {
         return true
     }
+    if (!globalSettings.hasStartedTasks(systemsStore.selectedSystemId)) {
+        return true
+    }
     if (!selectedTask.value) {
         return false
     }

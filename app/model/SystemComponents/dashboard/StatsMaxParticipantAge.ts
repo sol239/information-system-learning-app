@@ -9,7 +9,7 @@ export const statsMaxParticipantAgeComponent = new Component({
   <div id="statistika-max-vek-ucastnika-card">
     <div id="statistika-max-vek-ucastnika-icon">MAX</div>
     <div id="statistika-max-vek-ucastnika-content">
-      <div id="statistika-max-vek-ucastnika-number">max_vek_ucastnika</div>
+      <div id="statistika-max-vek-ucastnika-number">{{ max_vek_ucastnika }}</div>
       <div id="statistika-max-vek-ucastnika-label">věk nejstaršího účastníka</div>
     </div>
   </div>
@@ -48,7 +48,7 @@ export const statsMaxParticipantAgeComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-max-vek-ucastnika": `SELECT COALESCE(MAX(u.vek), 0) AS max_vek_ucastnika FROM ucastnici u`
+    "statistika-max-vek-ucastnika": `SELECT MAX(u.vek) AS max_vek_ucastnika FROM ucastnici u`
   },
   sql_click: {}
 });

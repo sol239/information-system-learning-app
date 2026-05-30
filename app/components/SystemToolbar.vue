@@ -303,9 +303,33 @@ function openRefreshSystemModal() {
 async function refreshComponents() {
   const system = systemsStore.selectedSystem;
   if (!system) return;
+
+  const cloneComponent = (component: Component) =>
+    Component.fromJSON(JSON.parse(JSON.stringify(component)));
+
   system.actualComponents = system.defaultComponents.map((c) =>
-    Component.fromJSON(JSON.parse(JSON.stringify(c)))
+    cloneComponent(c)
   );
+
+  const defaultTasksById = new Map(
+    (system.defaultTasks ?? []).map((task) => [String(task.id), task])
+  );
+
+  for (const task of system.tasks ?? []) {
+    const defaultTask = defaultTasksById.get(String(task.id));
+    if (!defaultTask) continue;
+
+    task.errorComponents = (defaultTask.errorComponents ?? []).map((component) =>
+      cloneComponent(component)
+    );
+
+    if (task.activity && defaultTask.activity) {
+      task.activity.activityComponents = (defaultTask.activity.activityComponents ?? []).map((component) =>
+        cloneComponent(component)
+      );
+    }
+  }
+
   await systemsStore.updateSystem(system);
   toast.add({
     title: t("component_refresh_success") || "Components refreshed",

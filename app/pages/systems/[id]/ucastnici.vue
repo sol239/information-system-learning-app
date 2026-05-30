@@ -279,7 +279,7 @@ const loadData = async () => {
                 u.telefon,
                 u.adresa,
                 u.vek,
-                COALESCE(alergeny.pocet_alergenu, 0) AS pocet_alergenu
+                alergeny.pocet_alergenu AS pocet_alergenu
              FROM ucastnici u
              LEFT JOIN turnusy_ucastnici tu ON u.id_ucastnika = tu.id_ucastnika
              LEFT JOIN (

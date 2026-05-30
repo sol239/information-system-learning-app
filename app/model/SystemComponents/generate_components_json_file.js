@@ -75,7 +75,7 @@ async function generateComponentsJson() {
 
     // Save the result to the preloaded public system folder.
     const outputFileName = 'system_components.json';
-    const outputDir = path.join(projectRoot, 'public', 'systems', 'information_system_2');
+    const outputDir = path.join(projectRoot, 'public', 'systems', 'skolni-tabor-palava');
     const outputFilePath = path.join(outputDir, outputFileName);
 
     fs.mkdirSync(outputDir, { recursive: true });

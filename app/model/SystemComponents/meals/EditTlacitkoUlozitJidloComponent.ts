@@ -7,7 +7,7 @@ export const editTlacitkoUlozitJidloKomponenta = new Component({
   description: "Tlačítko pro uložení změn existujícího jídla. Vyžaduje generalVariable: idJidla.",
 
   html: `
-<button id="system-edit_btn_ulozit_jidlo" class="btn-uspech" stav_tlacitka>Upravit jídlo</button>
+<button id="system-edit_btn_ulozit_jidlo" class="btn-uspech" {{ stav_tlacitka }}>Upravit jídlo</button>
 `,
 
   css: `

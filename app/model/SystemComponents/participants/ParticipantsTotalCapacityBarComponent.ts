@@ -8,11 +8,11 @@ export const celkovaKapacitaUcastnikuKomponenta = new Component({
   html: `
 <div id="widget-kapacity-ucastniku">
   <span id="ikona-kapacity-ucastniku">👥</span>
-  <span id="popisek-kapacity-ucastniku">Kapacita: celkem_zapsanych/celkova_kapacita</span>
+  <span id="popisek-kapacity-ucastniku">Kapacita: {{ celkem_zapsanych }}/{{ celkova_kapacita }}</span>
   <div id="pozadi-kapacity-ucastniku">
-    <div id="vypln-kapacity-ucastniku" style="width: procento_obsazenosti_ucastniku%"></div>
+    <div id="vypln-kapacity-ucastniku" style="width: {{ procento_obsazenosti_ucastniku }}%"></div>
   </div>
-  <span id="procenta-kapacity-ucastniku">procento_obsazenosti_ucastniku %</span>
+  <span id="procenta-kapacity-ucastniku">{{ procento_obsazenosti_ucastniku }} %</span>
 </div>
 `,
   css: `

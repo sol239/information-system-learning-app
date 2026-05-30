@@ -9,7 +9,7 @@ export const statistikaVedoucichKomponenta = new Component({
   <div id="statistika-vedoucich-karta">
     <div id="statistika-vedoucich-ikona">👨‍🏫</div>
     <div id="statistika-vedoucich-obsah">
-      <div id="statistika-vedoucich-pocet">pocet_vedoucich</div>
+      <div id="statistika-vedoucich-pocet">{{ pocet_vedoucich }}</div>
       <div id="statistika-vedoucich-popisek">vedoucích</div>
     </div>
   </div>

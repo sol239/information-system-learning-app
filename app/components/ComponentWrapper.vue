@@ -453,7 +453,7 @@ async function populateSqlVariables(sqlRecord: Record<string, string>) {
         const rawValue = values[0][i];
         const value: VariableType = varType instanceof Date && rawValue !== null
           ? new Date(rawValue as string)
-          : (rawValue as VariableType) ?? varType;
+          : rawValue as VariableType;
         pushIfUnique(new Variable(vars[i].variableAsName, value));
       }
     } else if (values.length > 1) {
@@ -463,7 +463,7 @@ async function populateSqlVariables(sqlRecord: Record<string, string>) {
           const rawValue = row[i];
           return varType instanceof Date && rawValue !== null
             ? new Date(rawValue as string)
-            : (rawValue as VariableType) ?? varType;
+            : rawValue as VariableType;
         });
         pushIfUnique(new Variable(vars[i].variableAsName, columnValues));
       }

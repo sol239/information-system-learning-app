@@ -9,7 +9,7 @@ export const statistikaTurnusuKomponenta = new Component({
   <div id="statistika-turnusu-karta">
     <div id="statistika-turnusu-ikona">📅</div>
     <div id="statistika-turnusu-obsah">
-      <div id="statistika-turnusu-pocet">pocet_turnusu</div>
+      <div id="statistika-turnusu-pocet">{{ pocet_turnusu }}</div>
       <div id="statistika-turnusu-popisek">turnusů</div>
     </div>
   </div>

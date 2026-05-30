@@ -271,13 +271,15 @@ const isBodyEdited = computed(() => {
 
 const jsVarsHeader = computed<string>(() => {
   const vars = [...(localVariables.value.generalVariables ?? []), ...(localVariables.value.sqlVariables ?? [])];
-  if (vars.length === 0) return '';
+  const userCodeComment = `// ${t('js_user_code_comment')}`;
+
+  if (vars.length === 0) return userCodeComment;
 
   return [
     `// ${t('js_available_constants_comment')}`,
     JsHandler.getVariablesIntoJs(vars).trimEnd(),
     '',
-    `// ${t('js_user_code_comment')}`
+    userCodeComment
   ].join('\n');
 });
 

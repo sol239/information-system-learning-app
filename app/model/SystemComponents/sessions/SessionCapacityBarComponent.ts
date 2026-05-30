@@ -9,12 +9,12 @@ export const kapacitaTurnusuKomponenta = new Component({
 <div class="kapacita-turnusu-kontejner">
   <div class="kapacita-turnusu-hlavicka">
     <span class="kapacita-turnusu-popisek">Kapacita</span>
-    <span class="kapacita-turnusu-pocet">pocet_prihlasenych/kapacita_turnusu</span>
+    <span class="kapacita-turnusu-pocet">{{ pocet_prihlasenych }}/{{ kapacita_turnusu }}</span>
   </div>
   <div class="kapacita-turnusu-barva-pozadi">
-    <div class="kapacita-turnusu-barva-vypln" style="width: procento_obsazenosti%"></div>
+    <div class="kapacita-turnusu-barva-vypln" style="width: {{ procento_obsazenosti }}%"></div>
   </div>
-  <div class="kapacita-turnusu-procenta">procento_obsazenosti% obsazeno</div>
+  <div class="kapacita-turnusu-procenta">{{ procento_obsazenosti }}% obsazeno</div>
 </div>
 `,
   css: `

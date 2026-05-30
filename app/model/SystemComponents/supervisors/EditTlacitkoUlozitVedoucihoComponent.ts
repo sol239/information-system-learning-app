@@ -7,7 +7,7 @@ export const editTlacitkoUlozitVedoucihoKomponenta = new Component({
   description: "Tlačítko pro uložení změn existujícího vedoucího. Vyžaduje generalVariable: idVedouciho.",
 
   html: `
-<button id="system-edit_btn_ulozit_vedouciho" class="btn-uspech" stav_tlacitka>Upravit vedoucího</button>
+<button id="system-edit_btn_ulozit_vedouciho" class="btn-uspech" {{ stav_tlacitka }}>Upravit vedoucího</button>
 `,
 
   css: `

@@ -322,7 +322,7 @@ export const jidelnicekTlacitkoPridatJidloOsobeKomponenta = new Component({
   description: "Tlačítko, které uloží vybrané jídlo vybrané osobě.",
 
   html: `
-<button id="jidelnicek-tlacitko-pridat-jidlo-osobe" stav_tlacitka_pridat_jidlo_osobe>
+<button id="jidelnicek-tlacitko-pridat-jidlo-osobe" {{ stav_tlacitka_pridat_jidlo_osobe }}>
   Přidat k jídlu
 </button>
 `,

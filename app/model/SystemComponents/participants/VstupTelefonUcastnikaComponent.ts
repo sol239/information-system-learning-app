@@ -9,7 +9,7 @@ export const vstupTelefonUcastnikaKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Telefon:</label>
-  <input type="tel" id="system-vstup_telefon_ucastnika" placeholder="Zadejte telefon" style="border: 4px solid barva_ramecku" />
+  <input type="tel" id="system-vstup_telefon_ucastnika" placeholder="Zadejte telefon" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

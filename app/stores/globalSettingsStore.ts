@@ -39,6 +39,7 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
     const errorComponentIds: Ref<string[]> = ref([])
     const solvedComponentIds: Ref<string[]> = ref([])
     const deletedPreloadedSystemIds: Ref<string[]> = ref([])
+    const startedTaskSystemIds: Ref<string[]> = ref([])
 
     function markPreloadedSystemAsDeleted(id: string) {
         if (!deletedPreloadedSystemIds.value.includes(id)) {
@@ -52,6 +53,22 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
         }
 
         teacherMode.value = !teacherMode.value
+    }
+
+    function hasStartedTasks(systemId: string | null | undefined): boolean {
+        if (!systemId) {
+            return false
+        }
+
+        return startedTaskSystemIds.value.includes(String(systemId))
+    }
+
+    function markTasksStarted(systemId: string | null | undefined) {
+        if (!systemId || hasStartedTasks(systemId)) {
+            return
+        }
+
+        startedTaskSystemIds.value.push(String(systemId))
     }
 
     return {
@@ -68,12 +85,15 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
         errorComponentIds,
         solvedComponentIds,
         deletedPreloadedSystemIds,
+        startedTaskSystemIds,
         markPreloadedSystemAsDeleted,
-        toggleTeacherMode
+        toggleTeacherMode,
+        hasStartedTasks,
+        markTasksStarted
     }
 
 }, {
     persist: {
-        pick: ['globalLanguage', 'taskMenuDisplayedAsSidebar', 'solvedComponentIds', 'loadSystemsFromPublicFolder', 'deletedPreloadedSystemIds'],
+        pick: ['globalLanguage', 'taskMenuDisplayedAsSidebar', 'solvedComponentIds', 'loadSystemsFromPublicFolder', 'deletedPreloadedSystemIds', 'startedTaskSystemIds'],
     }
 })

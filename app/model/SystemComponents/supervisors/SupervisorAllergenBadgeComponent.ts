@@ -5,7 +5,7 @@ export const stitekAlergenuVedoucihoKomponenta = new Component({
   name: "Štítek alergenů vedoucího",
   tags: ["vedoucí"],
   description: `Zobrazuje štítek s počtem alergenů vedoucího (zelený=0, růžový>=1). Vyžaduje generalVariable: idVedouciho.`,
-  html: `<div class="stitek-alergenu-vedouciho" style="background-color: barva;">Alergeny: pocet_alergenu_vedouciho</div>`,
+  html: `<div class="stitek-alergenu-vedouciho" style="background-color: {{ barva }};">Alergeny: {{ pocet_alergenu_vedouciho }}</div>`,
   css: `
 .stitek-alergenu-vedouciho {
   display: inline-flex;

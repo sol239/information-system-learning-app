@@ -7,7 +7,7 @@ export const tlacitkoUlozitUcastnikaKomponenta = new Component({
   description: "Tlačítko pro uložení nového účastníka.",
 
   html: `
-<button id="system-btn_ulozit_ucastnika" class="btn-uspech" stav_tlacitka>Uložit účastníka</button>
+<button id="system-btn_ulozit_ucastnika" class="btn-uspech" {{ stav_tlacitka }}>Uložit účastníka</button>
 `,
 
   css: `

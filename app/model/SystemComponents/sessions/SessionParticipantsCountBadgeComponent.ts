@@ -7,7 +7,7 @@ export const sessionParticipantsCountBadgeComponent = new Component({
   description: `Zobrazuje badge s počtem účastníků turnusu. Vyžaduje generalVariable: idTurnusu.`,
   html: `
 <div id="stitek-ucastniku-turnusu">
-  <span id="text-stitku-ucastniku">Účastníci (pocet_ucastniku_turnusu)</span>
+  <span id="text-stitku-ucastniku">Účastníci ({{ pocet_ucastniku_turnusu }})</span>
 </div>
 `,
   css: `

@@ -7,7 +7,7 @@ export const sessionSupervisorsListComponent = new Component({
   description: `Vypisuje vedoucí turnusu s iniciálami avataru, jménem a e-mailem. Vyžaduje generalVariable: idTurnusu.`,
   html: `
 <div id="seznam-vedoucich-turnusu">
-  <ul id="seznam-vedoucich-turnusu-idTurnusu"></ul>
+  <ul id="seznam-vedoucich-turnusu-{{ idTurnusu }}"></ul>
 </div>
 `,
   css: `

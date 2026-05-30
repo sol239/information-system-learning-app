@@ -10,7 +10,7 @@ export const vstupAlergenyJidlaKomponenta = new Component({
 <div class="form-radek">
   <label for="vstup_alergeny_jidla">Alergeny:</label>
   <div id="vstup_alergeny_jidla" class="vyber-checkboxu">
-    moznosti_alergenu_vstup_jidla
+    {{ moznosti_alergenu_vstup_jidla }}
   </div>
   <input type="hidden" id="system-vstup_alergeny_jidla" name="system-vstup_alergeny_jidla" value="NULL" />
 </div>
@@ -51,6 +51,6 @@ if (checkboxesAlergenuVstupJidla.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyJidla: `SELECT COALESCE((SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu), '') AS moznosti_alergenu_vstup_jidla`
+    nacistAlergenyJidla: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu) AS moznosti_alergenu_vstup_jidla`
   },
 });

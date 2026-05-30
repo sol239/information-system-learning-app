@@ -60,6 +60,16 @@ function onDividerMousedown(e: MouseEvent) {
         </div>
       </div>
 
+      <UButton
+        v-if="!mobileTasksOpen"
+        icon="i-lucide-grid-2x2"
+        color="primary"
+        size="xl"
+        class="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg shadow-primary-500/30 lg:hidden"
+        :aria-label="t('tasks')"
+        @click="mobileTasksOpen = true"
+      />
+
       <!-- Drag divider (desktop only) -->
       <div
         class="divider hidden lg:block"
@@ -100,9 +110,14 @@ function onDividerMousedown(e: MouseEvent) {
       </div>
 
       <!-- Mobile/tablet slideover (bottom) -->
-      <USlideover v-model:open="mobileTasksOpen" side="bottom" class="lg:hidden">
+      <USlideover
+        v-model:open="mobileTasksOpen"
+        side="bottom"
+        class="lg:hidden"
+        :ui="{ content: 'w-screen max-w-none' }"
+      >
         <template #content>
-          <div class="task-sidebar-shell flex flex-col h-full overflow-hidden">
+          <div class="task-sidebar-shell flex h-[85dvh] w-screen max-w-none flex-col overflow-hidden">
             <!-- Toolbar -->
             <div class="flex flex-shrink-0 flex-nowrap items-center gap-2 overflow-x-auto border-b border-gray-200 px-3 py-2 dark:border-gray-800">
               <SystemToolbar class="min-w-0 flex-1" />

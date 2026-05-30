@@ -7,7 +7,7 @@ export const pocetDniTurnusuKomponenta = new Component({
   description: `Zobrazuje počet dní turnusu. Vyžaduje generalVariable: idTurnusu.`,
   html: `
 <div class="pocet-dni-turnusu-stitek">
-  🗓️ Počet dní: pocet_dni_turnusu
+  🗓️ Počet dní: {{ pocet_dni_turnusu }}
 </div>
 `,
   css: `

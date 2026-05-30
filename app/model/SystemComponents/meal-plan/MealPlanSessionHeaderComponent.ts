@@ -8,7 +8,7 @@ export const jidelnicekHlavickaTurnusuKomponenta = new Component({
   html: `
 <div id="jidelnicek-turnusu-nazev">
   <span id="jidelnicek-turnusu-ikona">📅</span>
-  <span id="jidelnicek-turnusu-popisek">Turnus idTurnusu</span>
+  <span id="jidelnicek-turnusu-popisek">Turnus {{ idTurnusu }}</span>
 </div>
 `,
   css: `
@@ -40,7 +40,7 @@ export const jidelnicekDatumTurnusuKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje datumový rozsah turnusu v jídelníčku. Vyžaduje generalVariable: idTurnusu.`,
   html: `
-<span id="jidelnicek-turnusu-datum-stitek">datum_od_jidelnicku – datum_do_jidelnicku</span>
+<span id="jidelnicek-turnusu-datum-stitek">{{ datum_od_jidelnicku }} – {{ datum_do_jidelnicku }}</span>
 `,
   css: `
 #jidelnicek-turnusu-datum-stitek {
@@ -69,7 +69,7 @@ export const jidelnicekPocetJidelTurnusuKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje počet unikátních jídel turnusu v jídelníčku. Vyžaduje generalVariable: idTurnusu.`,
   html: `
-<span id="jidelnicek-turnusu-jidla-stitek">Unikátních jídel: pocet_unikatnich_jidel</span>
+<span id="jidelnicek-turnusu-jidla-stitek">Unikátních jídel: {{ pocet_unikatnich_jidel }}</span>
 `,
   css: `
 #jidelnicek-turnusu-jidla-stitek {
@@ -98,7 +98,7 @@ export const jidelnicekPocetPorciTurnusuKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje počet porcí turnusu v jídelníčku. Vyžaduje generalVariable: idTurnusu.`,
   html: `
-<span id="jidelnicek-turnusu-porci-stitek">Počet porcí: pocet_porci</span>
+<span id="jidelnicek-turnusu-porci-stitek">Počet porcí: {{ pocet_porci }}</span>
 `,
   css: `
 #jidelnicek-turnusu-porci-stitek {

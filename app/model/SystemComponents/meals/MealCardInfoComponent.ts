@@ -7,8 +7,8 @@ export const kartaJidlaKomponenta = new Component({
   description: `Karta zobrazující název jídla a štítek doby podávání. Vyžaduje generalVariable: idJidla.`,
   html: `
 <div id="hlavicka-karty-jidla">
-  <span id="nazev-jidla">jmeno</span>
-  <span id="stitek-doby-podavani">doba_podavani</span>
+  <span id="nazev-jidla">{{ jmeno }}</span>
+  <span id="stitek-doby-podavani">{{ doba_podavani }}</span>
 </div>
 `,
   css: `

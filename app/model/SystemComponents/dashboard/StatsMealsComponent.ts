@@ -9,7 +9,7 @@ export const statistikaJidelKomponenta = new Component({
   <div id="statistika-jidel-karta">
     <div id="statistika-jidel-ikona">🍽️</div>
     <div id="statistika-jidel-obsah">
-      <div id="statistika-jidel-pocet">pocet_jidel</div>
+      <div id="statistika-jidel-pocet">{{ pocet_jidel }}</div>
       <div id="statistika-jidel-popisek">jídel</div>
     </div>
   </div>

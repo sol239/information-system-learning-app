@@ -9,7 +9,7 @@ export const editVstupKapacitaKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Kapacita:</label>
-  <input type="number" id="system-edit_vstup_kapacita" min="1" value="edit_vstup_kapacita" style="border: 4px solid barva_ramecku" />
+  <input type="number" id="system-edit_vstup_kapacita" min="1" value="{{ edit_vstup_kapacita }}" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

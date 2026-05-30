@@ -9,7 +9,7 @@ export const statsTotalParticipantsInSessionsComponent = new Component({
   <div id="statistika-celkem-ucasti-turnusu-card">
     <div id="statistika-celkem-ucasti-turnusu-icon">SUM</div>
     <div id="statistika-celkem-ucasti-turnusu-content">
-      <div id="statistika-celkem-ucasti-turnusu-number">celkem_ucasti_v_turnusech</div>
+      <div id="statistika-celkem-ucasti-turnusu-number">{{ celkem_ucasti_v_turnusech }}</div>
       <div id="statistika-celkem-ucasti-turnusu-label">účastí ve všech turnusech</div>
     </div>
   </div>

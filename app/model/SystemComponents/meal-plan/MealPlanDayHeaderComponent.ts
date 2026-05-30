@@ -8,7 +8,7 @@ export const jidelnicekHlavickaDneKomponenta = new Component({
   html: `
 <div id="jidelnicek-dne-nazev">
   <span id="jidelnicek-dne-ikona">📅</span>
-  <span id="jidelnicek-dne-datum">zobrazeni_dne</span>
+  <span id="jidelnicek-dne-datum">{{ zobrazeni_dne }}</span>
 </div>
 `,
   css: `
@@ -42,7 +42,7 @@ export const jidelnicekPocetJidelDneKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje počet unikátních jídel dne v jídelníčku. Vyžaduje generalVariable: datumDne (formát YYYY-MM-DD).`,
   html: `
-<span id="jidelnicek-dne-jidla-stitek">Unikátních jídel: pocet_unikatnich_jidel_dne</span>
+<span id="jidelnicek-dne-jidla-stitek">Unikátních jídel: {{ pocet_unikatnich_jidel_dne }}</span>
 `,
   css: `
 #jidelnicek-dne-jidla-stitek {
@@ -71,7 +71,7 @@ export const jidelnicekPocetPorciDneKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje počet porcí dne v jídelníčku. Vyžaduje generalVariable: datumDne (formát YYYY-MM-DD).`,
   html: `
-<span id="jidelnicek-dne-porci-stitek">Počet porcí: pocet_porci_dne</span>
+<span id="jidelnicek-dne-porci-stitek">Počet porcí: {{ pocet_porci_dne }}</span>
 `,
   css: `
 #jidelnicek-dne-porci-stitek {

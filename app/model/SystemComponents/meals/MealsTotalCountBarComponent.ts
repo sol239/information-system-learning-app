@@ -8,7 +8,7 @@ export const celkovyPocetJidelKomponenta = new Component({
   html: `
 <div id="widget-poctu-jidel">
   <span id="ikona-poctu-jidel">🍴</span>
-  <span id="popisek-poctu-jidel">Celkový počet jídel: celkovy_pocet_jidel</span>
+  <span id="popisek-poctu-jidel">Celkový počet jídel: {{ celkovy_pocet_jidel }}</span>
 </div>
 `,
   css: `

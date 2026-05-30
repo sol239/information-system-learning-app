@@ -7,7 +7,7 @@ export const datumTurnusuKomponenta = new Component({
   description: `Zobrazuje datumový rozsah turnusu. Vyžaduje generalVariable: idTurnusu.`,
   html: `
 <div class="datum-turnusu-stitek">
-  📅 datum_od_turnusu - datum_do_turnusu
+  📅 {{ datum_od_turnusu }} - {{ datum_do_turnusu }}
 </div>
 `,
   css: `

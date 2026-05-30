@@ -8,11 +8,11 @@ export const editVstupAlergenyUcastnikaKomponenta = new Component({
 
   html: `
 <div class="form-radek">
-  <label for="edit-vstup_alergeny_ucastnika-idUcastnika">Alergeny:</label>
-  <div id="edit-vstup_alergeny_ucastnika-idUcastnika" class="vyber-checkboxu">
-    moznosti_alergenu_edit_ucastnika
+  <label for="edit-vstup_alergeny_ucastnika-{{ idUcastnika }}">Alergeny:</label>
+  <div id="edit-vstup_alergeny_ucastnika-{{ idUcastnika }}" class="vyber-checkboxu">
+    {{ moznosti_alergenu_edit_ucastnika }}
   </div>
-  <input type="hidden" id="system-edit_vstup_alergeny_ucastnika-idUcastnika" name="system-edit_vstup_alergeny_ucastnika" />
+  <input type="hidden" id="system-edit_vstup_alergeny_ucastnika-{{ idUcastnika }}" name="system-edit_vstup_alergeny_ucastnika" />
 </div>
 `,
 
@@ -49,6 +49,6 @@ if (checkboxesAlergenuEditUcastnika.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyUcastnika: `SELECT COALESCE((SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN ucastnici_alergeny ua ON ua.id_alergenu = a.id_alergenu AND ua.id_ucastnika = idUcastnika ORDER BY a.id_alergenu), '') AS moznosti_alergenu_edit_ucastnika`
+    nacistAlergenyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN ucastnici_alergeny ua ON ua.id_alergenu = a.id_alergenu AND ua.id_ucastnika = idUcastnika ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_ucastnika`
   },
 });

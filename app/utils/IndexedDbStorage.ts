@@ -22,7 +22,8 @@ interface StoredSystem {
     databaseBinary: Uint8Array | null;
     defaultDatabaseBinary: Uint8Array | null;
     createSchemaSql?: string;
-    score: { mistakesCount: number; score: number } | null;
+    score: { mistakes?: number[]; mistakesCount?: number; score: number } | null;
+    mistakes?: number[];
     mistakesCount?: number;
     currentRound?: number;
     levelCount?: number;
@@ -89,7 +90,8 @@ export class IndexedDbStorage {
                 databaseBinary,
                 defaultDatabaseBinary,
                 createSchemaSql: system.createSchemaSql,
-                score: { mistakesCount: system.score.mistakesCount, score: system.score.score },
+                score: { mistakes: IndexedDbStorage.toPlainMistakes(system.score.mistakes), score: system.score.score },
+                mistakes: IndexedDbStorage.toPlainMistakes(system.mistakes),
                 mistakesCount: system.mistakesCount,
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
@@ -141,7 +143,8 @@ export class IndexedDbStorage {
                 databaseBinary,
                 defaultDatabaseBinary,
                 createSchemaSql: system.createSchemaSql,
-                score: { mistakesCount: system.score.mistakesCount, score: system.score.score },
+                score: { mistakes: IndexedDbStorage.toPlainMistakes(system.score.mistakes), score: system.score.score },
+                mistakes: IndexedDbStorage.toPlainMistakes(system.mistakes),
                 mistakesCount: system.mistakesCount,
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
@@ -163,8 +166,16 @@ export class IndexedDbStorage {
     }
 
     private static toInformationSystem(record: StoredSystem): InformationSystem {
+        const legacyMistakesCount = Number(record.mistakesCount ?? record.score?.mistakesCount ?? 0);
+        const mistakes = Array.isArray(record.mistakes)
+            ? record.mistakes
+            : Array.isArray(record.score?.mistakes)
+                ? record.score.mistakes
+                : Number.isFinite(legacyMistakesCount) && legacyMistakesCount > 0
+                    ? Array.from({ length: legacyMistakesCount }, () => 0)
+                    : [];
         const score = record.score
-            ? new Score(record.score.mistakesCount, record.score.score)
+            ? new Score(mistakes, record.score.score)
             : new Score();
         const system = new InformationSystem({
             id: record.id as GUID,
@@ -184,7 +195,8 @@ export class IndexedDbStorage {
             defaultComponents: Component.arrayFromJSON(record.defaultComponents ?? []),
             createSchemaSql: record.createSchemaSql,
             score,
-            mistakesCount: Number(record.mistakesCount ?? record.score?.mistakesCount ?? 0),
+            mistakes,
+            mistakesCount: legacyMistakesCount,
             currentRound: Number(record.currentRound ?? 1),
             levelCount: Number(record.levelCount ?? 1),
         });
@@ -194,5 +206,13 @@ export class IndexedDbStorage {
                 : DatabaseWrapper.fromBinary(record.databaseBinary);
         }
         return system;
+    }
+
+    private static toPlainMistakes(mistakes: unknown): number[] {
+        if (!Array.isArray(mistakes)) {
+            return [];
+        }
+
+        return Array.from(mistakes, penalty => Number(penalty || 0));
     }
 }

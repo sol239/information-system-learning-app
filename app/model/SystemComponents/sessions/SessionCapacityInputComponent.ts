@@ -9,7 +9,7 @@ export const vstupKapacitaKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Kapacita:</label>
-  <input type="number" id="system-vstup_kapacita" min="1" style="border: 4px solid barva_ramecku" />
+  <input type="number" id="system-vstup_kapacita" min="1" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

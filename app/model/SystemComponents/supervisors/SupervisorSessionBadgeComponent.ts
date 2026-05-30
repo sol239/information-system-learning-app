@@ -7,7 +7,7 @@ export const stitekTurnusuVedoucihoKomponenta = new Component({
   description: `Zobrazuje název turnusu a datum pro vedoucího. Vyžaduje generalVariable: idVedouciho.`,
   html: `
 <div id="stitek-turnusu-vedouciho">
-  turnusy_vedouciho
+  {{ turnusy_vedouciho }}
 </div>
 `,
   css: `
@@ -21,7 +21,7 @@ export const stitekTurnusuVedoucihoKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "stitek-turnusu-vedouciho": `SELECT COALESCE(GROUP_CONCAT('Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')', CHAR(10)), 'Bez turnusu') AS turnusy_vedouciho FROM turnusy t JOIN vedouci_turnusy vt ON t.id_turnusu = vt.id_turnusu WHERE vt.id_vedouciho = idVedouciho`
+    "stitek-turnusu-vedouciho": `SELECT GROUP_CONCAT('Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')', CHAR(10)) AS turnusy_vedouciho FROM turnusy t JOIN vedouci_turnusy vt ON t.id_turnusu = vt.id_turnusu WHERE vt.id_vedouciho = idVedouciho`
   },
   sql_click: {}
 });

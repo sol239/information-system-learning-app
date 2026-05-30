@@ -8,8 +8,8 @@ export const editVstupEmailUcastnikaKomponenta = new Component({
 
   html: `<div class="form-radek">
   <label>Email:</label>
-  <input type="email" id="system-edit_vstup_email_ucastnika" style="border: 4px solid barva_ramecku
-  " value="edit_vstup_email_ucastnika" />
+  <input type="email" id="system-edit_vstup_email_ucastnika" style="border: 4px solid {{ barva_ramecku }}
+  " value="{{ edit_vstup_email_ucastnika }}" />
 </div>`,
 
   css: `

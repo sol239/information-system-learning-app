@@ -1,8 +1,9 @@
 <template>
-  <div
-    ref="triggerRef"
-    class="modern-hover-popover"
-    @mouseenter="showPopover"
+	  <div
+	    ref="triggerRef"
+	    class="modern-hover-popover"
+	    :class="{ 'modern-hover-popover--full-width': fullWidth }"
+	    @mouseenter="showPopover"
     @mouseleave="hidePopover"
     @focusin="showPopover"
     @focusout="hidePopover"
@@ -43,12 +44,14 @@ import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 const props = withDefaults(defineProps<{
   title?: string
   description?: string
-  icon?: string
-  disabled?: boolean
-}>(), {
-  icon: 'i-heroicons-information-circle',
-  disabled: false
-})
+	  icon?: string
+	  disabled?: boolean
+	  fullWidth?: boolean
+	}>(), {
+	  icon: 'i-heroicons-information-circle',
+	  disabled: false,
+	  fullWidth: false
+	})
 
 const triggerRef = ref<HTMLElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)
@@ -114,10 +117,15 @@ onBeforeUnmount(hidePopover)
 </script>
 
 <style scoped>
-.modern-hover-popover {
-  position: relative;
-  display: inline-flex;
-}
+	.modern-hover-popover {
+	  position: relative;
+	  display: inline-flex;
+	}
+
+	.modern-hover-popover--full-width {
+	  display: flex;
+	  width: 100%;
+	}
 
 .modern-hover-popover__panel {
   position: fixed;

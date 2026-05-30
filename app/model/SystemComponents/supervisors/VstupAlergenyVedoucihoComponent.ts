@@ -10,7 +10,7 @@ export const vstupAlergenyVedoucihoKomponenta = new Component({
 <div class="form-radek">
   <label for="vstup_alergeny_vedouciho">Alergeny:</label>
   <div id="vstup_alergeny_vedouciho" class="vyber-checkboxu">
-    moznosti_alergenu_vstup_vedouciho
+    {{ moznosti_alergenu_vstup_vedouciho }}
   </div>
   <input type="hidden" id="system-vstup_alergeny_vedouciho" name="system-vstup_alergeny_vedouciho" value="NULL" />
 </div>
@@ -51,6 +51,6 @@ if (checkboxesAlergenuVstupVedouciho.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyVedouciho: `SELECT COALESCE((SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu), '') AS moznosti_alergenu_vstup_vedouciho`
+    nacistAlergenyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu) AS moznosti_alergenu_vstup_vedouciho`
   },
 });

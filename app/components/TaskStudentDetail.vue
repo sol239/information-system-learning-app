@@ -12,7 +12,7 @@
           </UBadge>
         </div>
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white w-full">
-          {{ props.task.title }}
+          {{ props.title ?? props.task.title }}
         </h2>
         <p v-if="props.task.description" class="text-base text-gray-600 dark:text-gray-300 w-full">
           {{ props.task.description }}
@@ -141,7 +141,7 @@
         :title="t('task_activity_not_completed_title')"
         :description="t('task_activity_not_completed_description')"
         icon="i-lucide-lock"
-        class="block w-full"
+        full-width
       >
         <div
           class="rounded-xl border border-gray-200 p-4 dark:border-gray-800 space-y-3 transition-opacity w-full"
@@ -276,6 +276,7 @@ const { systemInputVariables } = useSystemInputVariables()
 
 const props = defineProps<{
   task: Task | null
+  title?: string
   readonly?: boolean
 }>()
 const isReadonly = computed(() => props.readonly === true)
@@ -297,6 +298,30 @@ watch(
   }
 )
 
+watch(
+  () => [
+    props.task?.id,
+    props.task?.finishType,
+    props.task?.activity?.isCompleted,
+    props.task?.finish?.isComplete,
+    props.task?.completed
+  ],
+  () => {
+    const task = props.task
+    if (
+      isReadonly.value
+      || !task
+      || task.finishType !== FinishType.IMMEDIATE
+      || task.completed
+      || task.finish?.isComplete
+      || task.activity?.isCompleted !== true
+    ) return
+
+    void evaluateFinish()
+  },
+  { immediate: true }
+)
+
 function toggleActivityOption(index: number) {
   if (isReadonly.value) return
 
@@ -313,7 +338,7 @@ function toggleFinishOption(index: number) {
   else selectedFinishOptionIndices.value.splice(idx, 1)
 }
 
-function evaluateActivity() {
+async function evaluateActivity() {
   if (isReadonly.value) return
 
   const task = props.task
@@ -358,6 +383,11 @@ function evaluateActivity() {
       addSolvedComponentIds(ids)
       //console.log('[evaluateActivity] solvedComponentIds after:', [...globalSettings.solvedComponentIds])
     }
+  }
+
+  if (isCorrect && task.finishType === FinishType.IMMEDIATE) {
+    await evaluateFinish()
+    return
   }
 
   if (!isCorrect) {
@@ -444,9 +474,10 @@ function applyIncorrectScore(task: Task) {
   const score = system?.score
   if (!system || !score || task.completed) return
 
-  score.decreaseScore(task.failPenalty)
-  score.incrementMistakes()
-  system.mistakesCount += 1
+  const penalty = Number(task.failPenalty || 0)
+  score.decreaseScore(penalty)
+  score.addMistake(penalty)
+  system.mistakes.push(penalty)
 }
 
 function isTaskActivityCompleted(task: Task): boolean {

@@ -8,11 +8,11 @@ export const editVstupTurnusyUcastnikaKomponenta = new Component({
 
   html: `
 <div class="form-radek">
-  <label for="edit-vstup_turnusy_ucastnika-idUcastnika">Turnusy:</label>
-  <div id="edit-vstup_turnusy_ucastnika-idUcastnika" class="vyber-checkboxu">
-    moznosti_turnusu_edit_ucastnika
+  <label for="edit-vstup_turnusy_ucastnika-{{ idUcastnika }}">Turnusy:</label>
+  <div id="edit-vstup_turnusy_ucastnika-{{ idUcastnika }}" class="vyber-checkboxu">
+    {{ moznosti_turnusu_edit_ucastnika }}
   </div>
-  <input type="hidden" id="system-edit_vstup_turnusy_ucastnika-idUcastnika" name="system-edit_vstup_turnusy_ucastnika" />
+  <input type="hidden" id="system-edit_vstup_turnusy_ucastnika-{{ idUcastnika }}" name="system-edit_vstup_turnusy_ucastnika" />
 </div>
 `,
 
@@ -49,6 +49,6 @@ if (checkboxesTurnusuEditUcastnika.length > 0) {
 }
 `,
   sql: {
-    nacistTurnusyUcastnika: `SELECT COALESCE((SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || t.id_turnusu || '"' || CASE WHEN tu.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')</label>', '') FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON tu.id_turnusu = t.id_turnusu AND tu.id_ucastnika = idUcastnika ORDER BY t.id_turnusu), '') AS moznosti_turnusu_edit_ucastnika`
+    nacistTurnusyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || t.id_turnusu || '"' || CASE WHEN tu.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')</label>', '') FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON tu.id_turnusu = t.id_turnusu AND tu.id_ucastnika = idUcastnika ORDER BY t.id_turnusu) AS moznosti_turnusu_edit_ucastnika`
   },
 });

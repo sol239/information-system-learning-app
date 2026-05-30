@@ -232,7 +232,7 @@ const loadData = async () => {
                 j.id_jidla,
                 j.doba_podavani,
                 j.jmeno,
-                COALESCE(alergeny.pocet_alergenu, 0) AS pocet_alergenu
+                alergeny.pocet_alergenu AS pocet_alergenu
              FROM jidla j
              LEFT JOIN (
                 SELECT id_jidla, COUNT(id_alergenu) AS pocet_alergenu

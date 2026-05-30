@@ -329,7 +329,7 @@ export const jidelnicekTlacitkoOdebratJidloOsobeKomponenta = new Component({
   description: "Tlačítko, které odebere vybrané jídlo vybrané osobě.",
 
   html: `
-<button id="jidelnicek-tlacitko-odebrat-jidlo-osobe" stav_tlacitka_odebrat_jidlo_osobe>
+<button id="jidelnicek-tlacitko-odebrat-jidlo-osobe" {{ stav_tlacitka_odebrat_jidlo_osobe }}>
   Odebrat jídlo
 </button>
 `,

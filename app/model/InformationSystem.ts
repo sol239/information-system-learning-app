@@ -79,9 +79,9 @@ export class InformationSystem {
   public score: Score;
 
   /**
-   * Counts incorrect task evaluation attempts in this system.
+   * Penalties for incorrect task evaluation attempts in this system.
    */
-  public mistakesCount: number;
+  public mistakes: number[];
 
   /**
    * The currently unlocked task level.
@@ -107,7 +107,8 @@ export class InformationSystem {
     configData,
     createSchemaSql,
     score,
-    mistakesCount = 0,
+    mistakes,
+    mistakesCount,
     currentRound = 1,
     levelCount = 1,
   }: {
@@ -124,6 +125,7 @@ export class InformationSystem {
     configData?: any;
     createSchemaSql?: string;
     score?: Score;
+    mistakes?: number[];
     mistakesCount?: number;
     currentRound?: number;
     levelCount?: number;
@@ -141,9 +143,21 @@ export class InformationSystem {
     this.configData = configData;
     this.createSchemaSql = createSchemaSql;
     this.score = score ?? new Score();
-    this.mistakesCount = mistakesCount;
+    this.mistakes = Array.isArray(mistakes)
+      ? mistakes.map(penalty => Number(penalty || 0))
+      : Number.isFinite(Number(mistakesCount)) && Number(mistakesCount) > 0
+        ? Array.from({ length: Number(mistakesCount) }, () => 0)
+        : [...this.score.mistakes]
     this.currentRound = currentRound;
     this.levelCount = levelCount;
+  }
+
+  public get mistakesCount(): number {
+    return this.mistakes.length;
+  }
+
+  public get mistakesPenalty(): number {
+    return this.mistakes.reduce((sum, penalty) => sum + Number(penalty || 0), 0);
   }
 
   /**
@@ -158,6 +172,7 @@ export class InformationSystem {
       language: configData.language,
       description: configData.description,
       pages: configData.pages ?? [],
+      mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
       mistakesCount: Number(configData.mistakesCount ?? 0),
       currentRound: Number(configData.currentRound ?? 1),
       levelCount: Number(configData.levelCount ?? 1),
@@ -188,6 +203,7 @@ export class InformationSystem {
         description: configData.description,
         tasks: (configData.tasks || []).map((task: any) => Task.fromJSON(task)),
         pages,
+        mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
         mistakesCount: Number(configData.mistakesCount ?? 0),
         currentRound: Number(configData.currentRound ?? 1),
         levelCount: Number(configData.levelCount ?? 1),

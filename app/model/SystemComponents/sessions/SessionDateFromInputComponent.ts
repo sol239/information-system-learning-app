@@ -9,7 +9,7 @@ export const vstupDatumOdKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Datum od:</label>
-  <input type="date" id="system-vstup_datum_od" style="border: 4px solid barva_ramecku" />
+  <input type="date" id="system-vstup_datum_od" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

@@ -8,20 +8,20 @@ export const kartaVedoucihoKomponenta = new Component({
   html: `
 <div id="karta-vedouciho">
   <div id="karta-vedouciho-hlavicka">
-    <span id="jmeno-vedouciho">jmeno</span>
-    <span id="vek-vedouciho-stitek">Věk: vek</span>
+    <span id="jmeno-vedouciho">{{ jmeno }}</span>
+    <span id="vek-vedouciho-stitek">Věk: {{ vek }}</span>
   </div>
   <div id="email-vedouciho-radek">
     <span id="email-vedouciho-ikona">✉️</span>
-    <span id="email-vedouciho">email</span>
+    <span id="email-vedouciho">{{ email }}</span>
   </div>
   <div id="telefon-vedouciho-radek">
     <span id="telefon-vedouciho-ikona">📞</span>
-    <span id="telefon-vedouciho">telefon</span>
+    <span id="telefon-vedouciho">{{ telefon }}</span>
   </div>
   <div id="adresa-vedouciho-radek">
     <span id="adresa-vedouciho-ikona">📍</span>
-    <span id="adresa-vedouciho">adresa</span>
+    <span id="adresa-vedouciho">{{ adresa }}</span>
   </div>
 </div>
 `,

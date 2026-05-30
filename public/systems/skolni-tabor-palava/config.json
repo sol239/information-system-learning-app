@@ -49,299 +49,6 @@
   ],
   "tasks": [
     {
-      "id": "c09e79cf-5e37-4d94-bf89-2afc0296d00d",
-      "title": "Minimální počet účastníků",
-      "description": "",
-      "componentsRepaired": false,
-      "completed": false,
-      "activity": {
-        "isCompleted": false,
-        "substituteAfterActivity": true,
-        "description": "Zjistěte, jestli se na nástěnce se skutečně se správně obrazuje minimální počet účastníku turnusů. Možná budete muset jít do databáze a ověřit si to. Pokud skutečně narazíte na nějakou nesrovnalost, tak vyberte komponentu, který chybu způsobuje a poté klikněte tlačítko 'Vyhodnotit'.",
-        "activityComponents": [
-          {
-            "id": "statistika-min-ucastniku-turnusu",
-            "name": "Statistika – Min. účastníků na turnus",
-            "description": "Zobrazuje minimální počet účastníků zapsaných v jednom turnusu.",
-            "html": "\n  <div id=\"statistika-min-ucastniku-turnusu-card\">\n    <div id=\"statistika-min-ucastniku-turnusu-icon\">MIN</div>\n    <div id=\"statistika-min-ucastniku-turnusu-content\">\n      <div id=\"statistika-min-ucastniku-turnusu-number\">minimalni_pocet_zapsanych</div>\n      <div id=\"statistika-min-ucastniku-turnusu-label\">min. účastníků v turnusu</div>\n    </div>\n  </div>\n  ",
-            "css": "\n#statistika-min-ucastniku-turnusu-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-min-ucastniku-turnusu-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-min-ucastniku-turnusu-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-min-ucastniku-turnusu-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
-            "js": "",
-            "js_click": "",
-            "sql": {
-              "statistika-min-ucastniku-turnusu": "SELECT MIN(pocet_zapsanych) as minimalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);"
-            },
-            "sql_click": {},
-            "tags": [
-              "dashboard",
-              "statistika",
-              "účastníci",
-              "turnusy",
-              "html",
-              "css",
-              "sql"
-            ],
-            "edited": false,
-            "variables": {
-              "generalVariables": [],
-              "sqlVariables": [],
-              "jsVariables": []
-            }
-          }
-        ],
-        "checkRepair": false,
-        "repairChecks": []
-      },
-      "activityType": "select",
-      "finish": {
-        "isComplete": false,
-        "description": "Nyní již komponenta správně zobrazuje minimální počet účastníku z turnusů.",
-        "correctAnswer": "9",
-        "label": "Napište přesně nejmenší počet účastníků ze všech turnusů"
-      },
-      "finishType": "type-correct",
-      "round": 1,
-      "status": "not_started",
-      "feedback": "Správně jste označili komponentu, která chybu způsobovala - komponenta ukazovala maximum místo minima.",
-      "pointsReward": 1,
-      "failPenalty": 1,
-      "answer": "",
-      "errorComponents": [
-        {
-          "id": "statistika-min-ucastniku-turnusu",
-          "name": "Statistika – Min. účastníků na turnus",
-          "description": "Zobrazuje minimální počet účastníků zapsaných v jednom turnusu.",
-          "html": "\n  <div id=\"statistika-min-ucastniku-turnusu-card\">\n    <div id=\"statistika-min-ucastniku-turnusu-icon\">MIN</div>\n    <div id=\"statistika-min-ucastniku-turnusu-content\">\n      <div id=\"statistika-min-ucastniku-turnusu-number\">minimalni_pocet_zapsanych</div>\n      <div id=\"statistika-min-ucastniku-turnusu-label\">min. účastníků v turnusu</div>\n    </div>\n  </div>\n  ",
-          "css": "\n#statistika-min-ucastniku-turnusu-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-min-ucastniku-turnusu-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-min-ucastniku-turnusu-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-min-ucastniku-turnusu-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
-          "js": "",
-          "js_click": "",
-          "sql": {
-            "statistika-min-ucastniku-turnusu": "SELECT MAX(pocet_zapsanych) as minimalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);"
-          },
-          "sql_click": {},
-          "tags": [
-            "dashboard",
-            "statistika",
-            "účastníci",
-            "turnusy",
-            "html",
-            "css",
-            "sql"
-          ],
-          "edited": false,
-          "variables": {
-            "generalVariables": [],
-            "sqlVariables": [
-              {
-                "name": "minimalni_pocet_zapsanych",
-                "variable": 12
-              }
-            ],
-            "jsVariables": []
-          }
-        }
-      ],
-      "isEditable": false,
-      "isSubstituted": false,
-      "canExecuteQuery": false,
-      "visiblePages": [
-        {
-          "name": "Nástěnka",
-          "route": "/nastenka",
-          "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky.",
-          "vueFile": "nastenka.vue"
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Database",
-          "vueFile": "database.vue"
-        }
-      ],
-      "finishDescription": "Nyní již komponenta správně zobrazuje minimální počet účastníku z turnusů.",
-      "finishLabel": "Napište přesně nejmenší počet účastníků ze všech turnusů",
-      "activityLabel": "",
-      "activityDescription": "Zjistěte, jestli se na nástěnce se skutečně se správně obrazuje minimální počet účastníku turnusů. Možná budete muset jít do databáze a ověřit si to. Pokud skutečně narazíte na nějakou nesrovnalost, tak vyberte komponentu, který chybu způsobuje a poté klikněte tlačítko 'Vyhodnotit'.",
-      "activityCheckRepair": false,
-      "activityRepairChecks": [],
-      "activityOptions": [],
-      "finishOptions": [],
-      "finishCorrectAnswer": "9",
-      "finishCheckQuery": "",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": true,
-      "codeEditPermissions": {
-        "html": true,
-        "css": true,
-        "js": true,
-        "sql": true,
-        "js_click": false,
-        "sql_click": true
-      }
-    },
-    {
-      "id": "df76dd1c-e5d8-4987-a5bc-3415e7ed3902",
-      "title": "Počet vedoucích v systému",
-      "description": "Cílem tohoto úkolu je zjistit, kolik je v informačním systému účastníků. ",
-      "componentsRepaired": false,
-      "completed": false,
-      "activity": {
-        "isCompleted": false,
-        "substituteAfterActivity": true,
-        "activityComponents": [
-          {
-            "id": "statistika-vedoucich",
-            "name": "Statistika vedoucích",
-            "description": "Komponenta pro statistiku vedoucích. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci",
-            "html": "\n  <div id=\"statistika-vedoucich-karta\">\n    <div id=\"statistika-vedoucich-ikona\">👨‍🏫</div>\n    <div id=\"statistika-vedoucich-obsah\">\n      <div id=\"statistika-vedoucich-pocet\">pocet_vedoucich</div>\n      <div id=\"statistika-vedoucich-popisek\">vedoucích</div>\n    </div>\n  </div>\n  ",
-            "css": "\n#statistika-vedoucich-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-vedoucich-ikona {\n  font-size: 32px;\n}\n\n#statistika-vedoucich-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-vedoucich-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
-            "js": "",
-            "js_click": "",
-            "sql": {
-              "statistika-vedoucich": "SELECT COUNT(id_vedouciho) as pocet_vedoucich FROM vedouci_turnusy;"
-            },
-            "sql_click": {},
-            "tags": [
-              "statistika",
-              "vedoucích",
-              "html",
-              "css",
-              "sql"
-            ],
-            "edited": false,
-            "variables": {
-              "generalVariables": [],
-              "sqlVariables": [],
-              "jsVariables": []
-            }
-          }
-        ],
-        "label": "Co způsobuje chybu, která zobrazuje počet vedoucích v systému?",
-        "options": [
-          {
-            "id": "59ce2f8f-07ea-48a9-b259-6f2cc490e4eb",
-            "text": "Komponenta čerpá data ze špatné tabulky.",
-            "isCorrect": false
-          },
-          {
-            "id": "6c71fcef-3b00-44b4-9edb-01d1f70b90db",
-            "text": "Komponenta započítá jednoho vedoucího dvakrát, pokud je ve více turnusech.",
-            "isCorrect": true
-          },
-          {
-            "id": "7485be55-5482-4e3e-aa73-fc101d32a756",
-            "text": "Komponentu by spravit upravením COUNT(id_vedouciho) na COUNT(DISTINCT id_vedouciho).",
-            "isCorrect": true
-          },
-          {
-            "id": "6c00a55a-088e-469c-a788-de6e4544dbbb",
-            "text": "Žádná možnost není správná.",
-            "isCorrect": false
-          }
-        ],
-        "checkRepair": false,
-        "repairChecks": []
-      },
-      "activityType": "select-options",
-      "finish": {
-        "isComplete": false,
-        "correctAnswer": "6",
-        "label": "Správně napiště přesný počet vedoucích"
-      },
-      "finishType": "type-correct",
-      "round": 1,
-      "status": "not_started",
-      "feedback": "Správně jste určili, proč komponenta nefungovala. Pusť se do řešení dalších úkolů.",
-      "pointsReward": 2,
-      "failPenalty": 1,
-      "answer": "",
-      "errorComponents": [
-        {
-          "id": "statistika-vedoucich",
-          "name": "Statistika vedoucích",
-          "description": "Komponenta pro statistiku vedoucích. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci",
-          "html": "\n  <div id=\"statistika-vedoucich-karta\">\n    <div id=\"statistika-vedoucich-ikona\">👨‍🏫</div>\n    <div id=\"statistika-vedoucich-obsah\">\n      <div id=\"statistika-vedoucich-pocet\">pocet_vedoucich</div>\n      <div id=\"statistika-vedoucich-popisek\">vedoucích</div>\n    </div>\n  </div>\n  ",
-          "css": "\n#statistika-vedoucich-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-vedoucich-ikona {\n  font-size: 32px;\n}\n\n#statistika-vedoucich-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-vedoucich-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
-          "js": "",
-          "js_click": "",
-          "sql": {
-            "statistika-vedoucich": "SELECT COUNT(id_vedouciho) as pocet_vedoucich FROM vedouci_turnusy;"
-          },
-          "sql_click": {},
-          "tags": [
-            "statistika",
-            "vedoucích",
-            "html",
-            "css",
-            "sql"
-          ],
-          "edited": false,
-          "variables": {
-            "generalVariables": [],
-            "sqlVariables": [],
-            "jsVariables": []
-          }
-        }
-      ],
-      "isEditable": false,
-      "isSubstituted": false,
-      "canExecuteQuery": false,
-      "visiblePages": [
-        {
-          "name": "Nástěnka",
-          "route": "/nastenka",
-          "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky.",
-          "vueFile": "nastenka.vue"
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Database",
-          "vueFile": "database.vue"
-        }
-      ],
-      "finishDescription": "",
-      "finishLabel": "Správně napiště přesný počet vedoucích",
-      "activityLabel": "Co způsobuje chybu, která zobrazuje počet vedoucích v systému?",
-      "activityDescription": "",
-      "activityCheckRepair": false,
-      "activityRepairChecks": [],
-      "activityOptions": [
-        {
-          "id": "59ce2f8f-07ea-48a9-b259-6f2cc490e4eb",
-          "text": "Komponenta čerpá data ze špatné tabulky.",
-          "isCorrect": false
-        },
-        {
-          "id": "6c71fcef-3b00-44b4-9edb-01d1f70b90db",
-          "text": "Komponenta započítá jednoho vedoucího dvakrát, pokud je ve více turnusech.",
-          "isCorrect": true
-        },
-        {
-          "id": "7485be55-5482-4e3e-aa73-fc101d32a756",
-          "text": "Komponentu by spravit upravením COUNT(id_vedouciho) na COUNT(DISTINCT id_vedouciho).",
-          "isCorrect": true
-        },
-        {
-          "id": "6c00a55a-088e-469c-a788-de6e4544dbbb",
-          "text": "Žádná možnost není správná.",
-          "isCorrect": false
-        }
-      ],
-      "finishOptions": [],
-      "finishCorrectAnswer": "6",
-      "finishCheckQuery": "",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": true,
-      "codeEditPermissions": {
-        "html": true,
-        "css": true,
-        "js": true,
-        "sql": true,
-        "js_click": false,
-        "sql_click": true
-      }
-    },
-    {
       "id": "4881a760-cb8d-41cb-8784-fed13faa6a76",
       "title": "Délka turnusu",
       "description": "Cílem tohoto úkolu je určit kolik dní trvá srpnový turnus.",
@@ -355,7 +62,7 @@
             "id": "pocet-dni-turnusu",
             "name": "Počet dní turnusu",
             "description": "Zobrazuje počet dní turnusu. Vyžaduje generalVariable: idTurnusu.",
-            "html": "\n<div class=\"pocet-dni-turnusu-stitek\">\n  🗓️ Počet dní: pocet_dni_turnusu\n</div>\n",
+            "html": "\n<div class=\"pocet-dni-turnusu-stitek\">\n  🗓️ Počet dní: {{ pocet_dni_turnusu }}\n</div>\n",
             "css": "\n.pocet-dni-turnusu-stitek {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  padding: 6px 16px;\n  background: #16a34a;\n  border-radius: 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n}\n",
             "js": "",
             "js_click": "",
@@ -405,18 +112,18 @@
         "correctAnswer": "7"
       },
       "finishType": "type-correct",
-      "round": 2,
+      "round": 3,
       "status": "not_started",
       "feedback": "Správně jste opravili komponentu. Problém byl, že výraz julianday(datum_do) - julianday(datum_od) vrací počet dnů mezi daty bez započtení koncového dne.",
-      "pointsReward": 2,
-      "failPenalty": 1,
+      "pointsReward": 3,
+      "failPenalty": 0.5,
       "answer": "",
       "errorComponents": [
         {
           "id": "pocet-dni-turnusu",
           "name": "Počet dní turnusu",
           "description": "Zobrazuje počet dní turnusu. Vyžaduje generalVariable: idTurnusu.",
-          "html": "\n<div class=\"pocet-dni-turnusu-stitek\">\n  🗓️ Počet dní: pocet_dni_turnusu\n</div>\n",
+          "html": "\n<div class=\"pocet-dni-turnusu-stitek\">\n  🗓️ Počet dní: {{ pocet_dni_turnusu }}\n</div>\n",
           "css": "\n.pocet-dni-turnusu-stitek {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  padding: 6px 16px;\n  background: #16a34a;\n  border-radius: 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n}\n",
           "js": "",
           "js_click": "",
@@ -463,28 +170,20 @@
           "route": "/turnusy",
           "description": "Přehled dostupných turnusů pro účastníky.",
           "vueFile": "turnusy.vue"
-        }
-      ],
-      "finishDescription": "Kolik dnů trvá turnus č. 3?",
-      "finishLabel": "",
-      "activityLabel": "",
-      "activityDescription": "Opravte komponentu, zodpovědnou za zobrazování počtu dnů turnusu, tak aby správně zobrazovala počet dnů, které turnus trvá. Počet dnů započítává první i poslední den.",
-      "activityCheckRepair": true,
-      "activityRepairChecks": [
+        },
         {
-          "id": "57146129-e46f-4d1d-a01a-4efaaf2a963e",
-          "componentId": "pocet-dni-turnusu",
-          "componentName": "Počet dní turnusu",
-          "operator": "contains",
-          "text": "🗓️ Počet dní: 13"
+          "name": "Účastníci",
+          "route": "/ucastnici",
+          "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
+          "vueFile": "ucastnici.vue"
+        },
+        {
+          "name": "Databáze",
+          "route": "/database",
+          "description": "Database",
+          "vueFile": "database.vue"
         }
       ],
-      "activityOptions": [],
-      "finishOptions": [],
-      "finishCorrectAnswer": "7",
-      "finishCheckQuery": "",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": false,
       "codeEditPermissions": {
         "html": true,
         "css": true,
@@ -508,7 +207,7 @@
             "id": "stitek-stavu-turnusu",
             "name": "Štítek stavu turnusu",
             "description": "Štítek s dynamickými barvami řešenými přes inline styly pro zamezení úniku CSS.",
-            "html": "\n<div class=\"obal-stavu-turnusu\">\n  <span class=\"stitek-stavu-turnusu\" \n        style=\"color: s_barva_textu; background-color: s_barva_pozadi; border-color: s_barva_textu;\">\n    text_stavu\n  </span>\n</div>\n",
+            "html": "\n<div class=\"obal-stavu-turnusu\">\n  <span class=\"stitek-stavu-turnusu\" \n        style=\"color: {{ s_barva_textu }}; background-color: {{ s_barva_pozadi }}; border-color: {{ s_barva_textu }};\">\n    {{ text_stavu }}\n  </span>\n</div>\n",
             "css": "\n.obal-stavu-turnusu {\n  display: inline-flex;\n  align-items: center;\n}\n\n.stitek-stavu-turnusu {\n  display: inline-flex;\n  padding: 4px 14px;\n  border-radius: 9999px;\n  font-size: 11px;\n  font-weight: 700;\n  text-transform: uppercase;\n  border: 1px solid;\n}\n",
             "js": "\nlet text_stavu = \"VOLNO\";\nlet s_barva_textu = \"#16a34a\";\nlet s_barva_pozadi = \"#dcfce7\";\n\nif (aktualni_pocet >= celkova_kapacita) {\n    text_stavu = \"PLNO\";\n    s_barva_textu = \"#dc2626\";\n    s_barva_pozadi = \"#fee2e2\";\n} else if (aktualni_pocet >= (celkova_kapacita * 0.8)) {\n    text_stavu = \"SKORO PLNO\";\n    s_barva_textu = \"#854d0e\";\n    s_barva_pozadi = \"#fef9c3\";\n}\n",
             "js_click": "",
@@ -571,18 +270,18 @@
         ]
       },
       "finishType": "select-options",
-      "round": 2,
+      "round": 3,
       "status": "not_started",
       "feedback": "Správně jste opravili komponentu - chyba spočívala v tom, že byla chybně uvedena podmínka pro vytvoření štítku. Turnus byl skoro plný již od 30% zaplnění.",
-      "pointsReward": 1.5,
-      "failPenalty": 1,
+      "pointsReward": 3,
+      "failPenalty": 0.5,
       "answer": "",
       "errorComponents": [
         {
           "id": "stitek-stavu-turnusu",
           "name": "Štítek stavu turnusu",
           "description": "Štítek s dynamickými barvami řešenými přes inline styly pro zamezení úniku CSS.",
-          "html": "\n<div class=\"obal-stavu-turnusu\">\n  <span class=\"stitek-stavu-turnusu\" \n        style=\"color: s_barva_textu; background-color: s_barva_pozadi; border-color: s_barva_textu;\">\n    text_stavu\n  </span>\n</div>\n",
+          "html": "\n<div class=\"obal-stavu-turnusu\">\n  <span class=\"stitek-stavu-turnusu\" \n        style=\"color: {{ s_barva_textu }}; background-color: {{ s_barva_pozadi }}; border-color: {{ s_barva_textu }};\">\n    {{ text_stavu }}\n  </span>\n</div>\n",
           "css": "\n.obal-stavu-turnusu {\n  display: inline-flex;\n  align-items: center;\n}\n\n.stitek-stavu-turnusu {\n  display: inline-flex;\n  padding: 4px 14px;\n  border-radius: 9999px;\n  font-size: 11px;\n  font-weight: 700;\n  text-transform: uppercase;\n  border: 1px solid;\n}\n",
           "js": "\nlet text_stavu = \"VOLNO\";\nlet s_barva_textu = \"#16a34a\";\nlet s_barva_pozadi = \"#dcfce7\";\n\nif (aktualni_pocet >= celkova_kapacita) {\n    text_stavu = \"PLNO\";\n    s_barva_textu = \"#dc2626\";\n    s_barva_pozadi = \"#fee2e2\";\n} else if (aktualni_pocet >= (celkova_kapacita * 0.3)) {\n    text_stavu = \"SKORO PLNO\";\n    s_barva_textu = \"#854d0e\";\n    s_barva_pozadi = \"#fef9c3\";\n}\n",
           "js_click": "",
@@ -648,44 +347,20 @@
           "route": "/turnusy",
           "description": "Přehled dostupných turnusů pro účastníky.",
           "vueFile": "turnusy.vue"
-        }
-      ],
-      "finishDescription": "Určete zaplnění turnusu č. 1.",
-      "finishLabel": "",
-      "activityLabel": "",
-      "activityDescription": "Opravte komponentu, která chybu způsobuje. ",
-      "activityCheckRepair": true,
-      "activityRepairChecks": [
-        {
-          "id": "5bf88f49-762d-4a97-86fd-5fc95cca5038",
-          "componentId": "stitek-stavu-turnusu",
-          "componentName": "Štítek stavu turnusu",
-          "operator": "contains",
-          "text": "VOLNO"
-        }
-      ],
-      "activityOptions": [],
-      "finishOptions": [
-        {
-          "id": "d5e72199-4360-4a1c-aee4-f6ec9da19cf2",
-          "text": "PLNO",
-          "isCorrect": false
         },
         {
-          "id": "f7734ba2-5a21-4f6f-a762-f1f6d4f91cfa",
-          "text": "SKORO PLNO",
-          "isCorrect": false
+          "name": "Účastníci",
+          "route": "/ucastnici",
+          "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
+          "vueFile": "ucastnici.vue"
         },
         {
-          "id": "80f8fc30-3f6f-43a1-bf90-b7666105c58d",
-          "text": "VOLNO",
-          "isCorrect": true
+          "name": "Databáze",
+          "route": "/database",
+          "description": "Database",
+          "vueFile": "database.vue"
         }
       ],
-      "finishCorrectAnswer": "",
-      "finishCheckQuery": "",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": false,
       "codeEditPermissions": {
         "html": true,
         "css": true,
@@ -710,12 +385,12 @@
             "id": "edit-vstup-alergeny-ucastnika",
             "name": "Vstup – Edit alergeny účastníka",
             "description": "Vícenásobný výběr alergenů účastníka. Vyžaduje generalVariable: idUcastnika.",
-            "html": "\n<div class=\"form-radek\">\n  <label for=\"edit-vstup_alergeny_ucastnika-idUcastnika\">Alergeny:</label>\n  <div id=\"edit-vstup_alergeny_ucastnika-idUcastnika\" class=\"vyber-checkboxu\">\n    moznosti_alergenu_edit_ucastnika\n  </div>\n  <input type=\"hidden\" id=\"system-edit_vstup_alergeny_ucastnika-idUcastnika\" name=\"system-edit_vstup_alergeny_ucastnika\" />\n</div>\n",
+            "html": "\n<div class=\"form-radek\">\n  <label for=\"edit-vstup_alergeny_ucastnika-{{ idUcastnika }}\">Alergeny:</label>\n  <div id=\"edit-vstup_alergeny_ucastnika-{{ idUcastnika }}\" class=\"vyber-checkboxu\">\n    {{ moznosti_alergenu_edit_ucastnika }}\n  </div>\n  <input type=\"hidden\" id=\"system-edit_vstup_alergeny_ucastnika-{{ idUcastnika }}\" name=\"system-edit_vstup_alergeny_ucastnika\" />\n</div>\n",
             "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }\n.vyber-checkboxu { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; min-width: 280px; max-height: 150px; overflow-y: auto; background: #ffffff; }\n.volba-radek { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 4px; font-size: 14px; font-weight: 400; cursor: pointer; }\n.volba-radek:hover { background: #f3f4f6; }\n.volba-radek input { width: 16px; height: 16px; }\n",
             "js": "\nconst checkboxesAlergenuEditUcastnika = document.querySelectorAll('#edit-vstup_alergeny_ucastnika-' + idUcastnika + ' input[type=\"checkbox\"]');\nconst hiddenAlergenyEditUcastnika = document.querySelector('#system-edit_vstup_alergeny_ucastnika-' + idUcastnika);\n\nfunction syncAlergenyEditUcastnika() {\n  if (!hiddenAlergenyEditUcastnika) return;\n\n  const hodnoty = Array.from(checkboxesAlergenuEditUcastnika)\n    .filter(function(checkbox) { return checkbox.checked; })\n    .map(function(checkbox) { return checkbox.value; });\n\n  hiddenAlergenyEditUcastnika.value = hodnoty.length > 0 ? hodnoty.join(',') : 'NULL';\n  hiddenAlergenyEditUcastnika.dispatchEvent(new Event('input', { bubbles: true }));\n}\n\nif (checkboxesAlergenuEditUcastnika.length > 0) {\n  syncAlergenyEditUcastnika();\n\n  checkboxesAlergenuEditUcastnika.forEach(function(checkbox) {\n    checkbox.addEventListener('change', syncAlergenyEditUcastnika);\n  });\n}\n",
             "js_click": "",
             "sql": {
-              "nacistAlergenyUcastnika": "SELECT COALESCE((SELECT GROUP_CONCAT('<label class=\"volba-radek\"><input type=\"checkbox\" value=\"' || a.id_alergenu || '\"' || CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN ucastnici_alergeny ua ON ua.id_alergenu = a.id_alergenu AND ua.id_ucastnika = idUcastnika ORDER BY a.id_alergenu), '') AS moznosti_alergenu_edit_ucastnika"
+              "nacistAlergenyUcastnika": "SELECT (SELECT GROUP_CONCAT('<label class=\"volba-radek\"><input type=\"checkbox\" value=\"' || a.id_alergenu || '\"' || CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN ucastnici_alergeny ua ON ua.id_alergenu = a.id_alergenu AND ua.id_ucastnika = idUcastnika ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_ucastnika"
             },
             "sql_click": {},
             "tags": [
@@ -754,9 +429,7 @@
             "text": "Žádná možnost není správná.",
             "isCorrect": false
           }
-        ],
-        "checkRepair": false,
-        "repairChecks": []
+        ]
       },
       "activityType": "select-options",
       "finish": {
@@ -765,23 +438,23 @@
         "checkQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;"
       },
       "finishType": "after-database-update",
-      "round": 3,
+      "round": 2,
       "status": "not_started",
       "feedback": "Problém byl v designu vybíracího menu, to podporovalo jenom vybrání jednoho alergenu. Takovému menu se často říká 'radio button menu (group)'. Je nutné mít ale v takovém případě menu, které podporuje více možností - tzv. checkbox menu.",
-      "pointsReward": 1,
-      "failPenalty": 1,
+      "pointsReward": 2,
+      "failPenalty": 0.5,
       "answer": "",
       "errorComponents": [
         {
           "id": "edit-vstup-alergeny-ucastnika",
           "name": "Vstup – Edit alergeny účastníka",
           "description": "Vícenásobný výběr alergenů účastníka. Vyžaduje generalVariable: idUcastnika.",
-          "html": "<div class=\"form-radek\">\n  <label>Alergen:</label>\n  <div id=\"edit-vstup_alergeny_ucastnika-idUcastnika\" class=\"vyber-radio\">\n    moznosti_alergenu_edit_ucastnika\n  </div>\n</div>",
+          "html": "\n<div class=\"form-radek\">\n  <label for=\"edit-vstup_alergeny_ucastnika-{{ idUcastnika }}\">Alergeny:</label>\n  <div id=\"edit-vstup_alergeny_ucastnika-{{ idUcastnika }}\" class=\"vyber-checkboxu\">\n    {{ moznosti_alergenu_edit_ucastnika }}\n  </div>\n  <input type=\"hidden\" id=\"system-edit_vstup_alergeny_ucastnika-{{ idUcastnika }}\" name=\"system-edit_vstup_alergeny_ucastnika\" />\n</div>\n",
           "css": ".form-radek {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  margin-bottom: 12px;\n}\n\n.form-radek label {\n  font-size: 13px;\n  font-weight: 600;\n  color: #374151;\n}\n\n.vyber-radio {\n  border: 1px solid #d1d5db;\n  border-radius: 6px;\n  padding: 8px;\n  min-width: 280px;\n  max-height: 150px;\n  overflow-y: auto;\n  background: #ffffff;\n}\n\n.volba-radek {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px;\n  border-radius: 4px;\n  font-size: 14px;\n  font-weight: 400;\n  cursor: pointer;\n}\n\n.volba-radek:hover {\n  background: #f3f4f6;\n}\n\n.volba-radek input[type=\"radio\"] {\n  width: 16px;\n  height: 16px;\n  margin: 0;\n  cursor: pointer;\n  accent-color: #2563eb;\n}",
           "js": "const radia = document.querySelectorAll(\n  '#edit-vstup_alergeny_ucastnika-' + idUcastnika + ' input[type=\"radio\"]'\n);\n\nradia.forEach(function(r) {\n  if (r.dataset.syncBound === '1') return;\n  r.dataset.syncBound = '1';\n\n  r.addEventListener('change', function() {\n    r.dispatchEvent(new Event('input', { bubbles: true }));\n  });\n});\n\nconst vybrane = Array.from(radia).find(function(r) {\n  return r.checked;\n});\n\nif (vybrane) {\n  vybrane.dispatchEvent(new Event('input', { bubbles: true }));\n}",
           "js_click": "",
           "sql": {
-            "nacistAlergenyUcastnika": "SELECT COALESCE((\n  SELECT GROUP_CONCAT(\n    '<label class=\"volba-radek\">' ||\n      '<input type=\"radio\" name=\"system-edit_vstup_alergeny_ucastnika\" value=\"' || a.id_alergenu || '\"' ||\n      CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END ||\n      '> ' || a.jmeno ||\n    '</label>',\n    ''\n  )\n  FROM alergeny a\n  LEFT JOIN ucastnici_alergeny ua\n    ON ua.id_alergenu = a.id_alergenu\n   AND ua.id_ucastnika = idUcastnika\n  ORDER BY a.id_alergenu\n), '') AS moznosti_alergenu_edit_ucastnika"
+            "nacistAlergenyUcastnika": "SELECT (\n  SELECT GROUP_CONCAT(\n    '<label class=\"volba-radek\">' ||\n      '<input type=\"radio\" name=\"system-edit_vstup_alergeny_ucastnika\" value=\"' || a.id_alergenu || '\"' ||\n      CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END ||\n      '> ' || a.jmeno ||\n    '</label>',\n    ''\n  )\n  FROM alergeny a\n  LEFT JOIN ucastnici_alergeny ua\n    ON ua.id_alergenu = a.id_alergenu\n   AND ua.id_ucastnika = idUcastnika\n  ORDER BY a.id_alergenu\n) AS moznosti_alergenu_edit_ucastnika"
           },
           "sql_click": {},
           "tags": [
@@ -825,12 +498,6 @@
           "vueFile": "nastenka.vue"
         },
         {
-          "name": "Turnusy",
-          "route": "/turnusy",
-          "description": "Přehled dostupných turnusů pro účastníky.",
-          "vueFile": "turnusy.vue"
-        },
-        {
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
@@ -843,34 +510,6 @@
           "vueFile": "database.vue"
         }
       ],
-      "finishDescription": "Přidejte alergeny podle zadání",
-      "finishLabel": "",
-      "activityLabel": "",
-      "activityDescription": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno akorát, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
-      "activityCheckRepair": false,
-      "activityRepairChecks": [],
-      "activityOptions": [
-        {
-          "id": "7c3c2704-7343-40bd-9904-4f87e31a33a0",
-          "text": "Databáze nepodporuje, aby účastník měl více než jeden alergen.",
-          "isCorrect": false
-        },
-        {
-          "id": "c93b8c83-d21c-4d78-9c2d-c2be752b05f2",
-          "text": "Databáze podporuje, aby účastník měl více alergenů, ale menu pro výběr podporuje jen vybrání jednoho.",
-          "isCorrect": true
-        },
-        {
-          "id": "db9085ba-b786-4105-ba8c-936dc5bfdc5e",
-          "text": "Žádná možnost není správná.",
-          "isCorrect": false
-        }
-      ],
-      "finishOptions": [],
-      "finishCorrectAnswer": "",
-      "finishCheckQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": true,
       "codeEditPermissions": {
         "html": true,
         "css": true,
@@ -894,7 +533,7 @@
             "id": "edit-vstup-jmeno-vedouciho",
             "name": "Vstup – Edit Jméno vedoucího",
             "description": "Pole pro úpravu jména vedoucího. Vyžaduje generalVariable: idVedouciho.",
-            "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"edit_vstup_jmeno_vedouciho\" style=\"border: 4px solid barva_ramecku\" />\n</div>\n",
+            "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"{{ edit_vstup_jmeno_vedouciho }}\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
             "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
             "js": "const je_jmeno_validni = edit_vstup_jmeno_vedouciho.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
             "js_click": "",
@@ -943,7 +582,7 @@
           "id": "edit-vstup-jmeno-vedouciho",
           "name": "Vstup – Edit Jméno vedoucího",
           "description": "Pole pro úpravu jména vedoucího. Vyžaduje generalVariable: idVedouciho.",
-          "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"edit_vstup_jmeno_vedouciho\" style=\"border: 4px solid barva_ramecku\" />\n</div>\n",
+          "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"{{ edit_vstup_jmeno_vedouciho }}\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
           "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
           "js": "const je_jmeno_validni = edit_vstup_jmeno_vedouciho.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
           "js_click": "",
@@ -1011,18 +650,6 @@
           "vueFile": "vedouci.vue"
         }
       ],
-      "finishDescription": "Upravté jméno vedoucího Tomáš Masaryk",
-      "finishLabel": "",
-      "activityLabel": "",
-      "activityDescription": "Opravte komponentu, která chybu způsobuje. Aplikace opravu nebude kontrolovat.",
-      "activityCheckRepair": false,
-      "activityRepairChecks": [],
-      "activityOptions": [],
-      "finishOptions": [],
-      "finishCorrectAnswer": "",
-      "finishCheckQuery": "SELECT * FROM vedouci WHERE jmeno = 'Tomáš Garrigue Masaryk';",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": false,
       "codeEditPermissions": {
         "html": true,
         "css": true,
@@ -1033,46 +660,39 @@
       }
     },
     {
-      "id": "96875e4c-839c-4f4c-9377-99a2f1434201",
-      "title": "Tortily došly",
-      "description": "V obchodě došly tortily a nebude je díky tomu možné podávat. Je potřeba tohle jídlo s tortilama odstranit z informačního systému.",
+      "id": "7e0f54a1-1af0-447d-aac2-8d9d02448384",
+      "title": "Nejstarší účastník",
+      "description": "V tomto úkolu bude vašim cílem správně určit věk nejstaršího účastníka.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
         "isCompleted": false,
         "substituteAfterActivity": true,
-        "description": "V obchodě došly tortily a nebude je díky tomu možné podávat. Je potřeba tohle jídlo odtranit z informačního systému.",
         "activityComponents": [
           {
-            "id": "smazat-jidlo",
-            "name": "Smazat jídlo",
-            "description": "Tlačítko pro smazání jídla. Vyžaduje generalVariable: idJidla.",
-            "html": "\n<div id=\"smazat-jidlo-tlacitko\">\n  Smazat jídlo\n</div>\n",
-            "css": "\n#smazat-jidlo-tlacitko {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 8px 14px;\n  border-radius: 9999px;\n  border: 1px solid #ef4444;\n  background: #fef2f2;\n  color: #dc2626;\n  font-size: 13px;\n  font-weight: 700;\n  line-height: 1;\n  cursor: pointer;\n}\n",
+            "id": "statistika-max-vek-ucastnika",
+            "name": "Statistika – Max. věk účastníka",
+            "description": "Zobrazuje věk nejstaršího účastníka.",
+            "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">věk nejstaršího účastníka</div>\n    </div>\n  </div>\n  ",
+            "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
             "js": "",
             "js_click": "",
-            "sql": {},
-            "sql_click": {
-              "smazat-jidlo-alergeny": "DELETE FROM jidla_alergeny WHERE id_jidla = idJidla",
-              "smazat-jidlo-kniha-jidel": "DELETE FROM kniha_jidel WHERE id_jidla = idJidla",
-              "smazat-jidlo-ucastnici": "DELETE FROM ucastnici_jidla WHERE id_jidla = idJidla",
-              "smazat-jidlo-vedouci": "DELETE FROM jidla_vedouci WHERE id_jidla = idJidla",
-              "smazat-jidlo": "DELETE FROM jidla WHERE id_jidla = idJidla"
+            "sql": {
+              "statistika-max-vek-ucastnika": "SELECT MAX(u.vek) AS max_vek_ucastnika FROM ucastnici u"
             },
+            "sql_click": {},
             "tags": [
-              "jídla",
+              "dashboard",
+              "statistika",
+              "účastníci",
+              "věk",
               "html",
               "css",
               "sql"
             ],
             "edited": false,
             "variables": {
-              "generalVariables": [
-                {
-                  "name": "idJidla",
-                  "variable": 7
-                }
-              ],
+              "generalVariables": [],
               "sqlVariables": [],
               "jsVariables": []
             }
@@ -1080,73 +700,73 @@
         ],
         "options": [
           {
-            "id": "2698e90f-d960-4407-931e-610b9d3421eb",
-            "text": "Tlačítko 'Smazat jídlo' správně maže jídla. ",
+            "id": "5ce4bcea-b49e-41b5-a9ca-94f6ed663c8b",
+            "text": "Věk nejstaršího účastníka je zobrazován správně na nástěnce",
             "isCorrect": false
           },
           {
-            "id": "d9066fba-6682-43e6-9b8f-c8c494711b8e",
-            "text": "Tlačítko 'Smazat jídlo' sice smaže jídlo, ale nesmaže záznam i jídlu např. z tabulky s jídly a jejich alergeny.",
-            "isCorrect": true
-          },
-          {
-            "id": "1890397d-0453-4cb2-802d-d574e636207b",
-            "text": "Pro opravení tlařítka by bylo potřeba doplnit potřebné DELETE dotazy pro každou z tabulek, kde je id_jidla jako sloupec.",
-            "isCorrect": true
-          },
-          {
-            "id": "51e2323f-8e62-4bb8-a838-3acd7ee4094a",
-            "text": "Tlačítko 'Smazat jídlo' správně smaže jídlo z tabulky 'jidla', ale z ostatních tabulek ho nesmaže, protože dojde k chybě databáze.",
+            "id": "3bd3dc24-ef29-4b48-ba9a-ea3cc02ae6db",
+            "text": "Komponenta zobrazuje věk nejstaršího vedoucího",
             "isCorrect": false
           },
           {
-            "id": "94fd38c2-44bb-4bf4-8188-8a89a5f0770f",
-            "text": "Žádná možnost není správná.",
+            "id": "18685760-bb91-457c-84bd-dcdb7c2800f3",
+            "text": "Namísto věku nejstaršího účastníka se zobrazuje věk nejmladšího",
+            "isCorrect": true
+          },
+          {
+            "id": "fc936dee-f355-49c2-8963-e43fd3e87b3d",
+            "text": "Žádná odpověď není správná",
             "isCorrect": false
           }
-        ]
+        ],
+        "checkRepair": false,
+        "repairChecks": []
       },
       "activityType": "select-options",
       "finish": {
         "isComplete": false,
-        "description": "Smažte jídlo po opravení komponenty. Pokud jste jídlo smazali před tím než bylo tlačítko opraveno, tak si obnovte databázi na stránce 'Databáze' a poté jej můžete znova smazat :)",
-        "checkQuery": "SELECT 1 AS ok\nWHERE NOT EXISTS (\n  SELECT 1 FROM jidla WHERE id_jidla = 25\n)\nAND NOT EXISTS (\n  SELECT 1 FROM jidla_alergeny WHERE id_jidla = 25\n)\nAND NOT EXISTS (\n  SELECT 1 FROM kniha_jidel WHERE id_jidla = 25\n)\nAND NOT EXISTS (\n  SELECT 1 FROM ucastnici_jidla WHERE id_jidla = 25\n)\nAND NOT EXISTS (\n  SELECT 1 FROM jidla_vedouci WHERE id_jidla = 25\n);"
+        "correctAnswer": "14",
+        "label": "Napište věk nejstaršího účastníka"
       },
-      "finishType": "after-database-update",
-      "round": 5,
+      "finishType": "type-correct",
+      "round": 1,
       "status": "not_started",
-      "feedback": "Při kliknutí na tlačítko smazat se má jídlo smazat ve všech tabulkách se sloupcem id_jidla, nestačí jídlo pouze smazat v tabulce 'jidla'. ",
-      "pointsReward": 3,
-      "failPenalty": 1,
+      "feedback": "Správně jste odpověděli na otázku a určili věk nejstaršího účastníka.",
+      "pointsReward": 1,
+      "failPenalty": 0.5,
       "answer": "",
       "errorComponents": [
         {
-          "id": "smazat-jidlo",
-          "name": "Smazat jídlo",
-          "description": "Tlačítko pro smazání jídla. Vyžaduje generalVariable: idJidla.",
-          "html": "\n<div id=\"smazat-jidlo-tlacitko\">\n  Smazat jídlo\n</div>\n",
-          "css": "\n#smazat-jidlo-tlacitko {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 8px 14px;\n  border-radius: 9999px;\n  border: 1px solid #ef4444;\n  background: #fef2f2;\n  color: #dc2626;\n  font-size: 13px;\n  font-weight: 700;\n  line-height: 1;\n  cursor: pointer;\n}\n",
+          "id": "statistika-max-vek-ucastnika",
+          "name": "Statistika – Max. věk účastníka",
+          "description": "Zobrazuje věk nejstaršího účastníka.",
+          "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">věk nejstaršího účastníka</div>\n    </div>\n  </div>\n  ",
+          "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
           "js": "",
           "js_click": "",
-          "sql": {},
-          "sql_click": {
-            "smazat-jidlo": "DELETE FROM jidla WHERE id_jidla = idJidla"
+          "sql": {
+            "statistika-max-vek-ucastnika": "SELECT MIN(u.vek) AS max_vek_ucastnika FROM ucastnici u"
           },
+          "sql_click": {},
           "tags": [
-            "jídla",
+            "dashboard",
+            "statistika",
+            "účastníci",
+            "věk",
             "html",
             "css",
             "sql"
           ],
           "edited": false,
           "variables": {
-            "generalVariables": [
+            "generalVariables": [],
+            "sqlVariables": [
               {
-                "name": "idJidla",
+                "name": "max_vek_ucastnika",
                 "variable": 7
               }
             ],
-            "sqlVariables": [],
             "jsVariables": []
           }
         }
@@ -1162,28 +782,149 @@
           "vueFile": "nastenka.vue"
         },
         {
-          "name": "Turnusy",
-          "route": "/turnusy",
-          "description": "Přehled dostupných turnusů pro účastníky.",
-          "vueFile": "turnusy.vue"
+          "name": "Databáze",
+          "route": "/database",
+          "description": "Database",
+          "vueFile": "database.vue"
+        }
+      ],
+      "codeEditPermissions": {
+        "html": true,
+        "css": true,
+        "js": true,
+        "sql": true,
+        "js_click": false,
+        "sql_click": true
+      },
+      "finishDescription": "",
+      "finishLabel": "Napište věk nejstaršího účastníka",
+      "activityLabel": "",
+      "activityDescription": "",
+      "activityCheckRepair": false,
+      "activityRepairChecks": [],
+      "activityOptions": [
+        {
+          "id": "5ce4bcea-b49e-41b5-a9ca-94f6ed663c8b",
+          "text": "Věk nejstaršího účastníka je zobrazován správně na nástěnce",
+          "isCorrect": false
         },
         {
-          "name": "Účastníci",
-          "route": "/ucastnici",
-          "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
-          "vueFile": "ucastnici.vue"
+          "id": "3bd3dc24-ef29-4b48-ba9a-ea3cc02ae6db",
+          "text": "Komponenta zobrazuje věk nejstaršího vedoucího",
+          "isCorrect": false
         },
         {
-          "name": "Vedoucí",
-          "route": "/vedouci",
-          "description": "Seznam vedoucích tábora s možností správy jejich údajů.",
-          "vueFile": "vedouci.vue"
+          "id": "18685760-bb91-457c-84bd-dcdb7c2800f3",
+          "text": "Namísto věku nejstaršího účastníka se zobrazuje věk nejmladšího",
+          "isCorrect": true
         },
         {
-          "name": "Jídla",
-          "route": "/jidla",
-          "description": "Přehled jídel, která budou na táboře podávána, včetně informací o alergenech.",
-          "vueFile": "jidla.vue"
+          "id": "fc936dee-f355-49c2-8963-e43fd3e87b3d",
+          "text": "Žádná odpověď není správná",
+          "isCorrect": false
+        }
+      ],
+      "finishOptions": [],
+      "finishCorrectAnswer": "14",
+      "finishCheckQuery": "",
+      "finishVariableConstraints": [],
+      "substituteAfterActivity": true
+    },
+    {
+      "id": "c134571d-6c36-4dea-8805-e596afd0e048",
+      "title": "Množství rúzných jídel v systému",
+      "description": "Cílem úkolu je najít komponentu, která způsobuje chybné zobrazovaní počtu jídel v systému",
+      "componentsRepaired": false,
+      "completed": false,
+      "activity": {
+        "isCompleted": false,
+        "substituteAfterActivity": true,
+        "activityComponents": [
+          {
+            "id": "statistika-jidel",
+            "name": "Statistika jídel",
+            "description": "Komponenta pro statistiku jídel. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla",
+            "html": "\n  <div id=\"statistika-jidel-karta\">\n    <div id=\"statistika-jidel-ikona\">🍽️</div>\n    <div id=\"statistika-jidel-obsah\">\n      <div id=\"statistika-jidel-pocet\">{{ pocet_jidel }}</div>\n      <div id=\"statistika-jidel-popisek\">jídel</div>\n    </div>\n  </div>\n  ",
+            "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 32px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+            "js": "",
+            "js_click": "",
+            "sql": {
+              "statistika-jidel": "SELECT COUNT(*) as pocet_jidel FROM jidla"
+            },
+            "sql_click": {},
+            "tags": [
+              "statistika",
+              "jídel",
+              "html",
+              "css",
+              "sql"
+            ],
+            "edited": false,
+            "variables": {
+              "generalVariables": [],
+              "sqlVariables": [],
+              "jsVariables": []
+            }
+          }
+        ],
+        "label": "Která komponenta špatně zobrazuje data"
+      },
+      "activityType": "select",
+      "finish": {
+        "isComplete": false,
+        "description": "",
+        "correctAnswer": "30",
+        "label": "Určete přesný počet různých jídel v systému"
+      },
+      "finishType": "type-correct",
+      "round": 1,
+      "status": "not_started",
+      "feedback": "Správně jste označili komponentu, která způsobovala chybu - namísto tabulky 'jidla' používala tabulku 'alergeny'",
+      "pointsReward": 1,
+      "failPenalty": 0.5,
+      "answer": "",
+      "errorComponents": [
+        {
+          "id": "statistika-jidel",
+          "name": "Statistika jídel",
+          "description": "Komponenta pro statistiku jídel. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla",
+          "html": "\n  <div id=\"statistika-jidel-karta\">\n    <div id=\"statistika-jidel-ikona\">🍽️</div>\n    <div id=\"statistika-jidel-obsah\">\n      <div id=\"statistika-jidel-pocet\">{{ pocet_jidel }}</div>\n      <div id=\"statistika-jidel-popisek\">jídel</div>\n    </div>\n  </div>\n  ",
+          "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 32px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+          "js": "",
+          "js_click": "",
+          "sql": {
+            "statistika-jidel": "SELECT COUNT(*) as pocet_jidel FROM alergeny"
+          },
+          "sql_click": {},
+          "tags": [
+            "statistika",
+            "jídel",
+            "html",
+            "css",
+            "sql"
+          ],
+          "edited": false,
+          "variables": {
+            "generalVariables": [],
+            "sqlVariables": [
+              {
+                "name": "pocet_jidel",
+                "variable": 14
+              }
+            ],
+            "jsVariables": []
+          }
+        }
+      ],
+      "isEditable": false,
+      "isSubstituted": false,
+      "canExecuteQuery": false,
+      "visiblePages": [
+        {
+          "name": "Nástěnka",
+          "route": "/nastenka",
+          "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky.",
+          "vueFile": "nastenka.vue"
         },
         {
           "name": "Databáze",
@@ -1200,8 +941,302 @@
         "js_click": false,
         "sql_click": true
       }
+    },
+    {
+      "id": "670cbb72-859b-45d3-b73e-69d1b28c3c23",
+      "title": "Barva štítku alergenů",
+      "description": "Když má účastník nějaký alergen, tak by jeho štítek měl být červený, v opačném případě by měl zelený.",
+      "componentsRepaired": false,
+      "completed": false,
+      "activity": {
+        "isCompleted": false,
+        "substituteAfterActivity": false,
+        "activityComponents": [
+          {
+            "id": "stitek-alergenu-ucastnika",
+            "name": "Štítek alergenů účastníka",
+            "description": "Zobrazuje štítek s počtem alergenů účastníka (zelený=0, růžový>=1). Vyžaduje generalVariable: idUcastnika.",
+            "html": "<div class=\"stitek-alergenu-ucastnika\" style=\"background-color: {{ barva }};\">Alergeny: {{ pocet_alergenu_ucastnika }}</div>",
+            "css": "\n.stitek-alergenu-ucastnika {\n  display: inline-flex;\n  align-items: center;\n  padding: 4px 14px;\n  border-radius: 9999px;\n  font-size: 12px;\n  font-weight: 600;\n  border: 1px solid transparent;\n}\n",
+            "js": "let barva = \"#FFFFFF\";\n  if (pocet_alergenu_ucastnika === 0) {\n    barva = \"#9aefb8\";\n  } else {\n    barva = \"#ea98ba\";\n  }",
+            "js_click": "",
+            "sql": {
+              "pocet-alergenu-ucastnika": "SELECT COUNT(ua.id_alergenu) AS pocet_alergenu_ucastnika\nFROM ucastnici u\nJOIN ucastnici_alergeny ua \n  ON u.id_ucastnika = ua.id_ucastnika\nWHERE u.id_ucastnika = idUcastnika;"
+            },
+            "sql_click": {},
+            "tags": [
+              "účastníci",
+              "html",
+              "css",
+              "js",
+              "sql"
+            ],
+            "edited": false,
+            "variables": {
+              "generalVariables": [
+                {
+                  "name": "idUcastnika",
+                  "variable": 9
+                }
+              ],
+              "sqlVariables": [],
+              "jsVariables": []
+            }
+          }
+        ],
+        "label": "Fungují štítky správně?",
+        "options": [
+          {
+            "id": "5f99fc66-e177-49c0-b328-bfb32f14dc02",
+            "text": "Štítky fungují správně",
+            "isCorrect": false
+          },
+          {
+            "id": "31e47377-53f8-4f4e-b20e-ca11bcf998e9",
+            "text": "Štítky fungují špatně, protože když má účastník víc než jeden alergen, tak se použije barva zelená",
+            "isCorrect": true
+          },
+          {
+            "id": "f807eded-eb98-4b1d-af6a-d506a22a8dac",
+            "text": "Štítky fungují špatně, protože barva štítku je nastavena v CSS napevno a JavaScript ji nepřepisuje.",
+            "isCorrect": false
+          },
+          {
+            "id": "88902d77-abba-4cd8-be0b-b62cc570f665",
+            "text": "Žádná odpověď není správná",
+            "isCorrect": false
+          }
+        ]
+      },
+      "activityType": "select-options",
+      "finish": {
+        "isComplete": false,
+        "description": "Úkol bude dokončen ihned po splnění aktivity"
+      },
+      "finishType": "immediate",
+      "round": 2,
+      "status": "not_started",
+      "feedback": "",
+      "pointsReward": 2,
+      "failPenalty": 0.5,
+      "answer": "",
+      "errorComponents": [
+        {
+          "id": "stitek-alergenu-ucastnika",
+          "name": "Štítek alergenů účastníka",
+          "description": "Zobrazuje štítek s počtem alergenů účastníka (zelený=0, růžový>=1). Vyžaduje generalVariable: idUcastnika.",
+          "html": "<div class=\"stitek-alergenu-ucastnika\" style=\"background-color: {{ barva }};\">Alergeny: {{ pocet_alergenu_ucastnika }}</div>",
+          "css": "\n.stitek-alergenu-ucastnika {\n  display: inline-flex;\n  align-items: center;\n  padding: 4px 14px;\n  border-radius: 9999px;\n  font-size: 12px;\n  font-weight: 600;\n  border: 1px solid transparent;\n}\n",
+          "js": "let barva = \"#FFFFFF\";\n  if (pocet_alergenu_ucastnika !== 0) {\n    barva = \"#9aefb8\";\n  } else {\n    barva = \"#ea98ba\";\n  }",
+          "js_click": "",
+          "sql": {
+            "pocet-alergenu-ucastnika": "SELECT COUNT(ua.id_alergenu) AS pocet_alergenu_ucastnika\nFROM ucastnici u\nJOIN ucastnici_alergeny ua \n  ON u.id_ucastnika = ua.id_ucastnika\nWHERE u.id_ucastnika = idUcastnika;"
+          },
+          "sql_click": {},
+          "tags": [
+            "účastníci",
+            "html",
+            "css",
+            "js",
+            "sql"
+          ],
+          "edited": false,
+          "variables": {
+            "generalVariables": [
+              {
+                "name": "idUcastnika",
+                "variable": 9
+              }
+            ],
+            "sqlVariables": [
+              {
+                "name": "pocet_alergenu_ucastnika",
+                "variable": 0
+              }
+            ],
+            "jsVariables": [
+              {
+                "name": "barva",
+                "variable": "#ea98ba"
+              }
+            ]
+          }
+        }
+      ],
+      "isEditable": false,
+      "isSubstituted": false,
+      "canExecuteQuery": false,
+      "visiblePages": [
+        {
+          "name": "Nástěnka",
+          "route": "/nastenka",
+          "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky.",
+          "vueFile": "nastenka.vue"
+        },
+        {
+          "name": "Databáze",
+          "route": "/database",
+          "description": "Database",
+          "vueFile": "database.vue"
+        },
+        {
+          "name": "Účastníci",
+          "route": "/ucastnici",
+          "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
+          "vueFile": "ucastnici.vue"
+        }
+      ],
+      "codeEditPermissions": {
+        "html": true,
+        "css": true,
+        "js": true,
+        "sql": true,
+        "js_click": false,
+        "sql_click": true
+      }
+    },
+    {
+      "id": "c7b429fc-8007-4bc3-ab82-d4b38158e039",
+      "title": "Seřazení účastníků podle příjmení",
+      "description": "Cílem tohoto úkolu je seřadit účastníky podle jejich příjmní",
+      "componentsRepaired": false,
+      "completed": false,
+      "activity": {
+        "isCompleted": false,
+        "substituteAfterActivity": true,
+        "activityComponents": [
+          {
+            "id": "razeni-ucastniku",
+            "name": "Řazení účastníků",
+            "description": "Výběr řazení účastníků podle jména, věku, emailu nebo počtu alergenů.",
+            "html": "\n<div id=\"razeni-ucastniku\">\n  <label for=\"system-razeni_ucastniku\">Řadit:</label>\n  <select id=\"system-razeni_ucastniku\">\n    <option value=\"jmeno\" selected>Jméno</option>\n    <option value=\"vek\">Věk</option>\n    <option value=\"email\">Email</option>\n    <option value=\"alergeny\">Počet alergenů</option>\n  </select>\n</div>\n",
+            "css": "\n#razeni-ucastniku {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  border: 1px solid #0e7490;\n  border-radius: 8px;\n  background-color: #ffffff;\n}\n\n#razeni-ucastniku label {\n  font-size: 13px;\n  font-weight: 600;\n  color: #0e7490;\n  white-space: nowrap;\n}\n\n#system-razeni_ucastniku {\n  min-width: 110px;\n  border: 0;\n  outline: none;\n  background: transparent;\n  color: #111827;\n  font-size: 14px;\n}\n",
+            "js": "",
+            "js_click": "",
+            "sql": {
+              "ucastnici-serazeni-podle-jmena": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_jmeno\nFROM ucastnici u\nORDER BY u.jmeno COLLATE NOCASE, u.id_ucastnika\n",
+              "ucastnici-serazeni-podle-veku": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_vek\nFROM ucastnici u\nORDER BY u.vek, u.id_ucastnika\n",
+              "ucastnici-serazeni-podle-emailu": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_email\nFROM ucastnici u\nORDER BY u.email COLLATE NOCASE, u.id_ucastnika\n",
+              "ucastnici-serazeni-podle-poctu-alergenu": "\nSELECT\n  u.id_ucastnika AS id_ucastnika_razeni_alergeny,\n  COUNT(ua.id_alergenu) AS pocet_alergenu_razeni_ucastnika\nFROM ucastnici u\nLEFT JOIN ucastnici_alergeny ua\n  ON ua.id_ucastnika = u.id_ucastnika\nGROUP BY u.id_ucastnika\nORDER BY COUNT(ua.id_alergenu), u.id_ucastnika\n"
+            },
+            "sql_click": {},
+            "tags": [
+              "účastníci",
+              "řazení",
+              "sql",
+              "html",
+              "css"
+            ],
+            "edited": false,
+            "variables": {
+              "generalVariables": [],
+              "sqlVariables": [],
+              "jsVariables": []
+            }
+          }
+        ],
+        "label": "Lze řadit podle příjmení?",
+        "options": [
+          {
+            "id": "17b88b78-ad1d-401a-ba91-006336123cfc",
+            "text": "Ano, stačí v menu 'Řadit' zvolit možnost 'Jméno'",
+            "isCorrect": false
+          },
+          {
+            "id": "09313875-7b4e-4d10-8601-e90e0c28789a",
+            "text": "Ne, bylo by potřeba, aby místo jednoho sloupce 'Jméno' byly sloupce 'Křestní jméno' a 'Příjmení' a filtrování právě podle sloupce 'Příjmení'",
+            "isCorrect": true
+          },
+          {
+            "id": "d7be48d2-3478-4d1f-b6db-506a65277844",
+            "text": "Ne, bylo by potřeba udělat SQL dotaz, který rozdělí hodnotu v sloupci 'Jméno' na slova a bude filtrovat podle posledního slova",
+            "isCorrect": true
+          },
+          {
+            "id": "cc24fbbf-779d-4f80-86b4-58f4c7c981f2",
+            "text": "Ano, ale jediný způsob je, že se upraví jméno každého účastníka, aby obsahovalo jen příjmení a nic jiného",
+            "isCorrect": false
+          }
+        ]
+      },
+      "activityType": "select-options",
+      "finish": {
+        "isComplete": false,
+        "description": "Úkol bude dokončen ihned po splnění aktivity"
+      },
+      "finishType": "immediate",
+      "round": 2,
+      "status": "not_started",
+      "feedback": "",
+      "pointsReward": 2,
+      "failPenalty": 0.5,
+      "answer": "",
+      "errorComponents": [
+        {
+          "id": "razeni-ucastniku",
+          "name": "Řazení účastníků",
+          "description": "Výběr řazení účastníků podle jména, věku, emailu nebo počtu alergenů.",
+          "html": "\n<div id=\"razeni-ucastniku\">\n  <label for=\"system-razeni_ucastniku\">Řadit:</label>\n  <select id=\"system-razeni_ucastniku\">\n    <option value=\"jmeno\" selected>Jméno</option>\n    <option value=\"vek\">Věk</option>\n    <option value=\"email\">Email</option>\n    <option value=\"alergeny\">Počet alergenů</option>\n  </select>\n</div>\n",
+          "css": "\n#razeni-ucastniku {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  border: 1px solid #0e7490;\n  border-radius: 8px;\n  background-color: #ffffff;\n}\n\n#razeni-ucastniku label {\n  font-size: 13px;\n  font-weight: 600;\n  color: #0e7490;\n  white-space: nowrap;\n}\n\n#system-razeni_ucastniku {\n  min-width: 110px;\n  border: 0;\n  outline: none;\n  background: transparent;\n  color: #111827;\n  font-size: 14px;\n}\n",
+          "js": "",
+          "js_click": "",
+          "sql": {
+            "ucastnici-serazeni-podle-jmena": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_jmeno\nFROM ucastnici u\nORDER BY u.jmeno COLLATE NOCASE, u.id_ucastnika\n",
+            "ucastnici-serazeni-podle-veku": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_vek\nFROM ucastnici u\nORDER BY u.vek, u.id_ucastnika\n",
+            "ucastnici-serazeni-podle-emailu": "\nSELECT u.id_ucastnika AS id_ucastnika_razeni_email\nFROM ucastnici u\nORDER BY u.email COLLATE NOCASE, u.id_ucastnika\n",
+            "ucastnici-serazeni-podle-poctu-alergenu": "\nSELECT\n  u.id_ucastnika AS id_ucastnika_razeni_alergeny,\n  COUNT(ua.id_alergenu) AS pocet_alergenu_razeni_ucastnika\nFROM ucastnici u\nLEFT JOIN ucastnici_alergeny ua\n  ON ua.id_ucastnika = u.id_ucastnika\nGROUP BY u.id_ucastnika\nORDER BY COUNT(ua.id_alergenu), u.id_ucastnika\n"
+          },
+          "sql_click": {},
+          "tags": [
+            "účastníci",
+            "řazení",
+            "sql",
+            "html",
+            "css"
+          ],
+          "edited": false,
+          "variables": {
+            "generalVariables": [],
+            "sqlVariables": [],
+            "jsVariables": []
+          }
+        }
+      ],
+      "isEditable": false,
+      "isSubstituted": false,
+      "canExecuteQuery": false,
+      "visiblePages": [
+        {
+          "name": "Nástěnka",
+          "route": "/nastenka",
+          "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky.",
+          "vueFile": "nastenka.vue"
+        },
+        {
+          "name": "Databáze",
+          "route": "/database",
+          "description": "Database",
+          "vueFile": "database.vue"
+        },
+        {
+          "name": "Účastníci",
+          "route": "/ucastnici",
+          "description": "Seznam všech účastníků tábora s možností správy jejich údajů.",
+          "vueFile": "ucastnici.vue"
+        }
+      ],
+      "codeEditPermissions": {
+        "html": true,
+        "css": true,
+        "js": true,
+        "sql": true,
+        "js_click": false,
+        "sql_click": true
+      }
     }
   ],
+  "mistakes": [],
+  "mistakesCount": 0,
   "currentRound": 1,
-  "levelCount": 5
+  "levelCount": 6
 }

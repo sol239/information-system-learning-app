@@ -7,7 +7,7 @@ export const tlacitkoUlozitKomponenta = new Component({
   description: "Tlačítko pro uložení nového turnusu.",
 
   html: `
-<button id="system-btn_ulozit" class="btn-uspech" stav_tlacitka>Uložit turnus</button>
+<button id="system-btn_ulozit" class="btn-uspech" {{ stav_tlacitka }}>Uložit turnus</button>
 `,
 
   css: `

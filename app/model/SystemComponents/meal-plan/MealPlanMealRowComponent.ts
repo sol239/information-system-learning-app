@@ -8,7 +8,7 @@ export const jidelnicekRadekJidlaKomponenta = new Component({
   html: `
 <div id="jidelnicek-jidlo-nazev-kontejner">
   <span id="jidelnicek-jidlo-ikona">🍽️</span>
-  <span id="jidelnicek-jidlo-nazev">nazev_jidla_jidelnicku</span>
+  <span id="jidelnicek-jidlo-nazev">{{ nazev_jidla_jidelnicku }}</span>
 </div>
 `,
   css: `
@@ -44,7 +44,7 @@ export const jidelnicekAlergenyJidlaKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje alergeny jídla v akordéonu jídelníčku. Vyžaduje generalVariable: idJidla.`,
   html: `
-<div id="jidelnicek-jidlo-alergeny-idJidla"></div>
+<div id="jidelnicek-jidlo-alergeny-{{ idJidla }}">{{ pilulky_alergenu_jidelnicku }}</div>
 `,
   css: `
 [id^="jidelnicek-jidlo-alergeny-"] {
@@ -65,24 +65,10 @@ export const jidelnicekAlergenyJidlaKomponenta = new Component({
   color: #be185d;
 }
 `,
-  js: `
-  const alergenyJidelnicku = typeof alergeny_jidelnicku === 'undefined' ? [] : (Array.isArray(alergeny_jidelnicku) ? alergeny_jidelnicku : [alergeny_jidelnicku]);
-
-  const seznamAlergenuJidelnicku = document.querySelector('#jidelnicek-jidlo-alergeny-' + idJidla);
-  if (seznamAlergenuJidelnicku) {
-    seznamAlergenuJidelnicku.innerHTML = '';
-
-    alergenyJidelnicku.forEach(function(text) {
-      const span = document.createElement('span');
-      span.className = 'pilulka-alergenu-jidelnicku';
-      span.textContent = text;
-
-      seznamAlergenuJidelnicku.appendChild(span);
-    });
-  }`,
+  js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-alergeny-jidla": `SELECT a.jmeno AS alergeny_jidelnicku FROM alergeny a JOIN jidla_alergeny ja ON a.id_alergenu = ja.id_alergenu WHERE ja.id_jidla = idJidla`
+    "jidelnicek-alergeny-jidla": `SELECT GROUP_CONCAT('<span class="pilulka-alergenu-jidelnicku">' || a.jmeno || '</span>', '') AS pilulky_alergenu_jidelnicku FROM alergeny a JOIN jidla_alergeny ja ON a.id_alergenu = ja.id_alergenu WHERE ja.id_jidla = idJidla`
   },
   sql_click: {}
 });
@@ -93,7 +79,7 @@ export const jidelnicekDobaPodavaniJidlaKomponenta = new Component({
   tags: ["jídelníček"],
   description: `Zobrazuje dobu podávání jídla v akordéonu jídelníčku. Vyžaduje generalVariable: idJidla.`,
   html: `
-  <span id="jidelnicek-jidlo-doba-stitek">doba_podavani_jidelnicku</span>
+  <span id="jidelnicek-jidlo-doba-stitek">{{ doba_podavani_jidelnicku }}</span>
 `,
   css: `
 #jidelnicek-jidlo-doba-stitek {

@@ -9,7 +9,7 @@ export const vstupEmailVedoucihoKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Email:</label>
-  <input type="email" id="system-vstup_email_vedouciho" placeholder="Zadejte email" style="border: 4px solid barva_ramecku" />
+  <input type="email" id="system-vstup_email_vedouciho" placeholder="Zadejte email" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

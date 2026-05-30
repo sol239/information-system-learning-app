@@ -9,7 +9,7 @@ export const statsMaxParticipantsPerSessionComponent = new Component({
   <div id="statistika-max-ucastniku-turnusu-card">
     <div id="statistika-max-ucastniku-turnusu-icon">#</div>
     <div id="statistika-max-ucastniku-turnusu-content">
-      <div id="statistika-max-ucastniku-turnusu-number">maximalni_pocet_zapsanych</div>
+      <div id="statistika-max-ucastniku-turnusu-number">{{ maximalni_pocet_zapsanych }}</div>
       <div id="statistika-max-ucastniku-turnusu-label">max. účastníků v turnusu</div>
     </div>
   </div>

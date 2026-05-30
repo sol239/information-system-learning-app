@@ -9,7 +9,7 @@ export const vstupNazevJidlaKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Název jídla:</label>
-  <input type="text" id="system-vstup_nazev_jidla" placeholder="Zadejte název jídla" style="border: 4px solid barva_ramecku" />
+  <input type="text" id="system-vstup_nazev_jidla" placeholder="Zadejte název jídla" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

@@ -7,7 +7,7 @@ export const sessionParticipantsListComponent = new Component({
   description: `Vypisuje účastníky turnusu s iniciálami avatara a jménem. Vyžaduje generalVariable: idTurnusu.`,
   html: `
 <div id="seznam-ucastniku-turnusu">
-  <ul id="seznam-ucastniku-turnusu-idTurnusu"></ul>
+  <ul id="seznam-ucastniku-turnusu-{{ idTurnusu }}"></ul>
 </div>
 `,
   css: `

@@ -10,7 +10,7 @@ export const vstupTurnusyVedoucihoKomponenta = new Component({
 <div class="form-radek">
   <label for="vstup_turnusy_vedouciho">Turnusy:</label>
   <div id="vstup_turnusy_vedouciho" class="vyber-checkboxu">
-    moznosti_turnusu_vstup_vedouciho
+    {{ moznosti_turnusu_vstup_vedouciho }}
   </div>
   <input type="hidden" id="system-vstup_turnusy_vedouciho" name="system-vstup_turnusy_vedouciho" value="NULL" />
 </div>
@@ -51,6 +51,6 @@ if (checkboxesTurnusuVstupVedouciho.length > 0) {
 }
 `,
   sql: {
-    nacistTurnusyVedouciho: `SELECT COALESCE((SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_turnusu || '"> Turnus ' || id_turnusu || ' (' || strftime('%d. %m.', datum_od) || ' - ' || strftime('%d. %m. %Y', datum_do) || ')</label>', '') FROM turnusy ORDER BY id_turnusu), '') AS moznosti_turnusu_vstup_vedouciho`
+    nacistTurnusyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_turnusu || '"> Turnus ' || id_turnusu || ' (' || strftime('%d. %m.', datum_od) || ' - ' || strftime('%d. %m. %Y', datum_do) || ')</label>', '') FROM turnusy ORDER BY id_turnusu) AS moznosti_turnusu_vstup_vedouciho`
   },
 });

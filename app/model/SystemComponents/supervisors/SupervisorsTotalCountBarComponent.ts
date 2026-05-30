@@ -8,7 +8,7 @@ export const celkovyPocetVedoucichKomponenta = new Component({
   html: `
 <div id="widget-poctu-vedoucich">
   <span id="ikona-poctu-vedoucich">👨‍🏫</span>
-  <span id="popisek-poctu-vedoucich">Celkový počet vedoucích: celkovy_pocet_vedoucich</span>
+  <span id="popisek-poctu-vedoucich">Celkový počet vedoucích: {{ celkovy_pocet_vedoucich }}</span>
 </div>
 `,
   css: `

@@ -9,7 +9,7 @@ export const editVstupEmailVedoucihoKomponenta = new Component({
   html: `
 <div class="form-radek">
   <label>Email:</label>
-  <input type="email" id="system-edit_vstup_email_vedouciho" value="edit_vstup_email_vedouciho" style="border: 4px solid barva_ramecku" />
+  <input type="email" id="system-edit_vstup_email_vedouciho" value="{{ edit_vstup_email_vedouciho }}" style="border: 4px solid {{ barva_ramecku }}" />
 </div>
 `,
 

@@ -7,7 +7,7 @@ export const editTlacitkoUlozitUcastnikaKomponenta = new Component({
   description: "Tlačítko pro uložení změn existujícího účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `
-<button id="system-edit_btn_ulozit_ucastnika" class="btn-uspech" stav_tlacitka>Upravit účastníka</button>
+<button id="system-edit_btn_ulozit_ucastnika" class="btn-uspech" {{ stav_tlacitka }}>Upravit účastníka</button>
 `,
 
   css: `

@@ -9,7 +9,7 @@ export const statsMinParticipantsPerSessionComponent = new Component({
   <div id="statistika-min-ucastniku-turnusu-card">
     <div id="statistika-min-ucastniku-turnusu-icon">MIN</div>
     <div id="statistika-min-ucastniku-turnusu-content">
-      <div id="statistika-min-ucastniku-turnusu-number">minimalni_pocet_zapsanych</div>
+      <div id="statistika-min-ucastniku-turnusu-number">{{ minimalni_pocet_zapsanych }}</div>
       <div id="statistika-min-ucastniku-turnusu-label">min. účastníků v turnusu</div>
     </div>
   </div>
