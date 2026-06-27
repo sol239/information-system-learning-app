@@ -432,11 +432,11 @@ Určuje, jestli se aplikace spustí v učitelském, nebo studentském režimu. H
 
 ### 9.2 `NUXT_PUBLIC_LOAD_COMPONENTS_FROM`
 
-Určuje, odkud se načítají výchozí komponenty systému. Hodnota `system` načítá komponenty ze souboru `system_components.json`, který je součástí načteného systému. Hodnota `directory` používá komponenty uložené přímo v projektu v adresáři `app/model/SystemComponents`, což se hodí hlavně při lokálním vývoji a úpravách základních komponent.
+Určuje, odkud se načítají výchozí komponenty systému. Hodnota `public` načítá komponenty ze souboru `system_components.json`, který je součástí načteného systému. Hodnota `development` používá komponenty uložené přímo v projektu v adresáři `app/model/SystemComponents`, což se hodí hlavně při lokálním vývoji a úpravách základních komponent.
 
 ### 9.3 `NUXT_PUBLIC_LOAD_PAGES_FROM`
 
-Určuje, odkud se načítají stránky systému. Hodnota `system` používá `.vue` soubory přiložené k načtenému systému, takže stránky mohou být součástí exportovaného nebo připraveného systému. Hodnota `directory` nechá aplikaci používat statické Nuxt stránky z projektu, tedy stránky uložené přímo v adresáři aplikace.
+Určuje, odkud se načítají stránky systému. Hodnota `public` používá `.vue` soubory přiložené k načtenému systému, takže stránky mohou být součástí exportovaného nebo připraveného systému. Hodnota `development` nechá aplikaci používat statické Nuxt stránky z projektu, tedy stránky uložené přímo v adresáři aplikace.
 
 ### 9.4 `NUXT_PUBLIC_HTML_AVAILABLE`
 
@@ -484,11 +484,11 @@ SQL soubor pro vytvoření výchozí databáze systému. Typicky obsahuje přík
 
 ### 10.3 `system_components.json`
 
-Soubor s výchozími komponentami systému. Obsahuje komponenty, které se v systému zobrazují a které mohou studenti podle úkolů zkoumat nebo opravovat. Použije se hlavně tehdy, když je proměnná `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` nastavená na hodnotu `system`.
+Soubor s výchozími komponentami systému. Obsahuje komponenty, které se v systému zobrazují a které mohou studenti podle úkolů zkoumat nebo opravovat. Použije se hlavně tehdy, když je proměnná `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` nastavená na hodnotu `public`.
 
 ### 10.4 Soubory `.vue`
 
-Pokud systém používá vlastní stránky a proměnná `NUXT_PUBLIC_LOAD_PAGES_FROM` je nastavená na hodnotu `system`, mohou být v adresáři systému také `.vue` soubory. Jejich názvy jsou uvedené v části `pages` v souboru `config.json`. Pokud se stránky načítají z adresáře aplikace pomocí hodnoty `directory`, tyto soubory v systému být nemusí.
+Pokud systém používá vlastní stránky a proměnná `NUXT_PUBLIC_LOAD_PAGES_FROM` je nastavená na hodnotu `public`, mohou být v adresáři systému také `.vue` soubory. Jejich názvy jsou uvedené v části `pages` v souboru `config.json`. Pokud se stránky načítají z adresáře aplikace pomocí hodnoty `development`, tyto soubory v systému být nemusí.
 
 ## 11 Tvorba & úprava systémů
 
@@ -527,4 +527,3 @@ Pokud máte jakékoliv dotazy, nápady na vylepšení, nebo chcete sdílet své 
 ## 15 Odkazy
 
 1. https://www.cloudflare.com/learning/serverless/glossary/client-side-vs-server-side/
-

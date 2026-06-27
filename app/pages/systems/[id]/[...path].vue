@@ -23,7 +23,7 @@ if (!system) {
     if (!page) {
         error.value = `Page ${pagePath} not found`
     } else if (!page.vueSource) {
-        error.value = getPageLoadSource() === 'directory'
+        error.value = getPageLoadSource() === 'development'
             ? `No static Nuxt page found for ${pagePath}`
             : `No source for page ${pagePath}`
     } else {

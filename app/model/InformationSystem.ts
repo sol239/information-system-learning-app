@@ -2,12 +2,15 @@ import { Task } from "./Task/Task";
 import { Component } from "./Component";
 import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 import { SqljsDatabaseFactory } from "~/utils/SqljsDatabaseFactory";
+import JSZip from "jszip";
 import type { GUID } from "./GUID";
 import type { Page } from "./Page";
 import { Score } from "./Score";
 import { useComponentStore } from "~/stores/componentStore";
 import { getComponentLoadSource } from "~/utils/componentLoadSource";
 import { getPageLoadSource } from "~/utils/pageLoadSource";
+import { Operation } from "~/utils/Operation/Operation";
+import { OperationResultType } from "~/utils/Operation/OperationResultType";
 
 /**
  * Represents an information system, encapsulating its configuration, data tables, tasks, and component mappings.
@@ -161,10 +164,11 @@ export class InformationSystem {
   }
 
   /**
-   * Creates an InformationSystem from a raw config JSON string.
-   * Throws SyntaxError if the JSON is invalid.
+   * Creates an InformationSystem instance from a JSON string representation of its configuration.
+   * @param configJson - The JSON string representing the system's configuration.
+   * @returns An instance of InformationSystem initialized with the provided configuration.
    */
-  public static fromConfig(configJson: string): InformationSystem {
+  public static fromJson(configJson: string): InformationSystem {
     const configData = JSON.parse(configJson);
     return new InformationSystem({
       id: String(configData.id) as GUID,
@@ -181,99 +185,109 @@ export class InformationSystem {
     });
   }
 
-  // TODO: Write comments
-  public static async loadSystem(filesContents: Record<string, string>): Promise<Operation<InformationSystem | null>> {
-    const configEntry = Object.entries(filesContents).find(([path]) => path.endsWith('config.json'));
-    if (!configEntry) {
-      return new Operation(OperationResultType.ERROR, "Config file not found.", null);
-    }
-    const [configPath, configContent] = configEntry;
-
+  public static async deserializeFromZip(zipData: ArrayBuffer): Promise<InformationSystem | null> {
     try {
+      const zip = await JSZip.loadAsync(zipData);
+      const filesContents: Record<string, string> = {};
+      const readFiles: Promise<void>[] = [];
+
+      zip.forEach((relativePath, zipEntry) => {
+        if (zipEntry.dir) {
+          return;
+        }
+
+        readFiles.push(
+          zipEntry.async("text").then(content => {
+            filesContents[relativePath] = content;
+          })
+        );
+      });
+
+      await Promise.all(readFiles);
+
+      return await InformationSystem.deserializeFromFiles(filesContents);
+    } catch {
+      return null;
+    }
+  }
+
+  public static async loadSystem(filesContents: Record<string, string>): Promise<Operation<InformationSystem | null>> {
+    try {
+      const system = await InformationSystem.deserializeFromFiles(filesContents);
+      if (!system) {
+        return new Operation(OperationResultType.ERROR, "Failed to load system.", null);
+      }
+
+      return new Operation(OperationResultType.SUCCESS, "System loaded successfully.", system);
+    } catch (error) {
+      return new Operation(
+        OperationResultType.ERROR,
+        "Failed to load system: " + (error instanceof Error ? error.message : String(error)),
+        null
+      );
+    }
+  }
+
+  private static async deserializeFromFiles(filesContents: Record<string, string>): Promise<InformationSystem | null> {
+    try {
+      const configContent = Object.entries(filesContents).find(([path]) => path.endsWith("config.json"))?.[1];
+      if (!configContent) {
+        return null;
+      }
+
       const configData = JSON.parse(configContent);
-      const loadPagesFromSystem = getPageLoadSource() === 'system';
+      const loadPagesFromZip = getPageLoadSource() === "public";
       const pages: Page[] = (configData.pages || []).map((page: Page) => ({
         ...page,
-        vueSource: loadPagesFromSystem ? filesContents[page.vueFile] ?? null : undefined,
+        vueSource: loadPagesFromZip ? filesContents[page.vueFile] ?? null : undefined,
       }));
+
+      const sqlEntry = Object.entries(filesContents).find(([path]) => path.endsWith("create_schema.sql"));
+      let database: DatabaseWrapper | null = null;
+      if (sqlEntry) {
+        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(sqlEntry[1]);
+        if (dbResult.result !== OperationResultType.SUCCESS || !dbResult.data) {
+          return null;
+        }
+
+        database = DatabaseWrapper.fromInstance(dbResult.data);
+      }
+
       const system = new InformationSystem({
-        id: configData.id as GUID,
+        id: String(configData.id) as GUID,
         name: configData.name,
         language: configData.language,
         description: configData.description,
         tasks: (configData.tasks || []).map((task: any) => Task.fromJSON(task)),
         pages,
+        database,
         mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
         mistakesCount: Number(configData.mistakesCount ?? 0),
         currentRound: Number(configData.currentRound ?? 1),
         levelCount: Number(configData.levelCount ?? 1),
-        createSchemaSql: Object.entries(filesContents).find(([path]) => path.endsWith('create_schema.sql'))?.[1],
+        createSchemaSql: sqlEntry?.[1],
         configData,
       });
 
-      // Initialize the database with the config data and CSV contents
-      // initialize using create_schema.sql
-      const sqlEntry = Object.entries(filesContents).find(([path]) => path.endsWith('create_schema.sql'));
-      //console.log("Found SQL entry for database initialization:", sqlEntry);
-      if (sqlEntry) {
-        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(sqlEntry[1]);
-        //console.log("Database creation from SQL result:", dbResult);
-        if (dbResult.result === OperationResultType.SUCCESS && dbResult.data) {
-          system.database = DatabaseWrapper.fromInstance(dbResult.data);
-        } else {
-          return new Operation(OperationResultType.ERROR, "Failed to build database: " + dbResult.message, null);
-        }
-      }
-
-
-      // const csvEntries = Object.fromEntries(
-      //   Object.entries(filesContents).filter(([path]) => !path.endsWith('config.json') && !path.endsWith('system_components.json') && !path.endsWith('.vue'))
-      // );
-      // if (Object.keys(csvEntries).length > 0) {
-      //   const dbResult = await SqljsDatabaseFactory.createDatabase(csvEntries);
-      //   if (dbResult.result === OperationResultType.SUCCESS && dbResult.data) {
-      //     system.database = DatabaseWrapper.fromInstance(dbResult.data);
-      //   } else {
-      //     return new Operation(OperationResultType.ERROR, "Failed to build database: " + dbResult.message, null);
-      //   }
-      // }
-
-      if (getComponentLoadSource() === 'system') {
-        const componentsEntry = Object.entries(filesContents).find(([path]) => path.endsWith('system_components.json'));
-        if (componentsEntry?.[1]?.trim()) {
-          try {
-            const componentsData = JSON.parse(componentsEntry[1]);
-            system.defaultComponents = Component.arrayFromJSON(componentsData);
-            if (system.actualComponents.length === 0) {
-              system.actualComponents = InformationSystem.cloneComponents(system.defaultComponents);
-            }
-          } catch (e) {
-            console.warn("Failed to parse system_components.json", e);
-          }
-        } else {
-          console.warn("system_components.json not found or empty; no default components were loaded from the system.");
-        }
+      const componentsEntry = Object.entries(filesContents).find(([path]) => path.endsWith("system_components.json"));
+      if (getComponentLoadSource() === "public" && componentsEntry?.[1]?.trim()) {
+        const components = Component.arrayFromJSON(JSON.parse(componentsEntry[1]));
+        system.defaultComponents = InformationSystem.cloneComponents(components);
+        system.actualComponents = InformationSystem.cloneComponents(components);
       } else {
         const componentStore = useComponentStore();
         system.defaultComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
-        if (system.actualComponents.length === 0) {
-          system.actualComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
-        }
+        system.actualComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
       }
 
-      return new Operation(OperationResultType.SUCCESS, "System loaded successfully.", system);
-
-      /* TODO: the saving into IndexedDB shall happen after upload button click. There shall be no saving to pinia store. But after upload of the system, the pinia stores shall
-      look into indexed db and update itself.
-       */
-    } catch (error) {
-      return new Operation(OperationResultType.ERROR, "Failed to load system: " + (error instanceof Error ? error.message : String(error)), null);
+      return system;
+    } catch {
+      return null;
     }
-
   }
 
   private static cloneComponents(components: Component[]): Component[] {
-    return components.map(component => Component.fromJSON(JSON.parse(JSON.stringify(component))));
+    return Component.arrayFromJSON(JSON.parse(JSON.stringify(components ?? [])));
   }
 
 }

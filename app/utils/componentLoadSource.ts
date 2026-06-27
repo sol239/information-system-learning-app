@@ -1,9 +1,10 @@
 import { useRuntimeConfig } from '#app'
 
-export type ComponentLoadSource = 'system' | 'directory'
+export type ComponentLoadSource = 'public' | 'development'
 
 export function normalizeComponentLoadSource(value: unknown): ComponentLoadSource {
-  return String(value ?? 'system').trim().toLowerCase() === 'directory' ? 'directory' : 'system'
+  const source = String(value ?? 'public').trim().toLowerCase()
+  return source === 'development' ? 'development' : 'public'
 }
 
 export function getComponentLoadSource(): ComponentLoadSource {

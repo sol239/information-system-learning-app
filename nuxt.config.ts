@@ -2,7 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const loadPagesFrom = process.env.NUXT_PUBLIC_LOAD_PAGES_FROM ?? 'system'
+const loadPagesFrom = process.env.NUXT_PUBLIC_LOAD_PAGES_FROM ?? 'public'
 
 function generateSystemsManifest() {
   return {
@@ -41,7 +41,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   hooks: {
     'pages:extend'(pages) {
-      if (String(loadPagesFrom).trim().toLowerCase() === 'directory') {
+      const normalizedLoadPagesFrom = String(loadPagesFrom).trim().toLowerCase()
+      if (normalizedLoadPagesFrom === 'development') {
         return
       }
 
@@ -66,7 +67,7 @@ export default defineNuxtConfig({
     public: {
       appMode: process.env.NUXT_PUBLIC_APP_MODE ?? '',
       singleSystem: process.env.NUXT_PUBLIC_SINGLE_SYSTEM ?? 'true',
-      loadComponentsFrom: process.env.NUXT_PUBLIC_LOAD_COMPONENTS_FROM ?? 'system',
+      loadComponentsFrom: process.env.NUXT_PUBLIC_LOAD_COMPONENTS_FROM ?? 'public',
       loadPagesFrom,
       htmlAvailable: process.env.NUXT_PUBLIC_HTML_AVAILABLE ?? 'true',
       cssAvailable: process.env.NUXT_PUBLIC_CSS_AVAILABLE ?? 'true',

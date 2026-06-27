@@ -1,6 +1,6 @@
 import type { Database } from "sql.js";
-import { Operation } from "./Operation";
-import { OperationResultType } from "./OperationResultType";
+import { Operation } from "./Operation/Operation";
+import { OperationResultType } from "./Operation/OperationResultType";
 import { ColumnType } from "./ColumnType";
 import { ColumnDefinition } from "./ColumnDefinition";
 

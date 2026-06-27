@@ -1,6 +1,6 @@
 import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
-import { OperationResultType } from '~/utils/OperationResultType'
+import { OperationResultType } from '~/utils/Operation/OperationResultType'
 import type { GUID } from '~/model/GUID'
 import type { InformationSystem as InformationSystemType } from '~/model/InformationSystem'
 import { getPageLoadSource } from '~/utils/pageLoadSource'
@@ -90,7 +90,7 @@ export function usePreloadedSystems() {
             ...loader.sqlFilesContent,
         }
 
-        if (getPageLoadSource() === 'system') {
+        if (getPageLoadSource() === 'public') {
             Object.assign(filesContents, loader.vueFilesContent)
         }
 
@@ -123,7 +123,7 @@ export function usePreloadedSystems() {
             filesContents['create_schema.sql'] = optionalEntries[1]
         }
 
-        if (getPageLoadSource() === 'system') {
+        if (getPageLoadSource() === 'public') {
             const vueFiles = Array.from(
                 new Set(
                     (configData.pages ?? [])

@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Operation } from '~/utils/Operation'
-import { OperationResultType } from '~/utils/OperationResultType'
+import type { Operation } from '~/utils/Operation/Operation'
+import { OperationResultType } from '~/utils/Operation/OperationResultType'
 import { DatabaseHandler } from '~/utils/DatabaseHandler'
 import type { ColumnType } from '~/utils/ColumnType'
 import { useSystemsStore } from '~/stores/systemsStore'

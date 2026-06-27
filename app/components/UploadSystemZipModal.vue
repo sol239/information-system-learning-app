@@ -174,7 +174,7 @@ async function onUpload(close: () => void) {
             }
 
             // Re-attach any page vue sources that were loaded from the system
-            if (getPageLoadSource() === 'system') {
+            if (getPageLoadSource() === 'public') {
                 for (const page of sysToClone.pages ?? []) {
                     if (page.vueFile && (page as any).vueSource) {
                         filesContents[page.vueFile] = (page as any).vueSource
@@ -207,7 +207,7 @@ async function onUpload(close: () => void) {
             ...loader.value.csvFilesContent,
             ...loader.value.sqlFilesContent,
         }
-        if (getPageLoadSource() === 'system') {
+        if (getPageLoadSource() === 'public') {
             Object.assign(filesContents, loader.value.vueFilesContent)
         }
         const loadResult = await InformationSystem.loadSystem(filesContents)

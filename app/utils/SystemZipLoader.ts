@@ -2,8 +2,8 @@ import JSZip from 'jszip';
 import { InformationSystem } from '~/model/InformationSystem';
 import { type Mapping } from '~/language/Mapping';
 import { MappingCs } from '~/language/MappingCs';
-import { Operation } from '~/utils/Operation';
-import { OperationResultType } from '~/utils/OperationResultType';
+import { Operation } from '~/utils/Operation/Operation';
+import { OperationResultType } from '~/utils/Operation/OperationResultType';
 
 /**
  * Utility class responsible for loading and parsing ZIP files that contain information system configurations and related data.

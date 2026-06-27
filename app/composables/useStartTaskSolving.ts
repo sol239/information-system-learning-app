@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { OperationResultType } from '~/utils/OperationResultType'
+import { OperationResultType } from '~/utils/Operation/OperationResultType'
 
 export function useStartTaskSolving() {
   const { t } = useI18n()

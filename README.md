@@ -114,8 +114,8 @@ Konfigurace je načítána v `nuxt.config.ts` přes runtime config.
 | --- | --- | --- |
 | `NUXT_PUBLIC_APP_MODE` | prázdná hodnota | `TEACHER` zapne učitelský režim. Jiná hodnota spouští studentský pohled. |
 | `NUXT_PUBLIC_SINGLE_SYSTEM` | `true` | Ve studentském režimu omezuje navigaci na jeden vybraný systém. |
-| `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` | `system` | Určuje, zda se komponenty načítají ze systému, nebo z komponent registrovaných v aplikaci. |
-| `NUXT_PUBLIC_LOAD_PAGES_FROM` | `system` | `system` načítá `.vue` stránky ze systému. `directory` používá stránky v `app/pages/systems/[id]`. |
+| `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` | `public` | Určuje, zda se komponenty načítají z veřejných dat systému, nebo z komponent registrovaných v aplikaci. |
+| `NUXT_PUBLIC_LOAD_PAGES_FROM` | `public` | `public` načítá `.vue` stránky ze systému. `development` používá stránky v `app/pages/systems/[id]`. |
 | `NUXT_PUBLIC_HTML_AVAILABLE` | `true` | Zobrazí editor HTML. |
 | `NUXT_PUBLIC_CSS_AVAILABLE` | `true` | Zobrazí editor CSS. |
 | `NUXT_PUBLIC_JS_AVAILABLE` | `true` | Zobrazí editor JS. |
@@ -197,7 +197,7 @@ Seznam komponent dostupných v systému. Každá komponenta má vlastní HTML, C
 
 ### `.vue` stránky
 
-Stránky systému, které skládají komponenty do konkrétních pohledů. Při `NUXT_PUBLIC_LOAD_PAGES_FROM=system` se načítají přímo ze ZIPu nebo složky systému.
+Stránky systému, které skládají komponenty do konkrétních pohledů. Při `NUXT_PUBLIC_LOAD_PAGES_FROM=public` se načítají přímo ze ZIPu nebo složky systému.
 
 Předpřipravený příklad najdete v `public/systems/skolni-tabor-palava`. Prázdná šablona je v `docs/cs/empty-system-template`.
 

@@ -1,7 +1,7 @@
 import initSqlJs, { type Database } from 'sql.js';
 import { DatabaseHandler } from './DatabaseHandler';
-import { Operation } from './Operation';
-import { OperationResultType } from './OperationResultType';
+import { Operation } from './Operation/Operation';
+import { OperationResultType } from './Operation/OperationResultType';
 import { getSqlWasmPath } from './sqlWasmPath';
 export class DatabaseWrapper {
     /**

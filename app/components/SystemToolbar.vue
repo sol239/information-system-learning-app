@@ -1,7 +1,5 @@
 <template>
   <div class="flex flex-nowrap items-center gap-2 overflow-x-auto">
-    <!-- <DebugButton /> -->
-
     <UButton
       v-if="globalSettings.teacherMode"
       :icon="globalSettings.teacherHighlightEnabled ? 'i-lucide-eye' : 'i-lucide-eye-off'"
@@ -63,11 +61,6 @@
     </UPopover>
 
     <div v-if="!globalSettings.teacherMode" class="flex items-center gap-2">
-      <!-- Score badge moved to task sidebar header -->
-      <!-- <UBadge color="red" variant="subtle" size="lg" class="font-bold px-3">
-                {{ $t('score') }}: {{ systemsStore.selectedSystem?.score.score ?? 0 }}
-            </UBadge> -->
-
       <UButton
         :icon="
           highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'
@@ -81,29 +74,6 @@
           highlightStore.isEditModeActive ? $t("disable_edit") : $t("enable_edit")
         }}</span>
       </UButton>
-
-      <!-- Student button removed -->
-      <!-- <UDrawer v-model:open="studentDrawerOpen" direction="right">
-                <UButton color="sky" variant="subtle" icon="i-lucide-graduation-cap" size="md"
-                    @click="studentDrawerOpen = true">
-                    <span class="mobile-hidden">{{ $t('student') }}</span>
-                </UButton>
-                <template #content>
-                    <UCard class="h-full border-0 rounded-none overflow-y-auto">
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-xl font-bold">{{ $t('student_guide') }}</h3>
-                                <UButton icon="i-lucide-x" color="neutral" variant="ghost"
-                                    @click="studentDrawerOpen = false" />
-                            </div>
-                        </template>
-                        <StudentComponent />
-                    </UCard>
-                </template>
-            </UDrawer> -->
-
-      <!-- Settings removed -->
-      <!-- <SettingsDrawer /> -->
     </div>
 
     <UButton
@@ -250,10 +220,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import SettingsDrawer from "~/components/SettingsDrawer.vue";
-import StudentComponent from "~/components/StudentComponent.vue";
 import { IndexedDbHandler } from "~/utils/IndexedDbHandler";
-import { OperationResultType } from "~/utils/OperationResultType";
+import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { Component } from "~/model/Component";
 
 const highlightStore = useHighlightStore();

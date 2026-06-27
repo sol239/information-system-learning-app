@@ -2,7 +2,7 @@ import { Component } from '~/model/Component'
 import { getComponentLoadSource } from '~/utils/componentLoadSource'
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
-    if (getComponentLoadSource() !== 'directory') {
+    if (getComponentLoadSource() !== 'development') {
         return
     }
 

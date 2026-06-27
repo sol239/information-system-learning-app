@@ -48,7 +48,7 @@ import { useSystemsStore } from '~/stores/systemsStore';
 import { useHighlightStore } from '~/stores/highlightStore';
 import { DatabaseHandler } from '~/utils/DatabaseHandler';
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper';
-import { OperationResultType } from '~/utils/OperationResultType';
+import { OperationResultType } from '~/utils/Operation/OperationResultType.js';
 import { TableMap } from '~/core/TableMap';
 import type { VariableType } from '~/model/types/VariableType';
 import EditComponentModal from './EditComponentModal.vue'; // Adjust path as needed

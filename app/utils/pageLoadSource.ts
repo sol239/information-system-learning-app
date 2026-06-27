@@ -1,9 +1,10 @@
 import { useRuntimeConfig } from '#app'
 
-export type PageLoadSource = 'system' | 'directory'
+export type PageLoadSource = 'public' | 'development'
 
 export function normalizePageLoadSource(value: unknown): PageLoadSource {
-  return String(value ?? 'system').trim().toLowerCase() === 'directory' ? 'directory' : 'system'
+  const source = String(value ?? 'public').trim().toLowerCase()
+  return source === 'development' ? 'development' : 'public'
 }
 
 export function getPageLoadSource(): PageLoadSource {
