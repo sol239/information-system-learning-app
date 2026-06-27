@@ -17,11 +17,7 @@
       </UFormField>
 
       <div class="flex flex-wrap items-center justify-end gap-2">
-        <ModernHoverPopover
-          :title="previewStudentView ? t('task_preview_student_title') : t('task_preview_editor_title')"
-          :description="previewStudentView ? t('task_preview_student_desc') : t('task_preview_editor_desc')"
-          :icon="previewStudentView ? 'i-lucide-eye' : 'i-lucide-pencil'"
-        >
+        <UPopover mode="hover" arrow>
           <UButton
             :icon="previewStudentView ? 'i-lucide-pencil' : 'i-lucide-eye'"
             color="neutral"
@@ -30,7 +26,20 @@
           >
             {{ previewStudentView ? t('task_editor_view') : t('task_student_preview') }}
           </UButton>
-        </ModernHoverPopover>
+          <template #content>
+            <div class="app-popover-content">
+              <UIcon :name="previewStudentView ? 'i-lucide-eye' : 'i-lucide-pencil'" class="app-popover-icon" />
+              <div class="app-popover-text">
+                <strong class="app-popover-title">
+                  {{ previewStudentView ? t('task_preview_student_title') : t('task_preview_editor_title') }}
+                </strong>
+                <span class="app-popover-description">
+                  {{ previewStudentView ? t('task_preview_student_desc') : t('task_preview_editor_desc') }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </UPopover>
 
         <UButton
           icon="i-lucide-plus"
@@ -201,7 +210,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import HoverHint from '~/components/HoverHint.vue'
-import ModernHoverPopover from '~/components/ModernHoverPopover.vue'
 import type { GUID } from '~/model/GUID'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { Task } from '~/model/Task/Task'

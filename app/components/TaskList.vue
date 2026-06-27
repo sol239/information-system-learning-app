@@ -89,38 +89,47 @@
           class="mb-1"
         />
 
-        <ModernHoverPopover
+        <UPopover
           v-if="isTaskLocked(task)"
-          class="w-full"
-          :title="t('task_level_locked_title')"
-          :description="t('task_level_locked_description')"
-          icon="i-lucide-lock"
+          mode="hover"
+          arrow
         >
-          <button
-            type="button"
-            aria-disabled="true"
-            class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60 dark:border-gray-700 dark:bg-gray-800/50"
-            @click.prevent
-          >
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex min-w-0 flex-col gap-1">
-                <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
+          <span class="app-popover-trigger-full">
+            <button
+              type="button"
+              aria-disabled="true"
+              class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60 dark:border-gray-700 dark:bg-gray-800/50"
+              @click.prevent
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex min-w-0 flex-col gap-1">
+                  <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
+                </div>
+                <span
+                  v-if="showTaskCompletion"
+                  role="checkbox"
+                  :aria-checked="isTaskDone(task)"
+                  :aria-label="t('task_completed')"
+                  class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                  :class="isTaskDone(task)
+                    ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
+                    : 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'"
+                >
+                  <UIcon v-if="isTaskDone(task)" name="i-lucide-check" class="h-3 w-3 text-white" />
+                </span>
               </div>
-              <span
-                v-if="showTaskCompletion"
-                role="checkbox"
-                :aria-checked="isTaskDone(task)"
-                :aria-label="t('task_completed')"
-                class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors"
-                :class="isTaskDone(task)
-                  ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
-                  : 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'"
-              >
-                <UIcon v-if="isTaskDone(task)" name="i-lucide-check" class="h-3 w-3 text-white" />
-              </span>
+            </button>
+          </span>
+          <template #content>
+            <div class="app-popover-content">
+              <UIcon name="i-lucide-lock" class="app-popover-icon" />
+              <div class="app-popover-text">
+                <strong class="app-popover-title">{{ t('task_level_locked_title') }}</strong>
+                <span class="app-popover-description">{{ t('task_level_locked_description') }}</span>
+              </div>
             </div>
-          </button>
-        </ModernHoverPopover>
+          </template>
+        </UPopover>
 
         <div
           v-else
@@ -148,22 +157,31 @@
             >
               <UIcon v-if="isTaskDone(task)" name="i-lucide-check" class="h-3 w-3 text-white" />
             </span>
-            <ModernHoverPopover
+            <UPopover
               v-if="globalSettings.teacherMode"
-              :title="t('task_remove_task_action')"
-              :description="t('task_remove_task_description')"
-              icon="i-lucide-trash-2"
-              class="mt-0.5 shrink-0"
+              mode="hover"
+              arrow
             >
-              <UButton
-                icon="i-lucide-trash-2"
-                color="red"
-                variant="ghost"
-                size="xs"
-                :aria-label="t('task_remove_task_action')"
-                @click.stop="deleteTask(task.id)"
-              />
-            </ModernHoverPopover>
+              <span class="mt-0.5 inline-flex shrink-0">
+                <UButton
+                  icon="i-lucide-trash-2"
+                  color="red"
+                  variant="ghost"
+                  size="xs"
+                  :aria-label="t('task_remove_task_action')"
+                  @click.stop="deleteTask(task.id)"
+                />
+              </span>
+              <template #content>
+                <div class="app-popover-content">
+                  <UIcon name="i-lucide-trash-2" class="app-popover-icon" />
+                  <div class="app-popover-text">
+                    <strong class="app-popover-title">{{ t('task_remove_task_action') }}</strong>
+                    <span class="app-popover-description">{{ t('task_remove_task_description') }}</span>
+                  </div>
+                </div>
+              </template>
+            </UPopover>
           </div>
         </div>
       </template>

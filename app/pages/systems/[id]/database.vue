@@ -24,16 +24,21 @@
                         <span class="text-xs text-gray-400 whitespace-nowrap">{{ tableRowCount }} {{ t('rows') }}</span>
                     </div>
                     <div class="ml-auto flex justify-end">
-                        <ModernHoverPopover
-                            :title="t('refresh_database_popover_title')"
-                            :description="t('refresh_database_popover_description')"
-                            icon="i-heroicons-circle-stack"
-                        >
+                        <UPopover mode="hover" arrow>
                             <UButton @click="handleRefreshDatabase" icon="i-heroicons-circle-stack" color="orange"
                                 variant="soft" size="sm" :loading="isRefreshingDatabase">
                                 {{ t('refresh_database') }}
                             </UButton>
-                        </ModernHoverPopover>
+                            <template #content>
+                                <div class="app-popover-content">
+                                    <UIcon name="i-heroicons-circle-stack" class="app-popover-icon" />
+                                    <div class="app-popover-text">
+                                        <strong class="app-popover-title">{{ t('refresh_database_popover_title') }}</strong>
+                                        <span class="app-popover-description">{{ t('refresh_database_popover_description') }}</span>
+                                    </div>
+                                </div>
+                            </template>
+                        </UPopover>
                     </div>
                 </div>
 

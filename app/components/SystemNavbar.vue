@@ -8,7 +8,9 @@
                 <nav
                     class="flex flex-wrap items-center gap-1 p-1 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
                     <template v-for="item in localItems" :key="item.route">
-                        <NuxtLink v-if="isPageAvailable(item.route)" :to="item.to"
+                        <NuxtLink
+                            v-if="isPageAvailable(item.route)"
+                            :to="item.to"
                             class="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all duration-200 group relative"
                             :class="[
                                 $route.path === item.to
@@ -18,15 +20,16 @@
                             <UIcon :name="item.icon || 'i-lucide-file'" class="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
                             <span class="text-sm font-medium">{{ item.label }}</span>
 
-                            <div v-if="$route.path === item.to"
-                                class="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary-500 rounded-full"></div>
+                            <div
+                                v-if="$route.path === item.to"
+                                class="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary-500 rounded-full"
+                            />
                         </NuxtLink>
 
-                        <ModernHoverPopover
+                        <UPopover
                             v-else
-                            :title="t('task_page_unavailable_title')"
-                            :description="t('task_page_unavailable_description')"
-                            icon="i-lucide-lock"
+                            mode="hover"
+                            arrow
                         >
                             <button
                                 type="button"
@@ -36,11 +39,20 @@
                                 <UIcon :name="item.icon || 'i-lucide-lock'" class="h-5 w-5" />
                                 <span class="text-sm font-medium">{{ item.label }}</span>
                             </button>
-                        </ModernHoverPopover>
+                            <template #content>
+                                <div class="app-popover-content">
+                                    <UIcon name="i-lucide-lock" class="app-popover-icon" />
+                                    <div class="app-popover-text">
+                                        <strong class="app-popover-title">{{ t('task_page_unavailable_title') }}</strong>
+                                        <span class="app-popover-description">{{ t('task_page_unavailable_description') }}</span>
+                                    </div>
+                                </div>
+                            </template>
+                        </UPopover>
                     </template>
                 </nav>
 
-                <div class="ml-auto flex items-center">
+                <div class="right-actions ml-auto flex items-center">
                     <NuxtLink
                         v-if="isPageAvailable(DATABASE_PAGE_ROUTE)"
                         :to="databaseTo"
@@ -55,11 +67,10 @@
                         <span>{{ t('database') }}</span>
                     </NuxtLink>
 
-                    <ModernHoverPopover
+                    <UPopover
                         v-else
-                        :title="t('task_page_unavailable_title')"
-                        :description="t('task_page_unavailable_description')"
-                        icon="i-heroicons-table-cells"
+                        mode="hover"
+                        arrow
                     >
                         <button
                             type="button"
@@ -69,7 +80,25 @@
                             <UIcon name="i-heroicons-table-cells" class="h-5 w-5" />
                             <span>{{ t('database') }}</span>
                         </button>
-                    </ModernHoverPopover>
+                        <template #content>
+                            <div class="app-popover-content">
+                                <UIcon name="i-heroicons-table-cells" class="app-popover-icon" />
+                                <div class="app-popover-text">
+                                    <strong class="app-popover-title">{{ t('task_page_unavailable_title') }}</strong>
+                                    <span class="app-popover-description">{{ t('task_page_unavailable_description') }}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </UPopover>
+
+                    <button
+                    color="primary"
+                        type="button"
+                        class="mobile-tasks-nav-button"
+                        @click="emit('open-tasks')"
+                    >
+                        {{ t('tasks') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -83,13 +112,14 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { DATABASE_PAGE_ROUTE, systemAllowsPageForTaskContext, systemVisiblePages } from '~/utils/taskPageVisibility'
 
 /* 2. Stores */
-const highlightStore = useHighlightStore()
 const systemsStore = useSystemsStore()
 const globalSettingsStore = useGlobalSettingsStore()
+const emit = defineEmits<{
+    'open-tasks': []
+}>()
 
 /* 3. Context hooks */
 const { t, locale } = useI18n()
-const route = useRoute()
 const databaseTo = computed(() => `/systems/${systemsStore.selectedSystemId}${DATABASE_PAGE_ROUTE}`)
 
 /* 8. Local state (ref, reactive) */
@@ -150,10 +180,53 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.right-actions {
+    gap: 0.5rem;
+}
+
+.mobile-tasks-nav-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(209 213 219 / 0.7);
+    border-radius: 0.5rem;
+    background: rgb(243 244 246 / 0.5);
+    padding: 0.5rem 0.75rem;
+    color: #4b5563;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.mobile-tasks-nav-button:hover {
+    background: rgb(255 255 255 / 0.7);
+    color: #111827;
+}
+
 /* Hide button labels on mobile screens */
 @media (max-width: 639px) {
     .mobile-hidden {
         display: none;
+    }
+}
+
+@media (max-width: 1023px) {
+    .mobile-tasks-nav-button {
+        display: inline-flex;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .mobile-tasks-nav-button {
+        border-color: rgb(55 65 81 / 0.6);
+        background: rgb(31 41 55 / 0.5);
+        color: #9ca3af;
+    }
+
+    .mobile-tasks-nav-button:hover {
+        background: rgb(55 65 81 / 0.6);
+        color: #ffffff;
     }
 }
 </style>

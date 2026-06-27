@@ -136,17 +136,16 @@
       </div>
 
       <!-- Finish section -->
-      <ModernHoverPopover
+      <UPopover
         :disabled="globalSettings.teacherMode || !isFinishLocked || !!props.task.finish?.isComplete || !!isReadonly"
-        :title="t('task_activity_not_completed_title')"
-        :description="t('task_activity_not_completed_description')"
-        icon="i-lucide-lock"
-        full-width
+        mode="hover"
+        arrow
       >
-        <div
-          class="rounded-xl border border-gray-200 p-4 dark:border-gray-800 space-y-3 transition-opacity w-full"
-          :class="isFinishLocked ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''"
-        >
+        <span class="app-popover-trigger-full">
+          <div
+            class="rounded-xl border border-gray-200 p-4 dark:border-gray-800 space-y-3 transition-opacity w-full"
+            :class="isFinishLocked ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''"
+          >
         <div class="flex items-center justify-between gap-2">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{{ t('task_finish') }}</p>
@@ -245,8 +244,18 @@
             {{ t('incorrect_answer') }}
           </UBadge>
         </div>
-      </div>
-      </ModernHoverPopover>
+          </div>
+        </span>
+        <template #content>
+          <div class="app-popover-content">
+            <UIcon name="i-lucide-lock" class="app-popover-icon" />
+            <div class="app-popover-text">
+              <strong class="app-popover-title">{{ t('task_activity_not_completed_title') }}</strong>
+              <span class="app-popover-description">{{ t('task_activity_not_completed_description') }}</span>
+            </div>
+          </div>
+        </template>
+      </UPopover>
 
       <!-- Feedback -->
       <div v-if="props.task.completed && props.task.feedback" class="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">

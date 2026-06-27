@@ -15,11 +15,10 @@
         </UBadge>
       </div>
       <div class="header-actions flex items-center justify-end gap-2">
-        <ModernHoverPopover
+        <UPopover
           v-if="infoDescription"
-          :title="infoTitle || label || language"
-          :description="infoDescription"
-          icon="i-lucide-info"
+          mode="hover"
+          arrow
         >
           <UButton
             icon="i-lucide-info"
@@ -28,7 +27,16 @@
             size="xs"
             :aria-label="t('show_info')"
           />
-        </ModernHoverPopover>
+          <template #content>
+            <div class="app-popover-content">
+              <UIcon name="i-lucide-info" class="app-popover-icon" />
+              <div class="app-popover-text">
+                <strong class="app-popover-title">{{ infoTitle || label || language }}</strong>
+                <span class="app-popover-description">{{ infoDescription }}</span>
+              </div>
+            </div>
+          </template>
+        </UPopover>
       </div>
     </div>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import SystemToolbar from '~/components/SystemToolbar.vue'
 
 const route = useRoute()
@@ -7,164 +6,134 @@ const { t } = useI18n()
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
 
-const isSystemRoute = computed(() => /^\/systems\/[^/]+\//.test(route.path))
-const isFullscreenSystemPage = computed(() => route.meta.fullscreenSystemPage === true)
-const showSystemChrome = computed(() => isSystemRoute.value && !isFullscreenSystemPage.value)
+const atSystemPage = computed(() => {
+  const [, systemsPath, systemId] = route.path.split('/')
+
+  return systemsPath === 'systems' && Boolean(systemId)
+})
 const scoreValue = computed(() => systemsStore.selectedSystem?.score.score ?? 0)
 const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount ?? 0)
 
-// Resizable right panel
-const RIGHT_PANEL_MIN = 200
-const RIGHT_PANEL_MAX = 700
-const rightPanelWidth = ref<number | null>(null)
-const rightPanelRef = ref<HTMLElement | null>(null)
-const isDragging = ref(false)
-
-// Mobile slideover
 const mobileTasksOpen = ref(false)
-
-function onDividerMousedown(e: MouseEvent) {
-  isDragging.value = true
-  const startX = e.clientX
-  const startWidth = rightPanelRef.value?.getBoundingClientRect().width ?? rightPanelWidth.value ?? window.innerWidth / 3
-
-  function onMousemove(e: MouseEvent) {
-    const delta = startX - e.clientX
-    rightPanelWidth.value = Math.min(RIGHT_PANEL_MAX, Math.max(RIGHT_PANEL_MIN, startWidth + delta))
-  }
-
-  function onMouseup() {
-    isDragging.value = false
-    window.removeEventListener('mousemove', onMousemove)
-    window.removeEventListener('mouseup', onMouseup)
-  }
-
-  window.addEventListener('mousemove', onMousemove)
-  window.addEventListener('mouseup', onMouseup)
-}
-
 </script>
 
 <template>
-  <div class="default-layout flex flex-col overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-    <!-- System route: 2-column layout (desktop) / single column (mobile) -->
-    <div v-if="showSystemChrome" class="default-main flex flex-col lg:flex-row overflow-hidden" :class="{ 'select-none': isDragging }">
-
-      <!-- Main column: nav bar + page content -->
-      <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <SystemNavbar class="flex-shrink-0" @open-tasks="mobileTasksOpen = true" />
-        <div class="flex-1 overflow-hidden">
+  <div class="default-layout">
+    <div v-if="atSystemPage" class="default-main system-layout">
+      <div class="system-column">
+        <SystemNavbar class="system-navbar" @open-tasks="mobileTasksOpen = true" />
+        <div class="content-scroll-area">
           <CustomScrollbar>
             <slot />
           </CustomScrollbar>
         </div>
       </div>
 
-      <UButton
-        v-if="!mobileTasksOpen"
-        icon="i-lucide-grid-2x2"
-        color="primary"
-        size="xl"
-        class="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg shadow-primary-500/30 lg:hidden"
-        :aria-label="t('tasks')"
-        @click="mobileTasksOpen = true"
-      />
-
-      <!-- Drag divider (desktop only) -->
-      <div
-        class="divider hidden lg:block"
-        @mousedown.prevent="onDividerMousedown"
-      />
-
-      <!-- Right column: toolbar + task list (desktop only) -->
-      <div
-        ref="rightPanelRef"
-        class="task-sidebar-shell hidden lg:flex flex-shrink-0 flex-col overflow-hidden"
-        :style="{ width: rightPanelWidth === null ? '35%' : rightPanelWidth + 'px' }"
-      >
-        <!-- Toolbar -->
-        <div class="flex-shrink-0 overflow-x-auto border-b border-gray-200 px-3 py-2 dark:border-gray-800">
+      <aside class="task-column">
+        <div class="toolbar-row">
           <SystemToolbar />
         </div>
 
-        <div class="flex-shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <h2 class="text-base font-semibold text-gray-900 dark:text-white">{{ t('tasks') }}</h2>
+        <div class="tasks-header">
+          <div class="tasks-title-group">
+            <h2 class="tasks-title">{{ t('tasks') }}</h2>
           </div>
-          <ModernHoverPopover
+          <UPopover
             v-if="!globalSettings.teacherMode"
-            :title="t('score')"
-            :description="t('score_mistakes_count', { count: mistakesCount })"
-            icon="i-lucide-alert-triangle"
+            mode="hover"
+            arrow
           >
-            <UBadge color="red" variant="subtle" size="lg" class="font-bold px-3">
-              {{ t('score') }}: {{ scoreValue }}
-            </UBadge>
-          </ModernHoverPopover>
+            <span class="score-trigger">
+              <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-alert-triangle" class="score-badge">
+                {{ t('score') }}: {{ scoreValue }}
+              </UBadge>
+            </span>
+
+            <template #content>
+              <div class="score-popover">
+                <UIcon name="i-lucide-alert-triangle" class="score-popover-icon" />
+                <div class="score-popover-text">
+                  <strong class="score-popover-title">{{ t('score') }}</strong>
+                  <span class="score-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
         </div>
-        <div class="flex-1 overflow-hidden">
+        <div class="tasks-scroll-area">
           <CustomScrollbar>
             <TaskList />
           </CustomScrollbar>
         </div>
-      </div>
+      </aside>
 
-      <!-- Mobile/tablet slideover (bottom) -->
-      <USlideover
+      <UModal
         v-model:open="mobileTasksOpen"
-        side="bottom"
-        class="lg:hidden"
-        :ui="{ content: 'w-screen max-w-none' }"
+        :title="t('tasks')"
+        class="mobile-task-modal"
+        :ui="{ content: 'mobile-task-modal-content', body: 'mobile-task-modal-body' }"
       >
-        <template #content>
-          <div class="task-sidebar-shell flex h-[85dvh] w-screen max-w-none flex-col overflow-hidden">
-            <!-- Toolbar -->
-            <div class="flex flex-shrink-0 flex-nowrap items-center gap-2 overflow-x-auto border-b border-gray-200 px-3 py-2 dark:border-gray-800">
-              <SystemToolbar class="min-w-0 flex-1" />
-              <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm" class="shrink-0" @click="mobileTasksOpen = false" />
+        <template #body>
+          <div class="mobile-task-panel">
+            <div class="mobile-toolbar-row">
+              <SystemToolbar class="mobile-toolbar" />
             </div>
 
-            <div class="flex-shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <h2 class="text-base font-semibold text-gray-900 dark:text-white">{{ t('tasks') }}</h2>
+            <div class="tasks-header">
+              <div class="tasks-title-group">
+                <h2 class="tasks-title">{{ t('tasks') }}</h2>
               </div>
-              <ModernHoverPopover
+              <UPopover
                 v-if="!globalSettings.teacherMode"
-                :title="t('score')"
-                :description="t('score_mistakes_count', { count: mistakesCount })"
-                icon="i-lucide-alert-triangle"
+                mode="hover"
+                arrow
               >
-                <UBadge color="red" variant="subtle" size="lg" class="font-bold px-3">
-                  {{ t('score') }}: {{ scoreValue }}
-                </UBadge>
-              </ModernHoverPopover>
+                <span class="score-trigger">
+                  <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-alert-triangle" class="score-badge">
+                    {{ t('score') }}: {{ scoreValue }}
+                  </UBadge>
+                </span>
+
+                <template #content>
+                  <div class="score-popover">
+                    <UIcon name="i-lucide-alert-triangle" class="score-popover-icon" />
+                    <div class="score-popover-text">
+                      <strong class="score-popover-title">{{ t('score') }}</strong>
+                      <span class="score-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+                    </div>
+                  </div>
+                </template>
+              </UPopover>
             </div>
-            <div class="flex-1 overflow-hidden">
+            <div class="tasks-scroll-area">
               <CustomScrollbar>
                 <TaskList />
               </CustomScrollbar>
             </div>
           </div>
         </template>
-      </USlideover>
+      </UModal>
     </div>
 
-    <!-- Non-system route -->
     <main v-else class="default-main">
       <CustomScrollbar>
         <slot />
       </CustomScrollbar>
     </main>
 
-    <StudentProgressModals v-if="showSystemChrome" />
+    <StudentProgressModals v-if="atSystemPage" />
   </div>
 </template>
 
 <style scoped>
 .default-layout {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  color: #111827;
+  background: #ffffff;
 }
 
 .default-main {
@@ -174,36 +143,206 @@ function onDividerMousedown(e: MouseEvent) {
   max-width: 100%;
 }
 
-.divider {
-  flex-shrink: 0;
-  width: 5px;
-  cursor: col-resize;
-  background: transparent;
-  border-left: 2px solid #e5e7eb;
-  transition: border-color 0.15s;
+.system-layout {
+  display: flex;
+  flex-direction: column;
 }
 
-.divider:hover,
-.divider:active {
-  border-color: #6366f1;
-  background: #6366f110;
+.system-column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
-.task-sidebar-shell {
-  background:
-    radial-gradient(circle at 88% 92%, rgba(186, 230, 253, 0.72), transparent 34%),
-    linear-gradient(135deg, #fffaf0 0%, #f2fbf6 32%, #eef7ff 64%, #f8fbff 100%);
+.system-navbar {
+  flex: 0 0 auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  .divider {
-    border-color: #374151;
+.content-scroll-area,
+.tasks-scroll-area {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.task-column {
+  display: none;
+}
+
+.toolbar-row,
+.mobile-toolbar-row,
+.tasks-header {
+  flex: 0 0 auto;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.toolbar-row {
+  overflow-x: auto;
+  padding: 0.5rem 0.75rem;
+}
+
+.mobile-toolbar-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.75rem;
+}
+
+.mobile-toolbar {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.tasks-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.tasks-title {
+  margin: 0;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+  font-weight: 700;
+}
+
+.score-trigger {
+  display: inline-flex;
+}
+
+.score-popover {
+  display: flex;
+  min-width: 15rem;
+  max-width: 18rem;
+  gap: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  padding: 0.75rem;
+  box-shadow: 0 10px 25px rgb(15 23 42 / 0.12);
+}
+
+.score-popover-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  color: #dc2626;
+}
+
+.score-popover-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.score-popover-title {
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.score-popover-description {
+  color: #4b5563;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.mobile-task-modal {
+  display: block;
+}
+
+:deep(.mobile-task-modal-content) {
+  width: min(100vw - 2rem, 36rem);
+  max-width: none;
+}
+
+:deep(.mobile-task-modal-body) {
+  padding: 0;
+}
+
+.mobile-task-panel {
+  display: flex;
+  width: 100%;
+  max-width: none;
+  height: min(75dvh, 42rem);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .system-layout {
+    flex-direction: row;
+  }
+
+  .system-column {
+    flex: 3 1 0;
+  }
+
+  .task-column {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-width: 18rem;
+    overflow: hidden;
+    border-left: 1px solid #e5e7eb;
+  }
+
+  .mobile-task-modal {
+    display: none;
   }
 }
 
-@media (max-width: 768px) {
-  .right-panel {
-    width: 240px;
+@media (prefers-color-scheme: dark) {
+  .default-layout {
+    color: #f3f4f6;
+    background: #030712;
+  }
+
+  .toolbar-row,
+  .mobile-toolbar-row,
+  .tasks-header,
+  .task-column {
+    border-color: #1f2937;
+  }
+
+  .tasks-title {
+    color: #ffffff;
+  }
+
+  .score-popover {
+    border-color: #374151;
+    background: #111827;
+  }
+
+  .score-popover-title {
+    color: #ffffff;
+  }
+
+  .score-popover-description {
+    color: #d1d5db;
   }
 }
 </style>

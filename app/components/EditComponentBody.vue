@@ -45,13 +45,18 @@
     <div v-if="clickActionsAvailable" class="flex items-center gap-2">
       <USeparator class="flex-1" />
       <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ t('click_actions') }}</span>
-      <ModernHoverPopover
-        :title="t('click_actions_info_title')"
-        :description="t('click_actions_info_description')"
-        icon="i-lucide-info"
-      >
+      <UPopover mode="hover" arrow>
         <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
-      </ModernHoverPopover>
+        <template #content>
+          <div class="app-popover-content">
+            <UIcon name="i-lucide-info" class="app-popover-icon" />
+            <div class="app-popover-text">
+              <strong class="app-popover-title">{{ t('click_actions_info_title') }}</strong>
+              <span class="app-popover-description">{{ t('click_actions_info_description') }}</span>
+            </div>
+          </div>
+        </template>
+      </UPopover>
       <USeparator class="flex-1" />
     </div>
 
@@ -112,13 +117,18 @@
       <div v-if="generalVariableNames.length > 0" class="text-left">
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">{{ t('available_general_variables') }}</p>
-          <ModernHoverPopover
-            :title="t('available_general_variables')"
-            :description="t('general_variables_info_description')"
-            icon="i-lucide-info"
-          >
+          <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
-          </ModernHoverPopover>
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_general_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('general_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
         </div>
         <div class="flex flex-wrap gap-2 text-left">
           <div v-for="name in generalVariableNames" :key="name" class="general-var-card text-left">
@@ -131,13 +141,18 @@
       <div v-if="sqlVariableNames.length > 0">
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">{{ t('available_sql_variables') }}</p>
-          <ModernHoverPopover
-            :title="t('available_sql_variables')"
-            :description="t('sql_variables_info_description')"
-            icon="i-lucide-info"
-          >
+          <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
-          </ModernHoverPopover>
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_sql_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('sql_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
         </div>
         <div class="flex flex-wrap gap-2">
           <div v-for="name in sqlVariableNames" :key="name" class="sql-var-card">
@@ -150,13 +165,18 @@
       <div v-if="jsVariableNames.length > 0">
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">{{ t('available_js_variables') }}</p>
-          <ModernHoverPopover
-            :title="t('available_js_variables')"
-            :description="t('js_variables_info_description')"
-            icon="i-lucide-info"
-          >
+          <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
-          </ModernHoverPopover>
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_js_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('js_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
         </div>
         <div class="flex flex-wrap gap-2">
           <div v-for="name in jsVariableNames" :key="name" class="js-var-card">
