@@ -30,7 +30,7 @@
                     <span v-else class="table-schema-node__prefix">-</span>
                     <span class="font-medium">{{ column.name }}</span>
                 </div>
-                <span class="shrink-0 text-gray-500 dark:text-gray-400">{{ column.type || 'TYPE' }}</span>
+                <span class="shrink-0 text-gray-500">{{ column.type || 'TYPE' }}</span>
             </div>
         </div>
     </div>
@@ -142,20 +142,4 @@ function columnHandleId(type: 'source' | 'target', columnName: string): string {
     right: -4px;
 }
 
-:global(.dark) .table-schema-node {
-    border-color: rgb(209 213 219);
-    background: rgb(17 24 39);
-    color: rgb(229 231 235);
-    box-shadow: none;
-}
-
-:global(.dark) .table-schema-node__header {
-    border-bottom-color: rgb(209 213 219);
-    background: rgb(17 24 39);
-    color: white;
-}
-
-:global(.dark) .table-schema-node__column {
-    border-bottom-color: rgb(31 41 55);
-}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="code-block-wrapper" :class="{ dark: isDark }">
+  <div class="code-block-wrapper">
     <div v-if="label || language" class="code-header">
       <div class="flex items-center gap-2">
         <span class="language-badge" :class="getLanguageClass">{{
@@ -111,9 +111,7 @@ const showCorrectBadge = computed(() => {
   return true;
 });
 
-const colorMode = useColorMode();
-const isDark = computed(() => colorMode.value === "dark");
-const monacoTheme = computed(() => (isDark.value ? "vs-dark" : "vs-light"));
+const monacoTheme = "vs-light";
 const comparisonCode = computed(() => props.originalCode ?? initialCode.value);
 const isEdited = computed(() => (props.code || "") !== (comparisonCode.value || ""));
 
@@ -246,12 +244,6 @@ function onCodeChange(value: string | undefined) {
   transition: all 0.3s ease;
 }
 
-.dark .code-block-wrapper {
-  background: #0f172b;
-  border: 1px solid #1e293b;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-}
-
 .code-header {
   display: flex;
   justify-content: space-between;
@@ -260,11 +252,6 @@ function onCodeChange(value: string | undefined) {
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
   border-radius: 12px 12px 0 0;
-}
-
-.dark .code-header {
-  background: #1e293b;
-  border-bottom: 1px solid #334155;
 }
 
 .language-badge {

@@ -23,9 +23,9 @@ const mobileTasksOpen = ref(false)
       <div class="system-column">
         <SystemNavbar class="system-navbar" @open-tasks="mobileTasksOpen = true" />
         <div class="content-scroll-area">
-          <CustomScrollbar>
+          <UScrollArea class="scroll-area">
             <slot />
-          </CustomScrollbar>
+          </UScrollArea>
         </div>
       </div>
 
@@ -61,9 +61,9 @@ const mobileTasksOpen = ref(false)
           </UPopover>
         </div>
         <div class="tasks-scroll-area">
-          <CustomScrollbar>
+          <UScrollArea class="scroll-area">
             <TaskList />
-          </CustomScrollbar>
+          </UScrollArea>
         </div>
       </aside>
 
@@ -106,9 +106,9 @@ const mobileTasksOpen = ref(false)
               </UPopover>
             </div>
             <div class="tasks-scroll-area">
-              <CustomScrollbar>
+              <UScrollArea class="scroll-area">
                 <TaskList />
-              </CustomScrollbar>
+              </UScrollArea>
             </div>
           </div>
         </template>
@@ -116,9 +116,9 @@ const mobileTasksOpen = ref(false)
     </div>
 
     <main v-else class="default-main">
-      <CustomScrollbar>
+      <UScrollArea class="scroll-area">
         <slot />
-      </CustomScrollbar>
+      </UScrollArea>
     </main>
 
     <StudentProgressModals v-if="atSystemPage" />
@@ -164,6 +164,11 @@ const mobileTasksOpen = ref(false)
 .tasks-scroll-area {
   flex: 1 1 auto;
   overflow: hidden;
+}
+
+.scroll-area {
+  width: 100%;
+  height: 100%;
 }
 
 .task-column {
@@ -315,34 +320,4 @@ const mobileTasksOpen = ref(false)
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .default-layout {
-    color: #f3f4f6;
-    background: #030712;
-  }
-
-  .toolbar-row,
-  .mobile-toolbar-row,
-  .tasks-header,
-  .task-column {
-    border-color: #1f2937;
-  }
-
-  .tasks-title {
-    color: #ffffff;
-  }
-
-  .score-popover {
-    border-color: #374151;
-    background: #111827;
-  }
-
-  .score-popover-title {
-    color: #ffffff;
-  }
-
-  .score-popover-description {
-    color: #d1d5db;
-  }
-}
 </style>

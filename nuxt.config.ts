@@ -77,10 +77,6 @@ export default defineNuxtConfig({
       sqlClickAvailable: process.env.NUXT_PUBLIC_SQL_CLICK_AVAILABLE ?? 'true',
     },
   },
-  colorMode: {
-    preference: 'light',
-    fallback: 'light',
-  },
   vite: {
     plugins: [generateSystemsManifest()],
   },

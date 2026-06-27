@@ -48,19 +48,3 @@
   display: block;
   width: 100%;
 }
-
-@media (prefers-color-scheme: dark) {
-  .app-popover-content {
-    border-color: rgb(55 65 81 / 0.92);
-    background: rgb(17 24 39 / 0.96);
-    color: #f9fafb;
-  }
-
-  .app-popover-title {
-    color: #ffffff;
-  }
-
-  .app-popover-description {
-    color: #d1d5db;
-  }
-}
