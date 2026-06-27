@@ -2,12 +2,12 @@
   <div class="max-w-5xl mx-auto py-12 px-4 sm:px-6">
     <div class="grid grid-cols-1 gap-8">
       <!-- Header Section -->
-      <UCard class="border-t-4 border-teacher-500 shadow-lg dark:bg-gray-900/50">
+      <UCard class="border-t-4 border-teacher-500 shadow-lg">
         <div class="flex flex-col md:flex-row items-start gap-6">
           <div class="flex-1">
             <span class="flex items-center gap-3 mb-4">
               <h1
-                class="systems-page-title text-3xl font-bold text-gray-900 dark:text-white mb-2"
+                class="systems-page-title text-3xl font-bold text-gray-900 mb-2"
               >
                 {{ t("information_systems") }}
               </h1>
@@ -19,19 +19,19 @@
 
             <div class="flex flex-col gap-6">
               <p
-                class="systems-page-description text-lg text-gray-600 dark:text-gray-300 max-w-prose leading-relaxed flex-1"
+                class="systems-page-description text-lg text-gray-600 max-w-prose leading-relaxed flex-1"
               >
                 {{ t("manage_your_systems_description") }}
               </p>
 
               <!--
               <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 px-4 py-3 dark:border-gray-800 lg:min-w-[420px] lg:max-w-[620px] lg:flex-1">
+                <div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 px-4 py-3 lg:min-w-[420px] lg:max-w-[620px] lg:flex-1">
                   <div class="flex flex-col">
-                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                    <span class="text-sm font-medium text-gray-900">
                       {{ t("load_systems_from_public_folder") }}
                     </span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                    <span class="text-sm text-gray-500">
                       {{ t("load_systems_from_public_folder_description") }}
                     </span>
                   </div>
@@ -60,7 +60,7 @@
         <UCard
           v-for="(system, index) in systemsStore.systems"
           :key="system.id"
-          class="shadow-lg bg-gradient-to-br from-teacher-50/50 to-white dark:from-teacher-950/20 dark:to-gray-900 border-none ring-1 ring-teacher-100 dark:ring-teacher-900/30 hover:ring-teacher-300 dark:hover:ring-teacher-700 transition-all duration-300"
+          class="shadow-lg bg-gradient-to-br from-teacher-50/50 to-white border-none ring-1 ring-teacher-100 hover:ring-teacher-300 transition-all duration-300"
         >
           <div class="space-y-4">
             <!-- System Header with Icon, Title, and Delete Button -->
@@ -68,7 +68,7 @@
               <div class="flex items-center space-x-3">
                 <div>
                   <h3
-                    class="system-name text-xl font-semibold text-gray-900 dark:text-white"
+                    class="system-name text-xl font-semibold text-gray-900"
                   >
                     {{ system.name }}
                   </h3>
@@ -90,7 +90,7 @@
             </div>
 
             <!-- Description -->
-            <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p class="text-gray-600 leading-relaxed">
               {{ system.description }}
             </p>
 

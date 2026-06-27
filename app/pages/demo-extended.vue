@@ -1,13 +1,13 @@
 <template></template>
 
+
+<script setup lang="ts">
 /* 1. Imports */
 import { ref, computed, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '~/stores/user'
-import MyComponent from '~/components/MyComponent.vue'
 
 /* 2. Stores */
-const userStore = useUserStore()
+//const userStore = useUserStore()
 
 /* 3. Context hooks */
 const route = useRoute()
@@ -53,9 +53,9 @@ onMounted(() => {
 
 /* 13. defineExpose */
 defineExpose({
-  handleSubmit,
-  formRef
 })
+
+</script>
 
 <style scoped>
 </style>

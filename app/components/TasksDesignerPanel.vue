@@ -4,7 +4,7 @@
       <UFormField>
         <template #label>
           <span>{{ t('task_level_count') }}</span>
-          <span class="ml-1 font-normal text-gray-500 dark:text-gray-400">
+          <span class="ml-1 font-normal text-gray-500">
             ({{ t('task_level_count_info') }})
           </span>
         </template>
@@ -62,7 +62,7 @@
 
           <template #content>
             <div
-              class="flex min-w-[230px] flex-col gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-900"
+              class="flex min-w-[230px] flex-col gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-xl"
               @mouseenter="optionsOpen = true"
               @mouseleave="optionsOpen = false"
             >
@@ -92,7 +92,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ t('tasks') }}</span>
+      <span class="text-sm font-semibold text-gray-900">{{ t('tasks') }}</span>
       <div class="flex flex-wrap gap-2">
         <span
           v-for="task in sortedTasks"
@@ -101,8 +101,8 @@
           tabindex="0"
           class="inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-medium ring-1 ring-inset transition"
           :class="selectedTask?.id === task.id
-            ? 'bg-gray-950 text-white ring-gray-950 dark:bg-white dark:text-gray-950 dark:ring-white'
-            : 'bg-gray-50 text-gray-900 ring-gray-200 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:ring-gray-700 dark:hover:bg-gray-800'"
+            ? 'bg-gray-950 text-white ring-gray-950'
+            : 'bg-gray-50 text-gray-900 ring-gray-200 hover:bg-gray-100'"
           @click="toggleSelectedTask(task)"
           @keydown.enter.prevent="toggleSelectedTask(task)"
           @keydown.space.prevent="toggleSelectedTask(task)"
@@ -111,7 +111,7 @@
             class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
             :class="selectedTask?.id === task.id
               ? 'bg-white/20 text-white'
-              : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-100'"
+              : 'bg-gray-200 text-gray-700'"
           >
             {{ normalizeTaskLevel(task.round) }}
           </span>
@@ -146,7 +146,7 @@
     <UModal v-model:open="showImportModal" :title="t('task_import_title')" :ui="{ content: 'w-[560px]' }">
       <template #body>
         <div class="flex flex-col gap-4">
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="text-sm text-gray-500">
             {{ t('task_import_description') }}
           </p>
           <UFileUpload
@@ -177,7 +177,7 @@
     <UModal v-model:open="showImportAllModal" :title="t('task_import_all_title')" :ui="{ content: 'w-[560px]' }">
       <template #body>
         <div class="flex flex-col gap-4">
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="text-sm text-gray-500">
             {{ t('task_import_all_description') }}
           </p>
           <UFileUpload

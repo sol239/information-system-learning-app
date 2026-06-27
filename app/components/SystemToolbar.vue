@@ -26,7 +26,7 @@
       <!-- <UButton icon="i-heroicons-beaker" color="neutral" variant="ghost" size="md" /> -->
       <template #content>
         <div
-          class="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl min-w-[240px] space-y-2"
+          class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2"
         >
           <UButton
             block
@@ -114,17 +114,17 @@
     >
       <template #body>
         <div class="flex flex-col gap-4">
-          <p class="text-sm text-gray-600 dark:text-gray-300">
+          <p class="text-sm text-gray-600">
             {{ t("refresh_system_modal_description") }}
           </p>
 
           <div class="flex flex-col gap-3">
-            <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+            <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
-                <span class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-sm font-medium text-gray-900">
                   {{ t("refresh_database") }}
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-xs text-gray-500">
                   {{ t("refresh_database_modal_option_description") }}
                 </span>
               </div>
@@ -139,12 +139,12 @@
               </UButton>
             </div>
 
-            <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+            <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
-                <span class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-sm font-medium text-gray-900">
                   {{ t("refresh_components") }}
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-xs text-gray-500">
                   {{ t("refresh_components_modal_option_description") }}
                 </span>
               </div>
@@ -159,12 +159,12 @@
               </UButton>
             </div>
 
-            <div class="rounded-lg border border-green-200 bg-green-50/50 p-4 dark:border-green-900/60 dark:bg-green-950/20">
+            <div class="rounded-lg border border-green-200 bg-green-50/50 p-4">
               <div class="mb-3 flex flex-col gap-1">
-                <span class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-sm font-medium text-gray-900">
                   {{ t("refresh_all") }}
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-xs text-gray-500">
                   {{ t("refresh_all_modal_option_description") }}
                 </span>
               </div>
@@ -196,7 +196,7 @@
       :ui="{ content: 'w-[420px]' }"
     >
       <template #body>
-        <p class="text-sm text-gray-600 dark:text-gray-300">
+        <p class="text-sm text-gray-600">
           {{ t("change_version_modal_description") }}
         </p>
       </template>

@@ -27,14 +27,14 @@
 
     <!-- Task list view -->
     <div v-else-if="showStudentIntro" class="flex flex-col p-4 gap-4">
-      <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div class="flex flex-col gap-4">
           <div class="flex items-start">
             <div class="min-w-0">
-              <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+              <h3 class="text-base font-semibold text-gray-900">
                 {{ t('student_welcome_modal_title') }}
               </h3>
-              <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
+              <p class="mt-1 text-sm leading-6 text-gray-600">
                 {{ t('student_welcome_sidebar_description', { count: taskCount, points: totalTaskPoints }) }}
               </p>
             </div>
@@ -57,27 +57,27 @@
       <button
         v-if="globalSettings.teacherMode"
         type="button"
-        class="flex w-full items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-3 text-left text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-800"
+        class="flex w-full items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-3 text-left text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100"
         @click="createTaskAndOpenDesigner"
       >
-        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white text-gray-500 shadow-sm dark:bg-gray-900 dark:text-gray-400">
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white text-gray-500 shadow-sm">
           <UIcon name="i-lucide-plus" class="h-4 w-4" />
         </span>
         <span class="min-w-0 font-medium text-sm">{{ t('task_create_task') }}</span>
       </button>
 
       <div v-if="!tasks.length" class="flex flex-col items-center py-8 text-center gap-2">
-        <UIcon name="i-lucide-clipboard-list" class="w-10 h-10 text-gray-300 dark:text-gray-600" />
-        <p class="text-sm text-gray-500 dark:text-gray-400">{{ t('task_list_empty') }}</p>
+        <UIcon name="i-lucide-clipboard-list" class="w-10 h-10 text-gray-300" />
+        <p class="text-sm text-gray-500">{{ t('task_list_empty') }}</p>
       </div>
 
       <template v-for="(task, index) in tasks" :key="task.id">
         <!-- Level Divider -->
         <div v-if="index === 0 || task.round !== tasks[index - 1].round" class="flex items-center py-3 first:pt-1">
-          <span class="pr-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+          <span class="pr-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
             {{ t('task_level') }} {{ task.round }}
           </span>
-          <div class="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
+          <div class="flex-1 border-t border-gray-300"></div>
         </div>
         <UAlert
           v-if="isFirstTaskOfLevel(index, task) && levelHasVisiblePagesConflict(task.round)"
@@ -98,12 +98,12 @@
             <button
               type="button"
               aria-disabled="true"
-              class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60 dark:border-gray-700 dark:bg-gray-800/50"
+              class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60"
               @click.prevent
             >
               <div class="flex items-start justify-between gap-2">
                 <div class="flex min-w-0 flex-col gap-1">
-                  <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
+                  <span class="font-medium text-sm text-gray-900 leading-snug">{{ taskDisplayTitle(task, index) }}</span>
                 </div>
                 <span
                   v-if="showTaskCompletion"
@@ -112,8 +112,8 @@
                   :aria-label="t('task_completed')"
                   class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors"
                   :class="isTaskDone(task)
-                    ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
-                    : 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'"
+                    ? 'border-green-500 bg-green-500'
+                    : 'border-gray-300 bg-white'"
                 >
                   <UIcon v-if="isTaskDone(task)" name="i-lucide-check" class="h-3 w-3 text-white" />
                 </span>
@@ -136,14 +136,14 @@
           role="button"
           tabindex="0"
           class="flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-colors cursor-pointer w-full"
-          :class="globalSettings.teacherMode && globalSettings.selectedTaskId === task.id ? 'border-sky-300 bg-sky-50/80 ring-2 ring-sky-200 shadow-sm shadow-sky-100 dark:border-cyan-700 dark:bg-cyan-950/35 dark:ring-cyan-800/70 dark:shadow-none' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'"
+          :class="globalSettings.teacherMode && globalSettings.selectedTaskId === task.id ? 'border-sky-300 bg-sky-50/80 ring-2 ring-sky-200 shadow-sm shadow-sky-100' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'"
           @click="openTask(task)"
           @keydown.enter="openTask(task)"
           @keydown.space.prevent="openTask(task)"
         >
           <div class="flex items-start justify-between gap-2">
             <div class="flex min-w-0 flex-col gap-1">
-              <span class="font-medium text-sm text-gray-900 dark:text-white leading-snug">{{ taskDisplayTitle(task, index) }}</span>
+              <span class="font-medium text-sm text-gray-900 leading-snug">{{ taskDisplayTitle(task, index) }}</span>
             </div>
             <span
               v-if="showTaskCompletion"
@@ -152,8 +152,8 @@
               :aria-label="t('task_completed')"
               class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors"
               :class="isTaskDone(task)
-                ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
-                : 'border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'"
+                ? 'border-green-500 bg-green-500'
+                : 'border-gray-300 bg-white'"
             >
               <UIcon v-if="isTaskDone(task)" name="i-lucide-check" class="h-3 w-3 text-white" />
             </span>

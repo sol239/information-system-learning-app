@@ -44,7 +44,7 @@
 
     <div v-if="clickActionsAvailable" class="flex items-center gap-2">
       <USeparator class="flex-1" />
-      <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ t('click_actions') }}</span>
+      <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ t('click_actions') }}</span>
       <UPopover mode="hover" arrow>
         <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
         <template #content>
@@ -74,9 +74,9 @@
           :info-title="t('js_click_block_info_title')" :info-description="t('js_click_block_info_description')"
           :size-multiplier="sizeMultiplier" @isEdited="setCodeBlockEdited('jsClick', $event)" />
         <div v-else
-          class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700">
+          class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <UIcon name="i-lucide-mouse-pointer-2" class="w-5 h-5 text-gray-400" />
-          <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t('no_js_click_action') }}</p>
+          <p class="text-xs text-gray-500 font-medium">{{ t('no_js_click_action') }}</p>
         </div>
       </div>
 
@@ -104,9 +104,9 @@
             @isEdited="setCodeBlockEdited('sqlClick', $event)" />
         </div>
         <div v-else
-          class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700">
+          class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <UIcon name="i-lucide-database-zap" class="w-5 h-5 text-gray-400" />
-          <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t('no_sql_click_action') }}</p>
+          <p class="text-xs text-gray-500 font-medium">{{ t('no_sql_click_action') }}</p>
         </div>
       </div>
     </div>
@@ -116,7 +116,7 @@
     <div class="flex flex-wrap items-start gap-4">
       <div v-if="generalVariableNames.length > 0" class="text-left">
         <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">{{ t('available_general_variables') }}</p>
+          <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600">{{ t('available_general_variables') }}</p>
           <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
             <template #content>
@@ -140,7 +140,7 @@
 
       <div v-if="sqlVariableNames.length > 0">
         <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">{{ t('available_sql_variables') }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-sky-600">{{ t('available_sql_variables') }}</p>
           <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
             <template #content>
@@ -164,7 +164,7 @@
 
       <div v-if="jsVariableNames.length > 0">
         <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">{{ t('available_js_variables') }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">{{ t('available_js_variables') }}</p>
           <UPopover mode="hover" arrow>
             <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
             <template #content>

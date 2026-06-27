@@ -35,7 +35,7 @@
                             role="button"
                             tabindex="0"
                             class="p-3 border rounded-lg cursor-pointer transition-colors"
-                            :class="selectedPreloadedSystem?.id === sys.id ? 'border-teacher-500 bg-teacher-50/50' : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'"
+                            :class="selectedPreloadedSystem?.id === sys.id ? 'border-teacher-500 bg-teacher-50/50' : 'border-gray-200 hover:border-gray-300'"
                             @click="selectPreloadedSystem(sys)"
                         >
                             <p class="font-semibold text-sm">{{ sys.name }}</p>

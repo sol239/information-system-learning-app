@@ -1,5 +1,5 @@
 <template>
-  <UCard v-if="props.task" class="shadow-lg dark:bg-gray-900/50">
+  <UCard v-if="props.task" class="shadow-lg">
     <div class="space-y-6">
       <!-- Title & points -->
       <div class="flex flex-col gap-2">
@@ -11,20 +11,20 @@
             -{{ props.task.failPenalty }} {{ t('task_penalty') }}
           </UBadge>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white w-full">
+        <h2 class="text-2xl font-bold text-gray-900 w-full">
           {{ props.title ?? props.task.title }}
         </h2>
-        <p v-if="props.task.description" class="text-base text-gray-600 dark:text-gray-300 w-full">
+        <p v-if="props.task.description" class="text-base text-gray-600 w-full">
           {{ props.task.description }}
         </p>
       </div>
 
       <!-- Activity section -->
-      <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800 space-y-3">
+      <div class="rounded-xl border border-gray-200 p-4 space-y-3">
         <div class="flex items-center justify-between gap-2">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{{ t('task_activity') }}</p>
-            <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">{{ t('task_activity') }}</p>
+            <h3 class="text-base font-semibold text-gray-900">
               {{ activityLabel }}
             </h3>
           </div>
@@ -38,8 +38,8 @@
             <div
               class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
               :class="props.task.activity?.isCompleted
-                ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
-                : 'border-gray-400 dark:border-gray-500'"
+                ? 'border-green-500 bg-green-500'
+                : 'border-gray-400'"
             >
               <UIcon v-if="props.task.activity?.isCompleted" name="i-lucide-check" class="text-white w-3 h-3" />
             </div>
@@ -47,7 +47,7 @@
           </UBadge>
         </div>
 
-        <p v-if="activityDescription" class="text-sm text-gray-700 dark:text-gray-300">
+        <p v-if="activityDescription" class="text-sm text-gray-700">
           {{ activityDescription }}
         </p>
 
@@ -62,29 +62,29 @@
                 ? 'cursor-not-allowed opacity-60'
                 : 'cursor-pointer',
               selectedActivityOptionIndices.includes(index)
-                ? 'border-sky-400 bg-sky-50 dark:border-sky-600 dark:bg-sky-900/20'
+                ? 'border-sky-400 bg-sky-50'
                 : isReadonly
-                  ? 'border-gray-200 dark:border-gray-700'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-gray-200'
+                  : 'border-gray-200 hover:border-gray-300'
             ]"
             @click="!isReadonly && !props.task.activity?.isCompleted && toggleActivityOption(index)"
           >
             <div
               class="w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors"
               :class="selectedActivityOptionIndices.includes(index)
-                ? 'border-sky-500 bg-sky-500 dark:border-sky-400 dark:bg-sky-400'
-                : 'border-gray-400 dark:border-gray-500'"
+                ? 'border-sky-500 bg-sky-500'
+                : 'border-gray-400'"
             >
               <UIcon v-if="selectedActivityOptionIndices.includes(index)" name="i-lucide-check" class="text-white w-3 h-3" />
             </div>
-            <span class="text-sm text-gray-800 dark:text-gray-200">{{ option.text }}</span>
+            <span class="text-sm text-gray-800">{{ option.text }}</span>
           </div>
         </div>
 
         <!-- substituteAfterActivity notice -->
-        <div v-if="props.task.activity?.substituteAfterActivity" class="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 dark:border-blue-800 dark:bg-blue-900/20">
-          <UIcon name="i-lucide-info" class="mt-0.5 shrink-0 text-blue-500 dark:text-blue-400" />
-          <p class="text-sm text-blue-700 dark:text-blue-300">
+        <div v-if="props.task.activity?.substituteAfterActivity" class="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+          <UIcon name="i-lucide-info" class="mt-0.5 shrink-0 text-blue-500" />
+          <p class="text-sm text-blue-700">
             {{ t('task_substitute_notice') }}
           </p>
         </div>
@@ -137,19 +137,20 @@
 
       <!-- Finish section -->
       <UPopover
-        :disabled="globalSettings.teacherMode || !isFinishLocked || !!props.task.finish?.isComplete || !!isReadonly"
+        :key="shouldShowFinishLockPopover ? 'finish-locked' : 'finish-unlocked'"
+        :disabled="!shouldShowFinishLockPopover"
         mode="hover"
         arrow
       >
         <span class="app-popover-trigger-full">
           <div
-            class="rounded-xl border border-gray-200 p-4 dark:border-gray-800 space-y-3 transition-opacity w-full"
+            class="rounded-xl border border-gray-200 p-4 space-y-3 transition-opacity w-full"
             :class="isFinishLocked ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''"
           >
         <div class="flex items-center justify-between gap-2">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{{ t('task_finish') }}</p>
-            <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">{{ t('task_finish') }}</p>
+            <h3 class="text-base font-semibold text-gray-900">
               {{ finishLabel }}
             </h3>
           </div>
@@ -162,8 +163,8 @@
             <div
               class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
               :class="props.task.finish?.isComplete
-                ? 'border-green-500 bg-green-500 dark:border-green-400 dark:bg-green-400'
-                : 'border-gray-400 dark:border-gray-500'"
+                ? 'border-green-500 bg-green-500'
+                : 'border-gray-400'"
             >
               <UIcon v-if="props.task.finish?.isComplete" name="i-lucide-check" class="text-white w-3 h-3" />
             </div>
@@ -171,7 +172,7 @@
           </UBadge>
         </div>
 
-        <p v-if="props.task.finish?.description" class="text-sm text-gray-700 dark:text-gray-300">
+        <p v-if="props.task.finish?.description" class="text-sm text-gray-700">
           {{ props.task.finish.description }}
         </p>
 
@@ -186,22 +187,22 @@
                 ? 'cursor-not-allowed opacity-60'
                 : 'cursor-pointer',
               selectedFinishOptionIndices.includes(index)
-                ? 'border-sky-400 bg-sky-50 dark:border-sky-600 dark:bg-sky-900/20'
+                ? 'border-sky-400 bg-sky-50'
                 : isReadonly
-                  ? 'border-gray-200 dark:border-gray-700'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-gray-200'
+                  : 'border-gray-200 hover:border-gray-300'
             ]"
             @click="!isReadonly && !props.task.finish?.isComplete && !isFinishLocked && toggleFinishOption(index)"
           >
             <div
               class="w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors"
               :class="selectedFinishOptionIndices.includes(index)
-                ? 'border-sky-500 bg-sky-500 dark:border-sky-400 dark:bg-sky-400'
-                : 'border-gray-400 dark:border-gray-500'"
+                ? 'border-sky-500 bg-sky-500'
+                : 'border-gray-400'"
             >
               <UIcon v-if="selectedFinishOptionIndices.includes(index)" name="i-lucide-check" class="text-white w-3 h-3" />
             </div>
-            <span class="text-sm text-gray-800 dark:text-gray-200">{{ option.text }}</span>
+            <span class="text-sm text-gray-800">{{ option.text }}</span>
           </div>
         </div>
 
@@ -258,8 +259,8 @@
       </UPopover>
 
       <!-- Feedback -->
-      <div v-if="props.task.completed && props.task.feedback" class="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
-        <p class="text-sm text-amber-800 dark:text-amber-300">{{ props.task.feedback }}</p>
+      <div v-if="props.task.completed && props.task.feedback" class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <p class="text-sm text-amber-800">{{ props.task.feedback }}</p>
       </div>
     </div>
   </UCard>
@@ -644,6 +645,17 @@ const isFinishUnlocked = computed(() => {
 })
 
 const isFinishLocked = computed(() => !isFinishUnlocked.value)
+
+const isTaskFinished = computed(() =>
+  Boolean(props.task?.finish?.isComplete || props.task?.completed || props.task?.status === TaskStatus.COMPLETED)
+)
+
+const shouldShowFinishLockPopover = computed(() =>
+  !globalSettings.teacherMode
+  && !isReadonly.value
+  && isFinishLocked.value
+  && !isTaskFinished.value
+)
 
 const canEvaluateFinish = computed(() =>
   props.task?.finishType === FinishType.IMMEDIATE

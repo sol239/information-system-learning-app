@@ -1,39 +1,39 @@
 <template>
     <div class="h-full">
-        <div v-if="error" class="flex h-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-500 dark:border-red-900/60 dark:bg-red-950/20">
+        <div v-if="error" class="flex h-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-500">
             <UIcon name="i-heroicons-exclamation-circle" class="w-5 h-5" />
             <span>{{ error }}</span>
         </div>
 
-        <div v-else-if="columns.length === 0" class="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-400 dark:border-gray-700 dark:bg-gray-900">
+        <div v-else-if="columns.length === 0" class="flex h-full flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-400">
             <UIcon name="i-heroicons-table-cells" class="w-10 h-10 mb-2" />
             <span>No data to display</span>
         </div>
 
-        <div v-else class="h-full overflow-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                <thead class="bg-gray-50 dark:bg-gray-800">
+        <div v-else class="h-full overflow-auto rounded-lg border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
                     <tr>
                         <th
                             v-for="col in columns"
                             :key="col"
-                            class="px-4 py-2 text-left font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap"
+                            class="px-4 py-2 text-left font-semibold text-gray-600 whitespace-nowrap"
                         >
                             <span>{{ col }}</span>
-                            <span v-if="columnTypes[col]" class="ml-1 text-[10px] font-normal text-gray-400 dark:text-gray-500 uppercase">{{ columnTypes[col] }}</span>
+                            <span v-if="columnTypes[col]" class="ml-1 text-[10px] font-normal text-gray-400 uppercase">{{ columnTypes[col] }}</span>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                <tbody class="divide-y divide-gray-100 bg-white">
                     <tr
                         v-for="(row, rowIndex) in rows"
                         :key="rowIndex"
-                        class="hover:bg-gray-50 dark:hover:bg-gray-800/60"
+                        class="hover:bg-gray-50"
                     >
                         <td
                             v-for="(cell, colIndex) in row"
                             :key="colIndex"
-                            class="px-4 py-2 text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                            class="px-4 py-2 text-gray-700 whitespace-nowrap"
                         >
                             <span v-if="cell === null" class="italic text-gray-400">NULL</span>
                             <span v-else>{{ cell }}</span>

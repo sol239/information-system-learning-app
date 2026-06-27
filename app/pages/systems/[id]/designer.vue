@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-950">
+  <div class="min-h-screen bg-white">
     <div class="mx-auto w-[90vw] max-w-none p-6">
       <div class="mb-6 mt-5 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <h1
-            class="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-teacher-600 dark:text-teacher-400 sm:text-5xl"
+            class="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-teacher-600 sm:text-5xl"
           >
             <span>{{ t("task_designer") }}</span>
           </h1>
@@ -21,7 +21,7 @@
             </UButton>
 
             <template #body>
-              <p class="text-sm text-gray-600 dark:text-gray-300">
+              <p class="text-sm text-gray-600">
                 {{ t("download_system_description") }}
               </p>
               <p v-if="downloadError" class="mt-3 text-sm text-red-500">
@@ -58,7 +58,7 @@
         </div>
       </div>
 
-      <div class="mt-10 border-t border-gray-200 pt-8 dark:border-gray-800">
+      <div class="mt-10 border-t border-gray-200 pt-8">
         <TasksDesignerPanel />
       </div>
     </div>

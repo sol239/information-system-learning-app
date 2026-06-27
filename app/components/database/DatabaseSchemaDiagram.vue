@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+    <div class="h-full overflow-hidden rounded-lg border border-gray-200 bg-white">
         <div v-if="schemaError" class="flex h-full items-center justify-center px-6 text-center text-sm text-red-500">
             {{ schemaError }}
         </div>

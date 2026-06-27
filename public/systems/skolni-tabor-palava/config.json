@@ -51,12 +51,12 @@
     {
       "id": "4881a760-cb8d-41cb-8784-fed13faa6a76",
       "title": "Délka turnusu",
-      "description": "Cílem tohoto úkolu je určit kolik dní trvá srpnový turnus.",
+      "description": "Určete, kolik dní trvá srpnový turnus. Funguje komponenta pro počet dní turnusu správně? Pokud ne, bude ji potřeba opravit.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
         "substituteAfterActivity": false,
-        "description": "Opravte komponentu, zodpovědnou za zobrazování počtu dnů turnusu, tak aby správně zobrazovala počet dnů, které turnus trvá. Počet dnů započítává první i poslední den.",
+        "description": "Opravte komponentu, zodpovědnou za zobrazování počtu dnů turnusu, tak, aby správně zobrazovala počet dnů, které turnus trvá. Počet dnů turnusu by měl správně zahrnovat první i poslední den turnusu.",
         "activityComponents": [
           {
             "id": "pocet-dni-turnusu",
@@ -108,8 +108,9 @@
       "activityType": "repair",
       "finish": {
         "isComplete": false,
-        "description": "Kolik dnů trvá turnus č. 3?",
-        "correctAnswer": "7"
+        "description": "",
+        "correctAnswer": "7",
+        "label": "Kolik dnů trvá turnus č. 3?"
       },
       "finishType": "type-correct",
       "round": 3,
@@ -180,7 +181,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         }
       ],
@@ -196,12 +197,11 @@
     {
       "id": "384fbf48-d405-4599-9d5f-ecd8338e78c2",
       "title": "Naplnění turnusu",
-      "description": "Cílem tohoto úkolu je správně zjistit v jaké fázi zaplnění je turnus. Turnus je skoro plný (tj. štítek SKORO PLNO), pokud má zaplnění větší nebo rovno 80% kapacity.",
+      "description": "Zjistěte stav zaplnění turnusu č. 1. Turnus je skoro plný (tj. štítek SKORO PLNO), pokud má zaplnění větší nebo rovno 80% kapacity. Funguje komponenta pro stav turnusu správně? Pokud ne, bude ji potřeba opravit.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
         "substituteAfterActivity": false,
-        "description": "Opravte komponentu, která chybu způsobuje. ",
         "activityComponents": [
           {
             "id": "stitek-stavu-turnusu",
@@ -236,6 +236,7 @@
             }
           }
         ],
+        "label": "Opravte komponentu, která chybu způsobuje",
         "checkRepair": true,
         "repairChecks": [
           {
@@ -357,7 +358,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         }
       ],
@@ -372,14 +373,14 @@
     },
     {
       "id": "fee117f5-d7b0-40bb-990a-6ea6a1d418d6",
-      "title": "Alergeny účástníka",
-      "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno akorát, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
+      "title": "Alergeny účastníka",
+      "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl oba alergeny, a zjistěte, v čem je problém.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
         "isCompleted": false,
         "substituteAfterActivity": true,
-        "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno akorát, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
+        "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
         "activityComponents": [
           {
             "id": "edit-vstup-alergeny-ucastnika",
@@ -413,6 +414,7 @@
             }
           }
         ],
+        "label": "V čem je problém, vyberte správnou možnost",
         "options": [
           {
             "id": "7c3c2704-7343-40bd-9904-4f87e31a33a0",
@@ -421,12 +423,17 @@
           },
           {
             "id": "c93b8c83-d21c-4d78-9c2d-c2be752b05f2",
-            "text": "Databáze podporuje, aby účastník měl více alergenů, ale menu pro výběr podporuje jen vybrání jednoho.",
+            "text": "Databáze podporuje, aby účastník měl více alergenů, ale menu pro výběr umožňuje vybrat jen jeden.",
             "isCorrect": true
           },
           {
             "id": "db9085ba-b786-4105-ba8c-936dc5bfdc5e",
             "text": "Žádná možnost není správná.",
+            "isCorrect": false
+          },
+          {
+            "id": "f777a547-17f6-4330-821f-535d7d52cab6",
+            "text": "TODO přidat možnost, ",
             "isCorrect": false
           }
         ]
@@ -434,13 +441,13 @@
       "activityType": "select-options",
       "finish": {
         "isComplete": false,
-        "description": "Přidejte alergeny podle zadání",
+        "description": "Přidejte alergeny podle zadání a poté vyhodnoťte úkol",
         "checkQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;"
       },
       "finishType": "after-database-update",
       "round": 2,
       "status": "not_started",
-      "feedback": "Problém byl v designu vybíracího menu, to podporovalo jenom vybrání jednoho alergenu. Takovému menu se často říká 'radio button menu (group)'. Je nutné mít ale v takovém případě menu, které podporuje více možností - tzv. checkbox menu.",
+      "feedback": "Problém byl v návrhu výběrového menu, které podporovalo výběr pouze jednoho alergenu. Takovému menu se často říká 'radio button menu (group)'. Je nutné mít ale v takovém případě menu, které podporuje více možností - tzv. checkbox menu.",
       "pointsReward": 2,
       "failPenalty": 0.5,
       "answer": "",
@@ -506,7 +513,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         }
       ],
@@ -522,7 +529,7 @@
     {
       "id": "60fe51fb-bd94-4630-8ac1-e123c9f2ec1b",
       "title": "Jméno vedoucího",
-      "description": "Tomáš Masaryk se oženil s Charlotte Garrigue a chtěl by, aby celé jeho jméno v informačním systému bylo: Tomáš Garrigue Masaryk. ",
+      "description": "Vedoucí Tomáš Masaryk se oženil s Charlotte Garrigue a chtěl by, aby celé jeho jméno v informačním systému bylo: Tomáš Garrigue Masaryk. Zjistěte, jestli to je v systému možné. Pokud to možné není, bude to potřeba opravit.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
@@ -535,7 +542,7 @@
             "description": "Pole pro úpravu jména vedoucího. Vyžaduje generalVariable: idVedouciho.",
             "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"{{ edit_vstup_jmeno_vedouciho }}\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
             "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-            "js": "const je_jmeno_validni = edit_vstup_jmeno_vedouciho.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+            "js": "const casti_jmena_vedouciho = edit_vstup_jmeno_vedouciho.trim().split(\" \");\nlet pocet_casti_jmena_vedouciho = 0;\n\ncasti_jmena_vedouciho.forEach(function(cast_jmena) {\n    if (cast_jmena !== \"\") {\n        pocet_casti_jmena_vedouciho = pocet_casti_jmena_vedouciho + 1;\n    }\n});\n\nlet je_jmeno_validni = false;\n\nif (pocet_casti_jmena_vedouciho === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
             "js_click": "",
             "sql": {
               "nacistJmenoVedouciho": "SELECT jmeno AS edit_vstup_jmeno_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho"
@@ -567,13 +574,13 @@
       "activityType": "repair",
       "finish": {
         "isComplete": false,
-        "description": "Upravté jméno vedoucího Tomáš Masaryk",
+        "description": "Upravte jméno vedoucího Tomáš Masaryk",
         "checkQuery": "SELECT * FROM vedouci WHERE jmeno = 'Tomáš Garrigue Masaryk';"
       },
       "finishType": "after-database-update",
       "round": 4,
       "status": "not_started",
-      "feedback": "Správně jste opravili komponentu, problém byl to, že komponenta povolovala pouze jména o 2 slovech, ale ne o 3. ",
+      "feedback": "Správně jste opravili komponentu, problém byl v tom, že komponenta povolovala pouze jména o 2 slovech, ale ne o 3. ",
       "pointsReward": 2,
       "failPenalty": 1,
       "answer": "",
@@ -584,7 +591,7 @@
           "description": "Pole pro úpravu jména vedoucího. Vyžaduje generalVariable: idVedouciho.",
           "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"{{ edit_vstup_jmeno_vedouciho }}\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
           "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-          "js": "const je_jmeno_validni = edit_vstup_jmeno_vedouciho.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+          "js": "const casti_jmena_vedouciho = edit_vstup_jmeno_vedouciho.trim().split(\" \");\nlet pocet_casti_jmena_vedouciho = 0;\n\ncasti_jmena_vedouciho.forEach(function(cast_jmena) {\n    if (cast_jmena !== \"\") {\n        pocet_casti_jmena_vedouciho = pocet_casti_jmena_vedouciho + 1;\n    }\n});\n\nlet je_jmeno_validni = false;\n\nif (pocet_casti_jmena_vedouciho === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
           "js_click": "",
           "sql": {
             "nacistJmenoVedouciho": "SELECT jmeno AS edit_vstup_jmeno_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho"
@@ -640,7 +647,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         },
         {
@@ -662,7 +669,7 @@
     {
       "id": "7e0f54a1-1af0-447d-aac2-8d9d02448384",
       "title": "Nejstarší účastník",
-      "description": "V tomto úkolu bude vašim cílem správně určit věk nejstaršího účastníka.",
+      "description": "V tomto úkolu bude vaším cílem správně určit věk nejstaršího účastníka. Zjistěte, která komponenta zobrazuje věk nejstaršího účastníka a zkontrolujte, jestli správně zobrazuje daný údaj. Správnou hodnotu můžete ověřit v databázi. Poté vyberte správné možnosti níže.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
@@ -698,6 +705,7 @@
             }
           }
         ],
+        "label": "Zaškrněte správné odpovědi",
         "options": [
           {
             "id": "5ce4bcea-b49e-41b5-a9ca-94f6ed663c8b",
@@ -719,13 +727,12 @@
             "text": "Žádná odpověď není správná",
             "isCorrect": false
           }
-        ],
-        "checkRepair": false,
-        "repairChecks": []
+        ]
       },
       "activityType": "select-options",
       "finish": {
         "isComplete": false,
+        "description": "",
         "correctAnswer": "14",
         "label": "Napište věk nejstaršího účastníka"
       },
@@ -784,7 +791,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         }
       ],
@@ -795,45 +802,12 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      },
-      "finishDescription": "",
-      "finishLabel": "Napište věk nejstaršího účastníka",
-      "activityLabel": "",
-      "activityDescription": "",
-      "activityCheckRepair": false,
-      "activityRepairChecks": [],
-      "activityOptions": [
-        {
-          "id": "5ce4bcea-b49e-41b5-a9ca-94f6ed663c8b",
-          "text": "Věk nejstaršího účastníka je zobrazován správně na nástěnce",
-          "isCorrect": false
-        },
-        {
-          "id": "3bd3dc24-ef29-4b48-ba9a-ea3cc02ae6db",
-          "text": "Komponenta zobrazuje věk nejstaršího vedoucího",
-          "isCorrect": false
-        },
-        {
-          "id": "18685760-bb91-457c-84bd-dcdb7c2800f3",
-          "text": "Namísto věku nejstaršího účastníka se zobrazuje věk nejmladšího",
-          "isCorrect": true
-        },
-        {
-          "id": "fc936dee-f355-49c2-8963-e43fd3e87b3d",
-          "text": "Žádná odpověď není správná",
-          "isCorrect": false
-        }
-      ],
-      "finishOptions": [],
-      "finishCorrectAnswer": "14",
-      "finishCheckQuery": "",
-      "finishVariableConstraints": [],
-      "substituteAfterActivity": true
+      }
     },
     {
       "id": "c134571d-6c36-4dea-8805-e596afd0e048",
-      "title": "Množství rúzných jídel v systému",
-      "description": "Cílem úkolu je najít komponentu, která způsobuje chybné zobrazovaní počtu jídel v systému",
+      "title": "Množství různých jídel v systému",
+      "description": "Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
@@ -867,7 +841,7 @@
             }
           }
         ],
-        "label": "Která komponenta špatně zobrazuje data"
+        "label": "Uveďte správnou hodnotu, kterou teďka komponenta zobrazuje"
       },
       "activityType": "select",
       "finish": {
@@ -929,7 +903,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         }
       ],
@@ -945,7 +919,7 @@
     {
       "id": "670cbb72-859b-45d3-b73e-69d1b28c3c23",
       "title": "Barva štítku alergenů",
-      "description": "Když má účastník nějaký alergen, tak by jeho štítek měl být červený, v opačném případě by měl zelený.",
+      "description": "Když má účastník nějaký alergen, tak by jeho štítek měl být červený, v opačném případě by měl být zelený. Prozkoumejte kód dané komponenty.",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
@@ -1076,7 +1050,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         },
         {
@@ -1098,7 +1072,7 @@
     {
       "id": "c7b429fc-8007-4bc3-ab82-d4b38158e039",
       "title": "Seřazení účastníků podle příjmení",
-      "description": "Cílem tohoto úkolu je seřadit účastníky podle jejich příjmní",
+      "description": "Zajímá vás věk účastnice Simony Urbanové. Abyste ji lépe našli, seřaďte si účastníky podle příjmení. ",
       "componentsRepaired": false,
       "completed": false,
       "activity": {
@@ -1144,7 +1118,7 @@
           },
           {
             "id": "09313875-7b4e-4d10-8601-e90e0c28789a",
-            "text": "Ne, bylo by potřeba, aby místo jednoho sloupce 'Jméno' byly sloupce 'Křestní jméno' a 'Příjmení' a filtrování právě podle sloupce 'Příjmení'",
+            "text": "Ne, bylo by potřeba, aby v databázovém schématu místo jednoho sloupce 'Jméno' byly sloupce 'Křestní jméno' a 'Příjmení' a aby přibyla možnost filtrování právě podle sloupce 'Příjmení'",
             "isCorrect": true
           },
           {
@@ -1162,9 +1136,11 @@
       "activityType": "select-options",
       "finish": {
         "isComplete": false,
-        "description": "Úkol bude dokončen ihned po splnění aktivity"
+        "description": "",
+        "correctAnswer": "10",
+        "label": "Napiště správně věk Simony Urbanové"
       },
-      "finishType": "immediate",
+      "finishType": "type-correct",
       "round": 2,
       "status": "not_started",
       "feedback": "",
@@ -1215,7 +1191,7 @@
         {
           "name": "Databáze",
           "route": "/database",
-          "description": "Database",
+          "description": "Databáze",
           "vueFile": "database.vue"
         },
         {

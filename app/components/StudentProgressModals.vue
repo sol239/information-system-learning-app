@@ -9,7 +9,7 @@
     >
       <template #body>
         <div class="space-y-4">
-          <p class="text-sm leading-6 text-gray-600 dark:text-gray-300">
+          <p class="text-sm leading-6 text-gray-600">
             {{ t('student_welcome_sidebar_description', { count: taskCount, points: totalTaskPoints }) }}
           </p>
 
@@ -42,27 +42,27 @@
     >
       <template #body>
         <div class="space-y-4">
-          <p class="text-sm leading-6 text-gray-600 dark:text-gray-300">
+          <p class="text-sm leading-6 text-gray-600">
             {{ t('student_completed_modal_description') }}
           </p>
 
           <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-              <div class="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+              <div class="text-xs font-medium uppercase text-gray-500">
                 {{ t('student_completed_modal_points_count') }}
               </div>
-              <div class="mt-1 text-xl font-semibold text-gray-900 dark:text-white">
+              <div class="mt-1 text-xl font-semibold text-gray-900">
                 {{ score }}
               </div>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-              <div class="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+              <div class="text-xs font-medium uppercase text-gray-500">
                 {{ t('student_completed_modal_mistakes') }}
               </div>
               <div class="mt-1 flex flex-wrap items-baseline gap-1.5">
-                <span class="text-xl font-semibold text-gray-900 dark:text-white">{{ mistakesCount }}</span>
-                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <span class="text-xl font-semibold text-gray-900">{{ mistakesCount }}</span>
+                <span class="text-xs font-medium text-gray-500">
                   {{ t('student_completed_modal_mistakes_penalty', { points: mistakesPenalty }) }}
                 </span>
               </div>

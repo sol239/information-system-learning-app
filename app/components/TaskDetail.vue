@@ -1,13 +1,13 @@
 <template>
   <div v-if="props.selectedTask" class="space-y-6 pt-2">
     <div class="grid gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] xl:items-start">
-      <div class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+      <div class="space-y-4 rounded-xl border border-gray-200 p-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            <h3 class="text-xl font-semibold text-gray-900">
               {{ t('task_detail_title') }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-gray-500">
               {{ t('task_detail_description') }}
             </p>
           </div>
@@ -20,7 +20,7 @@
         <UFormField>
           <template #label>
             <span>{{ t('task_description_label') }}</span>
-            <span class="ml-1 font-normal text-gray-400 dark:text-gray-500">
+            <span class="ml-1 font-normal text-gray-400">
               ({{ t('task_optional_suffix') }})
             </span>
           </template>
@@ -60,7 +60,7 @@
               {{ page.name }}: {{ page.route }}
             </UBadge>
           </div>
-          <p v-else class="text-sm text-gray-500 dark:text-gray-400">
+          <p v-else class="text-sm text-gray-500">
             {{ t('task_no_pages') }}
           </p>
         </UFormField>
@@ -122,8 +122,8 @@
 
       </div>
 
-      <div class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-        <span class="text-sm font-semibold text-gray-900 dark:text-white md:col-span-2">
+      <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+        <span class="text-sm font-semibold text-gray-900 md:col-span-2">
           {{ t('task_level') }}
         </span>
 
@@ -131,7 +131,7 @@
           <UFormField>
             <template #label>
               <span>{{ t('task_level') }}</span>
-              <span class="ml-1 font-normal text-gray-500 dark:text-gray-400">
+              <span class="ml-1 font-normal text-gray-500">
                 ({{ t('task_level_info') }})
               </span>
             </template>
@@ -145,21 +145,21 @@
           </UFormField>
 
           <div class="space-y-2">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <span class="text-sm font-medium text-gray-700">
               {{ t('task_level_tasks') }}
             </span>
-            <div class="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-2 dark:border-gray-800">
+            <div class="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-2">
               <div
                 v-for="task in tasksInSelectedLevel"
                 :key="task.id"
-                class="rounded-md border border-gray-200 px-3 py-2 text-sm dark:border-gray-800"
+                class="rounded-md border border-gray-200 px-3 py-2 text-sm"
                 :class="task.id === taskForm.id
-                  ? 'bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300'
-                  : 'bg-white text-gray-700 dark:bg-gray-950 dark:text-gray-300'"
+                  ? 'bg-primary-50 text-primary-700'
+                  : 'bg-white text-gray-700'"
               >
                 <span class="font-medium">{{ task.title || t('task_untitled') }}</span>
               </div>
-              <p v-if="!tasksInSelectedLevel.length" class="px-2 py-3 text-sm text-gray-500 dark:text-gray-400">
+              <p v-if="!tasksInSelectedLevel.length" class="px-2 py-3 text-sm text-gray-500">
                 {{ t('task_level_no_tasks') }}
               </p>
             </div>
@@ -167,8 +167,8 @@
         </div>
       </div>
 
-      <div class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-        <span class="text-sm font-semibold text-gray-900 dark:text-white md:col-span-2">
+      <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+        <span class="text-sm font-semibold text-gray-900 md:col-span-2">
           {{ t('task_scoring_label') }}
         </span>
 
@@ -176,7 +176,7 @@
           <UFormField>
             <template #label>
               <span>{{ t('task_points_reward') }}</span>
-              <span class="ml-1 font-normal text-gray-500 dark:text-gray-400">
+              <span class="ml-1 font-normal text-gray-500">
                 ({{ t('task_points_reward_info') }})
               </span>
             </template>
@@ -186,7 +186,7 @@
           <UFormField>
             <template #label>
               <span>{{ t('task_fail_penalty') }}</span>
-              <span class="ml-1 font-normal text-gray-500 dark:text-gray-400">
+              <span class="ml-1 font-normal text-gray-500">
                 ({{ t('task_fail_penalty_info') }})
               </span>
             </template>
@@ -205,7 +205,7 @@
           <UPopover mode="hover" arrow>
             <button
               type="button"
-              class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+              class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
               :aria-label="t('task_selected_components_info')"
             >
               <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -266,14 +266,14 @@
             </template>
           </UPopover>
         </UBadge>
-        <p v-if="!selectedComponents.length" class="text-sm text-gray-500 dark:text-gray-400 mr-2">
+        <p v-if="!selectedComponents.length" class="text-sm text-gray-500 mr-2">
           {{ t('task_no_components') }}
         </p>
         <UBadge
           as="button"
           color="neutral"
           variant="outline"
-          class="flex items-center gap-1 font-mono cursor-pointer border-dashed hover:bg-gray-50 dark:hover:bg-gray-800"
+          class="flex items-center gap-1 font-mono cursor-pointer border-dashed hover:bg-gray-50"
           @click="showPasteComponentModal = true"
         >
           <UIcon name="i-lucide-plus" class="w-3 h-3" />
@@ -282,13 +282,13 @@
       </div>
     </UFormField>
 
-    <div v-if="editingComponent" class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+    <div v-if="editingComponent" class="space-y-4 rounded-xl border border-gray-200 p-4">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+          <h3 class="text-base font-semibold text-gray-900">
             {{ t('task_edit_component_title') }}
           </h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="text-sm text-gray-500">
             {{ editingComponent.name || editingComponent.id }}
           </p>
         </div>
@@ -309,8 +309,8 @@
     </div>
 
     <div class="grid gap-6 lg:grid-cols-2">
-        <div class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+        <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+          <h3 class="text-lg font-semibold text-gray-900">
             {{ t('task_activity') }}
           </h3>
 
@@ -318,7 +318,7 @@
             <UFormField>
               <template #label>
                 <span>{{ t('task_activity_label_opt') }}</span>
-                <span class="ml-1 font-normal text-gray-400 dark:text-gray-500">
+                <span class="ml-1 font-normal text-gray-400">
                   ({{ t('task_optional_suffix') }})
                 </span>
               </template>
@@ -332,7 +332,7 @@
                   <UPopover mode="hover" arrow>
                     <button
                       type="button"
-                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
                       :aria-label="t('task_activity_type_info')"
                     >
                       <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -364,7 +364,7 @@
                   <UPopover mode="hover" arrow>
                     <button
                       type="button"
-                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
                       :aria-label="t('task_options_info')"
                     >
                       <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -383,8 +383,8 @@
               </template>
               <div class="space-y-3">
                 <div v-for="(option, index) in taskForm.activityOptions" :key="`activity-option-${index}`"
-                  class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-800">
-                  <span class="w-6 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3">
+                  <span class="w-6 text-sm font-medium text-gray-500">
                     {{ index + 1 }}.
                   </span>
                   <UInput v-model="option.text" :placeholder="t('task_option_text_placeholder')" class="w-[20rem] max-w-full" />
@@ -404,7 +404,7 @@
             <UFormField>
               <template #label>
                 <span>{{ t('task_activity_description') }}</span>
-                <span class="ml-1 font-normal text-gray-400 dark:text-gray-500">
+                <span class="ml-1 font-normal text-gray-400">
                   ({{ t('task_optional_suffix') }})
                 </span>
               </template>
@@ -426,7 +426,7 @@
               <UPopover mode="hover" arrow>
                 <button
                   type="button"
-                  class="mt-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+                  class="mt-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
                   :aria-label="substituteAfterActivityHint"
                 >
                   <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -458,7 +458,7 @@
                 <div
                   v-for="(constraint, index) in taskForm.activityRepairChecks"
                   :key="constraint.id"
-                  class="grid gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-800 md:grid-cols-[minmax(0,1.5fr)_160px_minmax(0,1fr)_auto]"
+                  class="grid gap-2 rounded-lg border border-gray-200 p-3 md:grid-cols-[minmax(0,1.5fr)_160px_minmax(0,1fr)_auto]"
                 >
                   <USelect
                     v-model="constraint.componentId"
@@ -491,7 +491,7 @@
                   />
                 </div>
 
-                <p v-if="!componentContainsComponentOptions.length" class="text-sm text-gray-500 dark:text-gray-400">
+                <p v-if="!componentContainsComponentOptions.length" class="text-sm text-gray-500">
                   {{ t('task_no_component_options') }}
                 </p>
 
@@ -509,8 +509,8 @@
           </div>
         </div>
 
-        <div class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+        <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+          <h3 class="text-lg font-semibold text-gray-900">
             {{ t('task_finish') }}
           </h3>
 
@@ -518,7 +518,7 @@
             <UFormField>
               <template #label>
                 <span>{{ t('task_finish_label_opt') }}</span>
-                <span class="ml-1 font-normal text-gray-400 dark:text-gray-500">
+                <span class="ml-1 font-normal text-gray-400">
                   ({{ t('task_optional_suffix') }})
                 </span>
               </template>
@@ -528,7 +528,7 @@
             <UFormField>
               <template #label>
                 <span>{{ t('task_finish_description_label') }}</span>
-                <span class="ml-1 font-normal text-gray-400 dark:text-gray-500">
+                <span class="ml-1 font-normal text-gray-400">
                   ({{ t('task_optional_suffix') }})
                 </span>
               </template>
@@ -553,7 +553,7 @@
                   <UPopover mode="hover" arrow>
                     <button
                       type="button"
-                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+                      class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
                       :aria-label="t('task_options_info')"
                     >
                       <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -572,8 +572,8 @@
               </template>
               <div class="space-y-3">
                 <div v-for="(option, index) in taskForm.finishOptions" :key="`finish-option-${index}`"
-                  class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-800">
-                  <span class="w-6 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3">
+                  <span class="w-6 text-sm font-medium text-gray-500">
                     {{ index + 1 }}.
                   </span>
                   <UInput v-model="option.text" :placeholder="t('task_option_text_placeholder')" class="w-[20rem] max-w-full" />
@@ -613,7 +613,7 @@
                 <div
                   v-for="(constraint, index) in taskForm.finishVariableConstraints"
                   :key="constraint.id"
-                  class="grid gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-800 md:grid-cols-[minmax(0,1.6fr)_120px_minmax(0,1fr)_auto]"
+                  class="grid gap-2 rounded-lg border border-gray-200 p-3 md:grid-cols-[minmax(0,1.6fr)_120px_minmax(0,1fr)_auto]"
                 >
                   <USelect
                     v-model="constraint.variableKey"
@@ -646,7 +646,7 @@
                   />
                 </div>
 
-                <p v-if="!variableConstraintOptions.length" class="text-sm text-gray-500 dark:text-gray-400">
+                <p v-if="!variableConstraintOptions.length" class="text-sm text-gray-500">
                   {{ t('task_no_variable_options') }}
                 </p>
 
@@ -674,7 +674,7 @@
               <UPopover mode="hover" arrow>
                 <button
                   type="button"
-                  class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none dark:text-gray-500 dark:hover:text-teacher-400"
+                  class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
                   :aria-label="t('task_feedback_info')"
                 >
                   <UIcon name="i-lucide-info" class="h-4 w-4" />
@@ -705,7 +705,7 @@
   <UModal v-model:open="showPasteComponentModal" :title="t('task_add_component_json')" :ui="{ content: 'w-[560px]' }">
     <template #body>
       <div class="flex flex-col gap-4">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-gray-500">
           {{ t('task_add_component_json_desc') }}
         </p>
         <UTextarea

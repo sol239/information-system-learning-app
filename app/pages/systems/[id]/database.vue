@@ -42,40 +42,51 @@
                     </div>
                 </div>
 
-                <aside class="h-[70vh] w-full overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-                    <CustomScrollbar always-visible>
+                <aside class="h-[70vh] w-full overflow-hidden rounded-lg border border-gray-200 bg-white">
+                    <UScrollArea class="h-full w-full">
                         <button
                             v-for="item in tableMenuItems"
                             :key="item.value"
                             type="button"
-                            class="flex w-full items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 pr-6 text-left text-sm transition-colors last:border-b-0 dark:border-gray-800"
+                            class="flex w-full items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 pr-6 text-left text-sm transition-colors last:border-b-0"
                             :class="value === item.value
-                                ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300'
-                                : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/70'"
+                                ? 'bg-sky-50 text-sky-700'
+                                : 'text-gray-700 hover:bg-gray-50'"
                             @click="value = item.value"
                         >
                             <span class="min-w-0 truncate font-medium">{{ item.label }}</span>
                             <UIcon v-if="value === item.value" name="i-lucide-check" class="h-4 w-4 shrink-0" />
                         </button>
-                    </CustomScrollbar>
+                    </UScrollArea>
                 </aside>
 
-                <div class="h-[70vh] min-w-0">
+                <div class="flex h-[70vh] min-w-0 flex-col gap-3">
                     <DatabaseSchemaDiagram
                         v-if="isSchemaPreviewSelected"
+                        class="min-h-0 flex-1"
                         :database="systemsStore.selectedSystem?.database?.sqlJsDatabase"
                         :schema-version="systemsStore.selectedSystem?.database?.dbNumber"
                     />
-                    <DatabaseTable v-else-if="value" :queryResult="tableQueryResult" :page="tablePage" :tableName="value"
-                        @update:totalPages="tableTotalPages = $event" @update:rowCount="tableRowCount = $event" />
+                    <template v-else-if="value">
+                        <DatabaseTable class="min-h-0 flex-1" :queryResult="tableQueryResult" :page="tablePage" :tableName="value"
+                            @update:totalPages="tableTotalPages = $event" @update:rowCount="tableRowCount = $event" />
+                        <div class="flex items-center gap-2">
+                            <UButton icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
+                                :disabled="tablePage <= 1" @click="tablePage--" />
+                            <span class="text-sm text-gray-500 whitespace-nowrap">{{ tablePage }} / {{ tableTotalPages }}</span>
+                            <UButton icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
+                                :disabled="tablePage >= tableTotalPages" @click="tablePage++" />
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ tableRowCount }} {{ t('rows') }}</span>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
 
         <div v-else
-            class="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+            class="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
             <UIcon name="i-lucide-database-zap" class="w-12 h-12 text-gray-400 mb-4" />
-            <p class="text-gray-500 dark:text-gray-400 font-medium">Database is not ready or being initialized...</p>
+            <p class="text-gray-500 font-medium">Database is not ready or being initialized...</p>
         </div>
 
         <USeparator class="my-4" />
@@ -101,10 +112,10 @@
             </div>
         </div>
         <div v-else
-            class="grid min-h-[210px] place-items-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 text-center dark:border-gray-700 dark:bg-gray-800/50">
+            class="grid min-h-[210px] place-items-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 text-center">
             <div>
-                <p class="font-medium text-gray-700 dark:text-gray-200">{{ t('database_query_disabled_title') }}</p>
-                <p class="mt-1 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+                <p class="font-medium text-gray-700">{{ t('database_query_disabled_title') }}</p>
+                <p class="mt-1 max-w-xl text-sm text-gray-500">
                     {{ t('database_query_disabled_description') }}
                 </p>
             </div>
