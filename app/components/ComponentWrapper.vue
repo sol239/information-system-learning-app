@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapperRef" :data-component-id="props.component.id" @click="handleClick" @input="handleInput"
+  <div ref="wrapperRef" :data-component-id="props.component.id" @click="handleClick" @input="handleInput" @change="handleChange"
     :class="['component-wrapper', {
       'highlight-active': highlightStore.isHighlightActive,
       'is-highlighted': highlightStore.isHighlightActive && highlightStore.selectedHighlightedComponentsIds.has(props.component.id),
@@ -580,6 +580,11 @@ function handleInput(event: Event) {
   ) return;
 
   syncSystemInput(target);
+}
+
+async function handleChange() {
+  await nextTick();
+  registerInitialSystemInputs();
 }
 
 function registerInitialSystemInputs() {
