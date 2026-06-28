@@ -137,8 +137,8 @@
 
       <!-- Finish section -->
       <UPopover
+        v-if="shouldShowFinishLockPopover"
         :key="shouldShowFinishLockPopover ? 'finish-locked' : 'finish-unlocked'"
-        :disabled="!shouldShowFinishLockPopover"
         mode="hover"
         arrow
       >
@@ -257,6 +257,111 @@
           </div>
         </template>
       </UPopover>
+
+      <div
+        v-else
+        class="rounded-xl border border-gray-200 p-4 space-y-3 transition-opacity w-full"
+        :class="isFinishLocked ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">{{ t('task_finish') }}</p>
+            <h3 class="text-base font-semibold text-gray-900">
+              {{ finishLabel }}
+            </h3>
+          </div>
+          <UBadge
+            :color="props.task.finish?.isComplete ? 'green' : 'neutral'"
+            variant="subtle"
+            size="md"
+            class="flex items-center gap-1.5"
+          >
+            <div
+              class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
+              :class="props.task.finish?.isComplete
+                ? 'border-green-500 bg-green-500'
+                : 'border-gray-400'"
+            >
+              <UIcon v-if="props.task.finish?.isComplete" name="i-lucide-check" class="text-white w-3 h-3" />
+            </div>
+            {{ t('completed') }}
+          </UBadge>
+        </div>
+
+        <p v-if="props.task.finish?.description" class="text-sm text-gray-700">
+          {{ props.task.finish.description }}
+        </p>
+
+        <!-- SELECT_OPTIONS finish options - checkable -->
+        <div v-if="finishOptions.length" class="space-y-2">
+          <div
+            v-for="(option, index) in finishOptions"
+            :key="`fin-opt-${index}`"
+            class="flex items-center gap-3 rounded-lg border px-3 py-2 select-none transition-colors"
+            :class="[
+              isReadonly || props.task.finish?.isComplete || isFinishLocked
+                ? 'cursor-not-allowed opacity-60'
+                : 'cursor-pointer',
+              selectedFinishOptionIndices.includes(index)
+                ? 'border-sky-400 bg-sky-50'
+                : isReadonly
+                  ? 'border-gray-200'
+                  : 'border-gray-200 hover:border-gray-300'
+            ]"
+            @click="!isReadonly && !props.task.finish?.isComplete && !isFinishLocked && toggleFinishOption(index)"
+          >
+            <div
+              class="w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors"
+              :class="selectedFinishOptionIndices.includes(index)
+                ? 'border-sky-500 bg-sky-500'
+                : 'border-gray-400'"
+            >
+              <UIcon v-if="selectedFinishOptionIndices.includes(index)" name="i-lucide-check" class="text-white w-3 h-3" />
+            </div>
+            <span class="text-sm text-gray-800">{{ option.text }}</span>
+          </div>
+        </div>
+
+        <UInput
+          v-if="props.task.finishType === FinishType.TYPE_CORRECT"
+          v-model="typeCorrectAnswer"
+          :placeholder="t('task_your_answer')"
+          :disabled="isReadonly || props.task.finish?.isComplete || isFinishLocked"
+          class="w-full"
+        />
+
+        <div v-if="canEvaluateFinish" class="flex items-center gap-3 mt-2">
+          <UButton
+            color="primary"
+            variant="solid"
+            icon="i-lucide-check-circle"
+            :disabled="isReadonly || props.task.finish?.isComplete === true || isFinishLocked"
+            @click="evaluateFinish"
+          >
+            {{ t('evaluate') }}
+          </UButton>
+          <UBadge
+            v-if="finishEvaluationResult === true"
+            color="green"
+            variant="subtle"
+            size="lg"
+            class="flex items-center gap-1"
+          >
+            <UIcon name="i-lucide-circle-check" class="w-4 h-4" />
+            {{ t('correct_answer') }}
+          </UBadge>
+          <UBadge
+            v-else-if="finishEvaluationResult === false"
+            color="red"
+            variant="subtle"
+            size="lg"
+            class="flex items-center gap-1"
+          >
+            <UIcon name="i-lucide-circle-x" class="w-4 h-4" />
+            {{ t('incorrect_answer') }}
+          </UBadge>
+        </div>
+      </div>
 
       <!-- Feedback -->
       <div v-if="props.task.completed && props.task.feedback" class="rounded-xl border border-amber-200 bg-amber-50 p-4">
