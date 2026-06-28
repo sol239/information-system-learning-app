@@ -1,6 +1,7 @@
 import JSZip from 'jszip'
 import type { Database } from 'sql.js'
 import type { InformationSystem } from '~/model/InformationSystem'
+import { resetTaskProgressJson } from '~/utils/taskProgress'
 
 type ExportablePage = {
   name: string
@@ -51,6 +52,7 @@ export class SystemZipExporter {
       : {}
 
     delete baseConfig.__manifestEntry
+    delete baseConfig.score
 
     return {
       ...baseConfig,
@@ -59,10 +61,10 @@ export class SystemZipExporter {
       language: system.language,
       description: system.description,
       pages: (system.pages ?? []).map(SystemZipExporter.serializePage),
-      tasks: SystemZipExporter.toPlainJson(system.tasks ?? []),
-      mistakes: system.mistakes,
-      mistakesCount: system.mistakesCount,
-      currentRound: system.currentRound,
+      tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(resetTaskProgressJson),
+      mistakes: [],
+      mistakesCount: 0,
+      currentRound: 1,
       levelCount: system.levelCount,
     }
   }

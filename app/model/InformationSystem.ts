@@ -11,6 +11,7 @@ import { getComponentLoadSource } from "~/utils/componentLoadSource";
 import { getPageLoadSource } from "~/utils/pageLoadSource";
 import { Operation } from "~/utils/Operation/Operation";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
+import { resetTaskProgress } from "~/utils/taskProgress";
 
 /**
  * Represents an information system, encapsulating its configuration, data tables, tasks, and component mappings.
@@ -258,12 +259,12 @@ export class InformationSystem {
         name: configData.name,
         language: configData.language,
         description: configData.description,
-        tasks: (configData.tasks || []).map((task: any) => Task.fromJSON(task)),
+        tasks: (configData.tasks || []).map((task: any) => resetTaskProgress(Task.fromJSON(task))),
         pages,
         database,
-        mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
-        mistakesCount: Number(configData.mistakesCount ?? 0),
-        currentRound: Number(configData.currentRound ?? 1),
+        mistakes: [],
+        mistakesCount: 0,
+        currentRound: 1,
         levelCount: Number(configData.levelCount ?? 1),
         createSchemaSql: sqlEntry?.[1],
         configData,
