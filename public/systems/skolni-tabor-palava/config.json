@@ -1,5 +1,5 @@
 {
-  "id": 2,
+  "id": "2",
   "name": "Školní tábor Pálava",
   "language": "cs",
   "description": "Školní tábor v Pálavě, zaměřený na výuku a zábavu pro děti.",
@@ -52,9 +52,10 @@
       "id": "4881a760-cb8d-41cb-8784-fed13faa6a76",
       "title": "Délka turnusu",
       "description": "Určete, kolik dní trvá srpnový turnus. Funguje komponenta pro počet dní turnusu správně? Pokud ne, bude ji potřeba opravit.",
-      "componentsRepaired": false,
-      "completed": false,
+      "componentsRepaired": true,
+      "completed": true,
       "activity": {
+        "isCompleted": true,
         "substituteAfterActivity": false,
         "description": "Opravte komponentu, zodpovědnou za zobrazování počtu dnů turnusu, tak, aby správně zobrazovala počet dnů, které turnus trvá. Počet dnů turnusu by měl správně zahrnovat první i poslední den turnusu.",
         "activityComponents": [
@@ -107,14 +108,14 @@
       },
       "activityType": "repair",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "",
         "correctAnswer": "7",
         "label": "Kolik dnů trvá turnus č. 3?"
       },
       "finishType": "type-correct",
       "round": 3,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "Správně jste opravili komponentu. Problém byl, že výraz julianday(datum_do) - julianday(datum_od) vrací počet dnů mezi daty bez započtení koncového dne.",
       "pointsReward": 3,
       "failPenalty": 0.5,
@@ -198,9 +199,10 @@
       "id": "384fbf48-d405-4599-9d5f-ecd8338e78c2",
       "title": "Naplnění turnusu",
       "description": "Zjistěte stav zaplnění turnusu č. 1. Turnus je skoro plný (tj. štítek SKORO PLNO), pokud má zaplnění větší nebo rovno 80% kapacity. Funguje komponenta pro stav turnusu správně? Pokud ne, bude ji potřeba opravit.",
-      "componentsRepaired": false,
-      "completed": false,
+      "componentsRepaired": true,
+      "completed": true,
       "activity": {
+        "isCompleted": true,
         "substituteAfterActivity": false,
         "activityComponents": [
           {
@@ -250,7 +252,7 @@
       },
       "activityType": "repair",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "Určete zaplnění turnusu č. 1.",
         "options": [
           {
@@ -272,7 +274,7 @@
       },
       "finishType": "select-options",
       "round": 3,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "Správně jste opravili komponentu - chyba spočívala v tom, že byla chybně uvedena podmínka pro vytvoření štítku. Turnus byl skoro plný již od 30% zaplnění.",
       "pointsReward": 3,
       "failPenalty": 0.5,
@@ -376,9 +378,9 @@
       "title": "Alergeny účastníka",
       "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl oba alergeny, a zjistěte, v čem je problém.",
       "componentsRepaired": false,
-      "completed": false,
+      "completed": true,
       "activity": {
-        "isCompleted": false,
+        "isCompleted": true,
         "substituteAfterActivity": true,
         "description": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
         "activityComponents": [
@@ -427,26 +429,28 @@
             "isCorrect": true
           },
           {
-            "id": "db9085ba-b786-4105-ba8c-936dc5bfdc5e",
-            "text": "Žádná možnost není správná.",
+            "id": "f777a547-17f6-4330-821f-535d7d52cab6",
+            "text": "Další alergii lze přidat až po uložení první v samostatném formuláři.",
             "isCorrect": false
           },
           {
-            "id": "f777a547-17f6-4330-821f-535d7d52cab6",
-            "text": "TODO přidat možnost, ",
+            "id": "7ab4783b-a2f6-4fb3-8ee2-9cf8d9cc37cd",
+            "text": "Žádná možnost není správná.",
             "isCorrect": false
           }
-        ]
+        ],
+        "checkRepair": false,
+        "repairChecks": []
       },
       "activityType": "select-options",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "Přidejte alergeny podle zadání a poté vyhodnoťte úkol",
         "checkQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;"
       },
       "finishType": "after-database-update",
       "round": 2,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "Problém byl v návrhu výběrového menu, které podporovalo výběr pouze jednoho alergenu. Takovému menu se často říká 'radio button menu (group)'. Je nutné mít ale v takovém případě menu, které podporuje více možností - tzv. checkbox menu.",
       "pointsReward": 2,
       "failPenalty": 0.5,
@@ -524,7 +528,40 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "finishDescription": "Přidejte alergeny podle zadání a poté vyhodnoťte úkol",
+      "finishLabel": "",
+      "activityLabel": "V čem je problém, vyberte správnou možnost",
+      "activityDescription": "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl dva alergeny.",
+      "activityCheckRepair": false,
+      "activityRepairChecks": [],
+      "activityOptions": [
+        {
+          "id": "7c3c2704-7343-40bd-9904-4f87e31a33a0",
+          "text": "Databáze nepodporuje, aby účastník měl více než jeden alergen.",
+          "isCorrect": false
+        },
+        {
+          "id": "c93b8c83-d21c-4d78-9c2d-c2be752b05f2",
+          "text": "Databáze podporuje, aby účastník měl více alergenů, ale menu pro výběr umožňuje vybrat jen jeden.",
+          "isCorrect": true
+        },
+        {
+          "id": "f777a547-17f6-4330-821f-535d7d52cab6",
+          "text": "Další alergii lze přidat až po uložení první v samostatném formuláři.",
+          "isCorrect": false
+        },
+        {
+          "id": "7ab4783b-a2f6-4fb3-8ee2-9cf8d9cc37cd",
+          "text": "Žádná možnost není správná.",
+          "isCorrect": false
+        }
+      ],
+      "finishOptions": [],
+      "finishCorrectAnswer": "",
+      "finishCheckQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;",
+      "finishVariableConstraints": [],
+      "substituteAfterActivity": true
     },
     {
       "id": "60fe51fb-bd94-4630-8ac1-e123c9f2ec1b",
@@ -671,9 +708,9 @@
       "title": "Nejstarší účastník",
       "description": "V tomto úkolu bude vaším cílem správně určit věk nejstaršího účastníka. Zjistěte, která komponenta zobrazuje věk nejstaršího účastníka a zkontrolujte, jestli správně zobrazuje daný údaj. Správnou hodnotu můžete ověřit v databázi. Poté vyberte správné možnosti níže.",
       "componentsRepaired": false,
-      "completed": false,
+      "completed": true,
       "activity": {
-        "isCompleted": false,
+        "isCompleted": true,
         "substituteAfterActivity": true,
         "activityComponents": [
           {
@@ -731,14 +768,14 @@
       },
       "activityType": "select-options",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "",
         "correctAnswer": "14",
         "label": "Napište věk nejstaršího účastníka"
       },
       "finishType": "type-correct",
       "round": 1,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "Správně jste odpověděli na otázku a určili věk nejstaršího účastníka.",
       "pointsReward": 1,
       "failPenalty": 0.5,
@@ -809,9 +846,9 @@
       "title": "Množství různých jídel v systému",
       "description": "Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.",
       "componentsRepaired": false,
-      "completed": false,
+      "completed": true,
       "activity": {
-        "isCompleted": false,
+        "isCompleted": true,
         "substituteAfterActivity": true,
         "activityComponents": [
           {
@@ -841,18 +878,19 @@
             }
           }
         ],
-        "label": "Uveďte správnou hodnotu, kterou teďka komponenta zobrazuje"
+        "label": "Vyberte komponentu, která zobrazuje údaj chybně",
+        "checkRepair": false,
+        "repairChecks": []
       },
       "activityType": "select",
       "finish": {
-        "isComplete": false,
-        "description": "",
+        "isComplete": true,
         "correctAnswer": "30",
-        "label": "Určete přesný počet různých jídel v systému"
+        "label": "Uveďte správnou hodnotu, kterou teďka komponenta zobrazuje"
       },
       "finishType": "type-correct",
       "round": 1,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "Správně jste označili komponentu, která způsobovala chybu - namísto tabulky 'jidla' používala tabulku 'alergeny'",
       "pointsReward": 1,
       "failPenalty": 0.5,
@@ -914,16 +952,28 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "finishDescription": "",
+      "finishLabel": "Uveďte správnou hodnotu, kterou teďka komponenta zobrazuje",
+      "activityLabel": "Vyberte komponentu, která zobrazuje údaj chybně",
+      "activityDescription": "",
+      "activityCheckRepair": false,
+      "activityRepairChecks": [],
+      "activityOptions": [],
+      "finishOptions": [],
+      "finishCorrectAnswer": "30",
+      "finishCheckQuery": "",
+      "finishVariableConstraints": [],
+      "substituteAfterActivity": true
     },
     {
       "id": "670cbb72-859b-45d3-b73e-69d1b28c3c23",
       "title": "Barva štítku alergenů",
       "description": "Když má účastník nějaký alergen, tak by jeho štítek měl být červený, v opačném případě by měl být zelený. Prozkoumejte kód dané komponenty.",
       "componentsRepaired": false,
-      "completed": false,
+      "completed": true,
       "activity": {
-        "isCompleted": false,
+        "isCompleted": true,
         "substituteAfterActivity": false,
         "activityComponents": [
           {
@@ -984,12 +1034,12 @@
       },
       "activityType": "select-options",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "Úkol bude dokončen ihned po splnění aktivity"
       },
       "finishType": "immediate",
       "round": 2,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "",
       "pointsReward": 2,
       "failPenalty": 0.5,
@@ -1074,9 +1124,9 @@
       "title": "Seřazení účastníků podle příjmení",
       "description": "Zajímá vás věk účastnice Simony Urbanové. Abyste ji lépe našli, seřaďte si účastníky podle příjmení. ",
       "componentsRepaired": false,
-      "completed": false,
+      "completed": true,
       "activity": {
-        "isCompleted": false,
+        "isCompleted": true,
         "substituteAfterActivity": true,
         "activityComponents": [
           {
@@ -1135,14 +1185,14 @@
       },
       "activityType": "select-options",
       "finish": {
-        "isComplete": false,
+        "isComplete": true,
         "description": "",
         "correctAnswer": "10",
         "label": "Napiště správně věk Simony Urbanové"
       },
       "finishType": "type-correct",
       "round": 2,
-      "status": "not_started",
+      "status": "completed",
       "feedback": "",
       "pointsReward": 2,
       "failPenalty": 0.5,
@@ -1211,8 +1261,10 @@
       }
     }
   ],
-  "mistakes": [],
-  "mistakesCount": 0,
-  "currentRound": 1,
+  "mistakes": [
+    0.5
+  ],
+  "mistakesCount": 1,
+  "currentRound": 4,
   "levelCount": 6
 }
