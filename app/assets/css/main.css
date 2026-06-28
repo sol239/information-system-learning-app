@@ -9,17 +9,18 @@ body,
 }
 
 body {
-  --app-zoom: 0.75;
-  --app-screen-height: calc(100vh / var(--app-zoom));
-  zoom: var(--app-zoom);
+  margin: 0;
 }
 
-.h-screen {
-  height: var(--app-screen-height) !important;
+#__nuxt {
+  --app-scale: 0.75;
 }
 
-.min-h-screen {
-  min-height: var(--app-screen-height) !important;
+.app-scale-wrapper {
+  transform: scale(var(--app-scale));
+  transform-origin: top left;
+  width: calc(100% / var(--app-scale));
+  min-height: calc(100vh / var(--app-scale));
 }
 
 /* Popover */

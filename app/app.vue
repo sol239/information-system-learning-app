@@ -1,5 +1,5 @@
 <template>
-  <UApp>
+  <UApp class="app-scale-wrapper">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
