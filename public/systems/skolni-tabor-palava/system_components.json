@@ -1293,7 +1293,7 @@
     "description": "Pole pro úpravu jména účastníka. Vyžaduje generalVariable: idUcastnika.",
     "html": "<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_ucastnika\" value=\"{{ edit_vstup_jmeno_ucastnika }}\" style=\"border: 4px solid {{ barva_ramecku }}\n  \" />\n</div>",
     "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 11px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-    "js": "const je_jmeno_validni = (edit_vstup_jmeno_ucastnika.split(\" \").length === 2);\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+    "js": "const delka_jmena = edit_vstup_jmeno_ucastnika.trim().split(\" \").length;\n\nlet je_jmeno_validni;\n\nif (delka_jmena === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
     "js_click": "",
     "sql": {
       "nacistJmenoUcastnika": "SELECT jmeno AS edit_vstup_jmeno_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika"
@@ -1683,7 +1683,7 @@
     "description": "Pole pro zadání jména účastníka.",
     "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-vstup_jmeno_ucastnika\" placeholder=\"Zadejte jméno\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
     "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 11px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-    "js": "const je_jmeno_validni = vstup_jmeno_ucastnika.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+    "js": "const delka_jmena = vstup_jmeno_ucastnika.trim().split(\" \").length;\n\nlet je_jmeno_validni;\n\nif (delka_jmena === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
     "js_click": "",
     "sql": {},
     "sql_click": {},
@@ -2479,7 +2479,7 @@
     "description": "Pole pro úpravu jména vedoucího. Vyžaduje generalVariable: idVedouciho.",
     "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-edit_vstup_jmeno_vedouciho\" value=\"{{ edit_vstup_jmeno_vedouciho }}\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
     "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 11px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-    "js": "const casti_jmena_vedouciho = edit_vstup_jmeno_vedouciho.trim().split(\" \");\nlet pocet_casti_jmena_vedouciho = 0;\n\ncasti_jmena_vedouciho.forEach(function(cast_jmena) {\n    if (cast_jmena !== \"\") {\n        pocet_casti_jmena_vedouciho = pocet_casti_jmena_vedouciho + 1;\n    }\n});\n\nlet je_jmeno_validni = false;\n\nif (pocet_casti_jmena_vedouciho === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+    "js": "const delka_jmena = edit_vstup_jmeno_vedouciho.trim().split(\" \").length;\n\nlet je_jmeno_validni;\n\nif (delka_jmena === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
     "js_click": "",
     "sql": {
       "nacistJmenoVedouciho": "SELECT jmeno AS edit_vstup_jmeno_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho"
@@ -2842,7 +2842,7 @@
     "description": "Pole pro zadání jména vedoucího.",
     "html": "\n<div class=\"form-radek\">\n  <label>Jméno:</label>\n  <input type=\"text\" id=\"system-vstup_jmeno_vedouciho\" placeholder=\"Zadejte jméno\" style=\"border: 4px solid {{ barva_ramecku }}\" />\n</div>\n",
     "css": "\n.form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }\n.form-radek label { font-size: 11px; font-weight: 600; color: #374151; }\n.form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }\n",
-    "js": "const je_jmeno_validni = vstup_jmeno_vedouciho.trim().split(\" \").filter(Boolean).length === 2;\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
+    "js": "const delka_jmena = vstup_jmeno_vedouciho.trim().split(\" \").length;\n\nlet je_jmeno_validni;\n\nif (delka_jmena === 2) {\n    je_jmeno_validni = true;\n} else {\n    je_jmeno_validni = false;\n}\n\nlet barva_ramecku = \"#FFFFFF\";\n\nif (je_jmeno_validni) {\n    barva_ramecku = \"#4aff5c\";\n} else {\n    barva_ramecku = \"#ff4f92\";\n}",
     "js_click": "",
     "sql": {},
     "sql_click": {},
