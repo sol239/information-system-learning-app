@@ -10,6 +10,7 @@ body,
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 /* default: Linux / Ubuntu / macOS */
@@ -24,8 +25,15 @@ html.is-windows {
   --app-screen-height: calc(100dvh / var(--app-zoom));
 }
 
-html.is-windows body {
-  zoom: var(--app-zoom);
+.app-scale-wrapper {
+  min-height: 100dvh;
+}
+
+html.is-windows .app-scale-wrapper {
+  width: calc(100% / var(--app-zoom));
+  min-height: var(--app-screen-height);
+  transform: scale(var(--app-zoom));
+  transform-origin: top left;
 }
 
 .h-screen {
