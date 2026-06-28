@@ -843,7 +843,7 @@
     },
     {
       "id": "c134571d-6c36-4dea-8805-e596afd0e048",
-      "title": "Množství různých jídel v systému",
+      "title": "Nalezení chybné komponenty",
       "description": "Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.",
       "componentsRepaired": false,
       "completed": true,
