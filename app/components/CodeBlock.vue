@@ -28,7 +28,7 @@
             icon="i-lucide-info"
             color="neutral"
             variant="ghost"
-            size="xs"
+            size="sm"
             :aria-label="t('show_info')"
           />
           <template #content>

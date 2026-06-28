@@ -74,7 +74,7 @@ export const hlavniKartaSystemuKomponenta = new Component({
 }
 
 #nazev-systemu {
-  font-size: 44px;
+  font-size: 36px;
   font-weight: 900;
   color: #111827;
   margin: 0 0 16px 0;
@@ -83,7 +83,7 @@ export const hlavniKartaSystemuKomponenta = new Component({
 }
 
 #popis-systemu {
-  font-size: 18px;
+  font-size: 17px;
   color: #4b5563;
   max-width: 700px;
   line-height: 1.7;

@@ -1,6 +1,6 @@
 <template>
     <UModal :title="t('upload_system')">
-        <UButton class="add-new-system-button" icon="i-lucide-plus-circle" size="lg" color="teacher">
+        <UButton class="add-new-system-button" icon="i-lucide-plus-circle" size="sm" color="teacher">
             {{ t('add_new_system') }}
         </UButton>
 
@@ -51,10 +51,10 @@
 
         <template #footer="{ close }">
             <UButton color="teacher" icon="i-lucide-chevron-right" :disabled="(!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists"
-                :loading="loading" @click="onUpload(close)">
+                :loading="loading" @click="onUpload(close)" size="sm">
                 {{ t('add_system') ?? 'Add System' }}
             </UButton>
-            <UButton color="neutral" variant="outline" @click="close">{{ t('cancel') }}</UButton>
+            <UButton color="neutral" variant="outline" @click="close" size="sm">{{ t('cancel') }}</UButton>
         </template>
     </UModal>
 </template>

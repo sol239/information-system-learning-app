@@ -5,7 +5,7 @@
       color="neutral"
       variant="soft"
       :label="selectedTaskTitle"
-    />
+    size="sm" />
 
     <template #body>
       <TasksDesignerPanel />

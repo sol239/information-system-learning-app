@@ -47,7 +47,7 @@
             block
             :loading="isStartingTasks"
             @click="startTaskSolving"
-          >
+           size="sm">
             {{ t('student_welcome_sidebar_start_button') }}
           </UButton>
         </div>
@@ -58,11 +58,11 @@
       <button
         v-if="globalSettings.teacherMode"
         type="button"
-        class="flex w-full items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-3 text-left text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100"
+        class="flex w-full items-center gap-[0.675rem] rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-[0.675rem] text-left text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100"
         @click="createTaskAndOpenDesigner"
       >
-        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white text-gray-500 shadow-sm">
-          <UIcon name="i-lucide-plus" class="h-4 w-4" />
+        <span class="flex h-[1.8rem] w-[1.8rem] shrink-0 items-center justify-center rounded-md bg-white text-gray-500 shadow-sm">
+          <UIcon name="i-lucide-plus" class="h-[0.9rem] w-[0.9rem]" />
         </span>
         <span class="min-w-0 font-medium text-sm">{{ t('task_create_task') }}</span>
       </button>
@@ -100,7 +100,7 @@
               :id="`task-${index + 1}`"
               type="button"
               aria-disabled="true"
-              class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60"
+              class="flex w-full cursor-not-allowed flex-col gap-[0.3375rem] rounded-lg border border-gray-200 bg-gray-50 p-[0.675rem] text-left opacity-60"
               @click.prevent
             >
               <div class="flex items-start justify-between gap-2">
@@ -138,7 +138,7 @@
           :id="`task-${index + 1}`"
           role="button"
           tabindex="0"
-          class="flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-colors cursor-pointer w-full"
+          class="flex flex-col gap-[0.3375rem] rounded-lg border p-[0.675rem] text-left transition-colors cursor-pointer w-full"
           :class="globalSettings.teacherMode && globalSettings.selectedTaskId === task.id ? 'border-sky-300 bg-sky-50/80 ring-2 ring-sky-200 shadow-sm shadow-sky-100' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'"
           @click="openTask(task)"
           @keydown.enter="openTask(task)"
@@ -170,7 +170,7 @@
                   icon="i-lucide-trash-2"
                   color="red"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   :aria-label="t('task_remove_task_action')"
                   @click.stop="deleteTask(task.id)"
                 />

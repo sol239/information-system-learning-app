@@ -4,7 +4,7 @@
       <div class="mb-6 mt-5 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <h1
-            class="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-teacher-600 sm:text-5xl"
+            class="flex items-center gap-3 text-3xl font-semibold tracking-tight text-teacher-600 sm:text-4xl"
           >
             <span>{{ t("task_designer") }}</span>
           </h1>
@@ -13,6 +13,7 @@
         <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
           <UModal v-model:open="downloadModalOpen" :title="t('download_system')">
             <UButton
+              size="sm"
               icon="i-lucide-download"
               color="teacher"
               variant="solid"
@@ -31,10 +32,11 @@
 
             <template #footer>
               <div class="flex justify-end gap-2">
-                <UButton color="neutral" variant="ghost" @click="downloadModalOpen = false">
+                <UButton size="sm" color="neutral" variant="ghost" @click="downloadModalOpen = false">
                   {{ t("cancel") }}
                 </UButton>
                 <UButton
+                  size="sm"
                   icon="i-lucide-download"
                   color="teacher"
                   variant="solid"
@@ -48,6 +50,7 @@
           </UModal>
 
           <UButton
+            size="sm"
             icon="i-lucide-arrow-left"
             color="teacher"
             variant="outline"

@@ -5,7 +5,7 @@
       :icon="globalSettings.teacherHighlightEnabled ? 'i-lucide-eye' : 'i-lucide-eye-off'"
       :color="globalSettings.teacherHighlightEnabled ? 'sky' : 'neutral'"
       :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'"
-      size="md"
+      size="sm"
       @click="
         globalSettings.teacherHighlightEnabled = !globalSettings.teacherHighlightEnabled
       "
@@ -16,14 +16,14 @@
       icon="i-lucide-pencil-ruler"
       color="teacher"
       variant="subtle"
-      size="md"
+      size="sm"
       @click="openTaskDesigner"
     >
       <span class="mobile-hidden">{{ t("designer") }}</span>
     </UButton>
 
     <UPopover>
-      <!-- <UButton icon="i-heroicons-beaker" color="neutral" variant="ghost" size="md" /> -->
+      <!-- <UButton icon="i-heroicons-beaker" color="neutral" variant="ghost" size="sm" /> -->
       <template #content>
         <div
           class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2"
@@ -35,7 +35,7 @@
             color="neutral"
             icon="i-heroicons-command-line"
             class="justify-start"
-          >
+           size="sm">
             Print table names</UButton
           >
           <UButton
@@ -45,7 +45,7 @@
             color="neutral"
             icon="i-heroicons-question-mark-circle"
             class="justify-start"
-            >Check DB Status</UButton
+             size="sm">Check DB Status</UButton
           >
           <UButton
             block
@@ -54,7 +54,7 @@
             color="neutral"
             icon="i-heroicons-magnifying-glass-circle"
             class="justify-start"
-            >Component Explorer</UButton
+             size="sm">Component Explorer</UButton
           >
         </div>
       </template>
@@ -67,7 +67,7 @@
         "
         color="yellow"
         :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'"
-        size="md"
+        size="sm"
         @click="highlightStore.toggleEditMode"
       >
         <span class="mobile-hidden">{{
@@ -78,7 +78,7 @@
 
     <UButton
       :label="$t('refresh_system')"
-      size="md"
+      size="sm"
       color="green"
       variant="subtle"
       icon="i-lucide-refresh-cw"
@@ -90,7 +90,7 @@
       icon="i-heroicons-arrow-right-on-rectangle"
       color="red"
       variant="subtle"
-      size="md"
+      size="sm"
       @click="leaveSystem"
     >
       <span class="mobile-hidden">{{ $t("leave_system") }}</span>
@@ -101,7 +101,7 @@
       :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
       color="teacher"
       variant="subtle"
-      size="md"
+      size="sm"
       @click="versionSwitchModalOpen = true"
     >
       <span class="mobile-hidden">{{ t("change_version") }}</span>
@@ -134,7 +134,7 @@
                 variant="soft"
                 icon="i-heroicons-circle-stack"
                 @click="refreshDatabaseFromModal"
-              >
+               size="sm">
                 {{ t("refresh_database") }}
               </UButton>
             </div>
@@ -154,7 +154,7 @@
                 variant="soft"
                 icon="i-heroicons-squares-2x2"
                 @click="refreshComponentsFromModal"
-              >
+               size="sm">
                 {{ t("refresh_components") }}
               </UButton>
             </div>
@@ -174,7 +174,7 @@
                 variant="solid"
                 icon="i-lucide-refresh-cw"
                 @click="refreshAllFromModal"
-              >
+               size="sm">
                 {{ t("refresh_all") }}
               </UButton>
             </div>
@@ -183,7 +183,7 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="refreshSystemModalOpen = false">
+          <UButton color="neutral" variant="ghost" @click="refreshSystemModalOpen = false" size="sm">
             {{ t("cancel") }}
           </UButton>
         </div>
@@ -202,14 +202,14 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="versionSwitchModalOpen = false">
+          <UButton color="neutral" variant="ghost" @click="versionSwitchModalOpen = false" size="sm">
             {{ t("cancel") }}
           </UButton>
           <UButton
             color="teacher"
             :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
             @click="changeVersion"
-          >
+           size="sm">
             {{ globalSettings.teacherMode ? t("switch_to_student_version") : t("switch_to_teacher_version") }}
           </UButton>
         </div>

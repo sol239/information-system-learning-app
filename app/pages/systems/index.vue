@@ -83,7 +83,7 @@
                   icon="i-lucide-trash-2"
                   color="red"
                   variant="ghost"
-                  size="md"
+                  size="sm"
                   @click="deleteSystem(system.id)"
                 />
               </div>
@@ -101,7 +101,7 @@
                 color="teacher"
                 variant="outline"
                 @click="navigateToSystem(system.id)"
-              >
+               size="sm">
                 {{ t("enter_system") }}
               </UButton>
             </div>

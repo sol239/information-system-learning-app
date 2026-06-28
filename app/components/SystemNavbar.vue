@@ -237,4 +237,32 @@ onMounted(() => {
   }
 }
 
+@media (min-width: 1024px) and (max-width: 1440px) {
+  nav {
+    gap: 0.225rem;
+    padding: 0.225rem;
+  }
+
+  nav a,
+  nav button,
+  #go-to-database-button,
+  .mobile-tasks-nav-button {
+    gap: 0.45rem;
+    padding: 0.3375rem 0.675rem;
+    font-size: 0.7875rem;
+    line-height: 1.125rem;
+  }
+
+  nav svg,
+  #go-to-database-button svg,
+  .mobile-tasks-nav-button svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .right-actions {
+    gap: 0.45rem;
+  }
+}
+
 </style>

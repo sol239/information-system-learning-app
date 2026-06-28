@@ -227,7 +227,7 @@
           class="flex items-center gap-1 font-mono pr-1">
           <span>{{ component.name }}</span>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-copy" color="neutral" variant="ghost" size="xs" class="shrink-0"
+            <UButton icon="i-lucide-copy" color="neutral" variant="ghost" size="sm" class="shrink-0"
               @click.stop="exportSelectedComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -240,7 +240,7 @@
             </template>
           </UPopover>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-pencil" color="neutral" variant="ghost" size="xs" class="shrink-0"
+            <UButton icon="i-lucide-pencil" color="neutral" variant="ghost" size="sm" class="shrink-0"
               @click.stop="startEditingComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -253,7 +253,7 @@
             </template>
           </UPopover>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="xs" class="shrink-0"
+            <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
               @click.stop="removeSelectedComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -294,10 +294,10 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <UButton color="neutral" variant="ghost" @click="stopEditingComponent">
+          <UButton color="neutral" variant="ghost" @click="stopEditingComponent" size="sm">
             {{ t('task_close') }}
           </UButton>
-          <UButton color="sky" :disabled="!isEditingComponentValid" @click="saveEditedComponent">
+          <UButton color="sky" :disabled="!isEditingComponentValid" @click="saveEditedComponent" size="sm">
             {{ t('task_save_changes') }}
           </UButton>
         </div>
@@ -395,7 +395,7 @@
                     @click="removeActivityOption(index)" />
                 </div>
 
-                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addActivityOption">
+                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addActivityOption" size="sm">
                   {{ t('task_add_option') }}
                 </UButton>
               </div>
@@ -501,7 +501,7 @@
                   variant="soft"
                   :disabled="!componentContainsComponentOptions.length"
                   @click="addActivityRepairCheck"
-                >
+                 size="sm">
                   {{ t('task_add_component_contains_constraint') }}
                 </UButton>
               </div>
@@ -584,7 +584,7 @@
                     @click="removeFinishOption(index)" />
                 </div>
 
-                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addFinishOption">
+                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addFinishOption" size="sm">
                   {{ t('task_add_option') }}
                 </UButton>
               </div>
@@ -656,7 +656,7 @@
                   variant="soft"
                   :disabled="!variableConstraintOptions.length"
                   @click="addVariableConstraint"
-                >
+                 size="sm">
                   {{ t('task_add_variable_constraint') }}
                 </UButton>
               </div>
@@ -725,14 +725,14 @@
           color="neutral"
           variant="ghost"
           @click="showPasteComponentModal = false"
-        >
+         size="sm">
           {{ t('cancel') }}
         </UButton>
         <UButton
           color="primary"
           :disabled="!pasteComponentJsonText.trim()"
           @click="handlePasteComponent"
-        >
+         size="sm">
           {{ t('task_paste_json') }}
         </UButton>
       </div>

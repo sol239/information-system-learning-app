@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="p-6 flex flex-col gap-5 max-w-7xl mx-auto">
 
-        <h1 class="text-4xl font-bold">{{ t('meal_plan') }}</h1>
+        <h1 class="text-3xl font-semibold">{{ t('meal_plan') }}</h1>
 
         <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div class="flex items-center gap-2 mb-4">
@@ -9,13 +9,13 @@
                 <h2 class="text-lg font-semibold text-gray-900">Přidat jídlo osobě</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 items-end">
-                <ComponentWrapper class="w-full" :component="addMealSessionComponent" />
-                <ComponentWrapper class="w-full" :component="addMealPersonComponent" />
-                <ComponentWrapper class="w-full" :component="addMealDateComponent" />
-                <ComponentWrapper class="w-full" :component="addMealMealComponent" />
+            <div class="flex flex-row flex-wrap items-end gap-4">
+                <ComponentWrapper class="w-fit" :component="addMealSessionComponent" />
+                <ComponentWrapper class="w-fit" :component="addMealPersonComponent" />
+                <ComponentWrapper class="w-fit" :component="addMealDateComponent" />
+                <ComponentWrapper class="w-fit" :component="addMealMealComponent" />
                 <ComponentWrapper
-                    class="w-full"
+                    class="w-fit"
                     :component="addMealSubmitComponent"
                     @action-completed="reloadMealPlan"
                 />
@@ -28,13 +28,13 @@
                 <h2 class="text-lg font-semibold text-gray-900">Odebrat jídlo osobě</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 items-end">
-                <ComponentWrapper class="w-full" :component="removeMealPersonComponent" />
-                <ComponentWrapper class="w-full" :component="removeMealSessionComponent" />
-                <ComponentWrapper class="w-full" :component="removeMealDateComponent" />
-                <ComponentWrapper class="w-full" :component="removeMealMealComponent" />
+            <div class="flex flex-row flex-wrap items-end gap-4">
+                <ComponentWrapper class="w-fit" :component="removeMealPersonComponent" />
+                <ComponentWrapper class="w-fit" :component="removeMealSessionComponent" />
+                <ComponentWrapper class="w-fit" :component="removeMealDateComponent" />
+                <ComponentWrapper class="w-fit" :component="removeMealMealComponent" />
                 <ComponentWrapper
-                    class="w-full"
+                    class="w-fit"
                     :component="removeMealSubmitComponent"
                     @action-completed="reloadMealPlan"
                 />

@@ -5,7 +5,7 @@
             icon="i-lucide-pencil"
             color="blue"
             variant="ghost"
-            size="md"
+            size="sm"
         />
 
         <template #body>
@@ -25,10 +25,10 @@
         </template>
 
         <template #footer="{ close }">
-            <UButton color="teacher" icon="i-lucide-check" :loading="saving" @click="save(close)">
+            <UButton color="teacher" icon="i-lucide-check" :loading="saving" @click="save(close)" size="sm">
                 {{ t('save') }}
             </UButton>
-            <UButton color="neutral" variant="outline" @click="close">
+            <UButton color="neutral" variant="outline" @click="close" size="sm">
                 {{ t('cancel') }}
             </UButton>
         </template>

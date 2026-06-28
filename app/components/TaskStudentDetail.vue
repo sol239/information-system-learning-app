@@ -4,14 +4,14 @@
       <!-- Title & points -->
       <div class="flex flex-col gap-2">
         <div class="flex flex-wrap items-center gap-2">
-          <UBadge color="green" variant="subtle" size="lg">
+          <UBadge color="green" variant="subtle" size="md">
             {{ props.task.pointsReward }} {{ t('task_pts') }}
           </UBadge>
-          <UBadge v-if="props.task.failPenalty" color="red" variant="subtle" size="lg">
+          <UBadge v-if="props.task.failPenalty" color="red" variant="subtle" size="md">
             -{{ props.task.failPenalty }} {{ t('task_penalty') }}
           </UBadge>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 w-full">
+        <h2 class="text-1xl font-bold text-gray-900 w-full">
           {{ props.title ?? props.task.title }}
         </h2>
         <p v-if="props.task.description" class="text-base text-gray-600 w-full">
@@ -109,7 +109,7 @@
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.activity?.isCompleted === true"
             @click="evaluateActivity"
-          >
+           size="sm">
             {{ t('evaluate') }}
           </UButton>
           <UBadge
@@ -221,7 +221,7 @@
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.finish?.isComplete === true || isFinishLocked"
             @click="evaluateFinish"
-          >
+           size="sm">
             {{ t('evaluate') }}
           </UButton>
           <UBadge
@@ -337,7 +337,7 @@
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.finish?.isComplete === true || isFinishLocked"
             @click="evaluateFinish"
-          >
+           size="sm">
             {{ t('evaluate') }}
           </UButton>
           <UBadge

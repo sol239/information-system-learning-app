@@ -48,7 +48,7 @@
                             v-for="item in tableMenuItems"
                             :key="item.value"
                             type="button"
-                            class="flex w-full items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 pr-6 text-left text-sm transition-colors last:border-b-0"
+                            class="flex w-full items-center justify-between gap-3 border-b border-gray-100 px-4 py-[0.675rem] pr-6 text-left text-sm transition-colors last:border-b-0"
                             :class="value === item.value
                                 ? 'bg-sky-50 text-sky-700'
                                 : 'text-gray-700 hover:bg-gray-50'"
@@ -96,7 +96,7 @@
             <CodeBlock v-model:code="query" language="sql" :label="t('sql_query')" height="125px" :correct="isQueryValid" />
             <div class="flex justify-end items-center">
                 <UButton @click="handleExecuteQuery" icon="i-heroicons-arrow-path" color="teacher" variant="soft"
-                    size="lg" :loading="isExecuting" :disabled="!isQueryValid">
+                    size="sm" :loading="isExecuting" :disabled="!isQueryValid">
                     {{ t('execute_query') }}
                 </UButton>
             </div>

@@ -3,7 +3,7 @@
     <ComponentWrapper :component="dashboardHeroCard" class="justify-center mt-6" />
     <section
       id="entity-stat-section"
-      class="flex flex-row flex-wrap justify-center gap-4"
+      class="flex flex-row flex-wrap justify-start gap-4"
     >
       <ComponentWrapper :component="participantsStat" />
       <ComponentWrapper :component="sessionsStat" />
@@ -12,8 +12,8 @@
     </section>
     <USeparator />
 
-    <h2 class="text-2xl font-semibold">Statistiky</h2>
-    <section id="agg-stat-section" class="flex flex-row flex-wrap justify-center gap-4">
+    <h2 class="text-[22px] font-semibold">Statistiky</h2>
+    <section id="agg-stat-section" class="flex flex-row flex-wrap justify-start gap-4">
       <ComponentWrapper :component="minParticipantsPerSessionStat" />
       <ComponentWrapper :component="maxParticipantsPerSessionStat" />
       <ComponentWrapper :component="totalParticipantsInSessionsStat" />

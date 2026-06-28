@@ -19,30 +19,30 @@ export const statsMinParticipantsPerSessionComponent = new Component({
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 8px;
-  padding: 16px;
+  padding: 10px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   max-width: 400px;
 }
 
 #statistika-min-ucastniku-turnusu-icon {
-  font-size: 22px;
+  font-size: 14px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-min-ucastniku-turnusu-number {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
   color: #111111;
 }
 
 #statistika-min-ucastniku-turnusu-label {
-  font-size: 13px;
+  font-size: 11px;
   color: #666666;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 `,
   js: ``,

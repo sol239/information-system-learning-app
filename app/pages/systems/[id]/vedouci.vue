@@ -1,10 +1,10 @@
-ï»¿<template>
+<template>
   <div class="p-6 flex flex-col gap-6 max-w-7xl mx-auto">
     <!-- Page header -->
-    <h1 class="text-4xl font-bold">{{ t("supervisors") }}</h1>
+    <h1 class="text-3xl font-semibold">{{ t("supervisors") }}</h1>
 
     <!-- Toolbar -->
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-row flex-wrap items-center gap-3">
       <!-- Session filter dropdown -->
       <USelect
         v-model="selectedSessionId"
@@ -17,14 +17,11 @@
       <!-- Total count widget -->
       <ComponentWrapper :component="countBarComponent" />
 
-      <!-- Spacer -->
-      <div class="flex-1" />
-
       <!-- Name/email filter -->
       <UInput
         v-model="filterText"
         icon="i-heroicons-magnifying-glass"
-        placeholder="JmÃ©no, email, telefon nebo adresa"
+        placeholder="Jméno, email, telefon nebo adresa"
         class="w-56"
       />
 
@@ -34,10 +31,10 @@
       <!-- Add supervisor modal -->
       <ModalContainer v-model:open="createModalOpen" class="w-fit">
         <UButton
-          label="PÅ™idat vedoucÃ­ho"
+          label="Pøidat vedoucího"
           color="primary"
           icon="i-heroicons-plus"
-          size="md"
+          size="sm"
         />
 
         <template #content>
@@ -51,10 +48,10 @@
             <ComponentWrapper :component="vstupTurnusyComponent" />
             <div class="flex gap-2">
               <UButton
-                label="ZruÅ¡it"
+                label="Zrušit"
                 color="neutral"
                 variant="solid"
-                size="md"
+                size="sm"
                 @click="createModalOpen = false"
               />
               <ComponentWrapper
@@ -102,7 +99,7 @@
               label="Upravit"
               color="neutral"
               variant="subtle"
-              size="md"
+              size="sm"
               class="flex-1"
             />
 
@@ -159,10 +156,10 @@
                 />
                 <div class="flex gap-2">
                   <UButton
-                    label="ZruÅ¡it"
+                    label="Zrušit"
                     color="neutral"
                     variant="solid"
-                    size="md"
+                    size="sm"
                     @click="editModalOpen[supervisorId] = false"
                   />
                   <ComponentWrapper

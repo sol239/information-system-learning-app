@@ -18,7 +18,7 @@
 
       <template #footer>
         <div class="flex w-full flex-col gap-2">
-          <UButton block color="primary" variant="soft" @click="closeWelcomeModal">
+          <UButton block color="primary" variant="soft" @click="closeWelcomeModal" size="sm">
             {{ t('student_welcome_modal_explore_button') }}
           </UButton>
           <UButton
@@ -29,7 +29,7 @@
             icon="i-lucide-rotate-cw"
             :loading="isStartingTasks"
             @click="startTasksFromModal"
-          >
+           size="sm">
             {{ t('student_welcome_sidebar_start_button') }}
           </UButton>
         </div>
@@ -74,7 +74,7 @@
 
       <template #footer>
         <div class="flex w-full justify-end">
-          <UButton color="primary" @click="completedModalOpen = false">
+          <UButton color="primary" @click="completedModalOpen = false" size="sm">
             {{ t('student_completed_modal_button') }}
           </UButton>
         </div>

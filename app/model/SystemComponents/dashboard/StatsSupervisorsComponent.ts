@@ -1,16 +1,16 @@
-﻿import { Component } from "~/model/Component";
+import { Component } from "~/model/Component";
 
 export const statistikaVedoucichKomponenta = new Component({
   id: "statistika-vedoucich",
-  name: "Statistika vedoucích",
-  tags: ["statistika", "vedoucích"],
-  description: `Komponenta pro statistiku vedoucích. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci`,
+  name: "Statistika vedouc�ch",
+  tags: ["statistika", "vedouc�ch"],
+  description: `Komponenta pro statistiku vedouc�ch. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci`,
   html: `
   <div id="statistika-vedoucich-karta">
-    <div id="statistika-vedoucich-ikona">👨‍🏫</div>
+    <div id="statistika-vedoucich-ikona">?????</div>
     <div id="statistika-vedoucich-obsah">
       <div id="statistika-vedoucich-pocet">{{ pocet_vedoucich }}</div>
-      <div id="statistika-vedoucich-popisek">vedoucích</div>
+      <div id="statistika-vedoucich-popisek">vedouc�ch</div>
     </div>
   </div>
   `,
@@ -19,28 +19,28 @@ export const statistikaVedoucichKomponenta = new Component({
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 8px;
-  padding: 16px;
+  padding: 10px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   max-width:400px;
 }
 
 #statistika-vedoucich-ikona {
-  font-size: 32px;
+  font-size: 21px;
 }
 
 #statistika-vedoucich-pocet {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
   color: #111111;
 }
 
 #statistika-vedoucich-popisek {
-  font-size: 13px;
+  font-size: 11px;
   color: #666666;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 `,
   js: ``,

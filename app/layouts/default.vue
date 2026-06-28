@@ -39,7 +39,7 @@ const mobileTasksOpen = ref(false)
         
         <div class="flex flex-row mt-4 items-center justify-between px-4">
           <div>
-            <h2 class="text-2xl font-bold">{{ t('tasks') }}</h2>
+            <h2 class="text-1xl font-bold">{{ t('tasks') }}</h2>
           </div>
           <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
             <span>
@@ -80,7 +80,7 @@ const mobileTasksOpen = ref(false)
               icon="i-lucide-x"
               :aria-label="t('task_close')"
               @click="mobileTasksOpen = false"
-            />
+            size="sm" />
           </div>
         </template>
 

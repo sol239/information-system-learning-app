@@ -23,7 +23,7 @@
             color="neutral"
             :variant="previewStudentView ? 'solid' : 'soft'"
             @click="previewStudentView = !previewStudentView"
-          >
+           size="sm">
             {{ previewStudentView ? t('task_editor_view') : t('task_student_preview') }}
           </UButton>
           <template #content>
@@ -46,7 +46,7 @@
           color="primary"
           variant="soft"
           @click="createTask"
-        >
+         size="sm">
           {{ t('task_new_task') }}
         </UButton>
 
@@ -56,7 +56,7 @@
             color="neutral"
             variant="soft"
             @mouseenter="optionsOpen = true"
-          >
+           size="sm">
             {{ t('task_options_menu') }}
           </UButton>
 
@@ -72,7 +72,7 @@
                 variant="ghost"
                 class="justify-start"
                 @click="openImportTaskModal"
-              >
+               size="sm">
                 {{ t('task_add_from_json') }}
               </UButton>
               <UButton
@@ -82,7 +82,7 @@
                 class="justify-start"
                 :disabled="!selectedTask"
                 @click="downloadSelectedTaskJson"
-              >
+               size="sm">
                 {{ t('task_download_json') }}
               </UButton>
             </div>
@@ -123,7 +123,7 @@
               icon="i-lucide-trash-2"
               color="red"
               variant="ghost"
-              size="xs"
+              size="sm"
               class="shrink-0"
               @click.stop="deleteTask(task.id)"
             />
@@ -168,8 +168,8 @@
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="showImportModal = false">{{ t('cancel') }}</UButton>
-          <UButton color="primary" @click="importFromJson">{{ t('task_import_btn') }}</UButton>
+          <UButton color="neutral" variant="ghost" @click="showImportModal = false" size="sm">{{ t('cancel') }}</UButton>
+          <UButton color="primary" @click="importFromJson" size="sm">{{ t('task_import_btn') }}</UButton>
         </div>
       </template>
     </UModal>
@@ -199,8 +199,8 @@
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="showImportAllModal = false">{{ t('cancel') }}</UButton>
-          <UButton color="primary" @click="importAllFromJson">{{ t('task_import_all_btn') }}</UButton>
+          <UButton color="neutral" variant="ghost" @click="showImportAllModal = false" size="sm">{{ t('cancel') }}</UButton>
+          <UButton color="primary" @click="importAllFromJson" size="sm">{{ t('task_import_all_btn') }}</UButton>
         </div>
       </template>
     </UModal>

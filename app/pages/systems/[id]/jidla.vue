@@ -1,11 +1,11 @@
-ï»¿<template>
+<template>
     <div class="p-6 flex flex-col gap-6 max-w-7xl mx-auto">
 
         <!-- Page header -->
-        <h1 class="text-4xl font-bold">{{ t('meals') }}</h1>
+        <h1 class="text-3xl font-semibold">{{ t('meals') }}</h1>
 
         <!-- Toolbar -->
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-row flex-wrap items-center gap-3">
             <!-- Serving-time filter dropdown -->
             <USelect
                 v-model="selectedTime"
@@ -18,14 +18,11 @@
             <!-- Meal count widget -->
             <ComponentWrapper :component="countBarComponent" />
 
-            <!-- Spacer -->
-            <div class="flex-1" />
-
             <!-- Meal name filter -->
             <UInput
                 v-model="filterText"
                 icon="i-heroicons-magnifying-glass"
-                placeholder="NÃ¡zev jÃ­dla"
+                placeholder="Název jídla"
                 class="w-56"
             />
 
@@ -34,7 +31,7 @@
 
             <!-- Add meal modal -->
             <ModalContainer v-model:open="createModalOpen" class="w-fit">
-                <UButton label="PÅ™idat jÃ­dlo" color="primary" icon="i-heroicons-plus" size="md" />
+                <UButton label="Pøidat jídlo" color="primary" icon="i-heroicons-plus" size="sm" />
 
                 <template #content>
                     <div class="modal-container">
@@ -42,7 +39,7 @@
                         <ComponentWrapper :component="vstupDobaComponent" />
                         <ComponentWrapper :component="vstupAlergenyComponent" />
                         <div class="flex gap-2">
-                            <UButton label="ZruÅ¡it" color="neutral" variant="solid" size="md"
+                            <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
                                 @click="createModalOpen = false" />
                             <ComponentWrapper :component="btnUlozitComponent" @action-completed="handleMealCreated" />
                         </div>
@@ -73,7 +70,7 @@
                 <!-- Actions -->
                 <div class="flex gap-3 pt-1 border-t border-gray-100">
                     <ModalContainer v-model:open="editModalOpen[mealId]" class="flex-1">
-                        <UButton label="Upravit" color="neutral" variant="subtle" size="md" class="flex-1" />
+                        <UButton label="Upravit" color="neutral" variant="subtle" size="sm" class="flex-1" />
 
                         <template #content>
                             <div class="modal-container">
@@ -84,7 +81,7 @@
                                 <ComponentWrapper
                                     :component="withVars(editVstupAlergenyComponent, [new Variable('idJidla', mealId)])" />
                                 <div class="flex gap-2">
-                                    <UButton label="ZruÅ¡it" color="neutral" variant="solid" size="md"
+                                    <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
                                         @click="editModalOpen[mealId] = false" />
                                     <ComponentWrapper
                                         :component="withVars(editBtnUlozitComponent, [new Variable('idJidla', mealId)])"
@@ -173,9 +170,9 @@ const selectedTime = ref<string | null>(null);
 
 const timeFilterItems = computed(() => [
     { label: t('all_meals'), value: null },
-    { label: 'snÃ­danÄ›', value: 'snÃ­danÄ›' },
-    { label: 'obÄ›d', value: 'obÄ›d' },
-    { label: 'veÄeÅ™e', value: 'veÄeÅ™e' },
+    { label: 'snídanì', value: 'snídanì' },
+    { label: 'obìd', value: 'obìd' },
+    { label: 'veèeøe', value: 'veèeøe' },
 ]);
 
 const normalizedFilterText = computed(() => filterText.value.trim().toLocaleLowerCase('cs-CZ'));

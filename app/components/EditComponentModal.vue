@@ -24,7 +24,7 @@
         color="sky"
         :variant="isFormEdited ? 'solid' : 'subtle'"
         :disabled="!isFormValid"
-      >
+       size="sm">
         {{ t("save_changes") }}
       </UButton>
     </template>

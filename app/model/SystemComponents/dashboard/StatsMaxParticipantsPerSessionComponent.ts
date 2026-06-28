@@ -19,30 +19,30 @@ export const statsMaxParticipantsPerSessionComponent = new Component({
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 8px;
-  padding: 16px;
+  padding: 10px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   max-width: 400px;
 }
 
 #statistika-max-ucastniku-turnusu-icon {
-  font-size: 32px;
+  font-size: 21px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-max-ucastniku-turnusu-number {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
   color: #111111;
 }
 
 #statistika-max-ucastniku-turnusu-label {
-  font-size: 13px;
+  font-size: 11px;
   color: #666666;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 `,
   js: ``,

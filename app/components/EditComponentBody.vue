@@ -2,11 +2,11 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-2 justify-end -mt-2">
       <UTooltip :text="t('decrease_font')" :ui="{ content: 'z-[10050]' }">
-        <UButton icon="i-lucide-minus" color="neutral" variant="ghost" @click="sizeMultiplier -= 0.05" />
+        <UButton icon="i-lucide-minus" color="neutral" variant="ghost" @click="sizeMultiplier -= 0.05" size="sm" />
       </UTooltip>
       <span class="text-xs text-gray-500 font-medium w-10 text-center">{{ Math.round(sizeMultiplier * 100) }}%</span>
       <UTooltip :text="t('increase_font')" :ui="{ content: 'z-[10050]' }">
-        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" @click="sizeMultiplier += 0.05" />
+        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" @click="sizeMultiplier += 0.05" size="sm" />
       </UTooltip>
     </div>
 
@@ -27,10 +27,10 @@
             size="xs" class="flex-1" :disabled="Object.keys(sqlRecord).length === 1" :ui="selectOverlayUi" />
           <div class="flex gap-1">
             <UTooltip :text="t('add_sql_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-plus" size="xs" variant="ghost" @click="addQuery" />
+              <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-trash-2" size="xs" variant="ghost" color="red" @click="removeQuery"
+              <UButton icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="removeQuery"
                 :disabled="sqlQueryNames.length <= 1" />
             </UTooltip>
           </div>
@@ -46,7 +46,7 @@
       <USeparator class="flex-1" />
       <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ t('click_actions') }}</span>
       <UPopover mode="hover" arrow>
-        <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
+        <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
         <template #content>
           <div class="app-popover-content">
             <UIcon name="i-lucide-info" class="app-popover-icon" />
@@ -64,9 +64,9 @@
       <div v-if="jsClickAvailable" class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ t('js_click_action') }}</span>
-          <UButton v-if="!editedJsClick" icon="i-lucide-plus" size="xs" variant="ghost" :label="t('add_action')"
+          <UButton v-if="!editedJsClick" icon="i-lucide-plus" size="sm" variant="ghost" :label="t('add_action')"
             @click="editedJsClick = '// click logic here'" />
-          <UButton v-else icon="i-lucide-trash-2" size="xs" variant="ghost" color="red" @click="editedJsClick = ''" />
+          <UButton v-else icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="editedJsClick = ''" />
         </div>
 
         <CodeBlock v-if="editedJsClick" v-model:code="editedJsClick" language="typescript" height="200px"
@@ -88,10 +88,10 @@
             :disabled="sqlClickQueryNames.length <= 1" :ui="selectOverlayUi" />
           <div class="flex gap-1">
             <UTooltip :text="t('add_sql_click_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-plus" size="xs" variant="ghost" @click="addClickQuery" />
+              <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addClickQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_click_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-trash-2" size="xs" variant="ghost" color="red" @click="removeClickQuery"
+              <UButton icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="removeClickQuery"
                 :disabled="sqlClickQueryNames.length === 0" />
             </UTooltip>
           </div>
@@ -118,7 +118,7 @@
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600">{{ t('available_general_variables') }}</p>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
             <template #content>
               <div class="app-popover-content">
                 <UIcon name="i-lucide-info" class="app-popover-icon" />
@@ -142,7 +142,7 @@
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs font-semibold uppercase tracking-wider text-sky-600">{{ t('available_sql_variables') }}</p>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
             <template #content>
               <div class="app-popover-content">
                 <UIcon name="i-lucide-info" class="app-popover-icon" />
@@ -166,7 +166,7 @@
         <div class="mb-2 flex items-center gap-1">
           <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">{{ t('available_js_variables') }}</p>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="xs" :aria-label="t('show_info')" />
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
             <template #content>
               <div class="app-popover-content">
                 <UIcon name="i-lucide-info" class="app-popover-icon" />
