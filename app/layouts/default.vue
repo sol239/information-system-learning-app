@@ -23,7 +23,7 @@ const mobileTasksOpen = ref(false)
 <template>
   <div>
     <div v-if="atSystemPage" class="flex h-screen overflow-hidden">
-      <div class="system-column flex min-h-0 w-[65%] min-w-0 flex-col">
+      <div class="system-column flex min-h-0 w-full min-w-0 flex-col lg:w-[65%]">
         <SystemNavbar @open-tasks="mobileTasksOpen = true" />
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
@@ -32,7 +32,7 @@ const mobileTasksOpen = ref(false)
         </div>
       </div>
 
-      <aside class="tasks-column flex min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300">
+      <aside class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex">
         <div >
           <SystemToolbar />
         </div>
@@ -66,16 +66,33 @@ const mobileTasksOpen = ref(false)
         </div>
       </aside>
 
-      <UModal v-model:open="mobileTasksOpen" :title="t('tasks')">
+      <UDrawer
+        v-model:open="mobileTasksOpen"
+        direction="bottom"
+        :title="t('tasks')"
+        :ui="{ content: 'max-h-[85dvh]', body: 'min-h-0' }"
+      >
+        <template #header>
+          <div class="flex justify-end">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-x"
+              :aria-label="t('task_close')"
+              @click="mobileTasksOpen = false"
+            />
+          </div>
+        </template>
+
         <template #body>
-          <div>
+          <div class="flex max-h-[calc(85dvh-5rem)] min-h-0 flex-col">
             <div>
               <SystemToolbar />
             </div>
 
-            <div>
+            <div class="mt-4 flex items-center justify-between px-1">
               <div>
-                <h2>{{ t('tasks') }}</h2>
+                <h2 class="text-2xl font-bold">{{ t('tasks') }}</h2>
               </div>
               <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
                 <span>
@@ -102,7 +119,7 @@ const mobileTasksOpen = ref(false)
             </div>
           </div>
         </template>
-      </UModal>
+      </UDrawer>
     </div>
 
     <main v-else class="h-screen overflow-hidden">
