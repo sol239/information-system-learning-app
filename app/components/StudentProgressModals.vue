@@ -22,6 +22,7 @@
             {{ t('student_welcome_modal_explore_button') }}
           </UButton>
           <UButton
+            id="enter-system-button"
             block
             color="primary"
             variant="solid"
