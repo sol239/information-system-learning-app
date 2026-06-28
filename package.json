@@ -43,7 +43,7 @@
     "@types/papaparse": "^5.5.2",
     "@types/sql.js": "^1.4.9",
     "@vue/test-utils": "^2.4.0",
-    "cypress": "^15.10.0",
+    "cypress": "^15.18.0",
     "eslint": "^9.39.4",
     "happy-dom": "^20.7.0",
     "playwright-core": "^1.58.2",
