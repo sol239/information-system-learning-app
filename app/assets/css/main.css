@@ -12,15 +12,28 @@ body {
   margin: 0;
 }
 
-#__nuxt {
-  --app-scale: 0.75;
+/* default: Linux / Ubuntu / macOS */
+:root {
+  --app-zoom: 1;
+  --app-screen-height: 100dvh;
 }
 
-.app-scale-wrapper {
-  transform: scale(var(--app-scale));
-  transform-origin: top left;
-  width: calc(100% / var(--app-scale));
-  min-height: calc(100vh / var(--app-scale));
+/* pouze Windows */
+html.is-windows {
+  --app-zoom: 0.75;
+  --app-screen-height: calc(100dvh / var(--app-zoom));
+}
+
+html.is-windows body {
+  zoom: var(--app-zoom);
+}
+
+.h-screen {
+  height: var(--app-screen-height) !important;
+}
+
+.min-h-screen {
+  min-height: var(--app-screen-height) !important;
 }
 
 /* Popover */
