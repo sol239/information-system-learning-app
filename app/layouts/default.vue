@@ -1,4 +1,7 @@
 <script setup lang="ts">
+
+// TODO: zde je potreba jeste poresit to UI, tailwind vs ne? spis jo, 
+
 import SystemToolbar from '~/components/SystemToolbar.vue'
 
 const route = useRoute()
@@ -18,95 +21,82 @@ const mobileTasksOpen = ref(false)
 </script>
 
 <template>
-  <div class="default-layout">
-    <div v-if="atSystemPage" class="default-main system-layout">
-      <div class="system-column">
-        <SystemNavbar class="system-navbar" @open-tasks="mobileTasksOpen = true" />
-        <div class="content-scroll-area">
-          <UScrollArea class="scroll-area">
+  <div>
+    <div v-if="atSystemPage" class="flex h-screen overflow-hidden">
+      <div class="system-column flex min-h-0 w-[65%] min-w-0 flex-col">
+        <SystemNavbar @open-tasks="mobileTasksOpen = true" />
+        <div class="min-h-0 flex-1">
+          <UScrollArea class="h-full">
             <slot />
           </UScrollArea>
         </div>
       </div>
 
-      <aside class="task-column">
-        <div class="toolbar-row">
+      <aside class="tasks-column flex min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300">
+        <div >
           <SystemToolbar />
         </div>
-
-        <div class="tasks-header">
-          <div class="tasks-title-group">
-            <h2 class="tasks-title">{{ t('tasks') }}</h2>
+        
+        <div class="flex flex-row mt-4 items-center justify-between px-4">
+          <div>
+            <h2 class="text-2xl font-bold">{{ t('tasks') }}</h2>
           </div>
-          <UPopover
-            v-if="!globalSettings.teacherMode"
-            mode="hover"
-            arrow
-          >
-            <span class="score-trigger">
-              <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-alert-triangle" class="score-badge">
+          <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
+            <span>
+              <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-list-todo">
                 {{ t('score') }}: {{ scoreValue }}
               </UBadge>
             </span>
 
             <template #content>
-              <div class="score-popover">
-                <UIcon name="i-lucide-alert-triangle" class="score-popover-icon" />
-                <div class="score-popover-text">
-                  <strong class="score-popover-title">{{ t('score') }}</strong>
-                  <span class="score-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('score') }}</strong>
+                  <span class="app-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
                 </div>
               </div>
             </template>
           </UPopover>
         </div>
-        <div class="tasks-scroll-area">
-          <UScrollArea class="scroll-area">
+        <div class="min-h-0 flex-1">
+          <UScrollArea class="h-full">
             <TaskList />
           </UScrollArea>
         </div>
       </aside>
 
-      <UModal
-        v-model:open="mobileTasksOpen"
-        :title="t('tasks')"
-        class="mobile-task-modal"
-        :ui="{ content: 'mobile-task-modal-content', body: 'mobile-task-modal-body' }"
-      >
+      <UModal v-model:open="mobileTasksOpen" :title="t('tasks')">
         <template #body>
-          <div class="mobile-task-panel">
-            <div class="mobile-toolbar-row">
-              <SystemToolbar class="mobile-toolbar" />
+          <div>
+            <div>
+              <SystemToolbar />
             </div>
 
-            <div class="tasks-header">
-              <div class="tasks-title-group">
-                <h2 class="tasks-title">{{ t('tasks') }}</h2>
+            <div>
+              <div>
+                <h2>{{ t('tasks') }}</h2>
               </div>
-              <UPopover
-                v-if="!globalSettings.teacherMode"
-                mode="hover"
-                arrow
-              >
-                <span class="score-trigger">
-                  <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-alert-triangle" class="score-badge">
+              <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
+                <span>
+                  <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-list-todo">
                     {{ t('score') }}: {{ scoreValue }}
                   </UBadge>
                 </span>
 
                 <template #content>
-                  <div class="score-popover">
-                    <UIcon name="i-lucide-alert-triangle" class="score-popover-icon" />
-                    <div class="score-popover-text">
-                      <strong class="score-popover-title">{{ t('score') }}</strong>
-                      <span class="score-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+                  <div class="app-popover-content">
+                    <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
+                    <div class="app-popover-text">
+                      <strong class="app-popover-title">{{ t('score') }}</strong>
+                      <span class="app-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
                     </div>
                   </div>
                 </template>
               </UPopover>
             </div>
-            <div class="tasks-scroll-area">
-              <UScrollArea class="scroll-area">
+            <div class="min-h-0 flex-1">
+              <UScrollArea class="h-full">
                 <TaskList />
               </UScrollArea>
             </div>
@@ -115,8 +105,8 @@ const mobileTasksOpen = ref(false)
       </UModal>
     </div>
 
-    <main v-else class="default-main">
-      <UScrollArea class="scroll-area">
+    <main v-else class="h-screen overflow-hidden">
+      <UScrollArea class="h-full">
         <slot />
       </UScrollArea>
     </main>
@@ -126,198 +116,12 @@ const mobileTasksOpen = ref(false)
 </template>
 
 <style scoped>
-.default-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  color: #111827;
-  background: #ffffff;
+.tasks-column {
+  background: radial-gradient(
+  circle at top left,
+  #d6ecff,
+  #eef8ff 50%,
+  #fff8c7 100%
+);
 }
-
-.default-main {
-  flex: 1;
-  overflow: hidden;
-  width: 100%;
-  max-width: 100%;
-}
-
-.system-layout {
-  display: flex;
-  flex-direction: column;
-}
-
-.system-column {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.system-navbar {
-  flex: 0 0 auto;
-}
-
-.content-scroll-area,
-.tasks-scroll-area {
-  flex: 1 1 auto;
-  overflow: hidden;
-}
-
-.scroll-area {
-  width: 100%;
-  height: 100%;
-}
-
-.task-column {
-  display: none;
-}
-
-.toolbar-row,
-.mobile-toolbar-row,
-.tasks-header {
-  flex: 0 0 auto;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.toolbar-row {
-  overflow-x: auto;
-  padding: 0.5rem 0.75rem;
-}
-
-.mobile-toolbar-row {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.5rem 0.75rem;
-}
-
-.mobile-toolbar {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.tasks-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-}
-
-.tasks-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.tasks-title {
-  margin: 0;
-  color: #111827;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.5rem;
-}
-
-.score-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-  font-weight: 700;
-}
-
-.score-trigger {
-  display: inline-flex;
-}
-
-.score-popover {
-  display: flex;
-  min-width: 15rem;
-  max-width: 18rem;
-  gap: 0.75rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  background: #ffffff;
-  padding: 0.75rem;
-  box-shadow: 0 10px 25px rgb(15 23 42 / 0.12);
-}
-
-.score-popover-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex: 0 0 auto;
-  color: #dc2626;
-}
-
-.score-popover-text {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.score-popover-title {
-  color: #111827;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.score-popover-description {
-  color: #4b5563;
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-}
-
-.mobile-task-modal {
-  display: block;
-}
-
-:deep(.mobile-task-modal-content) {
-  width: min(100vw - 2rem, 36rem);
-  max-width: none;
-}
-
-:deep(.mobile-task-modal-body) {
-  padding: 0;
-}
-
-.mobile-task-panel {
-  display: flex;
-  width: 100%;
-  max-width: none;
-  height: min(75dvh, 42rem);
-  flex-direction: column;
-  overflow: hidden;
-}
-
-@media (min-width: 1024px) {
-  .system-layout {
-    flex-direction: row;
-  }
-
-  .system-column {
-    flex: 3 1 0;
-  }
-
-  .task-column {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
-    min-width: 18rem;
-    overflow: hidden;
-    border-left: 1px solid #e5e7eb;
-  }
-
-  .mobile-task-modal {
-    display: none;
-  }
-}
-
 </style>
