@@ -32,8 +32,11 @@ html.is-windows {
 html.is-windows .app-scale-wrapper {
   width: calc(100% / var(--app-zoom));
   min-height: var(--app-screen-height);
-  transform: scale(var(--app-zoom));
-  transform-origin: top left;
+  zoom: var(--app-zoom);
+}
+
+html.is-windows [data-reka-popper-content-wrapper] [data-slot="content"] {
+  zoom: var(--app-zoom);
 }
 
 .h-screen {
