@@ -1,5 +1,9 @@
 <template>
-  <div class="code-block-wrapper">
+  <div
+    :id="codeBlockId"
+    class="code-block-wrapper"
+    :data-code-block-label="codeBlockName"
+  >
     <div v-if="label || language" class="code-header">
       <div class="flex items-center gap-2">
         <span class="language-badge" :class="getLanguageClass">{{
@@ -40,7 +44,12 @@
       </div>
     </div>
 
-    <div class="editor-container" :style="{ height: height }">
+    <div
+      :id="`${codeBlockId}-editor`"
+      class="editor-container"
+      :data-code-editor-id="codeBlockId"
+      :style="{ height: height }"
+    >
       <vue-monaco-editor
         :language="transformedLanguage"
         :theme="monacoTheme"
@@ -55,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, watch } from "vue";
+import { computed, getCurrentInstance, onBeforeUnmount, ref, watch } from "vue";
 import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 import { useI18n } from "vue-i18n";
 
@@ -114,6 +123,8 @@ const showCorrectBadge = computed(() => {
 const monacoTheme = "vs-light";
 const comparisonCode = computed(() => props.originalCode ?? initialCode.value);
 const isEdited = computed(() => (props.code || "") !== (comparisonCode.value || ""));
+const codeBlockName = computed(() => props.label || props.language);
+const codeBlockId = computed(() => `code-${slugifyCodeBlockName(codeBlockName.value)}`);
 
 watch(isEdited, (value) => emit("isEdited", value), { immediate: true });
 
@@ -140,7 +151,53 @@ let isUndoing = false;
 function onEditorMount(editor: any, monaco: any) {
   monacoEditorInstance = editor;
   setupProtectionListener(editor, monaco);
+  registerCodeBlockEditorForTests();
 }
+
+function getEditableEditorValue(): string {
+  const value = monacoEditorInstance?.getValue?.() ?? displayValue.value;
+  if (!props.protectedPrefix) return value;
+
+  const separator = props.protectedPrefix.trimEnd() + "\n";
+  return value.startsWith(separator) ? value.substring(separator.length) : value;
+}
+
+function setEditableEditorValue(value: string) {
+  const fullValue = props.protectedPrefix
+    ? props.protectedPrefix.trimEnd() + "\n" + value
+    : value;
+
+  monacoEditorInstance?.setValue?.(fullValue);
+  emit("update:code", value);
+  emit("change", value);
+}
+
+function registerCodeBlockEditorForTests() {
+  if (typeof window === "undefined" || !monacoEditorInstance) return;
+
+  const win = window as typeof window & {
+    __codeBlockEditors?: Record<string, {
+      getValue: () => string;
+      setValue: (value: string) => void;
+    }>;
+  };
+
+  win.__codeBlockEditors ??= {};
+  win.__codeBlockEditors[codeBlockId.value] = {
+    getValue: getEditableEditorValue,
+    setValue: setEditableEditorValue,
+  };
+}
+
+onBeforeUnmount(() => {
+  if (typeof window === "undefined") return;
+
+  const win = window as typeof window & {
+    __codeBlockEditors?: Record<string, unknown>;
+  };
+
+  delete win.__codeBlockEditors?.[codeBlockId.value];
+});
 
 function setupProtectionListener(editor: any, monaco: any) {
   editor.onDidChangeModelContent((event: any) => {
@@ -221,6 +278,18 @@ const editorOptions = computed(() => ({
   parameterHints: { enabled: false },
   inlineSuggest: { enabled: false },
 }));
+
+function slugifyCodeBlockName(value: string): string {
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/\+/g, " plus ")
+    .replace(/#/g, " sharp ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || "block";
+}
 
 function onCodeChange(value: string | undefined) {
   // When protectedPrefix is in use the onDidChangeModelContent listener handles all
