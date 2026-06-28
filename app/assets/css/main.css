@@ -10,41 +10,6 @@ body,
 
 body {
   margin: 0;
-  overflow-x: hidden;
-}
-
-/* default: Linux / Ubuntu / macOS */
-:root {
-  --app-zoom: 1;
-  --app-screen-height: 100dvh;
-}
-
-/* pouze Windows */
-html.is-windows {
-  --app-zoom: 0.75;
-  --app-screen-height: calc(100dvh / var(--app-zoom));
-}
-
-.app-scale-wrapper {
-  min-height: 100dvh;
-}
-
-html.is-windows .app-scale-wrapper {
-  width: calc(100% / var(--app-zoom));
-  min-height: var(--app-screen-height);
-  zoom: var(--app-zoom);
-}
-
-html.is-windows [data-reka-popper-content-wrapper] [data-slot="content"] {
-  zoom: var(--app-zoom);
-}
-
-.h-screen {
-  height: var(--app-screen-height) !important;
-}
-
-.min-h-screen {
-  min-height: var(--app-screen-height) !important;
 }
 
 /* Popover */
