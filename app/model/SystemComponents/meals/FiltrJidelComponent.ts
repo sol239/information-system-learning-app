@@ -59,7 +59,7 @@ SELECT j.id_jidla AS id_jidla_filtr_jidel
 FROM jidla j
 WHERE TRIM('filtr_jidel') = ''
    OR LOWER(j.jmeno) LIKE '%' || LOWER(TRIM('filtr_jidel')) || '%'
-ORDER BY j.jmeno COLLATE NOCASE, j.id_jidla
+ORDER BY j.jmeno, j.id_jidla
 `
   },
 });

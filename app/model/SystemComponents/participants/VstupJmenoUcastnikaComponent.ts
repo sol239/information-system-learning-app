@@ -19,7 +19,7 @@ export const vstupJmenoUcastnikaKomponenta = new Component({
 .form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }
 `,
 
-  js: `const je_jmeno_validni = vstup_jmeno_ucastnika.trim().split(" ").filter(Boolean).length === 2;
+  js: `const je_jmeno_validni = (vstup_jmeno_ucastnika.split(" ").length === 2);
 
 let barva_ramecku = "#FFFFFF";
 

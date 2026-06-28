@@ -51,7 +51,7 @@ export const razeniVedoucichKomponenta = new Component({
     "vedouci-serazeni-podle-jmena": `
 SELECT v.id_vedouciho AS id_vedouciho_razeni_jmeno
 FROM vedouci v
-ORDER BY v.jmeno COLLATE NOCASE, v.id_vedouciho
+ORDER BY v.jmeno, v.id_vedouciho
 `,
     "vedouci-serazeni-podle-veku": `
 SELECT v.id_vedouciho AS id_vedouciho_razeni_vek
@@ -61,7 +61,7 @@ ORDER BY v.vek, v.id_vedouciho
     "vedouci-serazeni-podle-emailu": `
 SELECT v.id_vedouciho AS id_vedouciho_razeni_email
 FROM vedouci v
-ORDER BY v.email COLLATE NOCASE, v.id_vedouciho
+ORDER BY v.email, v.id_vedouciho
 `,
     "vedouci-serazeni-podle-poctu-alergenu": `
 SELECT

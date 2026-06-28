@@ -19,22 +19,7 @@ export const editVstupJmenoVedoucihoKomponenta = new Component({
 .form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }
 `,
 
-  js: `const casti_jmena_vedouciho = edit_vstup_jmeno_vedouciho.trim().split(" ");
-let pocet_casti_jmena_vedouciho = 0;
-
-casti_jmena_vedouciho.forEach(function(cast_jmena) {
-    if (cast_jmena !== "") {
-        pocet_casti_jmena_vedouciho = pocet_casti_jmena_vedouciho + 1;
-    }
-});
-
-let je_jmeno_validni = false;
-
-if (pocet_casti_jmena_vedouciho === 2) {
-    je_jmeno_validni = true;
-} else {
-    je_jmeno_validni = false;
-}
+  js: `const je_jmeno_validni = (edit_vstup_jmeno_vedouciho.split(" ").length === 2);
 
 let barva_ramecku = "#FFFFFF";
 

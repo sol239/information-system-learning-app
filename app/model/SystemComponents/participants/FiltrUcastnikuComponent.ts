@@ -60,7 +60,7 @@ FROM ucastnici u
 WHERE TRIM('filtr_ucastniku') = ''
    OR LOWER(u.jmeno) LIKE '%' || LOWER(TRIM('filtr_ucastniku')) || '%'
    OR LOWER(u.email) LIKE '%' || LOWER(TRIM('filtr_ucastniku')) || '%'
-ORDER BY u.jmeno COLLATE NOCASE, u.id_ucastnika
+ORDER BY u.jmeno, u.id_ucastnika
 `
   },
 });

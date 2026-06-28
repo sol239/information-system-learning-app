@@ -50,12 +50,12 @@ export const razeniJidelKomponenta = new Component({
     "jidla-serazeni-podle-nazvu": `
 SELECT j.id_jidla AS id_jidla_razeni_nazev
 FROM jidla j
-ORDER BY j.jmeno COLLATE NOCASE, j.id_jidla
+ORDER BY j.jmeno, j.id_jidla
 `,
     "jidla-serazeni-podle-doby-podavani": `
 SELECT j.id_jidla AS id_jidla_razeni_doba
 FROM jidla j
-ORDER BY j.doba_podavani COLLATE NOCASE, j.id_jidla
+ORDER BY j.doba_podavani, j.id_jidla
 `,
     "jidla-serazeni-podle-poctu-alergenu": `
 SELECT

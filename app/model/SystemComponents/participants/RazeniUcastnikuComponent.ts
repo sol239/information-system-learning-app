@@ -51,7 +51,7 @@ export const razeniUcastnikuKomponenta = new Component({
     "ucastnici-serazeni-podle-jmena": `
 SELECT u.id_ucastnika AS id_ucastnika_razeni_jmeno
 FROM ucastnici u
-ORDER BY u.jmeno COLLATE NOCASE, u.id_ucastnika
+ORDER BY u.jmeno, u.id_ucastnika
 `,
     "ucastnici-serazeni-podle-veku": `
 SELECT u.id_ucastnika AS id_ucastnika_razeni_vek
@@ -61,7 +61,7 @@ ORDER BY u.vek, u.id_ucastnika
     "ucastnici-serazeni-podle-emailu": `
 SELECT u.id_ucastnika AS id_ucastnika_razeni_email
 FROM ucastnici u
-ORDER BY u.email COLLATE NOCASE, u.id_ucastnika
+ORDER BY u.email, u.id_ucastnika
 `,
     "ucastnici-serazeni-podle-poctu-alergenu": `
 SELECT
