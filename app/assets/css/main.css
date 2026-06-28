@@ -1,10 +1,28 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
-  --color-red: oklch(0.91 2 0);
+html,
+body,
+#__nuxt {
+  width: 100%;
+  min-height: 100vh;
 }
 
+body {
+  --app-zoom: 0.75;
+  --app-screen-height: calc(100vh / var(--app-zoom));
+  zoom: var(--app-zoom);
+}
+
+.h-screen {
+  height: var(--app-screen-height) !important;
+}
+
+.min-h-screen {
+  min-height: var(--app-screen-height) !important;
+}
+
+/* Popover */
 .app-popover-content {
   display: flex;
   width: min(22rem, calc(100vw - 2rem));
