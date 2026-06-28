@@ -41,6 +41,7 @@
           </div>
 
           <UButton
+            id="enter-system-sidebar-button"
             color="primary"
             icon="i-lucide-rotate-cw"
             block
@@ -96,6 +97,7 @@
         >
           <span class="app-popover-trigger-full">
             <button
+              :id="`task-${index + 1}`"
               type="button"
               aria-disabled="true"
               class="flex w-full cursor-not-allowed flex-col gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-3 text-left opacity-60"
@@ -133,6 +135,7 @@
 
         <div
           v-else
+          :id="`task-${index + 1}`"
           role="button"
           tabindex="0"
           class="flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-colors cursor-pointer w-full"
