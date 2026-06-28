@@ -1,8 +1,10 @@
 <template>
-  <UApp class="app-scale-wrapper">
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+  <UApp>
+    <div class="app-scale-wrapper">
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </div>
   </UApp>
 </template>
 
