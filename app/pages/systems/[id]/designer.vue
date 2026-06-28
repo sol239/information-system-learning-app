@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-white">
-    <div class="mx-auto w-[90vw] max-w-none p-6">
+    <div class="mx-auto w-full max-w-none p-6">
       <div class="mb-6 mt-5 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <h1

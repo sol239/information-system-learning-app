@@ -25,7 +25,7 @@
                     </div>
                     <div class="ml-auto flex justify-end">
                         <UPopover mode="hover" arrow>
-                            <UButton @click="handleRefreshDatabase" icon="i-heroicons-circle-stack" color="orange"
+                            <UButton id="reset-database-button" @click="handleRefreshDatabase" icon="i-heroicons-circle-stack" color="orange"
                                 variant="soft" size="sm" :loading="isRefreshingDatabase">
                                 {{ t('refresh_database') }}
                             </UButton>
