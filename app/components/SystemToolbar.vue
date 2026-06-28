@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-nowrap items-center gap-2 overflow-x-auto">
+  <div class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4">
     <UButton
       v-if="globalSettings.teacherMode"
       :icon="globalSettings.teacherHighlightEnabled ? 'i-lucide-eye' : 'i-lucide-eye-off'"
