@@ -32,8 +32,8 @@ interface StoredSystem {
 class AppDatabase extends Dexie {
     systems!: Table<StoredSystem, string>;
 
-    constructor() {
-        super('InformationSystemsDb');
+    constructor(name: string) {
+        super(name);
         this.version(1).stores({
             systems: 'id, name, language',
         });
@@ -43,13 +43,22 @@ class AppDatabase extends Dexie {
     }
 }
 
-const db = new AppDatabase();
+let db: AppDatabase | null = null;
+
+function getDb(): AppDatabase {
+    if (!db) {
+        const runtimeConfig = useRuntimeConfig();
+        db = new AppDatabase(String(runtimeConfig.public.indexedDbName));
+    }
+
+    return db;
+}
 
 export class IndexedDbStorage {
 
     public static async GetStoredInformationSystemsIds(): Promise<Operation<string[]>> {
         try {
-            const ids = await db.systems.toCollection().primaryKeys() as string[];
+            const ids = await getDb().systems.toCollection().primaryKeys() as string[];
             return new Operation(OperationResultType.SUCCESS, 'IDs retrieved successfully', ids);
         } catch (error) {
             return new Operation(OperationResultType.ERROR, `Error retrieving IDs: ${error}`, []);
@@ -58,7 +67,7 @@ export class IndexedDbStorage {
 
     public static async GetStoredInformationSystems(): Promise<Operation<InformationSystem[]>> {
         try {
-            const records = await db.systems.toArray();
+            const records = await getDb().systems.toArray();
             const systems = records.map(IndexedDbStorage.toInformationSystem);
             return new Operation(OperationResultType.SUCCESS, 'Systems retrieved successfully', systems);
         } catch (error) {
@@ -96,7 +105,7 @@ export class IndexedDbStorage {
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
             };
-            await db.systems.put(record);
+            await getDb().systems.put(record);
             return new Operation(OperationResultType.SUCCESS, 'System saved successfully', null);
         } catch (error) {
             return new Operation(OperationResultType.ERROR, `Error saving system: ${error}`, null);
@@ -105,7 +114,7 @@ export class IndexedDbStorage {
 
     public static async LoadInformationSystem(id: string): Promise<Operation<InformationSystem | null>> {
         try {
-            const record = await db.systems.get(id);
+            const record = await getDb().systems.get(id);
             if (!record) {
                 return new Operation(OperationResultType.FAILED, `System with id '${id}' not found`, null);
             }
@@ -117,7 +126,7 @@ export class IndexedDbStorage {
 
     public static async UpdateInformationSystem(system: InformationSystem): Promise<Operation<null>> {
         try {
-            const existingRecord = await db.systems.get(system.id);
+            const existingRecord = await getDb().systems.get(system.id);
             if (!existingRecord) {
                 return new Operation(OperationResultType.FAILED, `System with id '${system.id}' not found`, null);
             }
@@ -149,7 +158,7 @@ export class IndexedDbStorage {
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
             };
-            await db.systems.put(updatedRecord);
+            await getDb().systems.put(updatedRecord);
             return new Operation(OperationResultType.SUCCESS, 'System updated successfully', null);
         } catch (error) {
             return new Operation(OperationResultType.ERROR, `Error updating system: ${error}`, null);
@@ -158,7 +167,7 @@ export class IndexedDbStorage {
 
     public static async DeleteInformationSystem(id: string): Promise<Operation<null>> {
         try {
-            await db.systems.delete(id);
+            await getDb().systems.delete(id);
             return new Operation(OperationResultType.SUCCESS, 'System deleted successfully', null);
         } catch (error) {
             return new Operation(OperationResultType.ERROR, `Error deleting system: ${error}`, null);

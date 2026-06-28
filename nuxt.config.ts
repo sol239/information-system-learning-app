@@ -75,6 +75,9 @@ export default defineNuxtConfig({
       sqlAvailable: process.env.NUXT_PUBLIC_SQL_AVAILABLE ?? 'true',
       jsClickAvailable: process.env.NUXT_PUBLIC_JS_CLICK_AVAILABLE ?? 'false',
       sqlClickAvailable: process.env.NUXT_PUBLIC_SQL_CLICK_AVAILABLE ?? 'true',
+      indexedDbName: process.env.NUXT_PUBLIC_INDEXED_DB_NAME ?? 'InformationSystemsDb',
+      indexedDbVersion: Number(process.env.NUXT_PUBLIC_INDEXED_DB_VERSION ?? 1),
+      indexedDbVersionKey: process.env.NUXT_PUBLIC_INDEXED_DB_VERSION_KEY ?? 'db_version',
     },
   },
   vite: {
