@@ -86,6 +86,10 @@ export default defineNuxtConfig({
     debug: true,
   },
   css: ['./assets/css/main.css'],
+  colorMode: {
+    preference: 'light',
+    fallback: 'light'
+  },
   ssr: false,
   i18n: {
     locales: [
