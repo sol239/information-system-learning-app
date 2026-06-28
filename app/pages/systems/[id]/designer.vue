@@ -4,7 +4,7 @@
       <div class="mb-6 mt-5 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <h1
-            class="flex items-center gap-3 text-3xl font-semibold tracking-tight text-teacher-600 sm:text-4xl"
+            class="flex items-center gap-3 text-2xl font-bold tracking-tight text-teacher-600 sm:text-4xl"
           >
             <span>{{ t("task_designer") }}</span>
           </h1>

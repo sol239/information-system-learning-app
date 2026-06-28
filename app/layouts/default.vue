@@ -14,6 +14,7 @@ const atSystemPage = computed(() => {
 
   return systemsPath === 'systems' && Boolean(systemId)
 })
+const isFullscreenSystemPage = computed(() => route.meta.fullscreenSystemPage === true)
 const scoreValue = computed(() => systemsStore.selectedSystem?.score.score ?? 0)
 const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount ?? 0)
 
@@ -23,8 +24,8 @@ const mobileTasksOpen = ref(false)
 <template>
   <div>
     <div v-if="atSystemPage" class="flex h-screen overflow-hidden">
-      <div class="system-column flex min-h-0 w-full min-w-0 flex-col lg:w-[65%]">
-        <SystemNavbar @open-tasks="mobileTasksOpen = true" />
+      <div :class="['system-column flex min-h-0 w-full min-w-0 flex-col', isFullscreenSystemPage ? '' : 'lg:w-[65%]']">
+        <SystemNavbar v-if="!isFullscreenSystemPage" @open-tasks="mobileTasksOpen = true" />
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <slot />
@@ -32,7 +33,7 @@ const mobileTasksOpen = ref(false)
         </div>
       </div>
 
-      <aside class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex">
+      <aside v-if="!isFullscreenSystemPage" class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex">
         <div >
           <SystemToolbar />
         </div>
@@ -67,6 +68,7 @@ const mobileTasksOpen = ref(false)
       </aside>
 
       <UDrawer
+        v-if="!isFullscreenSystemPage"
         v-model:open="mobileTasksOpen"
         direction="bottom"
         :title="t('tasks')"
@@ -128,7 +130,7 @@ const mobileTasksOpen = ref(false)
       </UScrollArea>
     </main>
 
-    <StudentProgressModals v-if="atSystemPage" />
+    <StudentProgressModals v-if="atSystemPage && !isFullscreenSystemPage" />
   </div>
 </template>
 

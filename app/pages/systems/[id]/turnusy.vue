@@ -1,10 +1,10 @@
 <template>
     <div class="p-6 flex flex-col gap-8 max-w-7xl mx-auto">
         <div class="flex flex-row flex-wrap items-center gap-3 mb-4">
-            <h1 class="text-3xl font-semibold">{{ t('sessions') }}</h1>
+            <h1 class="text-2xl font-semibold">{{ t('sessions') }}</h1>
 
             <ModalContainer v-model:open="createModalOpen" class="w-fit">
-                <UButton label="Vytvo�it turnus" color="neutral" variant="subtle" size="sm" class="w-auto" />
+                <UButton label="Vytvořit turnus" color="neutral" variant="subtle" size="sm" class="w-auto" />
 
                 <template #content>
                     <div class="modal-container">
@@ -12,7 +12,7 @@
                         <ComponentWrapper :component="dateToInputComponent" />
                         <ComponentWrapper :component="capacityInputComponent" />
                         <div class="flex gap-2">
-                            <UButton label="Zru�it" color="neutral" variant="solid" size="sm"
+                            <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
                                 @click="createModalOpen = false" />
                             <ComponentWrapper :component="saveButtonComponent" @action-completed="handleSessionCreated" />
                         </div>
@@ -74,7 +74,7 @@
                                 <ComponentWrapper
                                     :component="withVars(editCapacityInputComponent, [new Variable('idTurnusu', sessionId)])" />
                                 <div class="flex gap-2">
-                                    <UButton label="Zru�it" color="neutral" variant="solid" size="sm"
+                                    <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
                                         @click="editModalOpen[sessionId] = false" />
                                     <ComponentWrapper
                                         :component="withVars(editSaveButtonComponent, [new Variable('idTurnusu', sessionId)])"
@@ -129,7 +129,7 @@ const createModalOpen = ref(false);
 const editModalOpen = reactive<Record<number, boolean>>({});
 const isDbReady = computed(() => !!systemsStore.selectedSystem?.database?.sqlJsDatabase);
 
-// Per-card components – each instance receives sessionId via generalVariables
+// Per-card components â€“ each instance receives sessionId via generalVariables
 const statusBadgeComponent = computed(() => systemsStore.getComponentById('stitek-stavu-turnusu'));
 const dateRangeComponent = computed(() => systemsStore.getComponentById('datum-turnusu'));
 const daysComponent = computed(() => systemsStore.getComponentById('pocet-dni-turnusu'));

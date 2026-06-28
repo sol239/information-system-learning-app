@@ -323,7 +323,7 @@ export const jidelnicekTlacitkoPridatJidloOsobeKomponenta = new Component({
 
   html: `
 <button id="jidelnicek-tlacitko-pridat-jidlo-osobe" {{ stav_tlacitka_pridat_jidlo_osobe }}>
-  Přidat k jídlu
+  Přidat
 </button>
 `,
   css: `

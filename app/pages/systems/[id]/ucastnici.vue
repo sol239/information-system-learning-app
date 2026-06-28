@@ -2,7 +2,7 @@
     <div class="p-6 flex flex-col gap-6 max-w-7xl mx-auto">
 
         <!-- Page header -->
-        <h1 class="text-3xl font-semibold">{{ t('participants') }}</h1>
+        <h1 class="text-2xl font-semibold">{{ t('participants') }}</h1>
 
         <!-- Toolbar -->
         <div class="flex flex-row flex-wrap items-center gap-3">
@@ -22,7 +22,7 @@
             <UInput
                 v-model="filterText"
                 icon="i-heroicons-magnifying-glass"
-                placeholder="Jméno, email, telefon nebo adresa"
+                placeholder="JmÃ©no, email, telefon nebo adresa"
                 class="w-56"
             />
 
@@ -31,7 +31,7 @@
 
             <!-- Add participant modal -->
             <ModalContainer v-model:open="createModalOpen" class="w-fit">
-                <UButton label="Pøidat úèastníka" color="primary" icon="i-heroicons-plus" size="sm" />
+                <UButton label="PÅ™idat ÃºÄastnÃ­ka" color="primary" icon="i-heroicons-plus" size="sm" />
 
                 <template #content>
                     <div class="modal-container">
@@ -43,7 +43,7 @@
                         <ComponentWrapper :component="vstupAlergenyComponent" />
                         <ComponentWrapper :component="vstupTurnusyComponent" />
                         <div class="flex gap-2">
-                            <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                            <UButton label="ZruÅ¡it" color="neutral" variant="solid" size="sm"
                                 @click="createModalOpen = false" />
                             <ComponentWrapper :component="btnUlozitComponent" @action-completed="handleParticipantCreated" />
                         </div>
@@ -96,7 +96,7 @@
                                 <ComponentWrapper
                                     :component="withVars(editVstupTurnusyComponent, [new Variable('idUcastnika', participantId)])" />
                                 <div class="flex gap-2">
-                                    <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                                    <UButton label="ZruÅ¡it" color="neutral" variant="solid" size="sm"
                                         @click="editModalOpen[participantId] = false" />
                                     <ComponentWrapper
                                         :component="withVars(editBtnUlozitComponent, [new Variable('idUcastnika', participantId)])"

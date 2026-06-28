@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="p-6 flex flex-col gap-5 max-w-7xl mx-auto">
 
-        <h1 class="text-3xl font-semibold">{{ t('meal_plan') }}</h1>
+        <h1 class="text-2xl font-semibold">{{ t('meal_plan') }}</h1>
 
         <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div class="flex items-center gap-2 mb-4">

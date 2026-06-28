@@ -848,6 +848,41 @@ onBeforeUnmount(() => {
   max-width: 100%;
 }
 
+.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-karta),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-card) {
+  padding: 10px !important;
+  gap: 10px !important;
+  width: 158px !important;
+  max-width: 158px !important;
+}
+
+.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-ikona),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-icon) {
+  font-size: 21px !important;
+}
+
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-icon) {
+  font-size: 14px !important;
+}
+
+.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-pocet),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-number) {
+  font-size: 20px !important;
+}
+
+.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-popisek),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-label) {
+  font-size: 11px !important;
+  margin-top: 2px !important;
+}
+
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-label) {
+  max-width: 95px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .content-interaction-disabled {
   pointer-events: none;
 }

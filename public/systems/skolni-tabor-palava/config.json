@@ -718,8 +718,8 @@
             "id": "statistika-max-vek-ucastnika",
             "name": "Statistika – Max. věk účastníka",
             "description": "Zobrazuje věk nejstaršího účastníka.",
-            "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">věk nejstaršího účastníka</div>\n    </div>\n  </div>\n  ",
-            "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+            "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">max. věk</div>\n    </div>\n  </div>\n  ",
+            "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 10px;\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 158px;\n  max-width: 158px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 14px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 20px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 11px;\n  color: #666666;\n  margin-top: 2px;\n}\n",
             "js": "",
             "js_click": "",
             "sql": {
@@ -786,8 +786,8 @@
           "id": "statistika-max-vek-ucastnika",
           "name": "Statistika – Max. věk účastníka",
           "description": "Zobrazuje věk nejstaršího účastníka.",
-          "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">věk nejstaršího účastníka</div>\n    </div>\n  </div>\n  ",
-          "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 22px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+          "html": "\n  <div id=\"statistika-max-vek-ucastnika-card\">\n    <div id=\"statistika-max-vek-ucastnika-icon\">MAX</div>\n    <div id=\"statistika-max-vek-ucastnika-content\">\n      <div id=\"statistika-max-vek-ucastnika-number\">{{ max_vek_ucastnika }}</div>\n      <div id=\"statistika-max-vek-ucastnika-label\">max. věk</div>\n    </div>\n  </div>\n  ",
+          "css": "\n#statistika-max-vek-ucastnika-card {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 10px;\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 158px;\n  max-width: 158px;\n}\n\n#statistika-max-vek-ucastnika-icon {\n  font-size: 14px;\n  font-weight: 700;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-number {\n  font-size: 20px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-max-vek-ucastnika-label {\n  font-size: 11px;\n  color: #666666;\n  margin-top: 2px;\n}\n",
           "js": "",
           "js_click": "",
           "sql": {
@@ -857,7 +857,7 @@
             "name": "Statistika jídel",
             "description": "Komponenta pro statistiku jídel. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla",
             "html": "\n  <div id=\"statistika-jidel-karta\">\n    <div id=\"statistika-jidel-ikona\">🍽️</div>\n    <div id=\"statistika-jidel-obsah\">\n      <div id=\"statistika-jidel-pocet\">{{ pocet_jidel }}</div>\n      <div id=\"statistika-jidel-popisek\">jídel</div>\n    </div>\n  </div>\n  ",
-            "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 32px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+            "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 10px;\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 158px;\n  max-width: 158px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 21px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 20px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 11px;\n  color: #666666;\n  margin-top: 2px;\n}\n",
             "js": "",
             "js_click": "",
             "sql": {
@@ -902,7 +902,7 @@
           "name": "Statistika jídel",
           "description": "Komponenta pro statistiku jídel. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla",
           "html": "\n  <div id=\"statistika-jidel-karta\">\n    <div id=\"statistika-jidel-ikona\">🍽️</div>\n    <div id=\"statistika-jidel-obsah\">\n      <div id=\"statistika-jidel-pocet\">{{ pocet_jidel }}</div>\n      <div id=\"statistika-jidel-popisek\">jídel</div>\n    </div>\n  </div>\n  ",
-          "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  width: 100%;\n  max-width:400px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 32px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 28px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 13px;\n  color: #666666;\n  margin-top: 4px;\n}\n",
+          "css": "\n#statistika-jidel-karta {\n  background-color: #ffffff;\n  border: 1px solid #cccccc;\n  border-radius: 8px;\n  padding: 10px;\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 158px;\n  max-width: 158px;\n}\n\n#statistika-jidel-ikona {\n  font-size: 21px;\n}\n\n#statistika-jidel-pocet {\n  font-size: 20px;\n  font-weight: bold;\n  color: #111111;\n}\n\n#statistika-jidel-popisek {\n  font-size: 11px;\n  color: #666666;\n  margin-top: 2px;\n}\n",
           "js": "",
           "js_click": "",
           "sql": {

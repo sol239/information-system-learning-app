@@ -2,15 +2,15 @@ import { Component } from "~/model/Component";
 
 export const statistikaVedoucichKomponenta = new Component({
   id: "statistika-vedoucich",
-  name: "Statistika vedoucích",
-  tags: ["statistika", "vedoucích"],
-  description: `Komponenta pro statistiku vedoucích. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci`,
+  name: "Statistika vedoucÃ­ch",
+  tags: ["statistika", "vedoucÃ­ch"],
+  description: `Komponenta pro statistiku vedoucÃ­ch. SQL: SELECT COUNT(*) as pocet_vedoucich FROM vedouci`,
   html: `
   <div id="statistika-vedoucich-karta">
     <div id="statistika-vedoucich-ikona">?????</div>
     <div id="statistika-vedoucich-obsah">
       <div id="statistika-vedoucich-pocet">{{ pocet_vedoucich }}</div>
-      <div id="statistika-vedoucich-popisek">vedoucích</div>
+      <div id="statistika-vedoucich-popisek">vedoucÃ­ch</div>
     </div>
   </div>
   `,

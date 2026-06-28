@@ -7,19 +7,15 @@
           <div class="flex-1">
             <span class="flex items-center gap-3 mb-4">
               <h1
-                class="systems-page-title text-3xl font-bold text-gray-900 mb-2"
+                class="systems-page-title text-2xl font-bold text-gray-900 mb-2"
               >
                 {{ t("information_systems") }}
               </h1>
-
-              <UBadge size="lg" color="teacher" variant="subtle" icon="i-heroicons-academic-cap">
-                {{ t("teacher") }}
-              </UBadge>
             </span>
 
             <div class="flex flex-col gap-6">
               <p
-                class="systems-page-description text-lg text-gray-600 max-w-prose leading-relaxed flex-1"
+                class="systems-page-description text-md text-gray-600 max-w-prose leading-relaxed flex-1"
               >
                 {{ t("manage_your_systems_description") }}
               </p>
@@ -68,7 +64,7 @@
               <div class="flex items-center space-x-3">
                 <div>
                   <h3
-                    class="system-name text-xl font-semibold text-gray-900"
+                    class="system-name text-lg font-semibold text-gray-900"
                   >
                     {{ system.name }}
                   </h3>
@@ -90,7 +86,7 @@
             </div>
 
             <!-- Description -->
-            <p class="text-gray-600 leading-relaxed">
+            <p class="text-gray-600 text-md leading-relaxed">
               {{ system.description }}
             </p>
 

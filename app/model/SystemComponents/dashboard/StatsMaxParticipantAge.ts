@@ -2,7 +2,7 @@ import { Component } from "~/model/Component";
 
 export const statsMaxParticipantAgeComponent = new Component({
   id: "statistika-max-vek-ucastnika",
-  name: "Statistika – Max. věk účastníka",
+  name: "Statistika max. věku",
   tags: ["dashboard", "statistika", "účastníci", "věk"],
   description: `Zobrazuje věk nejstaršího účastníka.`,
   html: `
@@ -10,7 +10,7 @@ export const statsMaxParticipantAgeComponent = new Component({
     <div id="statistika-max-vek-ucastnika-icon">MAX</div>
     <div id="statistika-max-vek-ucastnika-content">
       <div id="statistika-max-vek-ucastnika-number">{{ max_vek_ucastnika }}</div>
-      <div id="statistika-max-vek-ucastnika-label">věk nejstaršího účastníka</div>
+      <div id="statistika-max-vek-ucastnika-label">max. věk</div>
     </div>
   </div>
   `,
@@ -23,8 +23,8 @@ export const statsMaxParticipantAgeComponent = new Component({
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  max-width: 400px;
+  width: 158px;
+  max-width: 158px;
 }
 
 #statistika-max-vek-ucastnika-icon {

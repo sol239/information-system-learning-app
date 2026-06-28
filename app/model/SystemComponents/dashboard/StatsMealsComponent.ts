@@ -2,15 +2,15 @@ import { Component } from "~/model/Component";
 
 export const statistikaJidelKomponenta = new Component({
   id: "statistika-jidel",
-  name: "Statistika jÌdel",
-  tags: ["statistika", "jÌdel"],
-  description: `Komponenta pro statistiku jÌdel. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla`,
+  name: "Statistika j√≠del",
+  tags: ["statistika", "j√≠del"],
+  description: `Komponenta pro statistiku j√≠del. SQL: SELECT COUNT(*) as pocet_jidel FROM jidla`,
   html: `
   <div id="statistika-jidel-karta">
-    <div id="statistika-jidel-ikona">???</div>
+    <div id="statistika-jidel-ikona">üçΩÔ∏è</div>
     <div id="statistika-jidel-obsah">
       <div id="statistika-jidel-pocet">{{ pocet_jidel }}</div>
-      <div id="statistika-jidel-popisek">jÌdel</div>
+      <div id="statistika-jidel-popisek">j√≠del</div>
     </div>
   </div>
   `,
@@ -23,8 +23,8 @@ export const statistikaJidelKomponenta = new Component({
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  max-width:400px;
+  width: 158px;
+  max-width: 158px;
 }
 
 #statistika-jidel-ikona {
