@@ -3,7 +3,6 @@ import { InformationSystem } from '~/model/InformationSystem'
 import { OperationResultType } from '~/utils/Operation/OperationResultType'
 import type { GUID } from '~/model/GUID'
 import type { InformationSystem as InformationSystemType } from '~/model/InformationSystem'
-import { getPageLoadSource } from '~/utils/pageLoadSource'
 
 /**
  * Loads InformationSystem instances from ZIP files or unpacked folders listed in
@@ -85,13 +84,8 @@ export function usePreloadedSystems() {
         const loader = loaderResult.data
         const filesContents: Record<string, string> = {
             'config.json': loader.jsonConfigFileContent ?? '',
-            'system_components.json': loader.jsonComponentsContent ?? '',
             ...loader.csvFilesContent,
             ...loader.sqlFilesContent,
-        }
-
-        if (getPageLoadSource() === 'public') {
-            Object.assign(filesContents, loader.vueFilesContent)
         }
 
         const systemResult = await InformationSystem.loadSystem(filesContents)
@@ -104,41 +98,17 @@ export function usePreloadedSystems() {
 
     async function loadSystemFromDirectory(basePath: string, directoryName: string): Promise<InformationSystemType | null> {
         const configContent = await fetchRequiredTextFile(`${baseURL}/systems/${directoryName}/config.json`, `${directoryName}/config.json`)
-        const configData = JSON.parse(configContent) as { pages?: Array<{ vueFile?: string }> }
 
         const filesContents: Record<string, string> = {
             'config.json': configContent,
         }
 
         const optionalEntries = await Promise.all([
-            fetchOptionalTextFile(`${basePath}/system_components.json`),
             fetchOptionalTextFile(`${basePath}/create_schema.sql`),
         ])
 
         if (optionalEntries[0] !== null) {
-            filesContents['system_components.json'] = optionalEntries[0]
-        }
-
-        if (optionalEntries[1] !== null) {
-            filesContents['create_schema.sql'] = optionalEntries[1]
-        }
-
-        if (getPageLoadSource() === 'public') {
-            const vueFiles = Array.from(
-                new Set(
-                    (configData.pages ?? [])
-                        .map(page => page.vueFile?.trim())
-                        .filter((vueFile): vueFile is string => Boolean(vueFile))
-                )
-            )
-
-            const vueEntries = await Promise.all(
-                vueFiles.map(async vueFile => [vueFile, await fetchRequiredTextFile(`${basePath}/${vueFile}`, `${directoryName}/${vueFile}`)] as const)
-            )
-
-            for (const [vueFile, content] of vueEntries) {
-                filesContents[vueFile] = content
-            }
+            filesContents['create_schema.sql'] = optionalEntries[0]
         }
 
         const systemResult = await InformationSystem.loadSystem(filesContents)

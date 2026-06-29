@@ -35,21 +35,17 @@ Tato příručka slouží k tomu, jak aplikaci používat, konfigurovat, spustit
 #### 8 Předpřipravený systém s úkoly
 #### 9 Konfigurace
 - 9.1 `NUXT_PUBLIC_APP_MODE`
-- 9.2 `NUXT_PUBLIC_LOAD_COMPONENTS_FROM`
-- 9.3 `NUXT_PUBLIC_LOAD_PAGES_FROM`
-- 9.4 `NUXT_PUBLIC_HTML_AVAILABLE`
-- 9.5 `NUXT_PUBLIC_CSS_AVAILABLE`
-- 9.6 `NUXT_PUBLIC_JS_AVAILABLE`
-- 9.7 `NUXT_PUBLIC_SQL_AVAILABLE`
-- 9.8 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
-- 9.9 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
-- 9.10 `NUXT_PUBLIC_SINGLE_SYSTEM`
-- 9.11 `NUXT_APP_BASE_URL`
+- 9.2 `NUXT_PUBLIC_HTML_AVAILABLE`
+- 9.3 `NUXT_PUBLIC_CSS_AVAILABLE`
+- 9.4 `NUXT_PUBLIC_JS_AVAILABLE`
+- 9.5 `NUXT_PUBLIC_SQL_AVAILABLE`
+- 9.6 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
+- 9.7 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
+- 9.8 `NUXT_PUBLIC_SINGLE_SYSTEM`
+- 9.9 `NUXT_APP_BASE_URL`
 #### 10 Struktura adresáře systému
 - 10.1 `config.json`
 - 10.2 `create_schema.sql`
-- 10.3 `system_components.json`
-- 10.4 Soubory `.vue`
 #### 11 Tvorba & úprava systémů
 - 11.1 Úprava
 - 11.2 Tvorba systému
@@ -430,43 +426,39 @@ Konfigurace aplikace slouží k např. nastavení verze aplikace (učitelská vs
 
 Určuje, jestli se aplikace spustí v učitelském, nebo studentském režimu. Hodnota `TEACHER` zapne učitelskou verzi aplikace, ve které je možné vytvářet a upravovat systémy, úkoly a jejich obsah. Každá jiná hodnota, typicky `STUDENT`, učitelský režim vypne a aplikace se chová jako studentská verze určená pro řešení připravených úkolů.
 
-### 9.2 `NUXT_PUBLIC_LOAD_COMPONENTS_FROM`
 
-Určuje, odkud se načítají výchozí komponenty systému. Hodnota `public` načítá komponenty ze souboru `system_components.json`, který je součástí načteného systému. Hodnota `development` používá komponenty uložené přímo v projektu v adresáři `app/model/SystemComponents`, což se hodí hlavně při lokálním vývoji a úpravách základních komponent.
 
-### 9.3 `NUXT_PUBLIC_LOAD_PAGES_FROM`
 
-Určuje, odkud se načítají stránky systému. Hodnota `public` používá `.vue` soubory přiložené k načtenému systému, takže stránky mohou být součástí exportovaného nebo připraveného systému. Hodnota `development` nechá aplikaci používat statické Nuxt stránky z projektu, tedy stránky uložené přímo v adresáři aplikace.
 
-### 9.4 `NUXT_PUBLIC_HTML_AVAILABLE`
+### 9.2 `NUXT_PUBLIC_HTML_AVAILABLE`
 
 Zapíná nebo vypíná viditelnost editoru pro HTML část komponenty. Pokud je hodnota `true`, student nebo učitel vidí HTML sekci při opravě komponent. Pokud je hodnota `false`, HTML sekce se v editoru nezobrazí a uživatel ji nemůže upravovat.
 
-### 9.5 `NUXT_PUBLIC_CSS_AVAILABLE`
+### 9.3 `NUXT_PUBLIC_CSS_AVAILABLE`
 
 Zapíná nebo vypíná viditelnost editoru pro CSS část komponenty. Hodnota `true` zobrazí CSS sekci a umožní upravovat styly komponenty, zatímco hodnota `false` tuto část editoru skryje. Hodí se to například ve chvíli, kdy se mají úkoly soustředit jen na strukturu, JavaScript nebo SQL.
 
-### 9.6 `NUXT_PUBLIC_JS_AVAILABLE`
+### 9.4 `NUXT_PUBLIC_JS_AVAILABLE`
 
 Zapíná nebo vypíná viditelnost editoru pro JavaScriptovou část komponenty. Při hodnotě `true` je možné upravovat JS kód komponenty, při hodnotě `false` se tato sekce v editoru nezobrazí. Tím lze jednoduše omezit, které části komponent mají studenti při řešení úkolů k dispozici.
 
-### 9.7 `NUXT_PUBLIC_SQL_AVAILABLE`
+### 9.5 `NUXT_PUBLIC_SQL_AVAILABLE`
 
 Zapíná nebo vypíná viditelnost editoru pro SQL část komponenty. Hodnota `true` zpřístupní SQL sekci, ve které lze psát nebo opravovat dotazy pracující s databází systému. Hodnota `false` tuto sekci skryje, pokud se dané nasazení nebo sada úkolů SQL části netýká.
 
-### 9.8 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
+### 9.6 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
 
 Určuje, jestli se v editoru komponent zobrazí část pro JavaScriptovou akci po kliknutí. Hodnota `true` tuto možnost zpřístupní a umožní řešit chování komponenty vyvolané kliknutím. Hodnota `false` ji skryje, což je výchozí nastavení, pokud nechcete pracovat s klikací JavaScriptovou logikou.
 
-### 9.9 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
+### 9.7 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
 
 Určuje, jestli se v editoru komponent zobrazí část pro SQL akci po kliknutí. Hodnota `true` tuto možnost zpřístupní a umožní nastavovat databázovou akci, která se provede po kliknutí na komponentu. Hodnota `false` tuto část skryje, pokud ji v úkolech nechcete používat.
 
-### 9.10 `NUXT_PUBLIC_SINGLE_SYSTEM`
+### 9.8 `NUXT_PUBLIC_SINGLE_SYSTEM`
 
 Určuje chování studentské verze ve chvíli, kdy je aplikace připravená s jedním nebo více systémy. Hodnota `true` studentovi zjednoduší průchod tím, že aplikace pracuje primárně s prvním dostupným systémem a nepouští ho zbytečně přes výběr systémů. Hodnota `false` ponechá viditelný seznam systémů i ve studentském režimu.
 
-### 9.11 `NUXT_APP_BASE_URL`
+### 9.9 `NUXT_APP_BASE_URL`
 
 Nastavuje základní URL cestu, ze které je aplikace dostupná, což je důležité hlavně při nasazení na GitHub Pages nebo do podadresáře. Pokud je aplikace nasazená například v repozitáři `information-system-learning-app`, hodnota bývá `/information-system-learning-app`. Při špatně nastavené hodnotě se mohou špatně načítat stránky, systémy nebo soubor `sql-wasm.wasm`.
 
@@ -482,17 +474,12 @@ Hlavní konfigurační soubor systému. Obsahuje základní informace o systému
 
 SQL soubor pro vytvoření výchozí databáze systému. Typicky obsahuje příkazy pro vytvoření tabulek, vložení počátečních dat a nastavení stavu, se kterým studenti začínají pracovat. Díky tomuto souboru může mít každý systém vlastní databázový model i vlastní ukázková data. Když se systém poprvé vkládá do aplikace, tak se spustí tento SQL skript pro nastavení databáze do výchozího stavu. (Aplikace používá databázi sql.js, což je databáze SQLite běžící v prohlížeči, takže tento SQL skript se spouští nad touto databází.)
 
-### 10.3 `system_components.json`
 
-Soubor s výchozími komponentami systému. Obsahuje komponenty, které se v systému zobrazují a které mohou studenti podle úkolů zkoumat nebo opravovat. Použije se hlavně tehdy, když je proměnná `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` nastavená na hodnotu `public`.
 
-### 10.4 Soubory `.vue`
 
-Pokud systém používá vlastní stránky a proměnná `NUXT_PUBLIC_LOAD_PAGES_FROM` je nastavená na hodnotu `public`, mohou být v adresáři systému také `.vue` soubory. Jejich názvy jsou uvedené v části `pages` v souboru `config.json`. Pokud se stránky načítají z adresáře aplikace pomocí hodnoty `development`, tyto soubory v systému být nemusí.
 
 ## 11 Tvorba & úprava systémů
 
-Poznámka: podrobnější návod k tvorbě a úpravě systémů bude doplněn později - tvorba vlastních vue souborů a vlastích komponent. 
 
 ### 11.1 Úprava
 
@@ -527,3 +514,4 @@ Pokud máte jakékoliv dotazy, nápady na vylepšení, nebo chcete sdílet své 
 ## 15 Odkazy
 
 1. https://www.cloudflare.com/learning/serverless/glossary/client-side-vs-server-side/
+

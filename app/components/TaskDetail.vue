@@ -1624,8 +1624,7 @@ function toTaskPage(page: Page): Page {
   return {
     name: page.name,
     route: page.route,
-    description: page.description,
-    vueFile: page.vueFile
+    description: page.description
   }
 }
 

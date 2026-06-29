@@ -8,7 +8,6 @@ type ExportablePage = {
   route: string
   description?: string
   icon?: string
-  vueFile: string
 }
 
 export class SystemZipExporter {
@@ -19,13 +18,6 @@ export class SystemZipExporter {
     const config = SystemZipExporter.createConfig(system)
 
     zip.file('config.json', JSON.stringify(config, null, 2))
-    zip.file('system_components.json', JSON.stringify(SystemZipExporter.toPlainJson(system.actualComponents ?? []), null, 2))
-
-    for (const page of system.pages ?? []) {
-      if (page.vueFile && page.vueSource) {
-        zip.file(page.vueFile, page.vueSource)
-      }
-    }
 
     const createSchemaSql = SystemZipExporter.createSchemaSql(system)
     if (createSchemaSql.trim()) {
@@ -75,7 +67,6 @@ export class SystemZipExporter {
       route: page.route,
       description: page.description,
       icon: page.icon,
-      vueFile: page.vueFile,
     }
   }
 

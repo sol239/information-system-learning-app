@@ -1,5 +1,4 @@
 import JSZip from 'jszip';
-import { InformationSystem } from '~/model/InformationSystem';
 import { Operation } from '~/utils/Operation/Operation';
 import { OperationResultType } from '~/utils/Operation/OperationResultType';
 
@@ -19,11 +18,6 @@ export class SystemZipLoader {
     public csvFilesContent: Record<string, string> = {};
 
     /**
-     * A map of Vue file names to their source content for all .vue files in the ZIP.
-     */
-    public vueFilesContent: Record<string, string> = {};
-
-    /**
      * A map of SQL file names to their text content for all .sql files in the ZIP.
      */
     public sqlFilesContent: Record<string, string> = {};
@@ -32,11 +26,6 @@ export class SystemZipLoader {
      * The content of the JSON configuration file.
      */
     public jsonConfigFileContent: string | null = null;
-
-    /**
-     * The content of the JSON components file.
-     */
-    public jsonComponentsContent: string | null = null;
 
     /**
      * Loads the ZIP file and initializes the internal file structure.
@@ -58,14 +47,9 @@ export class SystemZipLoader {
                     zipEntry.async('text').then(content => {
                         if (relativePath.endsWith('config.json')) {
                             this.jsonConfigFileContent = content;
-                        } else if (relativePath.endsWith('system_components.json')) {
-                            this.jsonComponentsContent = content;
                         } else if (relativePath.endsWith('.csv')) {
                             const filename = relativePath.split('/').pop()!.replace(/\.[^/.]+$/, '');
                             this.csvFilesContent[filename] = content;
-                        } else if (relativePath.endsWith('.vue')) {
-                            const filename = relativePath.split('/').pop()!;
-                            this.vueFilesContent[filename] = content;
                         } else if (relativePath.endsWith('.sql')) {
                             const filename = relativePath.split('/').pop()!;
                             this.sqlFilesContent[filename] = content;

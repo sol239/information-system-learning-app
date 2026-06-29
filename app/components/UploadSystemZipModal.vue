@@ -65,7 +65,6 @@ import { ref, watch, onMounted } from 'vue'
 import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
 import { useSystemsStore } from '~/stores/systemsStore'
-import { getPageLoadSource } from '~/utils/pageLoadSource'
 import { usePreloadedSystems } from '~/composables/usePreloadedSystems'
 
 /* 3. Context hooks */
@@ -169,19 +168,6 @@ async function onUpload(close: () => void) {
                 filesContents['create_schema.sql'] = sysToClone.createSchemaSql
             }
 
-            if (sysToClone.defaultComponents.length > 0) {
-                filesContents['system_components.json'] = JSON.stringify(sysToClone.defaultComponents)
-            }
-
-            // Re-attach any page vue sources that were loaded from the system
-            if (getPageLoadSource() === 'public') {
-                for (const page of sysToClone.pages ?? []) {
-                    if (page.vueFile && (page as any).vueSource) {
-                        filesContents[page.vueFile] = (page as any).vueSource
-                    }
-                }
-            }
-
             const loadResult = await InformationSystem.loadSystem(filesContents)
             if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
                 const newSys = loadResult.data
@@ -203,12 +189,8 @@ async function onUpload(close: () => void) {
         
         const filesContents: Record<string, string> = {
             'config.json': loader.value.jsonConfigFileContent ?? '',
-            'system_components.json': loader.value.jsonComponentsContent ?? '',
             ...loader.value.csvFilesContent,
             ...loader.value.sqlFilesContent,
-        }
-        if (getPageLoadSource() === 'public') {
-            Object.assign(filesContents, loader.value.vueFilesContent)
         }
         const loadResult = await InformationSystem.loadSystem(filesContents)
         if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {

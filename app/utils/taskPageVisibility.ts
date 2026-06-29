@@ -10,7 +10,6 @@ export function databaseVisiblePage(name = 'Database'): Page {
     name,
     route: DATABASE_PAGE_ROUTE,
     description: 'Database',
-    vueFile: 'database.vue',
   }
 }
 

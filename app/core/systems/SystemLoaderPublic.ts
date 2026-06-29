@@ -1,4 +1,4 @@
-import type { InformationSystem } from "./InformationSystem";
+import type { InformationSystem } from "~/model/InformationSystem";
 import type { ISystemLoader } from "./ISystemLoader";
 
 export class SystemLoaderPublic implements ISystemLoader {

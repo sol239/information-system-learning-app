@@ -8,15 +8,13 @@
       "name": "Přehled",
       "route": "/prehled",
       "description": "Ukázková stránka pro hlavní přehled systému.",
-      "icon": "i-heroicons-home",
-      "vueFile": "prehled.vue"
+      "icon": "i-heroicons-home"
     },
     {
       "name": "Seznam",
       "route": "/seznam",
       "description": "Ukázková stránka pro seznam položek systému.",
-      "icon": "i-heroicons-list-bullet",
-      "vueFile": "seznam.vue"
+      "icon": "i-heroicons-list-bullet"
     }
   ],
   "tasks": [],

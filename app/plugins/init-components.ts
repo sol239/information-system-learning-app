@@ -1,15 +1,9 @@
 import { Component } from '~/model/Component'
-import { getComponentLoadSource } from '~/utils/componentLoadSource'
 
 /**
  * Nuxt plugin to load and register system components from the '~/model/SystemComponents' directory. 
- * It is used when 'NUXT_PUBLIC_LOAD_COMPONENTS_FROM' is set to 'development' to dynamically load components for development purposes.
  */
 export default defineNuxtPlugin(async (_nuxtApp) => {
-    if (getComponentLoadSource() !== 'development') {
-        return
-    }
-
     const store = useComponentStore()
     store.clearComponents()
 

@@ -7,8 +7,6 @@ import type { GUID } from "./GUID";
 import type { Page } from "./Page";
 import { Score } from "./Score";
 import { useComponentStore } from "~/stores/componentStore";
-import { getComponentLoadSource } from "~/utils/componentLoadSource";
-import { getPageLoadSource } from "~/utils/pageLoadSource";
 import { Operation } from "~/utils/Operation/Operation";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { resetTaskProgress } from "~/utils/taskProgress";
@@ -237,10 +235,8 @@ export class InformationSystem {
       }
 
       const configData = JSON.parse(configContent);
-      const loadPagesFromZip = getPageLoadSource() === "public";
       const pages: Page[] = (configData.pages || []).map((page: Page) => ({
         ...page,
-        vueSource: loadPagesFromZip ? filesContents[page.vueFile] ?? null : undefined,
       }));
 
       const sqlEntry = Object.entries(filesContents).find(([path]) => path.endsWith("create_schema.sql"));
@@ -270,16 +266,9 @@ export class InformationSystem {
         configData,
       });
 
-      const componentsEntry = Object.entries(filesContents).find(([path]) => path.endsWith("system_components.json"));
-      if (getComponentLoadSource() === "public" && componentsEntry?.[1]?.trim()) {
-        const components = Component.arrayFromJSON(JSON.parse(componentsEntry[1]));
-        system.defaultComponents = InformationSystem.cloneComponents(components);
-        system.actualComponents = InformationSystem.cloneComponents(components);
-      } else {
-        const componentStore = useComponentStore();
-        system.defaultComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
-        system.actualComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
-      }
+      const componentStore = useComponentStore();
+      system.defaultComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
+      system.actualComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
 
       return system;
     } catch {

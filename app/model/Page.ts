@@ -3,6 +3,4 @@ export type Page = {
     route: string;
     description?: string;
     icon?: string;
-    vueFile: string;
-    vueSource?: string;
 }

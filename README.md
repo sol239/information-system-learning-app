@@ -114,8 +114,6 @@ Konfigurace je načítána v `nuxt.config.ts` přes runtime config.
 | --- | --- | --- |
 | `NUXT_PUBLIC_APP_MODE` | prázdná hodnota | `TEACHER` zapne učitelský režim. Jiná hodnota spouští studentský pohled. |
 | `NUXT_PUBLIC_SINGLE_SYSTEM` | `true` | Ve studentském režimu omezuje navigaci na jeden vybraný systém. |
-| `NUXT_PUBLIC_LOAD_COMPONENTS_FROM` | `public` | Určuje, zda se komponenty načítají z veřejných dat systému, nebo z komponent registrovaných v aplikaci. |
-| `NUXT_PUBLIC_LOAD_PAGES_FROM` | `public` | `public` načítá `.vue` stránky ze systému. `development` používá stránky v `app/pages/systems/[id]`. |
 | `NUXT_PUBLIC_HTML_AVAILABLE` | `true` | Zobrazí editor HTML. |
 | `NUXT_PUBLIC_CSS_AVAILABLE` | `true` | Zobrazí editor CSS. |
 | `NUXT_PUBLIC_JS_AVAILABLE` | `true` | Zobrazí editor JS. |
@@ -131,7 +129,6 @@ app/
   components/          Vue komponenty aplikace, editorů, task panelů a ukázkového systému
   composables/         Sdílená aplikační logika pro načítání, přípravu a synchronizaci systému
   core/                Zpracování HTML, SQL, JS a mapování databázových tabulek
-  language/            Jazykové mapování a aplikační texty
   middleware/          Globální i routovací pravidla pro inicializaci, režimy a viditelnost stránek
   model/               Doménový model systému, komponent, úkolů, aktivit a dokončení
   pages/               Nuxt stránky aplikace a systémové routy
@@ -156,14 +153,11 @@ Výukový systém je ZIP soubor nebo složka v `public/systems`. Minimální str
 my-system/
   config.json
   create_schema.sql
-  system_components.json
-  prehled.vue
-  seznam.vue
 ```
 
 ### `config.json`
 
-Obsahuje metadata systému, seznam stránek, úkoly, počet úrovní a aktuální postup. Stránky odkazují na `.vue` soubory přes `vueFile`.
+Obsahuje metadata systemu, seznam stranek, ukoly, pocet urovni a aktualni postup. Stranky se identifikuji pomoci `route`; jejich Vue implementace je soucasti aplikace v `app/pages/systems/[id]`.
 
 ```json
 {
@@ -176,8 +170,7 @@ Obsahuje metadata systému, seznam stránek, úkoly, počet úrovní a aktuáln�
       "name": "Přehled",
       "route": "/prehled",
       "description": "Hlavní přehled.",
-      "icon": "i-heroicons-home",
-      "vueFile": "prehled.vue"
+      "icon": "i-heroicons-home"
     }
   ],
   "tasks": [],
@@ -191,13 +184,9 @@ Obsahuje metadata systému, seznam stránek, úkoly, počet úrovní a aktuáln�
 
 SQL skript pro vytvoření a naplnění SQLite databáze. Aplikace z něj vytvoří databázi přes `sql.js`.
 
-### `system_components.json`
 
-Seznam komponent dostupných v systému. Každá komponenta má vlastní HTML, CSS, JS, SQL dotazy, volitelné click akce, tagy a metadata proměnných.
 
-### `.vue` stránky
 
-Stránky systému, které skládají komponenty do konkrétních pohledů. Při `NUXT_PUBLIC_LOAD_PAGES_FROM=public` se načítají přímo ze ZIPu nebo složky systému.
 
 Předpřipravený příklad najdete v `public/systems/skolni-tabor-palava`. Prázdná šablona je v `docs/cs/empty-system-template`.
 

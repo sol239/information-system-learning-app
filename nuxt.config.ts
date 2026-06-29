@@ -2,8 +2,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const loadPagesFrom = process.env.NUXT_PUBLIC_LOAD_PAGES_FROM ?? 'public'
-
 function generateSystemsManifest() {
   return {
     name: 'generate-systems-manifest',
@@ -23,52 +21,13 @@ function generateSystemsManifest() {
   }
 }
 
-function isStaticSystemContentPage(file?: string) {
-  if (!file) {
-    return false
-  }
-
-  const normalizedFile = file.split(path.sep).join('/')
-
-  return normalizedFile.includes('/app/pages/systems/[id]/')
-    && !normalizedFile.endsWith('/app/pages/systems/[id]/[...path].vue')
-    && !normalizedFile.endsWith('/app/pages/systems/[id]/database.vue')
-    && !normalizedFile.endsWith('/app/pages/systems/[id]/designer.vue')
-}
-
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
-  hooks: {
-    'pages:extend'(pages) {
-      const normalizedLoadPagesFrom = String(loadPagesFrom).trim().toLowerCase()
-      if (normalizedLoadPagesFrom === 'development') {
-        return
-      }
-
-      function removeStaticSystemContentPages(routes: typeof pages) {
-        for (let index = routes.length - 1; index >= 0; index--) {
-          const route = routes[index]
-
-          if (route.children) {
-            removeStaticSystemContentPages(route.children)
-          }
-
-          if (isStaticSystemContentPage(route.file)) {
-            routes.splice(index, 1)
-          }
-        }
-      }
-
-      removeStaticSystemContentPages(pages)
-    },
-  },
   runtimeConfig: {
     public: {
       appMode: process.env.NUXT_PUBLIC_APP_MODE ?? '',
       singleSystem: process.env.NUXT_PUBLIC_SINGLE_SYSTEM ?? 'true',
-      loadComponentsFrom: process.env.NUXT_PUBLIC_LOAD_COMPONENTS_FROM ?? 'public',
-      loadPagesFrom,
       htmlAvailable: process.env.NUXT_PUBLIC_HTML_AVAILABLE ?? 'true',
       cssAvailable: process.env.NUXT_PUBLIC_CSS_AVAILABLE ?? 'true',
       jsAvailable: process.env.NUXT_PUBLIC_JS_AVAILABLE ?? 'true',
