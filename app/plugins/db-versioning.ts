@@ -8,6 +8,11 @@ function deleteIndexedDb(databaseName: string): Promise<void> {
   });
 }
 
+/**
+ * Nuxt plugin to handle IndexedDB versioning. It checks the current version of the database stored in localStorage against the version 
+ * defined in the runtime configuration. If the stored version is less than the current version, it deletes the existing IndexedDB and 
+ * updates the version in localStorage.
+ */
 export default defineNuxtPlugin(async () => {
   if (!import.meta.client) {
     return;

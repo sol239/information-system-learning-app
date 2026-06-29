@@ -1,7 +1,3 @@
-import type { R } from "vue-router/dist/router-CWoNjPRp.mjs"
-import { CsLanguage } from "~/language/CsLangauge"
-import { EnLanguage } from "~/language/EnLanguage"
-import type { Language } from "~/language/Language"
 import type { GUID } from "~/model/GUID"
 
 /**
@@ -11,23 +7,9 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
     const runtimeConfig = useRuntimeConfig()
 
     /**
-     * Langauage which is used across the application, but each system can have its own language settings. This is used for the global settings, which are not system specific.
-     * When a system is created it uses this language as the default language, but it can be changed later on.
-     */
-    const globalLanguage = ref<Language>(new CsLanguage())
-
-    /**
      * Whether the task menu is displayed as a sidebar or not. If not then it is displayed as a drawer after clicking on the tasks icon.
      */
     const taskMenuDisplayedAsSidebar = ref(false)
-
-    /**
-     * List of all available languages in the application.
-     */
-    const languages: Language[] = [
-        new EnLanguage(),
-        new CsLanguage()
-    ]
 
     const teacherModeEnv: Ref<boolean> = ref(String(runtimeConfig.public.appMode ?? '').trim().toUpperCase() === 'TEACHER')
     let teacherMode: Ref<boolean> = ref(teacherModeEnv.value)
@@ -72,9 +54,7 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
     }
 
     return {
-        globalLanguage,
         taskMenuDisplayedAsSidebar,
-        languages,
         teacherModeEnv,
         teacherMode,
         teacherHighlightEnabled,
@@ -94,6 +74,6 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
 
 }, {
     persist: {
-        pick: ['globalLanguage', 'taskMenuDisplayedAsSidebar', 'solvedComponentIds', 'loadSystemsFromPublicFolder', 'deletedPreloadedSystemIds', 'startedTaskSystemIds'],
+        pick: ['taskMenuDisplayedAsSidebar', 'solvedComponentIds', 'loadSystemsFromPublicFolder', 'deletedPreloadedSystemIds', 'startedTaskSystemIds'],
     }
 })

@@ -1,7 +1,5 @@
 import JSZip from 'jszip';
 import { InformationSystem } from '~/model/InformationSystem';
-import { type Mapping } from '~/language/Mapping';
-import { MappingCs } from '~/language/MappingCs';
 import { Operation } from '~/utils/Operation/Operation';
 import { OperationResultType } from '~/utils/Operation/OperationResultType';
 
