@@ -7,7 +7,7 @@ export const statistikaUcastnikuKomponenta = new Component({
   description: `Komponenta pro statistiku účastníků. SQL: SELECT COUNT(*) as pocet_ucastniku FROM ucastnici`,
   html: `
   <div id="statistika-ucastniku-karta">
-    <div id="statistika-ucastniku-ikona">??</div>
+    <div id="statistika-ucastniku-ikona">&#129485;&#8205;&#9794;&#65039;</div>
     <div id="statistika-ucastniku-obsah">
       <div id="statistika-ucastniku-pocet">{{ pocet_ucastniku }}</div>
       <div id="statistika-ucastniku-popisek">účastníků</div>
@@ -28,7 +28,12 @@ export const statistikaUcastnikuKomponenta = new Component({
 }
 
 #statistika-ucastniku-ikona {
-  font-size: 21px;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  font-size: 24px;
+  line-height: 28px;
+  text-align: center;
 }
 
 #statistika-ucastniku-pocet {
