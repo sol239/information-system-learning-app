@@ -1,3 +1,8 @@
+/**
+ * Deletes an IndexedDB database with the specified name.
+ * @param databaseName - The name of the IndexedDB database to delete.
+ * @returns A promise that resolves when the database is deleted. 
+ */
 function deleteIndexedDb(databaseName: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.deleteDatabase(databaseName);
@@ -24,6 +29,7 @@ export default defineNuxtPlugin(async () => {
   const dbVersionKey = String(runtimeConfig.public.indexedDbVersionKey);
   const dbVersion = parseInt(localStorage.getItem(dbVersionKey) || '0', 10);
 
+  // If the stored database version is less than the current version, delete the existing IndexedDB and update the version in localStorage
   if (dbVersion < currentDbVersion) {
     await deleteIndexedDb(databaseName);
     localStorage.setItem(dbVersionKey, String(currentDbVersion));
