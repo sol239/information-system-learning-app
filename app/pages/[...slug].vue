@@ -9,7 +9,7 @@ import { useGlobalSettingsStore } from '~/stores/globalSettingsStore';
 import { useSystemsStore } from '~/stores/systemsStore';
 import { usePrepareSystem } from '~/composables/usePrepareSystem';
 import { useAvailableSystemPages } from '~/composables/useAvailableSystemPages';
-import { usePreloadedSystems } from '~/composables/usePreloadedSystems';
+import { AppLoader } from '~/core/AppLoader';
 import { onMounted } from 'vue';
 
 const globalSettingsStore = useGlobalSettingsStore();
@@ -30,17 +30,7 @@ onMounted(async () => {
     return;
   }
 
-  // STUDENT MODE
-  // Load preloaded systems if there are no systems and public folder loading is enabled
-  if (systemsStore.systems.length === 0 && globalSettingsStore.loadSystemsFromPublicFolder) {
-    const { load, systems: preloadedSystems } = usePreloadedSystems();
-    await load();
-    for (const sys of preloadedSystems.value) {
-      if (!systemsStore.systems.some((existingSystem) => String(existingSystem.id) === String(sys.id))) {
-        await systemsStore.addSystem(sys);
-      }
-    }
-  }
+  await new AppLoader().loadApp();
 
   if (systemsStore.systems.length > 0) {
     const firstSystemId = systemsStore.systems[0].id;

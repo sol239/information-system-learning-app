@@ -3,13 +3,13 @@ import { Component } from "./Component";
 import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 import { SqljsDatabaseFactory } from "~/utils/SqljsDatabaseFactory";
 import JSZip from "jszip";
-import type { GUID } from "./GUID";
 import type { Page } from "./Page";
 import { Score } from "./Score";
 import { useComponentStore } from "~/stores/componentStore";
 import { Operation } from "~/utils/Operation/Operation";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { resetTaskProgress } from "~/utils/taskProgress";
+import type { SystemFile } from "~/model/types/SystemFile";
 
 /**
  * Represents an information system, encapsulating its configuration, data tables, tasks, and component mappings.
@@ -18,7 +18,7 @@ export class InformationSystem {
   /**
    * Unique identifier for the system.
    */
-  public id: GUID;
+  public id: string;
 
   /**
    * The language code of the system (e.g. "cs", "en").
@@ -126,7 +126,7 @@ export class InformationSystem {
     currentRound = 1,
     levelCount = 1,
   }: {
-    id: GUID;
+    id: string;
     name: string;
     language: string;
     description: string;
@@ -179,10 +179,10 @@ export class InformationSystem {
   }
 
 
-  public static async deserializeFromZip(zipData: ArrayBuffer): Promise<InformationSystem | null> {
+  public static async deserializeFromZip(zipData: ArrayBuffer): Promise<Operation<InformationSystem | null>> {
     try {
       const zip = await JSZip.loadAsync(zipData);
-      const filesContents: Record<string, string> = {};
+      const systemFiles: SystemFile[] = [];
       const readFiles: Promise<void>[] = [];
 
       zip.forEach((relativePath, zipEntry) => {
@@ -192,22 +192,30 @@ export class InformationSystem {
 
         readFiles.push(
           zipEntry.async("text").then(content => {
-            filesContents[relativePath] = content;
+            systemFiles.push({
+              name: relativePath.split("/").pop() ?? relativePath,
+              path: relativePath,
+              content,
+            });
           })
         );
       });
 
       await Promise.all(readFiles);
 
-      return await InformationSystem.deserializeFromFiles(filesContents);
-    } catch {
-      return null;
+      return await InformationSystem.loadSystem(systemFiles);
+    } catch (error) {
+      return new Operation(
+        OperationResultType.ERROR,
+        "Failed to deserialize system zip: " + (error instanceof Error ? error.message : String(error)),
+        null
+      );
     }
   }
 
-  public static async loadSystem(filesContents: Record<string, string>): Promise<Operation<InformationSystem | null>> {
+  public static async loadSystem(systemFiles: SystemFile[]): Promise<Operation<InformationSystem | null>> {
     try {
-      const system = await InformationSystem.deserializeFromFiles(filesContents);
+      const system = await InformationSystem.deserializeFromFiles(systemFiles);
       if (!system) {
         return new Operation(OperationResultType.ERROR, "Failed to load system.", null);
       }
@@ -222,9 +230,9 @@ export class InformationSystem {
     }
   }
 
-  private static async deserializeFromFiles(filesContents: Record<string, string>): Promise<InformationSystem | null> {
+  private static async deserializeFromFiles(systemFiles: SystemFile[]): Promise<InformationSystem | null> {
     try {
-      const configContent = Object.entries(filesContents).find(([path]) => path.endsWith("config.json"))?.[1];
+      const configContent = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("config.json"))?.content;
       if (!configContent) {
         return null;
       }
@@ -234,10 +242,10 @@ export class InformationSystem {
         ...page,
       }));
 
-      const sqlEntry = Object.entries(filesContents).find(([path]) => path.endsWith("create_schema.sql"));
+      const sqlFile = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("create_schema.sql"));
       let database: DatabaseWrapper | null = null;
-      if (sqlEntry) {
-        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(sqlEntry[1]);
+      if (sqlFile) {
+        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(sqlFile.content);
         if (dbResult.result !== OperationResultType.SUCCESS || !dbResult.data) {
           return null;
         }
@@ -246,7 +254,7 @@ export class InformationSystem {
       }
 
       const system = new InformationSystem({
-        id: String(configData.id) as GUID,
+        id: String(configData.id),
         name: configData.name,
         language: configData.language,
         description: configData.description,
@@ -259,7 +267,7 @@ export class InformationSystem {
         exploringSystem: Boolean(configData.exploringSystem),
         currentRound: 1,
         levelCount: Number(configData.levelCount ?? 1),
-        createSchemaSql: sqlEntry?.[1],
+        createSchemaSql: sqlFile?.content,
         configData,
       });
 
@@ -275,6 +283,10 @@ export class InformationSystem {
 
   private static cloneComponents(components: Component[]): Component[] {
     return Component.arrayFromJSON(JSON.parse(JSON.stringify(components ?? [])));
+  }
+
+  private static systemFilePath(file: SystemFile): string {
+    return file.path ?? file.name;
   }
 
 }

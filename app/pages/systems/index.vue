@@ -20,29 +20,6 @@
                 {{ t("manage_your_systems_description") }}
               </p>
 
-              <!--
-              <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 px-4 py-3 lg:min-w-[420px] lg:max-w-[620px] lg:flex-1">
-                  <div class="flex flex-col">
-                    <span class="text-sm font-medium text-gray-900">
-                      {{ t("load_systems_from_public_folder") }}
-                    </span>
-                    <span class="text-sm text-gray-500">
-                      {{ t("load_systems_from_public_folder_description") }}
-                    </span>
-                  </div>
-                  <USwitch
-                    color="teacher"
-                    :model-value="globalSettingsStore.loadSystemsFromPublicFolder"
-                    @update:model-value="onTogglePublicSystems"
-                  />
-                </div>
-
-                <div class="flex flex-wrap gap-4 lg:justify-end">
-                  <UploadSystemZipModal />
-                </div>
-              </div>
-              -->
               <div class="flex flex-wrap gap-4 lg:justify-end">
                 <UploadSystemZipModal />
               </div>
@@ -113,16 +90,11 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
-import { TaskStatus } from "~/model/Task/TaskStatus";
-import type { InformationSystem } from "~/model/InformationSystem";
 import UploadSystemZipModal from "~/components/UploadSystemZipModal.vue";
 import EditSystemModal from "~/components/EditSystemModal.vue";
-import { usePreloadedSystems } from "~/composables/usePreloadedSystems";
+import { AppLoader } from "~/core/AppLoader";
 import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
 import { useSystemsStore } from "~/stores/systemsStore";
-import { IndexedDbStorage } from "~/utils/IndexedDbStorage";
-import { OperationResultType } from "~/utils/Operation/OperationResultType";
 
 /* 2. Stores */
 const globalSettingsStore = useGlobalSettingsStore();
@@ -132,82 +104,15 @@ const { pushFirstAvailablePage } = useAvailableSystemPages();
 
 /* 3. Context hooks */
 const { t } = useI18n();
-const toast = useToast();
 const router = useRouter();
-
-/* 4. State */
-const dbReadyMap = reactive<Record<string, boolean>>({});
-const {
-  systems: preloadedSystems,
-  loading: preloadLoading,
-  errors: preloadErrors,
-  load: loadPreloaded,
-} = usePreloadedSystems();
-
 
 
 /* 5. Lifecycle */
 onMounted(async () => {
-  await loadSystemsPageData();
+  await new AppLoader().loadApp();
 });
 
-watch(
-  () => globalSettingsStore.loadSystemsFromPublicFolder,
-  async (enabled, previousValue) => {
-    if (previousValue === undefined || enabled === previousValue) {
-      return;
-    }
-
-    await loadSystemsPageData();
-  },
-);
-
 /* 5. Methods */
-async function loadSystemsPageData() {
-  await loadStoredSystems();
-
-  if (globalSettingsStore.loadSystemsFromPublicFolder) {
-    await loadPreloadedSystemsIntoStore();
-  }
-}
-
-async function loadStoredSystems() {
-  const result = await IndexedDbStorage.GetStoredInformationSystems();
-  if (result.result === OperationResultType.SUCCESS && result.data) {
-    systemsStore.systems.splice(0, systemsStore.systems.length, ...result.data);
-    for (const sys of result.data) {
-      dbReadyMap[sys.id] = await DatabaseWrapper.isDatabaseInitialized(sys.database);
-    }
-  }
-}
-
-async function loadPreloadedSystemsIntoStore() {
-  await loadPreloaded();
-
-  const deletedIds = new Set(globalSettingsStore.deletedPreloadedSystemIds.map(String))
-
-  for (const sys of preloadedSystems.value) {
-    if (deletedIds.has(String(sys.id))) {
-      continue;
-    }
-
-    if (systemsStore.systems.some((existingSystem) => String(existingSystem.id) === String(sys.id))) {
-      continue;
-    }
-
-    await systemsStore.addSystem(sys);
-    dbReadyMap[sys.id] = await DatabaseWrapper.isDatabaseInitialized(sys.database);
-  }
-
-  if (preloadErrors.value.length) {
-    console.warn("Preloaded systems errors:", preloadErrors.value);
-  }
-}
-
-async function onTogglePublicSystems(value: boolean) {
-  globalSettingsStore.loadSystemsFromPublicFolder = value;
-}
-
 async function navigateToSystem(id: string) {
   //console.log("Navigating to system " + id);
   if (!(await prepareSystem(id))) {
@@ -239,9 +144,5 @@ async function navigateToDesigner(id: string) {
 async function deleteSystem(id: string) {
   globalSettingsStore.markPreloadedSystemAsDeleted(id);
   await systemsStore.deleteSystemById(id);
-}
-
-function completedTasksCount(system: InformationSystem): number {
-  return system.tasks?.filter((t) => t.status === TaskStatus.COMPLETED).length ?? 0;
 }
 </script>

@@ -1,5 +1,6 @@
 import type { InformationSystem } from "~/model/InformationSystem"
-import { IndexedDbStorage } from "~/utils/IndexedDbStorage"
+import type { IStorage } from "~/core/storage/IStorage"
+import { IndexedDBStorage } from "~/core/storage/IndexedDB/IndexedDBStorage"
 import { Operation } from "~/utils/Operation/Operation"
 import { OperationResultType } from "~/utils/Operation/OperationResultType"
 
@@ -9,6 +10,7 @@ export const useSystemsStore = defineStore('systems', () => {
 
     const selectedSystemId = ref<string | null>(null)
     const globalSettingsStore = useGlobalSettingsStore()
+    const storage: IStorage = new IndexedDBStorage()
 
     const selectedSystem = computed(() => {
         return systems.value.find(system => String(system.id) === String(selectedSystemId.value))
@@ -44,7 +46,7 @@ export const useSystemsStore = defineStore('systems', () => {
     }
 
     async function deleteSystemById(id: string): Promise<Operation<null>> {
-        const result = await IndexedDbStorage.DeleteInformationSystem(id)
+        const result = await storage.deleteSystem(id)
         if (result.result === OperationResultType.SUCCESS) {
             systems.value = systems.value.filter(system => String(system.id) !== String(id))
         }
@@ -52,7 +54,7 @@ export const useSystemsStore = defineStore('systems', () => {
     }
 
     async function updateSystem(system: InformationSystem): Promise<Operation<null>> {
-        const result = await IndexedDbStorage.UpdateInformationSystem(system)
+        const result = await storage.saveSystem(system)
         if (result.result === OperationResultType.SUCCESS) {
             const index = systems.value.findIndex(s => s.id === system.id)
             if (index !== -1) {
@@ -63,11 +65,29 @@ export const useSystemsStore = defineStore('systems', () => {
     }
 
     async function addSystem(system: InformationSystem): Promise<Operation<null>> {
-        const result = await IndexedDbStorage.SaveInformationSystem(system)
+        const result = await storage.saveSystem(system)
         if (result.result === OperationResultType.SUCCESS) {
-            systems.value.push(system)
+            const index = systems.value.findIndex(existingSystem => String(existingSystem.id) === String(system.id))
+            if (index === -1) {
+                systems.value.push(system)
+            } else {
+                systems.value[index] = system
+            }
         }
         return result
+    }
+
+    async function loadSystemsFromStorage(systemIds: string[]): Promise<void> {
+        const loadedSystems: InformationSystem[] = []
+
+        for (const systemId of systemIds) {
+            const result = await storage.getSystem(systemId)
+            if (result.result === OperationResultType.SUCCESS && result.data) {
+                loadedSystems.push(result.data)
+            }
+        }
+
+        systems.value = loadedSystems
     }
 
     return {
@@ -77,6 +97,7 @@ export const useSystemsStore = defineStore('systems', () => {
         addSystem,
         deleteSystemById,
         getSystemById,
+        loadSystemsFromStorage,
         updateSystem,
         getComponentById,
     }

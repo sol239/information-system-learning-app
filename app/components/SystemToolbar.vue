@@ -410,7 +410,7 @@ async function leaveAndSave() {
     if (!system) throw new Error("No system selected");
     await systemsStore.updateSystem(system);
     if (system.database?.sqlJsDatabase) {
-      // database is persisted as part of updateSystem via IndexedDbStorage
+      // database is persisted as part of updateSystem.
     }
     toast.add({
       title: t("save_success") || "Results saved successfully",
