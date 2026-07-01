@@ -17,6 +17,7 @@ export default defineNuxtConfig({
       indexedDbName: process.env.NUXT_PUBLIC_INDEXED_DB_NAME ?? 'InformationSystemsDb',
       indexedDbVersion: 2,
       indexedDbVersionKey: 'db_version',
+      publicSystemsDirPath: '/systems',
       preloadedSystems: ['skolni-tabor-palava'],
     },
   },
