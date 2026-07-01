@@ -339,7 +339,7 @@
     "upload_system_zip": "Upload System .zip",
     "upload_system": "Upload System",
     "load_systems_from_public_folder": "Load systems from public folder",
-    "load_systems_from_public_folder_description": "Use systems listed in `public/systems/manifest.json`",
+    "load_systems_from_public_folder_description": "Use systems listed in runtime config",
     "system_upload_success": "System Upload Successful",
     "has_been_uploaded": "has been uploaded",
     "upload_error": "Upload Error",

@@ -336,7 +336,7 @@
     "upload_system_zip": "Nahrát systém ve formátu .zip",
     "upload_system": "Nahrát systém",
     "load_systems_from_public_folder": "Načítat systémy z veřejné složky",
-    "load_systems_from_public_folder_description": "Použít systémy uvedené v `public/systems/manifest.json`",
+    "load_systems_from_public_folder_description": "Použít systémy uvedené v runtime configu",
     "system_upload_success": "Systém úspěšně nahrán",
     "has_been_uploaded": "byl nahrán",
     "upload_error": "Chyba při nahrávání",

@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       indexedDbName: process.env.NUXT_PUBLIC_INDEXED_DB_NAME ?? 'InformationSystemsDb',
       indexedDbVersion: Number(process.env.NUXT_PUBLIC_INDEXED_DB_VERSION ?? 1),
       indexedDbVersionKey: process.env.NUXT_PUBLIC_INDEXED_DB_VERSION_KEY ?? 'db_version',
-      manifestPuFilePathPublic: 'systems/manifest.json',
+      preloadedSystems: ['skolni-tabor-palava'],
     },
   },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt', '@nuxt/test-utils/module', '@nuxt/eslint'],

@@ -52,7 +52,7 @@
       </UCard>
 
       <!-- Debug And Development -->
-       <UButton @click=getSystemListFromManifestFile></UButton>
+       <UButton @click=getPreloadedSystemList></UButton>
 
       <!-- Systems List -->
       <div v-if="systemsStore.systems.length > 0" class="space-y-6">
@@ -126,7 +126,7 @@ import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
 import { useSystemsStore } from "~/stores/systemsStore";
 import { IndexedDbStorage } from "~/utils/IndexedDbStorage";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
-import { getSystemListFromManifestFile } from "~/core/systems/getSystemListFromManifestFile";
+import { getPreloadedSystemList } from "~/core/systems/getPreloadedSystemList";
 
 /* 2. Stores */
 const globalSettingsStore = useGlobalSettingsStore();

@@ -6,12 +6,9 @@ import type { InformationSystem as InformationSystemType } from '~/model/Informa
 
 /**
  * Loads InformationSystem instances from ZIP files or unpacked folders listed in
- * public/systems/manifest.json.
+ * runtimeConfig.public.preloadedSystems.
  *
- * manifest.json format:
- * { "systems": ["system-a.zip", "system-a", "system-b.zip"] }
- *
- * Place ZIP files or unpacked system folders in public/systems/ next to the manifest.
+ * Place ZIP files or unpacked system folders in public/systems and list them in nuxt.config.ts.
  */
 export function usePreloadedSystems() {
     const systems = ref<InformationSystemType[]>([])
@@ -25,19 +22,16 @@ export function usePreloadedSystems() {
         errors.value = []
         systems.value = []
 
-        let manifest: { systems: string[] }
-        try {
-            const res = await fetch(`${baseURL}/systems/manifest.json`)
-            if (!res.ok) throw new Error(`manifest.json fetch failed: ${res.status}`)
-            manifest = await res.json()
-        } catch (e) {
-            errors.value.push(String(e))
+        const config = useRuntimeConfig()
+        const systemEntries = normalizeSystemEntries(config.public.preloadedSystems)
+        if (!systemEntries.length) {
+            errors.value.push('No preloaded systems configured in runtimeConfig.public.preloadedSystems')
             loading.value = false
             return
         }
 
         const results = await Promise.allSettled(
-            manifest.systems.map(entry => loadSystemFromEntry(entry))
+            systemEntries.map(entry => loadSystemFromEntry(entry))
         )
 
         for (const result of results) {
@@ -144,6 +138,21 @@ export function usePreloadedSystems() {
         }
 
         system.configData.__manifestEntry = manifestEntry
+    }
+
+    function normalizeSystemEntries(value: unknown): string[] {
+        if (Array.isArray(value)) {
+            return value.map(String).map(entry => entry.trim()).filter(Boolean)
+        }
+
+        if (typeof value === 'string') {
+            return value
+                .split(',')
+                .map(entry => entry.trim())
+                .filter(Boolean)
+        }
+
+        return []
     }
 
     function ensureUniquePreloadedIds(loadedSystems: InformationSystemType[]) {
