@@ -745,7 +745,6 @@ import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import EditComponentBody from '~/components/EditComponentBody.vue'
 import { Component as SystemComponent } from '~/model/Component'
 import type { ComponentVariables } from '~/model/ComponentVariables'
-import type { GUID } from '~/model/GUID'
 import type { Page } from '~/model/Page'
 import type { ComponentContainsConstraint, ComponentContainsOperator } from '~/model/Task/Activity/ComponentContainsCheck'
 import { ActivityType } from '~/model/Task/Activity/ActivityType'
@@ -765,7 +764,7 @@ import { inconsistentVisiblePageLevels } from '~/utils/taskLevels'
 import { systemVisiblePages } from '~/utils/taskPageVisibility'
 
 type TaskDetailForm = {
-  id: GUID | ''
+  id: string
   title: string
   description: string
   finishDescription: string
@@ -792,13 +791,13 @@ type TaskDetailForm = {
 }
 
 type ActivityOption = {
-  id?: GUID
+  id?: string
   text: string
   isCorrect: boolean
 }
 
 type VariableConstraintForm = {
-  id: GUID
+  id: string
   variableKey: string
   componentId?: string
   componentName?: string
@@ -818,7 +817,7 @@ type VariableConstraintOption = {
 }
 
 type ComponentContainsConstraintForm = {
-  id: GUID
+  id: string
   componentId: string
   componentName?: string
   operator: ComponentContainsOperator
@@ -1539,7 +1538,7 @@ function variableConstraintKey(componentId: string | undefined, scope: VariableC
 function toVariableConstraintForm(constraint: VariableConstraint): VariableConstraintForm {
   const variableScope = constraint.variableScope ?? 'general'
   return {
-    id: (constraint.id ?? createOptionId()) as GUID,
+    id: constraint.id ?? createOptionId(),
     variableKey: variableConstraintKey(constraint.componentId, variableScope, constraint.variableName),
     componentId: constraint.componentId,
     componentName: constraint.componentName,
@@ -1577,7 +1576,7 @@ function parseConstraintValue(value: string): string | number {
 
 function toComponentContainsConstraintForm(constraint: ComponentContainsConstraint): ComponentContainsConstraintForm {
   return {
-    id: (constraint.id ?? createOptionId()) as GUID,
+    id: constraint.id ?? createOptionId(),
     componentId: String(constraint.componentId ?? ''),
     componentName: constraint.componentName,
     operator: constraint.operator ?? 'contains',
@@ -1628,7 +1627,7 @@ function toTaskPage(page: Page): Page {
   }
 }
 
-function createOptionId(): GUID {
-  return crypto.randomUUID() as GUID
+function createOptionId(): string {
+  return crypto.randomUUID()
 }
 </script>

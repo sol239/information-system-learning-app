@@ -195,7 +195,6 @@
 import { computed } from 'vue'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { Task } from '~/model/Task/Task'
-import type { GUID } from '~/model/GUID'
 import { inconsistentVisiblePageLevels, isTaskDone, isTaskLevelLocked } from '~/utils/taskLevels'
 import { systemPageRouteFromPath, systemVisiblePages, taskAllowsPage } from '~/utils/taskPageVisibility'
 
@@ -298,7 +297,7 @@ async function createTaskAndOpenDesigner() {
     return
   }
 
-  const task = new Task(crypto.randomUUID() as GUID, 'New Task', '')
+  const task = new Task(crypto.randomUUID(), 'New Task', '')
   system.tasks.push(task)
   globalSettings.selectedTaskId = task.id
   await systemsStore.updateSystem(system)
@@ -311,7 +310,7 @@ async function createTaskAndOpenDesigner() {
   })
 }
 
-async function deleteTask(taskId: GUID) {
+async function deleteTask(taskId: string) {
   const system = systemsStore.selectedSystem
   if (!system?.tasks) {
     return

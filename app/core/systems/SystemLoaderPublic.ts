@@ -1,10 +1,4 @@
 import type { InformationSystem } from "~/model/InformationSystem";
 import type { ISystemLoader } from "./ISystemLoader";
+import type { Operation } from "~/utils/Operation/Operation";
 
-export class SystemLoaderPublic implements ISystemLoader {
-
-    async getSystem(systemName: string): Promise<InformationSystem> {
-       
-    }
-
-}

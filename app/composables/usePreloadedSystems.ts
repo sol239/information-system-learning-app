@@ -1,8 +1,8 @@
 import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
 import { OperationResultType } from '~/utils/Operation/OperationResultType'
-import type { GUID } from '~/model/GUID'
 import type { InformationSystem as InformationSystemType } from '~/model/InformationSystem'
+import type { SystemFile } from '~/model/types/SystemFile'
 
 /**
  * Loads InformationSystem instances from ZIP files or unpacked folders listed in
@@ -78,13 +78,13 @@ export function usePreloadedSystems() {
         }
 
         const loader = loaderResult.data
-        const filesContents: Record<string, string> = {
-            'config.json': loader.jsonConfigFileContent ?? '',
-            ...loader.csvFilesContent,
-            ...loader.sqlFilesContent,
-        }
+        const systemFiles: SystemFile[] = [
+            { name: 'config.json', content: loader.jsonConfigFileContent ?? '' },
+            ...entriesToSystemFiles(Object.entries(loader.csvFilesContent)),
+            ...entriesToSystemFiles(Object.entries(loader.sqlFilesContent)),
+        ]
 
-        const systemResult = await InformationSystem.loadSystem(filesContents)
+        const systemResult = await InformationSystem.loadSystem(systemFiles)
         if (systemResult.result !== OperationResultType.SUCCESS || !systemResult.data) {
             throw new Error(`Failed to load system from ${filename}: ${systemResult.message}`)
         }
@@ -95,19 +95,23 @@ export function usePreloadedSystems() {
     async function loadSystemFromDirectory(basePath: string, directoryName: string): Promise<InformationSystemType | null> {
         const configContent = await fetchRequiredTextFile(`${baseURL}/systems/${directoryName}/config.json`, `${directoryName}/config.json`)
 
-        const filesContents: Record<string, string> = {
-            'config.json': configContent,
-        }
+        const systemFiles: SystemFile[] = [
+            { name: 'config.json', path: `${directoryName}/config.json`, content: configContent },
+        ]
 
         const optionalEntries = await Promise.all([
             fetchOptionalTextFile(`${basePath}/create_schema.sql`),
         ])
 
         if (optionalEntries[0] !== null) {
-            filesContents['create_schema.sql'] = optionalEntries[0]
+            systemFiles.push({
+                name: 'create_schema.sql',
+                path: `${directoryName}/create_schema.sql`,
+                content: optionalEntries[0],
+            })
         }
 
-        const systemResult = await InformationSystem.loadSystem(filesContents)
+        const systemResult = await InformationSystem.loadSystem(systemFiles)
         if (systemResult.result !== OperationResultType.SUCCESS || !systemResult.data) {
             throw new Error(`Failed to load system from ${directoryName}: ${systemResult.message}`)
         }
@@ -166,7 +170,7 @@ export function usePreloadedSystems() {
 
                 const originalId = String(system.configData?.id ?? system.id)
                 const uniqueId = buildPreloadedVariantId(originalId, getPreloadedEntry(system))
-                system.id = uniqueId as GUID
+                system.id = uniqueId
 
                 if (system.configData && typeof system.configData === 'object') {
                     system.configData.id = system.id
@@ -197,8 +201,16 @@ export function usePreloadedSystems() {
         return String(system.id)
     }
 
-    function buildPreloadedVariantId(originalId: string, manifestEntry: string): string {
-        const normalizedEntry = manifestEntry
+    function entriesToSystemFiles(files: Array<[string, string]>): SystemFile[] {
+        return files.map(([path, content]) => ({
+            name: path.split('/').pop() ?? path,
+            path,
+            content,
+        }))
+    }
+
+    function buildPreloadedVariantId(originalId: string, preloadedEntry: string): string {
+        const normalizedEntry = preloadedEntry
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '')

@@ -1,7 +1,5 @@
-import type { GUID } from "../GUID";
-
 export type Option = {
-    id: GUID;
+    id: string;
     text: string;
     isCorrect: boolean;
 }

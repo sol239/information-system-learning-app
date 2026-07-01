@@ -1,5 +1,6 @@
-import type { InformationSystem } from "./InformationSystem";
+import type { InformationSystem } from "~/model/InformationSystem";
+import type { Operation } from "~/utils/Operation/Operation";
 
 export interface ISystemLoader {
-    getSystem(systemName: string): Promise<InformationSystem>;
+    getSystem(systemId: string): Promise<Operation<InformationSystem | null>>;
 }

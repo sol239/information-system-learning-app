@@ -1,15 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import type { GUID } from "~/model/GUID";
 import type { OperationResultType } from "./OperationResultType";
 
 /**
  * Defines the Operation class, which encapsulates the result of an operation, including its status, message, and datetime. 
  */
-export class Operation<T> {
+export class Operation<T = any> {
     /**
      * A unique identifier for the operation, which can be used to track or reference the specific operation that was performed.
      */
-    public id: GUID;
+    public id: string;
 
     /**
      * The result of the operation, represented as an OperationResultType enum value.
@@ -34,9 +33,9 @@ export class Operation<T> {
     constructor(
         result: OperationResultType,
         message: string,
-        data: T | null = null,
+        data: T,
         datetime?: Date,
-        id: GUID = uuidv4() as GUID
+        id: string = uuidv4()
     ) {
         this.id = id;
         this.result = result;

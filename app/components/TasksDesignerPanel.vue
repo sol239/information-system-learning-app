@@ -210,7 +210,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import HoverHint from '~/components/HoverHint.vue'
-import type { GUID } from '~/model/GUID'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { Task } from '~/model/Task/Task'
 import { useSystemsStore } from '~/stores/systemsStore'
@@ -303,7 +302,7 @@ const importFromJson = async () => {
   }
 
   const importedTask = Task.fromJSON(data)
-  importedTask.id = crypto.randomUUID() as GUID
+  importedTask.id = crypto.randomUUID()
 
   system.tasks.push(importedTask)
   selectedTask.value = importedTask
@@ -337,7 +336,7 @@ const importAllFromJson = async () => {
 
   system.tasks = data.map((item: unknown) => {
     const task = Task.fromJSON(item)
-    task.id = crypto.randomUUID() as GUID
+    task.id = crypto.randomUUID()
     return task
   })
 
@@ -377,7 +376,7 @@ const createTask = async () => {
     return
   }
 
-  const taskId = crypto.randomUUID() as GUID
+  const taskId = crypto.randomUUID()
   const newTask = new Task(taskId, 'New Task', '')
 
   system.tasks.push(newTask)
@@ -429,7 +428,7 @@ const handleLevelCountUpdate = (levelCount: number) => {
   queueSystemPersist(system)
 }
 
-const deleteTask = async (taskId: GUID) => {
+const deleteTask = async (taskId: string) => {
   const system = systemsStore.selectedSystem
   if (!system?.tasks) {
     return

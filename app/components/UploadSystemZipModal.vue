@@ -66,6 +66,7 @@ import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { usePreloadedSystems } from '~/composables/usePreloadedSystems'
+import type { SystemFile } from '~/model/types/SystemFile'
 
 /* 3. Context hooks */
 const { t } = useI18n()
@@ -158,17 +159,15 @@ async function onUpload(close: () => void) {
         if (selectedPreloadedSystem.value) {
             const sysToClone = selectedPreloadedSystem.value
 
-            // Reconstruct filesContents from the already-loaded system,
-            // mirroring exactly what the manifest/ZIP loader does.
-            const filesContents: Record<string, string> = {
-                'config.json': JSON.stringify(sysToClone.configData ?? {}),
-            }
+            const systemFiles: SystemFile[] = [
+                { name: 'config.json', content: JSON.stringify(sysToClone.configData ?? {}) },
+            ]
 
             if (sysToClone.createSchemaSql) {
-                filesContents['create_schema.sql'] = sysToClone.createSchemaSql
+                systemFiles.push({ name: 'create_schema.sql', content: sysToClone.createSchemaSql })
             }
 
-            const loadResult = await InformationSystem.loadSystem(filesContents)
+            const loadResult = await InformationSystem.loadSystem(systemFiles)
             if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
                 const newSys = loadResult.data
                 const resolved = resolveCollision(newSys)
@@ -187,12 +186,12 @@ async function onUpload(close: () => void) {
         
         if (!selectedFile.value || !loader.value) return
         
-        const filesContents: Record<string, string> = {
-            'config.json': loader.value.jsonConfigFileContent ?? '',
-            ...loader.value.csvFilesContent,
-            ...loader.value.sqlFilesContent,
-        }
-        const loadResult = await InformationSystem.loadSystem(filesContents)
+        const systemFiles: SystemFile[] = [
+            { name: 'config.json', content: loader.value.jsonConfigFileContent ?? '' },
+            ...entriesToSystemFiles(Object.entries(loader.value.csvFilesContent)),
+            ...entriesToSystemFiles(Object.entries(loader.value.sqlFilesContent)),
+        ]
+        const loadResult = await InformationSystem.loadSystem(systemFiles)
         if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
             await systemsStore.addSystem(loadResult.data)
         } else {
@@ -203,5 +202,13 @@ async function onUpload(close: () => void) {
     } finally {
         loading.value = false
     }
+}
+
+function entriesToSystemFiles(files: Array<[string, string]>): SystemFile[] {
+    return files.map(([path, content]) => ({
+        name: path.split('/').pop() ?? path,
+        path,
+        content,
+    }))
 }
 </script>

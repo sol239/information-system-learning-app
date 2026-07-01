@@ -7,7 +7,6 @@ import { SelectOptionsActivity } from "./Activity/SelectOptionsActivity";
 import { AfterDatabaseUpdateFinish } from "./Finish/AfterDatabaseUpdateFinish";
 import { FinishType } from "./Finish/FinishType";
 import { ImmediateFinish } from "./Finish/ImmediateFinish";
-import type { GUID } from "../GUID";
 import type { Page } from "../Page";
 import { TaskStatus } from "./TaskStatus";
 import { Component } from "../Component";
@@ -20,7 +19,7 @@ import type { CodeEditPermissions } from "~/utils/codeEditPermissions";
 
 export class Task {
   constructor(
-    public id: GUID,
+    public id: string,
     public title: string,
     public description: string,
 
@@ -59,7 +58,7 @@ export class Task {
     const finish = Task.createFinish(finishType, data?.finish, data?.finishDescription ?? "");
 
     const task = new Task(
-      String(data?.id ?? "") as GUID,
+      String(data?.id ?? ""),
       data?.title ?? "",
       data?.description ?? "",
       data?.componentsRepaired ?? false,
@@ -213,19 +212,19 @@ export class Task {
     }
 
     return data.map((option: any) => ({
-      id: String(option?.id ?? Task.createOptionId()) as GUID,
+      id: String(option?.id ?? Task.createOptionId()),
       text: option?.text ?? "",
       isCorrect: Boolean(option?.isCorrect)
     }));
   }
 
-  private static createOptionId(): GUID {
+  private static createOptionId(): string {
     const cryptoApi = globalThis.crypto as Crypto | undefined;
     if (cryptoApi?.randomUUID) {
-      return cryptoApi.randomUUID() as GUID;
+      return cryptoApi.randomUUID();
     }
 
-    return `option-${Date.now()}-${Math.random().toString(36).slice(2)}` as GUID;
+    return `option-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
   private static normalizeComponentContainsConstraints(data: any): ComponentContainsConstraint[] {
