@@ -178,29 +178,6 @@ export class InformationSystem {
     return this.mistakes.reduce((sum, penalty) => sum + Number(penalty || 0), 0);
   }
 
-  /**
-   * Creates an InformationSystem instance from a JSON string representation of its configuration.
-   * @param configJson - The JSON string representing the system's configuration.
-   * @returns An instance of InformationSystem initialized with the provided configuration.
-   */
-  public static fromJson(configJson: string): InformationSystem {
-    const configData = JSON.parse(configJson);
-    return new InformationSystem({
-      id: String(configData.id) as GUID,
-      name: configData.name,
-      language: configData.language,
-      description: configData.description,
-      pages: configData.pages ?? [],
-      mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
-      mistakesCount: Number(configData.mistakesCount ?? 0),
-      startedTasks: Boolean(configData.startedTasks),
-      exploringSystem: Boolean(configData.exploringSystem),
-      currentRound: Number(configData.currentRound ?? 1),
-      levelCount: Number(configData.levelCount ?? 1),
-      createSchemaSql: typeof configData.createSchemaSql === 'string' ? configData.createSchemaSql : undefined,
-      configData,
-    });
-  }
 
   public static async deserializeFromZip(zipData: ArrayBuffer): Promise<InformationSystem | null> {
     try {
