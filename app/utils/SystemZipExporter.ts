@@ -44,6 +44,7 @@ export class SystemZipExporter {
       : {}
 
     delete baseConfig.__manifestEntry
+    delete baseConfig.__preloadedEntry
     delete baseConfig.score
 
     return {

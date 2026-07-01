@@ -23,7 +23,9 @@ export function usePreloadedSystems() {
         systems.value = []
 
         const config = useRuntimeConfig()
-        const systemEntries = normalizeSystemEntries(config.public.preloadedSystems)
+        const systemEntries = Array.isArray(config.public.preloadedSystems)
+            ? config.public.preloadedSystems.map(String).map(entry => entry.trim()).filter(Boolean)
+            : []
         if (!systemEntries.length) {
             errors.value.push('No preloaded systems configured in runtimeConfig.public.preloadedSystems')
             loading.value = false
@@ -49,17 +51,17 @@ export function usePreloadedSystems() {
     async function loadSystemFromEntry(entry: string): Promise<InformationSystemType | null> {
         const normalizedEntry = entry.trim().replace(/^\/+|\/+$/g, '')
         if (!normalizedEntry) {
-            throw new Error('Manifest contains an empty system entry')
+            throw new Error('runtimeConfig.public.preloadedSystems contains an empty system entry')
         }
 
         if (normalizedEntry.toLowerCase().endsWith('.zip')) {
             const system = await loadSystemFromZip(`${baseURL}/systems/${normalizedEntry}`, normalizedEntry)
-            annotateManifestEntry(system, normalizedEntry)
+            annotatePreloadedEntry(system, normalizedEntry)
             return system
         }
 
         const system = await loadSystemFromDirectory(`${baseURL}/systems/${normalizedEntry}`, normalizedEntry)
-        annotateManifestEntry(system, normalizedEntry)
+        annotatePreloadedEntry(system, normalizedEntry)
         return system
     }
 
@@ -128,7 +130,7 @@ export function usePreloadedSystems() {
         return res.text()
     }
 
-    function annotateManifestEntry(system: InformationSystemType | null, manifestEntry: string) {
+    function annotatePreloadedEntry(system: InformationSystemType | null, preloadedEntry: string) {
         if (!system) {
             return
         }
@@ -137,22 +139,7 @@ export function usePreloadedSystems() {
             system.configData = {}
         }
 
-        system.configData.__manifestEntry = manifestEntry
-    }
-
-    function normalizeSystemEntries(value: unknown): string[] {
-        if (Array.isArray(value)) {
-            return value.map(String).map(entry => entry.trim()).filter(Boolean)
-        }
-
-        if (typeof value === 'string') {
-            return value
-                .split(',')
-                .map(entry => entry.trim())
-                .filter(Boolean)
-        }
-
-        return []
+        system.configData.__preloadedEntry = preloadedEntry
     }
 
     function ensureUniquePreloadedIds(loadedSystems: InformationSystemType[]) {
@@ -178,7 +165,7 @@ export function usePreloadedSystems() {
                 }
 
                 const originalId = String(system.configData?.id ?? system.id)
-                const uniqueId = buildPreloadedVariantId(originalId, getManifestEntry(system))
+                const uniqueId = buildPreloadedVariantId(originalId, getPreloadedEntry(system))
                 system.id = uniqueId as GUID
 
                 if (system.configData && typeof system.configData === 'object') {
@@ -189,8 +176,8 @@ export function usePreloadedSystems() {
     }
 
     function comparePreloadedSystems(a: InformationSystemType, b: InformationSystemType) {
-        const aEntry = getManifestEntry(a)
-        const bEntry = getManifestEntry(b)
+        const aEntry = getPreloadedEntry(a)
+        const bEntry = getPreloadedEntry(b)
         const aIsZip = aEntry.toLowerCase().endsWith('.zip')
         const bIsZip = bEntry.toLowerCase().endsWith('.zip')
 
@@ -201,10 +188,10 @@ export function usePreloadedSystems() {
         return aEntry.localeCompare(bEntry)
     }
 
-    function getManifestEntry(system: InformationSystemType): string {
-        const manifestEntry = system.configData?.__manifestEntry
-        if (typeof manifestEntry === 'string' && manifestEntry.trim().length > 0) {
-            return manifestEntry.trim()
+    function getPreloadedEntry(system: InformationSystemType): string {
+        const preloadedEntry = system.configData?.__preloadedEntry
+        if (typeof preloadedEntry === 'string' && preloadedEntry.trim().length > 0) {
+            return preloadedEntry.trim()
         }
 
         return String(system.id)
