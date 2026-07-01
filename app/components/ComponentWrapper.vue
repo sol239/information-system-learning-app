@@ -39,9 +39,9 @@
 <script setup lang="ts">
 import type { QueryExecResult } from 'sql.js';
 import { ref, onMounted, onBeforeUnmount, onBeforeUpdate, onUpdated, watch, computed, reactive, nextTick } from 'vue';
-import { SqlHandler } from '~/core/SqlHandler';
-import { JsHandler } from '~/core/JsHandler';
-import { HtmlHandler } from '~/core/HtmlHandler';
+import { SqlHandler } from '~/core/components/variables/SqlHandler.js';
+import { JsHandler } from '~/core/components/variables/JsHandler.js';
+import { HtmlHandler } from '~/core/components/variables/HtmlHandler.js';
 import { Component as SystemComponent } from '~/model/Component';
 import { ComponentVariables, Variable } from '~/model/ComponentVariables';
 import { useSystemsStore } from '~/stores/systemsStore';
@@ -49,7 +49,7 @@ import { useHighlightStore } from '~/stores/highlightStore';
 import { DatabaseHandler } from '~/utils/DatabaseHandler';
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper';
 import { OperationResultType } from '~/utils/Operation/OperationResultType.js';
-import { TableMap } from '~/core/TableMap';
+import { TableMap } from '~/core/components/variables/TableMap.js';
 import type { VariableType } from '~/model/types/VariableType';
 import EditComponentModal from './EditComponentModal.vue'; // Adjust path as needed
 import { useSystemInputVariables } from '~/composables/useSystemInputVariables';

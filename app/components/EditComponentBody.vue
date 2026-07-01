@@ -194,13 +194,13 @@
 import type { QueryExecResult } from 'sql.js';
 import { ref, watch, computed, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { SqlHandler } from '~/core/SqlHandler';
-import { JsHandler } from '~/core/JsHandler';
+import { SqlHandler } from '~/core/components/variables/SqlHandler';
+import { JsHandler } from '~/core/components/variables/JsHandler';
 import { Component as SystemComponent } from '~/model/Component';
 import { ComponentVariables, Variable } from '~/model/ComponentVariables';
 import { DatabaseHandler } from '~/utils/DatabaseHandler';
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper';
-import { TableMap } from '~/core/TableMap';
+import { TableMap } from '~/core/components/variables/TableMap';
 import { useSystemsStore } from '~/stores/systemsStore';
 import type { VariableType } from '~/model/types/VariableType';
 import {

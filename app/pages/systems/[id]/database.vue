@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { SqlHandler } from '~/core/SqlHandler'
+import { SqlHandler } from '~/core/components/variables/SqlHandler'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { DatabaseHandler } from '~/utils/DatabaseHandler'
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper'
