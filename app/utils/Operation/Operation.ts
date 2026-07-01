@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { GUID } from "~/model/GUID";
+import type { OperationResultType } from "./OperationResultType";
 
 /**
  * Defines the Operation class, which encapsulates the result of an operation, including its status, message, and datetime. 

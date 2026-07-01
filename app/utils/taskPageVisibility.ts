@@ -47,7 +47,11 @@ export function systemAllowsPageForTaskContext(
 ): boolean {
   const globalSettings = useGlobalSettingsStore()
 
-  if (globalSettings.bypassPageVisibility || globalSettings.teacherMode || !globalSettings.hasStartedTasks(system.id)) {
+  if (
+    globalSettings.bypassPageVisibility
+    || globalSettings.teacherMode
+    || (!system.startedTasks && system.exploringSystem)
+  ) {
     return true
   }
 

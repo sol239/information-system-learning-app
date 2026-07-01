@@ -86,6 +86,16 @@ export class InformationSystem {
   public mistakes: number[];
 
   /**
+   * Whether the student has started solving tasks in this system.
+   */
+  public startedTasks: boolean;
+
+  /**
+   * Whether the student is browsing the system without solving tasks.
+   */
+  public exploringSystem: boolean;
+
+  /**
    * The currently unlocked task level.
    */
   public currentRound: number;
@@ -111,6 +121,8 @@ export class InformationSystem {
     score,
     mistakes,
     mistakesCount,
+    startedTasks = false,
+    exploringSystem = false,
     currentRound = 1,
     levelCount = 1,
   }: {
@@ -129,6 +141,8 @@ export class InformationSystem {
     score?: Score;
     mistakes?: number[];
     mistakesCount?: number;
+    startedTasks?: boolean;
+    exploringSystem?: boolean;
     currentRound?: number;
     levelCount?: number;
   }) {
@@ -150,6 +164,8 @@ export class InformationSystem {
       : Number.isFinite(Number(mistakesCount)) && Number(mistakesCount) > 0
         ? Array.from({ length: Number(mistakesCount) }, () => 0)
         : [...this.score.mistakes]
+    this.startedTasks = Boolean(startedTasks);
+    this.exploringSystem = Boolean(exploringSystem);
     this.currentRound = currentRound;
     this.levelCount = levelCount;
   }
@@ -177,6 +193,8 @@ export class InformationSystem {
       pages: configData.pages ?? [],
       mistakes: Array.isArray(configData.mistakes) ? configData.mistakes : undefined,
       mistakesCount: Number(configData.mistakesCount ?? 0),
+      startedTasks: Boolean(configData.startedTasks),
+      exploringSystem: Boolean(configData.exploringSystem),
       currentRound: Number(configData.currentRound ?? 1),
       levelCount: Number(configData.levelCount ?? 1),
       createSchemaSql: typeof configData.createSchemaSql === 'string' ? configData.createSchemaSql : undefined,
@@ -260,6 +278,8 @@ export class InformationSystem {
         database,
         mistakes: [],
         mistakesCount: 0,
+        startedTasks: Boolean(configData.startedTasks),
+        exploringSystem: Boolean(configData.exploringSystem),
         currentRound: 1,
         levelCount: Number(configData.levelCount ?? 1),
         createSchemaSql: sqlEntry?.[1],

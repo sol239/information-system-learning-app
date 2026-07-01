@@ -45,7 +45,6 @@
             color="primary"
             icon="i-lucide-rotate-cw"
             block
-            :loading="isStartingTasks"
             @click="startTaskSolving"
            size="sm">
             {{ t('student_welcome_sidebar_start_button') }}
@@ -205,7 +204,6 @@ const { t } = useI18n()
 const systemsStore = useSystemsStore()
 const globalSettings = useGlobalSettingsStore()
 const route = useRoute()
-const { isStartingTasks, startTaskSolving } = useStartTaskSolving()
 
 const selectedTask = computed(() => {
   if (globalSettings.teacherMode) return null
@@ -223,8 +221,9 @@ const totalTaskPoints = computed(() =>
 )
 const showStudentIntro = computed(() =>
   !globalSettings.teacherMode
-  && !!systemsStore.selectedSystemId
-  && !globalSettings.hasStartedTasks(systemsStore.selectedSystemId)
+  && !!systemsStore.selectedSystem
+  && !systemsStore.selectedSystem.startedTasks
+  && systemsStore.selectedSystem.exploringSystem
 )
 
 
@@ -330,6 +329,19 @@ async function deleteTask(taskId: GUID) {
 
 function closeTask() {
   globalSettings.selectedTaskId = null
+}
+
+async function startTaskSolving() {
+  const system = systemsStore.selectedSystem
+  if (!system) {
+    return
+  }
+
+  globalSettings.selectedTaskId = null
+  globalSettings.solvedComponentIds = []
+  system.startedTasks = true
+  system.exploringSystem = false
+  await systemsStore.updateSystem(system)
 }
 
 function isTaskLocked(task: Task): boolean {

@@ -25,6 +25,8 @@ interface StoredSystem {
     score: { mistakes?: number[]; mistakesCount?: number; score: number } | null;
     mistakes?: number[];
     mistakesCount?: number;
+    startedTasks?: boolean;
+    exploringSystem?: boolean;
     currentRound?: number;
     levelCount?: number;
 }
@@ -102,6 +104,8 @@ export class IndexedDbStorage {
                 score: { mistakes: IndexedDbStorage.toPlainMistakes(system.score.mistakes), score: system.score.score },
                 mistakes: IndexedDbStorage.toPlainMistakes(system.mistakes),
                 mistakesCount: system.mistakesCount,
+                startedTasks: system.startedTasks,
+                exploringSystem: system.exploringSystem,
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
             };
@@ -155,6 +159,8 @@ export class IndexedDbStorage {
                 score: { mistakes: IndexedDbStorage.toPlainMistakes(system.score.mistakes), score: system.score.score },
                 mistakes: IndexedDbStorage.toPlainMistakes(system.mistakes),
                 mistakesCount: system.mistakesCount,
+                startedTasks: system.startedTasks,
+                exploringSystem: system.exploringSystem,
                 currentRound: system.currentRound,
                 levelCount: system.levelCount,
             };
@@ -206,6 +212,8 @@ export class IndexedDbStorage {
             score,
             mistakes,
             mistakesCount: legacyMistakesCount,
+            startedTasks: Boolean(record.startedTasks),
+            exploringSystem: Boolean(record.exploringSystem),
             currentRound: Number(record.currentRound ?? 1),
             levelCount: Number(record.levelCount ?? 1),
         });

@@ -3,6 +3,7 @@
   "name": "Školní tábor Pálava",
   "language": "cs",
   "description": "Školní tábor v Pálavě, zaměřený na výuku a zábavu pro děti.",
+  "startedTasks": false,
   "pages": [
     {
       "name": "Nástěnka",

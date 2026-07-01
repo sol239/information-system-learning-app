@@ -27,7 +27,6 @@
             color="primary"
             variant="solid"
             icon="i-lucide-rotate-cw"
-            :loading="isStartingTasks"
             @click="startTasksFromModal"
            size="sm">
             {{ t('student_welcome_sidebar_start_button') }}
@@ -36,167 +35,52 @@
       </template>
     </UModal>
 
-    <UModal
-      v-model:open="completedModalOpen"
-      :title="t('student_completed_modal_title')"
-      :ui="{ content: 'sm:max-w-md' }"
-    >
-      <template #body>
-        <div class="space-y-4">
-          <p class="text-sm leading-6 text-gray-600">
-            {{ t('student_completed_modal_description') }}
-          </p>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-              <div class="text-xs font-medium uppercase text-gray-500">
-                {{ t('student_completed_modal_points_count') }}
-              </div>
-              <div class="mt-1 text-xl font-semibold text-gray-900">
-                {{ score }}
-              </div>
-            </div>
-
-            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-              <div class="text-xs font-medium uppercase text-gray-500">
-                {{ t('student_completed_modal_mistakes') }}
-              </div>
-              <div class="mt-1 flex flex-wrap items-baseline gap-1.5">
-                <span class="text-xl font-semibold text-gray-900">{{ mistakesCount }}</span>
-                <span class="text-xs font-medium text-gray-500">
-                  {{ t('student_completed_modal_mistakes_penalty', { points: mistakesPenalty }) }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-
-      <template #footer>
-        <div class="flex w-full justify-end">
-          <UButton color="primary" @click="completedModalOpen = false" size="sm">
-            {{ t('student_completed_modal_button') }}
-          </UButton>
-        </div>
-      </template>
-    </UModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { TaskStatus } from '~/model/Task/TaskStatus'
+import { computed } from 'vue'
 
 const { t } = useI18n()
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
-const { isStartingTasks, startTaskSolving } = useStartTaskSolving()
 
-const welcomeModalOpen = ref(false)
-const completedModalOpen = ref(false)
-const isMounted = ref(false)
-
-const systemId = computed(() => systemsStore.selectedSystemId ?? 'unknown')
 const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? [])
 const taskCount = computed(() => tasks.value.length)
 const totalTaskPoints = computed(() =>
   tasks.value.reduce((sum, task) => sum + Number(task.pointsReward ?? 0), 0)
 )
-const completedTasksCount = computed(() =>
-  tasks.value.filter(task => task.completed || task.status === TaskStatus.COMPLETED).length,
-)
-const allTasksCompleted = computed(() => taskCount.value > 0 && completedTasksCount.value === taskCount.value)
-const score = computed(() => systemsStore.selectedSystem?.score.score ?? 0)
-const mistakesCount = computed(() =>
-  systemsStore.selectedSystem?.mistakesCount
-  ?? systemsStore.selectedSystem?.score.mistakesCount
-  ?? 0
-)
-const mistakesPenalty = computed(() =>
-  systemsStore.selectedSystem?.mistakesPenalty
-  ?? systemsStore.selectedSystem?.score.mistakesPenalty
-  ?? 0
-)
-const studentModeActive = computed(() => isMounted.value && !!systemsStore.selectedSystem && !globalSettings.teacherMode)
 
-const welcomeStorageKey = computed(() => `student-welcome-modal-seen:${systemId.value}`)
-const completedStorageKey = computed(() => `student-completed-modal-seen:${systemId.value}`)
+const welcomeModalOpen = computed({
+  get: () => globalSettings.studentWelcomeModalOpen,
+  set: value => {
+    globalSettings.studentWelcomeModalOpen = value
+  },
+})
 
-function hasSessionFlag(key: string) {
-  return window.sessionStorage.getItem(key) === 'true'
-}
-
-function clearSessionFlag(key: string) {
-  window.sessionStorage.removeItem(key)
-}
-
-function setSessionFlag(key: string) {
-  window.sessionStorage.setItem(key, 'true')
-}
-
-function maybeOpenWelcomeModal() {
-  if (
-    !studentModeActive.value
-    || globalSettings.hasStartedTasks(systemId.value)
-    || hasSessionFlag(welcomeStorageKey.value)
-  ) {
+async function closeWelcomeModal() {
+  const system = systemsStore.selectedSystem
+  if (!system) {
     return
   }
 
-  welcomeModalOpen.value = true
-  setSessionFlag(welcomeStorageKey.value)
-}
-
-function maybeOpenCompletedModal() {
-  if (!studentModeActive.value || welcomeModalOpen.value || !globalSettings.hasStartedTasks(systemId.value) || !allTasksCompleted.value || hasSessionFlag(completedStorageKey.value)) {
-    return
-  }
-
-  completedModalOpen.value = true
-  setSessionFlag(completedStorageKey.value)
-}
-
-function closeWelcomeModal() {
+  system.startedTasks = false
+  system.exploringSystem = true
   welcomeModalOpen.value = false
-  maybeOpenCompletedModal()
+  await systemsStore.updateSystem(system)
 }
 
 async function startTasksFromModal() {
-  const started = await startTaskSolving()
-  if (started) {
-    welcomeModalOpen.value = false
-    maybeOpenCompletedModal()
+  const system = systemsStore.selectedSystem
+  if (!system) {
+    return
   }
+
+  globalSettings.selectedTaskId = null
+  globalSettings.solvedComponentIds = []
+  system.startedTasks = true
+  system.exploringSystem = false
+  welcomeModalOpen.value = false
+  await systemsStore.updateSystem(system)
 }
-
-onMounted(() => {
-  isMounted.value = true
-  maybeOpenWelcomeModal()
-  maybeOpenCompletedModal()
-})
-
-watch([studentModeActive, systemId], () => {
-  maybeOpenWelcomeModal()
-  maybeOpenCompletedModal()
-})
-
-watch(allTasksCompleted, (isCompleted) => {
-  if (!isMounted.value) {
-    return
-  }
-
-  if (!isCompleted) {
-    clearSessionFlag(completedStorageKey.value)
-    completedModalOpen.value = false
-    return
-  }
-
-  maybeOpenCompletedModal()
-})
-
-watch(welcomeModalOpen, (isOpen) => {
-  if (!isOpen) {
-    maybeOpenCompletedModal()
-  }
-})
 </script>
