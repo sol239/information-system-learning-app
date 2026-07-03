@@ -53,6 +53,16 @@ export function useAvailableSystemPages() {
     })
   }
 
+  function getFirstAvailablePageName(task: Task | null | undefined = selectedTask.value): string | null {
+    const firstPage = pagesForTask(task)[0]
+
+    if (!firstPage) {
+      return null
+    }
+
+    return firstPage.route.replace(/^\/+/, '')
+  }
+
   return {
     selectedTask,
     availableVisiblePages: visiblePages,
@@ -60,5 +70,6 @@ export function useAvailableSystemPages() {
     firstVisiblePage,
     pagesForTask,
     pushFirstAvailablePage,
+    getFirstAvailablePageName,
   }
 }
