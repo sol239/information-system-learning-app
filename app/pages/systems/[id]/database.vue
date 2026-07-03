@@ -1,12 +1,14 @@
 <template>
     <div class="p-6">
         <div v-if="!isDbReady" class="flex items-center gap-2 mb-6">
-            <UButton v-if="!isDbReady" @click="handleCheckReady" icon="i-heroicons-shield-check" color="sky"
-                variant="soft" size="sm" :loading="isChecking">
+            <UButton
+v-if="!isDbReady" icon="i-heroicons-shield-check" color="sky" variant="soft"
+                size="sm" :loading="isChecking" @click="handleCheckReady">
                 Check Status
             </UButton>
-            <UButton v-if="!isDbReady" @click="handleInitialize" icon="i-heroicons-arrow-path" color="teacher"
-                variant="soft" size="sm" :loading="isInitializing">
+            <UButton
+v-if="!isDbReady" icon="i-heroicons-arrow-path" color="teacher" variant="soft"
+                size="sm" :loading="isInitializing" @click="handleInitialize">
                 Initialize Database
             </UButton>
         </div>
@@ -16,17 +18,20 @@
                 <div class="hidden lg:block"></div>
                 <div class="flex items-center justify-between gap-3">
                     <div v-if="!isSchemaPreviewSelected" class="flex items-center gap-2">
-                        <UButton icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
+                        <UButton
+icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
                             :disabled="tablePage <= 1" @click="tablePage--" />
                         <span class="text-sm text-gray-500 whitespace-nowrap">{{ tablePage }} / {{ tableTotalPages }}</span>
-                        <UButton icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
+                        <UButton
+icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
                             :disabled="tablePage >= tableTotalPages" @click="tablePage++" />
                         <span class="text-xs text-gray-400 whitespace-nowrap">{{ tableRowCount }} {{ t('rows') }}</span>
                     </div>
                     <div class="ml-auto flex justify-end">
                         <UPopover mode="hover" arrow>
-                            <UButton id="reset-database-button" @click="handleRefreshDatabase" icon="i-heroicons-circle-stack" color="orange"
-                                variant="soft" size="sm" :loading="isRefreshingDatabase">
+                            <UButton
+id="reset-database-button" icon="i-heroicons-circle-stack" color="orange" variant="soft"
+                                size="sm" :loading="isRefreshingDatabase" @click="handleRefreshDatabase">
                                 {{ t('refresh_database') }}
                             </UButton>
                             <template #content>
@@ -68,13 +73,16 @@
                         :schema-version="systemsStore.selectedSystem?.database?.dbNumber"
                     />
                     <template v-else-if="value">
-                        <DatabaseTable class="min-h-0 flex-1" :queryResult="tableQueryResult" :page="tablePage" :tableName="value"
-                            @update:totalPages="tableTotalPages = $event" @update:rowCount="tableRowCount = $event" />
+                        <DatabaseTable
+class="min-h-0 flex-1" :query-result="tableQueryResult" :page="tablePage" :table-name="value"
+                            @update:total-pages="tableTotalPages = $event" @update:row-count="tableRowCount = $event" />
                         <div class="flex items-center gap-2">
-                            <UButton icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
+                            <UButton
+icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
                                 :disabled="tablePage <= 1" @click="tablePage--" />
                             <span class="text-sm text-gray-500 whitespace-nowrap">{{ tablePage }} / {{ tableTotalPages }}</span>
-                            <UButton icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
+                            <UButton
+icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
                                 :disabled="tablePage >= tableTotalPages" @click="tablePage++" />
                             <span class="text-xs text-gray-400 whitespace-nowrap">{{ tableRowCount }} {{ t('rows') }}</span>
                         </div>
@@ -83,7 +91,8 @@
             </div>
         </div>
 
-        <div v-else
+        <div
+v-else
             class="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
             <UIcon name="i-lucide-database-zap" class="w-12 h-12 text-gray-400 mb-4" />
             <p class="text-gray-500 font-medium">Database is not ready or being initialized...</p>
@@ -95,23 +104,28 @@
         <div v-if="canExecuteQuery" class="flex flex-col gap-4">
             <CodeBlock v-model:code="query" language="sql" :label="t('sql_query')" height="125px" :correct="isQueryValid" />
             <div class="flex justify-end items-center">
-                <UButton @click="handleExecuteQuery" icon="i-heroicons-arrow-path" color="teacher" variant="soft"
-                    size="sm" :loading="isExecuting" :disabled="!isQueryValid">
+                <UButton
+icon="i-heroicons-arrow-path" color="teacher" variant="soft" size="sm"
+                    :loading="isExecuting" :disabled="!isQueryValid" @click="handleExecuteQuery">
                     {{ t('execute_query') }}
                 </UButton>
             </div>
-            <DatabaseTable v-if="queryResult !== null" :queryResult="queryResult" :page="queryPage"
-                @update:totalPages="queryTotalPages = $event" @update:rowCount="queryRowCount = $event" />
+            <DatabaseTable
+v-if="queryResult !== null" :query-result="queryResult" :page="queryPage"
+                @update:total-pages="queryTotalPages = $event" @update:row-count="queryRowCount = $event" />
             <div v-if="queryResult !== null" class="flex items-center gap-2">
-                <UButton icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
+                <UButton
+icon="i-heroicons-chevron-left" variant="soft" color="neutral" size="sm"
                     :disabled="queryPage <= 1" @click="queryPage--" />
                 <span class="text-sm text-gray-500 whitespace-nowrap">{{ queryPage }} / {{ queryTotalPages }}</span>
-                <UButton icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
+                <UButton
+icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
                     :disabled="queryPage >= queryTotalPages" @click="queryPage++" />
                 <span class="text-xs text-gray-400 whitespace-nowrap">{{ queryRowCount }} {{ t('rows') }}</span>
             </div>
         </div>
-        <div v-else
+        <div
+v-else
             class="grid min-h-[210px] place-items-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 text-center">
             <div>
                 <p class="font-medium text-gray-700">{{ t('database_query_disabled_title') }}</p>

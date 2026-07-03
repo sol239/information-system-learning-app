@@ -55,9 +55,9 @@
         :theme="monacoTheme"
         :value="displayValue"
         :options="editorOptions"
+        class="monaco-editor-instance"
         @change="onCodeChange"
         @mount="onEditorMount"
-        class="monaco-editor-instance"
       />
     </div>
   </div>

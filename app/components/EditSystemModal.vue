@@ -21,10 +21,10 @@
         </template>
 
         <template #footer="{ close }">
-            <UButton color="teacher" icon="i-lucide-check" :loading="saving" @click="save(close)" size="sm">
+            <UButton color="teacher" icon="i-lucide-check" :loading="saving" size="sm" @click="save(close)">
                 {{ t('save') }}
             </UButton>
-            <UButton color="neutral" variant="outline" @click="close" size="sm">
+            <UButton color="neutral" variant="outline" size="sm" @click="close">
                 {{ t('cancel') }}
             </UButton>
         </template>

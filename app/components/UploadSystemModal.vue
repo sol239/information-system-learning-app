@@ -14,17 +14,19 @@
                     :loading="loadingPreloaded"
                     @select="selectPreloadedSystem"
                 />
-                <UAlert v-if="systemAlreadyExists" variant="subtle" color="red" icon="i-lucide-alert-triangle"
+                <UAlert
+v-if="systemAlreadyExists" variant="subtle" color="red" icon="i-lucide-alert-triangle"
                     :title="t('system_already_exists')" class="mt-3" />
             </div>
         </template>
 
         <template #footer="{ close }">
-            <UButton color="teacher" icon="i-lucide-chevron-right" :disabled="(!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists"
-                :loading="loading" @click="onUpload(close)" size="sm">
+            <UButton
+color="teacher" icon="i-lucide-chevron-right" :disabled="(!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists"
+                :loading="loading" size="sm" @click="onUpload(close)">
                 {{ t('add_system') }}
             </UButton>
-            <UButton color="neutral" variant="outline" @click="close" size="sm">{{ t('cancel') }}</UButton>
+            <UButton color="neutral" variant="outline" size="sm" @click="close">{{ t('cancel') }}</UButton>
         </template>
     </UModal>
 </template>

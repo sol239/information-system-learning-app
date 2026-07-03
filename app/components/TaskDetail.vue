@@ -229,11 +229,13 @@
         </span>
       </template>
       <div class="flex flex-wrap gap-2 items-center">
-        <UBadge v-for="component in selectedComponents" :key="component.id" color="neutral" variant="subtle"
+        <UBadge
+v-for="component in selectedComponents" :key="component.id" color="neutral" variant="subtle"
           class="flex items-center gap-1 font-mono pr-1">
           <span>{{ component.name }}</span>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-copy" color="neutral" variant="ghost" size="sm" class="shrink-0"
+            <UButton
+icon="i-lucide-copy" color="neutral" variant="ghost" size="sm" class="shrink-0"
               @click.stop="exportSelectedComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -246,7 +248,8 @@
             </template>
           </UPopover>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-pencil" color="neutral" variant="ghost" size="sm" class="shrink-0"
+            <UButton
+icon="i-lucide-pencil" color="neutral" variant="ghost" size="sm" class="shrink-0"
               @click.stop="startEditingComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -259,7 +262,8 @@
             </template>
           </UPopover>
           <UPopover mode="hover" arrow>
-            <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
+            <UButton
+icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
               @click.stop="removeSelectedComponent(component.id)" />
             <template #content>
               <div class="app-popover-content">
@@ -300,16 +304,17 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <UButton color="neutral" variant="ghost" @click="stopEditingComponent" size="sm">
+          <UButton color="neutral" variant="ghost" size="sm" @click="stopEditingComponent">
             {{ t('task_close') }}
           </UButton>
-          <UButton color="sky" :disabled="!isEditingComponentValid" @click="saveEditedComponent" size="sm">
+          <UButton color="sky" :disabled="!isEditingComponentValid" size="sm" @click="saveEditedComponent">
             {{ t('task_save_changes') }}
           </UButton>
         </div>
       </div>
 
-      <EditComponentBody :key="editingComponent.id" ref="editComponentBodyRef" :component="editingComponent"
+      <EditComponentBody
+:key="editingComponent.id" ref="editComponentBodyRef" :component="editingComponent"
         :ignore-task-code-edit-permissions="true"
         @validation-change="isEditingComponentValid = $event" />
     </div>
@@ -359,7 +364,8 @@
                   </UPopover>
                 </span>
               </template>
-              <USelect v-model="taskForm.activityType" :items="activityTypeOptions" value-key="value" label-key="label"
+              <USelect
+v-model="taskForm.activityType" :items="activityTypeOptions" value-key="value" label-key="label"
                 :placeholder="t('task_select_activity_type')" class="w-full" />
             </UFormField>
 
@@ -388,20 +394,23 @@
                 </span>
               </template>
               <div class="space-y-3">
-                <div v-for="(option, index) in taskForm.activityOptions" :key="`activity-option-${index}`"
+                <div
+v-for="(option, index) in taskForm.activityOptions" :key="`activity-option-${index}`"
                   class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3">
                   <span class="w-6 text-sm font-medium text-gray-500">
                     {{ index + 1 }}.
                   </span>
                   <UInput v-model="option.text" :placeholder="t('task_option_text_placeholder')" class="w-[20rem] max-w-full" />
-                  <UButton :icon="option.isCorrect ? 'i-lucide-check' : 'i-lucide-x'"
+                  <UButton
+:icon="option.isCorrect ? 'i-lucide-check' : 'i-lucide-x'"
                     :color="option.isCorrect ? 'green' : 'red'" variant="soft" size="sm" class="shrink-0"
                     @click="toggleActivityOptionCorrect(index)" />
-                  <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
+                  <UButton
+icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
                     @click="removeActivityOption(index)" />
                 </div>
 
-                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addActivityOption" size="sm">
+                <UButton icon="i-lucide-plus" color="neutral" variant="soft" size="sm" @click="addActivityOption">
                   {{ t('task_add_option') }}
                 </UButton>
               </div>
@@ -506,8 +515,8 @@
                   color="neutral"
                   variant="soft"
                   :disabled="!componentContainsComponentOptions.length"
-                  @click="addActivityRepairCheck"
-                 size="sm">
+                  size="sm"
+                 @click="addActivityRepairCheck">
                   {{ t('task_add_component_contains_constraint') }}
                 </UButton>
               </div>
@@ -548,7 +557,8 @@
             </UFormField>
 
             <UFormField :label="t('task_finish_type')">
-              <USelect v-model="taskForm.finishType" :items="finishTypeOptions" value-key="value" label-key="label"
+              <USelect
+v-model="taskForm.finishType" :items="finishTypeOptions" value-key="value" label-key="label"
                 :placeholder="t('task_select_finish_type')" class="w-full" />
             </UFormField>
 
@@ -577,20 +587,23 @@
                 </span>
               </template>
               <div class="space-y-3">
-                <div v-for="(option, index) in taskForm.finishOptions" :key="`finish-option-${index}`"
+                <div
+v-for="(option, index) in taskForm.finishOptions" :key="`finish-option-${index}`"
                   class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3">
                   <span class="w-6 text-sm font-medium text-gray-500">
                     {{ index + 1 }}.
                   </span>
                   <UInput v-model="option.text" :placeholder="t('task_option_text_placeholder')" class="w-[20rem] max-w-full" />
-                  <UButton :icon="option.isCorrect ? 'i-lucide-check' : 'i-lucide-x'"
+                  <UButton
+:icon="option.isCorrect ? 'i-lucide-check' : 'i-lucide-x'"
                     :color="option.isCorrect ? 'green' : 'red'" variant="soft" size="sm" class="shrink-0"
                     @click="toggleFinishOptionCorrect(index)" />
-                  <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
+                  <UButton
+icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
                     @click="removeFinishOption(index)" />
                 </div>
 
-                <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addFinishOption" size="sm">
+                <UButton icon="i-lucide-plus" color="neutral" variant="soft" size="sm" @click="addFinishOption">
                   {{ t('task_add_option') }}
                 </UButton>
               </div>
@@ -661,8 +674,8 @@
                   color="neutral"
                   variant="soft"
                   :disabled="!variableConstraintOptions.length"
-                  @click="addVariableConstraint"
-                 size="sm">
+                  size="sm"
+                 @click="addVariableConstraint">
                   {{ t('task_add_variable_constraint') }}
                 </UButton>
               </div>
@@ -730,15 +743,15 @@
         <UButton
           color="neutral"
           variant="ghost"
-          @click="showPasteComponentModal = false"
-         size="sm">
+          size="sm"
+         @click="showPasteComponentModal = false">
           {{ t('cancel') }}
         </UButton>
         <UButton
           color="primary"
           :disabled="!pasteComponentJsonText.trim()"
-          @click="handlePasteComponent"
-         size="sm">
+          size="sm"
+         @click="handlePasteComponent">
           {{ t('task_paste_json') }}
         </UButton>
       </div>

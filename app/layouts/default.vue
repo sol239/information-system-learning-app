@@ -101,8 +101,8 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
               variant="ghost"
               icon="i-lucide-x"
               :aria-label="t('task_close')"
-              @click="mobileTasksOpen = false"
               size="sm"
+              @click="mobileTasksOpen = false"
             />
           </div>
         </template>

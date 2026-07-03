@@ -108,8 +108,8 @@
             variant="solid"
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.activity?.isCompleted === true"
-            @click="evaluateActivity"
-           size="sm">
+            size="sm"
+           @click="evaluateActivity">
             {{ t('evaluate') }}
           </UButton>
           <UBadge
@@ -220,8 +220,8 @@
             variant="solid"
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.finish?.isComplete === true || isFinishLocked"
-            @click="evaluateFinish"
-           size="sm">
+            size="sm"
+           @click="evaluateFinish">
             {{ t('evaluate') }}
           </UButton>
           <UBadge
@@ -336,8 +336,8 @@
             variant="solid"
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.finish?.isComplete === true || isFinishLocked"
-            @click="evaluateFinish"
-           size="sm">
+            size="sm"
+           @click="evaluateFinish">
             {{ t('evaluate') }}
           </UButton>
           <UBadge
@@ -373,7 +373,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { type ComponentContainsConstraint, type ComponentDomSnapshot } from '~/model/Task/Activity/ComponentContainsCheck'
+import type { ComponentContainsConstraint, ComponentDomSnapshot } from '~/model/Task/Activity/ComponentContainsCheck'
 import { ActivityType } from '~/model/Task/Activity/ActivityType'
 import { FinishType } from '~/model/Task/Finish/FinishType'
 import type { Task } from '~/model/Task/Task'
@@ -817,7 +817,7 @@ const isFinishUnlocked = computed(() => {
   }
 
   const isUncheckedRepair = props.task.activityType === ActivityType.REPAIR
-    && !Boolean((props.task.activity as { checkRepair?: boolean } | undefined)?.checkRepair)
+    && !(props.task.activity as { checkRepair?: boolean } | undefined)?.checkRepair
 
   if (isUncheckedRepair) {
     return true

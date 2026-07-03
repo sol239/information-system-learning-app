@@ -1,17 +1,19 @@
 <template>
-  <div ref="wrapperRef" :data-component-id="props.component.id" @click="handleClick" @input="handleInput" @change="handleChange"
-    :class="['component-wrapper', {
+  <div
+ref="wrapperRef" :data-component-id="props.component.id" :class="['component-wrapper', {
       'highlight-active': highlightStore.isHighlightActive,
       'is-highlighted': highlightStore.isHighlightActive && highlightStore.selectedHighlightedComponentsIds.has(props.component.id),
       'teacher-outline': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled,
       'teacher-outline--selected': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled && globalSettings.selectedComponents?.has(props.component.id),
-    }]">
+    }]" @click="handleClick" @input="handleInput"
+    @change="handleChange">
     <div :class="['content-container', { 'edit-mode': isEditEnabled }]">
       <div v-if="isJustRepaired" class="repaired-overlay"></div>
 
       <div v-if="!globalSettings.teacherMode">
         <span v-if="isEditEnabled" class="edit-icon" @click.stop="handleEdit">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          <svg
+xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
             <path d="m15 5 4 4" />
@@ -19,18 +21,21 @@
         </span>
       </div>
       <div v-else-if="globalSettings.teacherHighlightEnabled" class="teacher-mode-overlay" @click.stop="handleTeacherModeClick">
-        <UBadge :color="globalSettings.selectedComponents?.has(props.component.id) ? 'red' : 'blue'"
+        <UBadge
+:color="globalSettings.selectedComponents?.has(props.component.id) ? 'red' : 'blue'"
           variant="solid" size="md"
           class="teacher-icon" style="cursor: pointer;">
           {{ globalSettings.selectedComponents?.has(props.component.id) ? '✓ ' + props.component.name : props.component.name }}
         </UBadge>
       </div>
 
-      <div :class="['component-html', { 'content-interaction-disabled': (globalSettings.teacherMode && globalSettings.teacherHighlightEnabled) || highlightStore.isHighlightActive }]"
+      <div
+:class="['component-html', { 'content-interaction-disabled': (globalSettings.teacherMode && globalSettings.teacherHighlightEnabled) || highlightStore.isHighlightActive }]"
         v-html="resolvedComponentHtml"></div>
     </div>
 
-    <EditComponentModal v-model:open="isEditModalOpened" :component="props.component" :variables="componentVariables"
+    <EditComponentModal
+v-model:open="isEditModalOpened" :component="props.component" :variables="componentVariables"
       :code-edit-permissions="selectedTaskCodeEditPermissions"
       @save="handleModalSave" />
   </div>
@@ -42,12 +47,12 @@ import { ref, onMounted, onBeforeUnmount, onBeforeUpdate, onUpdated, watch, comp
 import { SqlHandler } from '~/core/components/variables/SqlHandler.js';
 import { JsHandler } from '~/core/components/variables/JsHandler.js';
 import { HtmlHandler } from '~/core/components/variables/HtmlHandler.js';
-import { Component as SystemComponent } from '~/model/Component';
+import type { Component as SystemComponent } from '~/model/Component';
 import { ComponentVariables, Variable } from '~/model/ComponentVariables';
 import { useSystemsStore } from '~/stores/systemsStore';
 import { useHighlightStore } from '~/stores/highlightStore';
 import { DatabaseHandler } from '~/utils/DatabaseHandler';
-import { DatabaseWrapper } from '~/utils/DatabaseWrapper';
+import type { DatabaseWrapper } from '~/utils/DatabaseWrapper';
 import { OperationResultType } from '~/utils/Operation/OperationResultType.js';
 import { TableMap } from '~/core/components/variables/TableMap.js';
 import type { VariableType } from '~/model/types/VariableType';

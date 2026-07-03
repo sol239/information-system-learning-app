@@ -43,7 +43,8 @@
                         <ComponentWrapper :component="vstupAlergenyComponent" />
                         <ComponentWrapper :component="vstupTurnusyComponent" />
                         <div class="flex gap-2">
-                            <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                            <UButton
+label="Zrušit" color="neutral" variant="solid" size="sm"
                                 @click="createModalOpen = false" />
                             <ComponentWrapper :component="btnUlozitComponent" @action-completed="handleParticipantCreated" />
                         </div>
@@ -96,7 +97,8 @@
                                 <ComponentWrapper
                                     :component="withVars(editVstupTurnusyComponent, [new Variable('idUcastnika', participantId)])" />
                                 <div class="flex gap-2">
-                                    <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                                    <UButton
+label="Zrušit" color="neutral" variant="solid" size="sm"
                                         @click="editModalOpen[participantId] = false" />
                                     <ComponentWrapper
                                         :component="withVars(editBtnUlozitComponent, [new Variable('idUcastnika', participantId)])"

@@ -2,7 +2,7 @@ import { deleteIndexedDb } from "~/utils/database/clearIndexedDB";
 import { SystemHelper } from "./systems/SystemHelper";
 import type { IStorage } from "./storage/IStorage";
 import { IndexedDBStorage } from "./storage/IndexedDB/IndexedDBStorage";
-import { InformationSystem } from "~/model/InformationSystem";
+import type { InformationSystem } from "~/model/InformationSystem";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { SystemLoaderPublic } from "./systems/SystemLoaderPublic";
 

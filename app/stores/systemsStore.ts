@@ -1,7 +1,7 @@
 import type { InformationSystem } from "~/model/InformationSystem"
 import type { IStorage } from "~/core/storage/IStorage"
 import { IndexedDBStorage } from "~/core/storage/IndexedDB/IndexedDBStorage"
-import { Operation } from "~/utils/Operation/Operation"
+import type { Operation } from "~/utils/Operation/Operation"
 import { OperationResultType } from "~/utils/Operation/OperationResultType"
 
 import { emptyComponent } from "~/model/SystemComponents/EmptyComponent"

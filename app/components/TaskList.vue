@@ -53,8 +53,8 @@
             color="primary"
             icon="i-lucide-rotate-cw"
             block
-            @click="startTaskSolving"
-           size="sm">
+            size="sm"
+           @click="startTaskSolving">
             {{ t('student_welcome_sidebar_start_button') }}
           </UButton>
         </div>

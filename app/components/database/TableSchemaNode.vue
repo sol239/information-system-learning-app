@@ -13,14 +13,14 @@
                 class="table-schema-node__column"
             >
                 <Handle
-                    type="target"
                     :id="columnHandleId('target', column.name)"
+                    type="target"
                     :position="Position.Left"
                     class="table-schema-node__handle table-schema-node__handle--left"
                 />
                 <Handle
-                    type="source"
                     :id="columnHandleId('source', column.name)"
+                    type="source"
                     :position="Position.Right"
                     class="table-schema-node__handle table-schema-node__handle--right"
                 />

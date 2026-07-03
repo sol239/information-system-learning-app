@@ -30,31 +30,31 @@
         >
           <UButton
             block
-            @click="printTableData"
             variant="soft"
             color="neutral"
             icon="i-heroicons-command-line"
             class="justify-start"
-           size="sm">
+            size="sm"
+           @click="printTableData">
             Print table names</UButton
           >
           <UButton
             block
-            @click="IsDbNull"
             variant="soft"
             color="neutral"
             icon="i-heroicons-question-mark-circle"
             class="justify-start"
-             size="sm">Check DB Status</UButton
+            size="sm"
+             @click="IsDbNull">Check DB Status</UButton
           >
           <UButton
             block
-            @click="openComponentExplorer"
             variant="soft"
             color="neutral"
             icon="i-heroicons-magnifying-glass-circle"
             class="justify-start"
-             size="sm">Component Explorer</UButton
+            size="sm"
+             @click="openComponentExplorer">Component Explorer</UButton
           >
         </div>
       </template>
@@ -133,8 +133,8 @@
                 color="orange"
                 variant="soft"
                 icon="i-heroicons-circle-stack"
-                @click="refreshDatabaseFromModal"
-               size="sm">
+                size="sm"
+               @click="refreshDatabaseFromModal">
                 {{ t("refresh_database") }}
               </UButton>
             </div>
@@ -153,8 +153,8 @@
                 color="primary"
                 variant="soft"
                 icon="i-heroicons-squares-2x2"
-                @click="refreshComponentsFromModal"
-               size="sm">
+                size="sm"
+               @click="refreshComponentsFromModal">
                 {{ t("refresh_components") }}
               </UButton>
             </div>
@@ -173,8 +173,8 @@
                 color="green"
                 variant="solid"
                 icon="i-lucide-refresh-cw"
-                @click="refreshAllFromModal"
-               size="sm">
+                size="sm"
+               @click="refreshAllFromModal">
                 {{ t("refresh_all") }}
               </UButton>
             </div>
@@ -183,7 +183,7 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="refreshSystemModalOpen = false" size="sm">
+          <UButton color="neutral" variant="ghost" size="sm" @click="refreshSystemModalOpen = false">
             {{ t("cancel") }}
           </UButton>
         </div>
@@ -202,14 +202,14 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="versionSwitchModalOpen = false" size="sm">
+          <UButton color="neutral" variant="ghost" size="sm" @click="versionSwitchModalOpen = false">
             {{ t("cancel") }}
           </UButton>
           <UButton
             color="teacher"
             :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
-            @click="changeVersion"
-           size="sm">
+            size="sm"
+           @click="changeVersion">
             {{ globalSettings.teacherMode ? t("switch_to_student_version") : t("switch_to_teacher_version") }}
           </UButton>
         </div>

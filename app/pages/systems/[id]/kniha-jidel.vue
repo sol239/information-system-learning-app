@@ -42,11 +42,13 @@
         </section>
 
         <!-- Sessions accordion -->
-        <div v-for="sessionId in sessionIds" :key="sessionId"
+        <div
+v-for="sessionId in sessionIds" :key="sessionId"
             class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 
             <!-- Session header row -->
-            <div class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+            <div
+class="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                 @click="toggleSession(sessionId)">
                 <div class="flex-1 flex items-center justify-between gap-3 flex-wrap">
                     <ComponentWrapper
@@ -72,11 +74,13 @@
 
             <!-- Days accordion -->
             <div v-if="isSessionExpanded(sessionId)" class="border-t border-gray-100">
-                <div v-for="date in getSessionDays(sessionId)" :key="date"
+                <div
+v-for="date in getSessionDays(sessionId)" :key="date"
                     class="border-b border-gray-100 last:border-b-0">
 
                     <!-- Day header row -->
-                    <div class="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-gray-50 transition-colors bg-gray-50/50"
+                    <div
+class="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-gray-50 transition-colors bg-gray-50/50"
                         @click="toggleDay(sessionId, date)">
                         <div class="flex-1 flex items-center justify-between gap-3 flex-wrap">
                             <ComponentWrapper
@@ -99,11 +103,13 @@
 
                     <!-- Meals accordion -->
                     <div v-if="isDayExpanded(sessionId, date)" class="border-t border-gray-100">
-                        <div v-for="mealId in getDayMeals(sessionId, date)" :key="mealId"
+                        <div
+v-for="mealId in getDayMeals(sessionId, date)" :key="mealId"
                             class="border-b border-gray-100 last:border-b-0">
 
                             <!-- Meal row -->
-                            <div class="flex items-center gap-3 px-8 py-4 cursor-pointer hover:bg-blue-50/30 transition-colors bg-white"
+                            <div
+class="flex items-center gap-3 px-8 py-4 cursor-pointer hover:bg-blue-50/30 transition-colors bg-white"
                                 @click="toggleMeal(mealId, date)">
                                 <div class="flex-1 flex items-start justify-between gap-3 flex-wrap">
                                     <div class="flex flex-col gap-1 min-w-0">
@@ -125,7 +131,8 @@
                             </div>
 
                             <!-- People section -->
-                            <div v-if="isMealExpanded(mealId, date)"
+                            <div
+v-if="isMealExpanded(mealId, date)"
                                 class="px-10 py-4 bg-blue-50/40 border-t border-blue-100 flex flex-col gap-4">
                                 <ComponentWrapper
                                     :component="withVars(mealPeopleComponent, [new Variable('idJidla', mealId), new Variable('datumDne', date)])"

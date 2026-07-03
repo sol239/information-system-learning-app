@@ -12,7 +12,8 @@
                         <ComponentWrapper :component="dateToInputComponent" />
                         <ComponentWrapper :component="capacityInputComponent" />
                         <div class="flex gap-2">
-                            <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                            <UButton
+label="Zrušit" color="neutral" variant="solid" size="sm"
                                 @click="createModalOpen = false" />
                             <ComponentWrapper :component="saveButtonComponent" @action-completed="handleSessionCreated" />
                         </div>
@@ -23,7 +24,8 @@
 
         <!-- Sessions Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="sessionId in sessionIds" :key="sessionId"
+            <div
+v-for="sessionId in sessionIds" :key="sessionId"
                 class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex flex-col gap-5">
 
                 <!-- Session Header: title + status badge -->
@@ -74,7 +76,8 @@
                                 <ComponentWrapper
                                     :component="withVars(editCapacityInputComponent, [new Variable('idTurnusu', sessionId)])" />
                                 <div class="flex gap-2">
-                                    <UButton label="Zrušit" color="neutral" variant="solid" size="sm"
+                                    <UButton
+label="Zrušit" color="neutral" variant="solid" size="sm"
                                         @click="editModalOpen[sessionId] = false" />
                                     <ComponentWrapper
                                         :component="withVars(editSaveButtonComponent, [new Variable('idTurnusu', sessionId)])"

@@ -2,43 +2,49 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-2 justify-end -mt-2">
       <UTooltip :text="t('decrease_font')" :ui="{ content: 'z-[10050]' }">
-        <UButton icon="i-lucide-minus" color="neutral" variant="ghost" @click="sizeMultiplier -= 0.05" size="sm" />
+        <UButton icon="i-lucide-minus" color="neutral" variant="ghost" size="sm" @click="sizeMultiplier -= 0.05" />
       </UTooltip>
       <span class="text-xs text-gray-500 font-medium w-10 text-center">{{ Math.round(sizeMultiplier * 100) }}%</span>
       <UTooltip :text="t('increase_font')" :ui="{ content: 'z-[10050]' }">
-        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" @click="sizeMultiplier += 0.05" size="sm" />
+        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" size="sm" @click="sizeMultiplier += 0.05" />
       </UTooltip>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 w-full">
-      <CodeBlock v-if="htmlAvailable" v-model:code="editedHtml" language="html" label="HTML" height="400px" :correct="undefined"
+      <CodeBlock
+v-if="htmlAvailable" v-model:code="editedHtml" language="html" label="HTML" height="400px" :correct="undefined"
         :info-title="t('html_block_info_title')" :info-description="t('html_block_info_description')"
-        :size-multiplier="sizeMultiplier" @isEdited="setCodeBlockEdited('html', $event)" />
-      <CodeBlock v-if="cssAvailable" v-model:code="editedCss" language="css" label="CSS" height="400px" :correct="undefined"
+        :size-multiplier="sizeMultiplier" @is-edited="setCodeBlockEdited('html', $event)" />
+      <CodeBlock
+v-if="cssAvailable" v-model:code="editedCss" language="css" label="CSS" height="400px" :correct="undefined"
         :info-title="t('css_block_info_title')" :info-description="t('css_block_info_description')"
-        :size-multiplier="sizeMultiplier" @isEdited="setCodeBlockEdited('css', $event)" />
-      <CodeBlock v-if="jsAvailable" v-model:code="editedJs" language="typescript" label="JS" height="400px" :correct="undefined"
+        :size-multiplier="sizeMultiplier" @is-edited="setCodeBlockEdited('css', $event)" />
+      <CodeBlock
+v-if="jsAvailable" v-model:code="editedJs" language="typescript" label="JS" height="400px" :correct="undefined"
         :info-title="t('js_block_info_title')" :info-description="t('js_block_info_description')"
         :protected-prefix="jsVarsHeader || undefined" :size-multiplier="sizeMultiplier"
-        @isEdited="setCodeBlockEdited('js', $event)" />
+        @is-edited="setCodeBlockEdited('js', $event)" />
       <div v-if="sqlAvailable" class="flex flex-col gap-2">
         <div class="flex flex-row gap-2 w-full items-center">
-          <USelect id="query-select" v-model="selectedSqlQuery" :items="sqlQueryNames" :placeholder="t('select_sql_query')"
+          <USelect
+id="query-select" v-model="selectedSqlQuery" :items="sqlQueryNames" :placeholder="t('select_sql_query')"
             size="xs" class="flex-1" :disabled="Object.keys(sqlRecord).length === 1" :ui="selectOverlayUi" />
           <div class="flex gap-1">
             <UTooltip :text="t('add_sql_query')" :ui="{ content: 'z-[10050]' }">
               <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="removeQuery"
-                :disabled="sqlQueryNames.length <= 1" />
+              <UButton
+icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" :disabled="sqlQueryNames.length <= 1"
+                @click="removeQuery" />
             </UTooltip>
           </div>
         </div>
-        <CodeBlock v-model:code="editedSql" language="sql" label="SQL" height="400px" :correct="isEditedSqlValid"
+        <CodeBlock
+v-model:code="editedSql" language="sql" label="SQL" height="400px" :correct="isEditedSqlValid"
           :info-title="t('sql_block_info_title')" :info-description="t('sql_block_info_description')"
           :size-multiplier="sizeMultiplier" :original-code="originalSqlRecord[selectedSqlQuery] || ''"
-          @isEdited="setCodeBlockEdited('sql', $event)" />
+          @is-edited="setCodeBlockEdited('sql', $event)" />
       </div>
     </div>
 
@@ -64,16 +70,19 @@
       <div v-if="jsClickAvailable" class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ t('js_click_action') }}</span>
-          <UButton v-if="!editedJsClick" icon="i-lucide-plus" size="sm" variant="ghost" :label="t('add_action')"
+          <UButton
+v-if="!editedJsClick" icon="i-lucide-plus" size="sm" variant="ghost" :label="t('add_action')"
             @click="editedJsClick = '// click logic here'" />
           <UButton v-else icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="editedJsClick = ''" />
         </div>
 
-        <CodeBlock v-if="editedJsClick" v-model:code="editedJsClick" language="typescript" height="200px"
+        <CodeBlock
+v-if="editedJsClick" v-model:code="editedJsClick" language="typescript" height="200px"
           label="JS Click" :correct="undefined"
           :info-title="t('js_click_block_info_title')" :info-description="t('js_click_block_info_description')"
-          :size-multiplier="sizeMultiplier" @isEdited="setCodeBlockEdited('jsClick', $event)" />
-        <div v-else
+          :size-multiplier="sizeMultiplier" @is-edited="setCodeBlockEdited('jsClick', $event)" />
+        <div
+v-else
           class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <UIcon name="i-lucide-mouse-pointer-2" class="w-5 h-5 text-gray-400" />
           <p class="text-xs text-gray-500 font-medium">{{ t('no_js_click_action') }}</p>
@@ -83,7 +92,8 @@
       <div v-if="sqlClickAvailable" class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
           <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider shrink-0">{{ t('sql_click_actions') }}</span>
-          <USelect v-if="sqlClickQueryNames.length > 0" v-model="selectedSqlClickQuery" :items="sqlClickQueryNames"
+          <USelect
+v-if="sqlClickQueryNames.length > 0" v-model="selectedSqlClickQuery" :items="sqlClickQueryNames"
             placeholder="Select SQL click query" size="xs" class="flex-1"
             :disabled="sqlClickQueryNames.length <= 1" :ui="selectOverlayUi" />
           <div class="flex gap-1">
@@ -91,19 +101,22 @@
               <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addClickQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_click_query')" :ui="{ content: 'z-[10050]' }">
-              <UButton icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" @click="removeClickQuery"
-                :disabled="sqlClickQueryNames.length === 0" />
+              <UButton
+icon="i-lucide-trash-2" size="sm" variant="ghost" color="red" :disabled="sqlClickQueryNames.length === 0"
+                @click="removeClickQuery" />
             </UTooltip>
           </div>
         </div>
 
         <div v-if="sqlClickQueryNames.length > 0" class="flex flex-col gap-2">
-          <CodeBlock v-model:code="editedSqlClick" language="sql" height="200px" label="SQL Click"
+          <CodeBlock
+v-model:code="editedSqlClick" language="sql" height="200px" label="SQL Click"
             :info-title="t('sql_click_block_info_title')" :info-description="t('sql_click_block_info_description')"
             :size-multiplier="sizeMultiplier" :original-code="originalSqlClickRecord[selectedSqlClickQuery] || ''"
-            @isEdited="setCodeBlockEdited('sqlClick', $event)" />
+            @is-edited="setCodeBlockEdited('sqlClick', $event)" />
         </div>
-        <div v-else
+        <div
+v-else
           class="flex flex-row items-center gap-2 py-4 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <UIcon name="i-lucide-database-zap" class="w-5 h-5 text-gray-400" />
           <p class="text-xs text-gray-500 font-medium">{{ t('no_sql_click_action') }}</p>
@@ -196,7 +209,7 @@ import { ref, watch, computed, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { SqlHandler } from '~/core/components/variables/SqlHandler';
 import { JsHandler } from '~/core/components/variables/JsHandler';
-import { Component as SystemComponent } from '~/model/Component';
+import type { Component as SystemComponent } from '~/model/Component';
 import { ComponentVariables, Variable } from '~/model/ComponentVariables';
 import { DatabaseHandler } from '~/utils/DatabaseHandler';
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper';

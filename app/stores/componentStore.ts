@@ -1,4 +1,4 @@
-import { Component } from "~/model/Component"
+import type { Component } from "~/model/Component"
 
 export const useComponentStore = defineStore('components', () => {
     const defaultComponents = ref<Component[]>([])

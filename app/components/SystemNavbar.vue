@@ -60,8 +60,8 @@
 
         <div class="right-actions ml-auto flex items-center">
           <NuxtLink
-            id="go-to-database-button"
             v-if="isPageAvailable(databasePageRoute)"
+            id="go-to-database-button"
             :to="databaseTo"
             class="flex items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium transition-all duration-200"
             :class="[

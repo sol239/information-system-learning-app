@@ -20,11 +20,11 @@
     <template #actions>
       <UButton
         class="ml-auto me-10"
-        @click="handleSave"
         color="sky"
         :variant="isFormEdited ? 'solid' : 'subtle'"
         :disabled="!isFormValid"
-       size="sm">
+        size="sm"
+       @click="handleSave">
         {{ t("save_changes") }}
       </UButton>
     </template>
@@ -46,8 +46,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { Component as SystemComponent } from "~/model/Component";
-import { ComponentVariables } from "~/model/ComponentVariables";
+import type { Component as SystemComponent } from "~/model/Component";
+import type { ComponentVariables } from "~/model/ComponentVariables";
 import EditComponentBody from "./EditComponentBody.vue";
 import { useI18n } from "vue-i18n";
 import type { CodeEditPermissions } from "~/utils/codeEditPermissions";

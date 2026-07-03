@@ -36,7 +36,7 @@
 
       <template #footer>
         <div class="flex w-full flex-col gap-2">
-          <UButton block color="primary" variant="soft" @click="closeWelcomeModal" size="sm">
+          <UButton block color="primary" variant="soft" size="sm" @click="closeWelcomeModal">
             {{ t('student_welcome_modal_explore_button') }}
           </UButton>
           <UButton
@@ -45,8 +45,8 @@
             color="primary"
             variant="solid"
             icon="i-lucide-rotate-cw"
-            @click="startTasksFromModal"
-           size="sm">
+            size="sm"
+           @click="startTasksFromModal">
             {{ t('student_welcome_sidebar_start_button') }}
           </UButton>
         </div>
