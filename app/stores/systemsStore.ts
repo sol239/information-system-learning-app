@@ -12,8 +12,8 @@ export const useSystemsStore = defineStore('systems', () => {
     const globalSettingsStore = useGlobalSettingsStore()
     const storage: IStorage = new IndexedDBStorage()
 
-    const selectedSystem = computed(() => {
-        return systems.value.find(system => String(system.id) === String(selectedSystemId.value))
+    const selectedSystem = computed<InformationSystem | null>(() => {
+        return systems.value.find(system => String(system.id) === String(selectedSystemId.value)) ?? null
     })
 
     const getComponentById = (componentId: string) => {
@@ -90,6 +90,13 @@ export const useSystemsStore = defineStore('systems', () => {
         systems.value = loadedSystems
     }
 
+    function getPrimarySystem(): InformationSystem | null {
+        if (systems.value.length === 0) {
+            return null;
+        }
+        return systems.value[0] ?? null;
+    }
+
     return {
         systems,
         selectedSystem,
@@ -100,6 +107,7 @@ export const useSystemsStore = defineStore('systems', () => {
         loadSystemsFromStorage,
         updateSystem,
         getComponentById,
+        getPrimarySystem
     }
 
 },
