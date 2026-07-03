@@ -760,6 +760,7 @@ icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import EditComponentBody from '~/components/EditComponentBody.vue'
 import { Component as SystemComponent } from '~/model/Component'

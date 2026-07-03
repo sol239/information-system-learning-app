@@ -372,6 +372,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any, vue/no-mutating-props */
 import { computed, ref, watch } from 'vue'
 import type { ComponentContainsConstraint, ComponentDomSnapshot } from '~/model/Task/Activity/ComponentContainsCheck'
 import { ActivityType } from '~/model/Task/Activity/ActivityType'

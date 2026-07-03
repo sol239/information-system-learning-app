@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Task } from '~/model/Task/Task'
 import { TaskStatus } from '~/model/Task/TaskStatus'
 

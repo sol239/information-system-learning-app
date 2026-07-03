@@ -145,6 +145,10 @@ import { DatabaseHandler } from '~/utils/DatabaseHandler'
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper'
 import { OperationResultType } from '~/utils/Operation/OperationResultType'
 
+defineOptions({
+  name: 'SystemDatabasePage',
+})
+
 /* 2. Stores */
 const systemsStore = useSystemsStore()
 const globalSettings = useGlobalSettingsStore()
@@ -266,11 +270,7 @@ async function handleExecuteQuery() {
             }
 
             const tableColumnMapResult = await DatabaseHandler.getTableColumnMap(system.database.sqlJsDatabase);
-            const x = SqlHandler.GetSqlVariableNames(query.value, tableColumnMapResult.data ?? {}, queryResult.value.data ?? []);
-            //console.log("Len: ", x.length)
-            for (const variable of x) {
-                //console.log(variable.toString())
-            }
+            SqlHandler.GetSqlVariableNames(query.value, tableColumnMapResult.data ?? {}, queryResult.value.data ?? []);
 
             const isMutation = /^\s*(?:DROP|CREATE|ALTER|INSERT|UPDATE|DELETE|REPLACE)\b/i.test(query.value);
             if (isMutation) {
@@ -284,7 +284,6 @@ async function handleExecuteQuery() {
 }
 
 async function handleCheckReady() {
-    const system = systemsStore.selectedSystem
     //console.log("Is system missing: ", !system)
     //console.log("Is database missing: ", !system?.database)
 }

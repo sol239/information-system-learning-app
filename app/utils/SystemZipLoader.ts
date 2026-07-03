@@ -78,8 +78,6 @@ export class SystemZipLoader {
 
     public printDebugInfo(): void {
         //console.log('JSON Config Content:', this.jsonConfigFileContent);
-        for (const [filename, content] of Object.entries(this.csvFilesContent)) {
-            //console.log(`CSV File: ${filename}, Content:`, content);
-        }
+        //console.log('CSV Files Content:', this.csvFilesContent);
     }
 }

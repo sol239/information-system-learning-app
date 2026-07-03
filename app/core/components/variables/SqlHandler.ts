@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-extraneous-class, @typescript-eslint/no-explicit-any */
 import type { QueryExecResult } from "sql.js";
 import type { ColumnDefinition } from "~/utils/ColumnDefinition";
 import { TableMap } from "./TableMap";

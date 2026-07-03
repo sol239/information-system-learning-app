@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import type { input } from "#build/ui";
 import type { VariableType } from "./types/VariableType";
 

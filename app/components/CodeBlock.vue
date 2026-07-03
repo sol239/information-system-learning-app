@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { computed, getCurrentInstance, onBeforeUnmount, ref, watch } from "vue";
 import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 import { useI18n } from "vue-i18n";

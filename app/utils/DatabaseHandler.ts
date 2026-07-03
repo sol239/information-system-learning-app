@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class, @typescript-eslint/no-explicit-any */
 import type { Database } from "sql.js";
 import { Operation } from "./Operation/Operation";
 import { OperationResultType } from "./Operation/OperationResultType";

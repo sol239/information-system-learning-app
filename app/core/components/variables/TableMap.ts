@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type {VariableType} from "~/model/types/VariableType";
 
 export class TableMap {

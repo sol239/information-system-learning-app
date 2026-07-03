@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 import type { IActivity } from "./IActivity";
 import type { Component } from "../../Component";
 import { componentMatchesDefault, evaluateComponentContainsConstraints, type ComponentContainsConstraint, type ComponentDomSnapshot } from "./ComponentContainsCheck";

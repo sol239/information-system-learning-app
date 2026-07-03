@@ -2,6 +2,7 @@ import { Task } from "./Task/Task";
 import { Component } from "./Component";
 import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 import { SqljsDatabaseFactory } from "~/utils/SqljsDatabaseFactory";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import JSZip from "jszip";
 import type { Page } from "./Page";
 import { Score } from "./Score";

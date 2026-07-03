@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Operation } from '~/utils/Operation/Operation'
 import { OperationResultType } from '~/utils/Operation/OperationResultType'
 import { DatabaseHandler } from '~/utils/DatabaseHandler'

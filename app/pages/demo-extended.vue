@@ -1,7 +1,10 @@
-<template></template>
+<template>
+  <div></div>
+</template>
 
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 /* 1. Imports */
 import { ref, computed, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'

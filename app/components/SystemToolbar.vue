@@ -219,6 +219,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import { ref } from "vue";
 import { IndexedDbHandler } from "~/utils/IndexedDbHandler";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";

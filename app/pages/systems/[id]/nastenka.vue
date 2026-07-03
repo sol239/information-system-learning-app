@@ -24,6 +24,10 @@
 import { computed } from 'vue'
 import ComponentWrapper from '~/components/ComponentWrapper.vue'
 
+defineOptions({
+  name: 'SystemDashboardPage',
+})
+
 /* 2. Stores */
 const { systemsStore } = useSyncSystemId()
 

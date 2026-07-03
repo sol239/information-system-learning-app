@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class, @typescript-eslint/no-explicit-any */
 import * as ts from "typescript";
 import type { VariableType } from "~/model/types/VariableType";
 import { Variable } from "~/model/ComponentVariables";

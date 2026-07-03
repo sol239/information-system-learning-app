@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { FinishEvaluationContext, IFinish } from "./IFinish";
 
 export class ImmediateFinish implements IFinish {

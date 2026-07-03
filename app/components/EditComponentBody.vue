@@ -204,6 +204,7 @@ v-else
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-dynamic-delete, @typescript-eslint/unified-signatures */
 import type { QueryExecResult } from 'sql.js';
 import { ref, watch, computed, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';

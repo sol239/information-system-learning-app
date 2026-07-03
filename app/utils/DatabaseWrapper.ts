@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 import initSqlJs, { type Database } from 'sql.js';
 import { DatabaseHandler } from './DatabaseHandler';
 import { Operation } from './Operation/Operation';

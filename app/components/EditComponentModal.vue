@@ -45,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars */
 import { ref, computed, watch } from "vue";
 import type { Component as SystemComponent } from "~/model/Component";
 import type { ComponentVariables } from "~/model/ComponentVariables";

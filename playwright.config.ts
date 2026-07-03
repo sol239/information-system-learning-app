@@ -27,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: process.env.BASE_URL || 'http://localhost:4000',
+    baseURL: process.env.BASE_URL || 'http://localhost:4000/information-system-learning-app',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -77,8 +77,5 @@ export default defineConfig({
     port: 4000,             // must match your running Nuxt server port
     reuseExistingServer: true, // ✅ important
     timeout: 0,             // optional, since server is already running
-  },
-  use: {
-    baseURL: 'http://localhost:4000/information-system-learning-app', // your running server
   },
 });

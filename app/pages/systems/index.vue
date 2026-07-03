@@ -31,7 +31,7 @@
       <!-- Systems List -->
       <div v-if="systemsStore.systems.length > 0" class="space-y-6">
         <UCard
-          v-for="(system, index) in systemsStore.systems"
+          v-for="system in systemsStore.systems"
           :key="system.id"
           class="shadow-lg bg-gradient-to-br from-teacher-50/50 to-white border-none ring-1 ring-teacher-100 hover:ring-teacher-300 transition-all duration-300"
         >
@@ -97,13 +97,16 @@ import { TaskHelper } from '~/core/systems/TaskHelper'
 import { useGlobalSettingsStore } from '~/stores/globalSettingsStore'
 import { useSystemsStore } from '~/stores/systemsStore'
 
+defineOptions({
+  name: 'SystemsIndexPage',
+})
+
 /* 2. Stores */
 const globalSettingsStore = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
 
 /* 3. Context hooks */
 const { t } = useI18n()
-const router = useRouter()
 
 /* 4. Constants (non-reactive) */
 
@@ -140,24 +143,6 @@ async function pushFirstAvailablePage() {
   }
 
   await navigateTo(`/systems/${systemId}${firstPage}`)
-}
-
-async function navigateToDesigner(id: string) {
-  if (!(await SystemHelper.prepareSystem(id))) {
-    return
-  }
-
-  const system = systemsStore.getSystemById(id)
-  const firstSystemRoute = system?.pages?.[0]?.route
-    ? `/systems/${id}${system.pages[0].route}`
-    : `/systems/${id}/dashboard`
-
-  router.push({
-    path: `/systems/${id}/designer`,
-    query: {
-      backTo: firstSystemRoute,
-    },
-  })
 }
 
 async function deleteSystem(id: string) {

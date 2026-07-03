@@ -8,7 +8,7 @@ export default defineConfig({
     baseUrl: 'http://localhost:3000/information-system-learning-app',
     specPattern: 'tests/cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: false,
-    setupNodeEvents(on, config) {
+    setupNodeEvents() {
       // implement node event listeners here
     },
   },

@@ -5,7 +5,7 @@ import { SystemHelper } from "~/core/systems/SystemHelper";
  * Nuxt plugin to load and prepare the primary system on client-side application startup/reload.
  * The function prepareSystem ensures that the system DB is ready.
  */
-export default defineNuxtPlugin(async (_nuxtApp) => {
+export default defineNuxtPlugin(async () => {
 
     const systemsStore = useSystemsStore();
 

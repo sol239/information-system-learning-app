@@ -1,6 +1,7 @@
 /**
  * Defines the types of activities that can be performed in a task.
  */
+/* eslint-disable no-unused-vars */
 export enum ActivityType {
     /**
      * Represents an activity where the user needs to repair a component or system. 

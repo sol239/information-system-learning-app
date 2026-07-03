@@ -3,7 +3,7 @@ import { Component } from '~/model/Component'
 /**
  * Nuxt plugin to load and register system components from the '~/model/SystemComponents' directory. 
  */
-export default defineNuxtPlugin(async (_nuxtApp) => {
+export default defineNuxtPlugin(async () => {
     const store = useComponentStore()
     store.clearComponents()
 
@@ -11,7 +11,7 @@ export default defineNuxtPlugin(async (_nuxtApp) => {
     const modules = import.meta.glob('~/model/SystemComponents/**/*.ts')
 
     for (const path in modules) {
-        const mod: any = await modules[path]!()
+        const mod = await modules[path]!() as Record<string, unknown>
 
         for (const key in mod) {
             const exportItem = mod[key]

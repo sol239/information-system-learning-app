@@ -5,6 +5,7 @@
  * finished the activity -> eg. user could not answer how many children have one allergen until
  * they fixed SQL query that is responsible for fetching that data.
  */
+/* eslint-disable no-unused-vars */
 export enum FinishType {
     /**
      * Task is completed immediately after the activity is finished.

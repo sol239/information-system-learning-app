@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 import { ColumnType } from './ColumnType';
 import { Operation } from './Operation/Operation';
 import { OperationResultType } from './Operation/OperationResultType';

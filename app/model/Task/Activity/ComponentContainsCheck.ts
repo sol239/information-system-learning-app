@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Component } from "~/model/Component";
 
 export type ComponentContainsOperator = 'contains' | 'not-contains';

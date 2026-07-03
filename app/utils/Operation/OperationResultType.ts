@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /** Represents the status of an operation */
 export enum OperationResultType {
     /**

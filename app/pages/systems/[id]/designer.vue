@@ -75,6 +75,10 @@ import TasksDesignerPanel from '~/components/TasksDesignerPanel.vue'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { SystemZipExporter } from '~/utils/SystemZipExporter'
 
+defineOptions({
+  name: 'SystemDesignerPage',
+})
+
 /* 2. Stores */
 const systemsStore = useSystemsStore()
 

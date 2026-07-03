@@ -8,6 +8,10 @@
 /* 1. Imports */
 import { onMounted } from 'vue'
 
+defineOptions({
+  name: 'CatchAllRedirectPage',
+})
+
 /* 2. Stores */
 
 /* 3. Context hooks */

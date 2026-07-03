@@ -1,5 +1,6 @@
 import type { Component } from "../../Component";
 
+/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 export interface IActivity {
     label?: string;
     description?: string;

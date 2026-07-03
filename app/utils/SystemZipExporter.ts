@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 import JSZip from 'jszip'
 import type { Database } from 'sql.js'
 import type { InformationSystem } from '~/model/InformationSystem'

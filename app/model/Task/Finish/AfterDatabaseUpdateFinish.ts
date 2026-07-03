@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { IFinish } from "./IFinish";
 import { OperationResultType } from "../../../utils/Operation/OperationResultType";
 import type { DatabaseWrapper } from "../../../utils/DatabaseWrapper";

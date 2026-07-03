@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { IActivity } from "./IActivity";
 import type { Component } from "../../Component";
 

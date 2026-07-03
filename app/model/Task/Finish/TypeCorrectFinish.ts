@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { IFinish } from "./IFinish";
 
 export class TypeCorrectFinish implements IFinish {

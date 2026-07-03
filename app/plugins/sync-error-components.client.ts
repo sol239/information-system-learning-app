@@ -1,6 +1,6 @@
 import { ActivityType } from '~/model/Task/Activity/ActivityType'
 
-export default defineNuxtPlugin((_nuxtApp) => {
+export default defineNuxtPlugin(() => {
     const systemsStore = useSystemsStore()
     const globalSettings = useGlobalSettingsStore()
     const highlightStore = useHighlightStore()

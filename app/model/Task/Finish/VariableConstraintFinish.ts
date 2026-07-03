@@ -1,6 +1,7 @@
 import type { Component } from "~/model/Component";
 import type { Variable } from "~/model/ComponentVariables";
 import type { VariableType } from "~/model/types/VariableType";
+/* eslint-disable no-unused-vars */
 import type { IFinish } from "./IFinish";
 
 export type VariableConstraintOperator = '<' | '>' | '>=' | '<=' | '==';

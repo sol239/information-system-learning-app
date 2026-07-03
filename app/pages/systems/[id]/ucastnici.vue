@@ -127,14 +127,17 @@ label="Zrušit" color="neutral" variant="solid" size="sm"
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, reactive } from 'vue';
-import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import ComponentWrapper from '~/components/ComponentWrapper.vue';
 import ModalContainer from '~/components/ModalContainer.vue';
 import { ComponentVariables, Variable } from '~/model/ComponentVariables';
-import { useSystemsStore } from '~/stores/systemsStore';
 import { useSystemInputVariables } from '~/composables/useSystemInputVariables';
 
+defineOptions({
+  name: 'SystemParticipantsPage',
+})
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function withVars(comp: any, vars: Variable[]) {
   if (!comp) return undefined;
   const clone = Object.create(comp);
@@ -145,7 +148,7 @@ function withVars(comp: any, vars: Variable[]) {
 
 const { systemInputVariables } = useSystemInputVariables();
 const { t } = useI18n();
-const { route, systemsStore, systemId } = useSyncSystemId();
+const { systemsStore } = useSyncSystemId();
 
 const isDbReady = computed(() => !!systemsStore.selectedSystem?.database?.sqlJsDatabase);
 
@@ -257,11 +260,6 @@ const filteredParticipantIds = computed(() => {
 
     return uniqueParticipants.map(participant => participant.id);
 });
-
-function resetFilter() {
-    selectedSessionId.value = null;
-    filterText.value = '';
-}
 
 const loadData = async () => {
     const db = systemsStore.selectedSystem?.database;

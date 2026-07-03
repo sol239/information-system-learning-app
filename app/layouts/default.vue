@@ -2,6 +2,10 @@
 /* 1. Imports */
 import SystemToolbar from '~/components/SystemToolbar.vue'
 
+defineOptions({
+  name: 'DefaultLayout',
+})
+
 /* 2. Stores */
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()

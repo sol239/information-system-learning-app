@@ -42,6 +42,7 @@ v-model:open="isEditModalOpened" :component="props.component" :variables="compon
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-dynamic-delete, vue/no-mutating-props */
 import type { QueryExecResult } from 'sql.js';
 import { ref, onMounted, onBeforeUnmount, onBeforeUpdate, onUpdated, watch, computed, reactive, nextTick } from 'vue';
 import { SqlHandler } from '~/core/components/variables/SqlHandler.js';

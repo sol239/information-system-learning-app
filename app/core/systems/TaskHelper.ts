@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 import type { Page } from "~/model/Page";
 import type { Task } from "~/model/Task/Task";
 

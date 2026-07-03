@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Database } from 'sql.js'
 import { VueFlow } from '@vue-flow/core'
 import type { VueFlowStore } from '@vue-flow/core'

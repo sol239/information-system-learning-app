@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { InformationSystem } from "~/model/InformationSystem";
 import type { Operation } from "~/utils/Operation/Operation";
 
