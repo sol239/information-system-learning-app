@@ -12,6 +12,8 @@
     "test:unit": "vitest run --dir test/unit",
     "test:watch": "vitest watch",
     "lint": "eslint \"app/**/*.{js,ts,vue}\" \"*.{js,ts,mjs,cjs}\" --fix",
+    "lint:tests": "eslint \"tests/**/*.{js,ts}\"",
+    "lint:check": "eslint \"app/**/*.{js,ts,vue}\" \"*.{js,ts,mjs,cjs}\"",
     "format": "prettier .  --write"
   },
   "dependencies": {

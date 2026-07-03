@@ -29,4 +29,37 @@ export default withNuxt(
       // 'vue/no-unused-vars': 'error'
     },
   },
+  {
+    files: ['tests/cypress/**/*.{js,ts}'],
+    languageOptions: {
+      globals: {
+        after: 'readonly',
+        afterEach: 'readonly',
+        before: 'readonly',
+        beforeEach: 'readonly',
+        context: 'readonly',
+        cy: 'readonly',
+        Cypress: 'readonly',
+        describe: 'readonly',
+        expect: 'readonly',
+        it: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['tests/vitest/**/*.{js,ts}'],
+    languageOptions: {
+      globals: {
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        describe: 'readonly',
+        expect: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        vi: 'readonly',
+      },
+    },
+  },
 )
