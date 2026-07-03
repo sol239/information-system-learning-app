@@ -1,8 +1,6 @@
 import JSZip from "jszip";
 import type { SystemFile } from "~/model/types/SystemFile";
 
-const runtimeConfig = useRuntimeConfig();
-
 export class SystemHelper {
 
     public static getPrimarySystemId(): string {
@@ -40,7 +38,7 @@ export class SystemHelper {
     }
 
     private static getPreloadedSystemEntries(): unknown[] {
-        const preloadedSystems = runtimeConfig.public.preloadedSystems;
+        const preloadedSystems = useRuntimeConfig().public.preloadedSystems;
         if (!Array.isArray(preloadedSystems) || preloadedSystems.length === 0) {
             throw new Error("No preloaded systems found in runtime config.");
         }
@@ -104,6 +102,7 @@ export class SystemHelper {
     }
 
     private static publicSystemUrl(path: string): string {
+        const runtimeConfig = useRuntimeConfig();
         const baseURL = String(runtimeConfig.app?.baseURL ?? "").replace(/\/$/, "");
         return `${baseURL}/systems/${path}`;
     }

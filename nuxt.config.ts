@@ -18,7 +18,7 @@ export default defineNuxtConfig({
       indexedDbVersion: 2,
       indexedDbVersionKey: 'db_version',
       publicSystemsDirPath: '/systems',
-      preloadedSystems: ['skolni-tabor-palava'],
+      preloadedSystems: ['skolni_tabor_palava'],
     },
   },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt', '@nuxt/test-utils/module', '@nuxt/eslint'],

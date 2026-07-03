@@ -21,7 +21,7 @@
               </p>
 
               <div class="flex flex-wrap gap-4 lg:justify-end">
-                <UploadSystemZipModal />
+                <UploadSystemZipModal v-if="globalSettingsStore.teacherMode" />
               </div>
             </div>
           </div>
@@ -53,6 +53,7 @@
                   :system="system"
                 />
                 <UButton
+                  v-if="globalSettingsStore.teacherMode"
                   icon="i-lucide-trash-2"
                   color="red"
                   variant="ghost"
