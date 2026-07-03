@@ -86,6 +86,14 @@ export class Task {
     return task;
   }
 
+  private static normalizeStringList(data: any): string[] {
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map(item => String(item));
+  }
+
   private static parseComponents(data: any): Component[] {
     if (!Array.isArray(data)) {
       return [];
@@ -160,6 +168,8 @@ export class Task {
         );
     }
     instance.substituteAfterActivity = substituteAfterActivity;
+    instance.isCompleted = Boolean(activity?.isCompleted);
+    instance.selectedOptionIds = Task.normalizeStringList(activity?.selectedOptionIds);
     return instance;
   }
 
@@ -203,6 +213,7 @@ export class Task {
     }
 
     taskFinish.isComplete = Boolean(finish?.isComplete);
+    taskFinish.selectedOptionIds = Task.normalizeStringList(finish?.selectedOptionIds);
     return taskFinish;
   }
 

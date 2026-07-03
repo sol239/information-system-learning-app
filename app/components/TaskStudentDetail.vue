@@ -405,13 +405,36 @@ const finishEvaluationResult = ref<boolean | null>(null)
 watch(
   () => props.task?.id,
   () => {
-    selectedActivityOptionIndices.value = []
-    selectedFinishOptionIndices.value = []
-    typeCorrectAnswer.value = ''
+    selectedActivityOptionIndices.value = getSelectedOptionIndices(
+      getTaskActivityOptions(),
+      props.task?.activity?.selectedOptionIds
+    )
+    selectedFinishOptionIndices.value = getSelectedOptionIndices(
+      getTaskFinishOptions(),
+      props.task?.finish?.selectedOptionIds
+    )
+    typeCorrectAnswer.value = props.task?.answer ?? ''
     activityEvaluationResult.value = null
     finishEvaluationResult.value = null
-  }
+  },
+  { immediate: true }
 )
+
+watch(typeCorrectAnswer, (answer) => {
+  const task = props.task
+
+  if (
+    isReadonly.value
+    || !task
+    || task.finishType !== FinishType.TYPE_CORRECT
+    || task.answer === answer
+  ) {
+    return
+  }
+
+  task.answer = answer
+  void persistSelectedSystem()
+})
 
 watch(
   () => [
@@ -443,6 +466,13 @@ function toggleActivityOption(index: number) {
   const idx = selectedActivityOptionIndices.value.indexOf(index)
   if (idx === -1) selectedActivityOptionIndices.value.push(index)
   else selectedActivityOptionIndices.value.splice(idx, 1)
+
+  if (props.task?.activity) {
+    props.task.activity.selectedOptionIds = selectedActivityOptionIndices.value
+      .map(optionIndex => getOptionId(activityOptions.value, optionIndex))
+      .filter((id): id is string => Boolean(id))
+    void persistSelectedSystem()
+  }
 }
 
 function toggleFinishOption(index: number) {
@@ -451,6 +481,13 @@ function toggleFinishOption(index: number) {
   const idx = selectedFinishOptionIndices.value.indexOf(index)
   if (idx === -1) selectedFinishOptionIndices.value.push(index)
   else selectedFinishOptionIndices.value.splice(idx, 1)
+
+  if (props.task?.finish) {
+    props.task.finish.selectedOptionIds = selectedFinishOptionIndices.value
+      .map(optionIndex => getOptionId(finishOptions.value, optionIndex))
+      .filter((id): id is string => Boolean(id))
+    void persistSelectedSystem()
+  }
 }
 
 async function evaluateActivity() {
@@ -472,6 +509,9 @@ async function evaluateActivity() {
     activity.isCompleted = isCorrect
   } else if (task.activityType === ActivityType.SELECT_OPTIONS) {
     const activity = task.activity as SelectOptionsActivity
+    activity.selectedOptionIds = selectedActivityOptionIndices.value
+      .map(index => getOptionId(activityOptions.value, index))
+      .filter((id): id is string => Boolean(id))
     const correctIndices = activity.options
       .map((o: any, i: number) => o.isCorrect ? i : -1)
       .filter((i: number) => i !== -1)
@@ -512,7 +552,7 @@ async function evaluateActivity() {
   // Persist updated progress to IndexedDB
   const system = systemsStore.selectedSystem
   if (system) {
-    systemsStore.updateSystem(system)
+    await systemsStore.updateSystem(system)
   }
 }
 
@@ -533,6 +573,7 @@ async function evaluateFinish() {
       .map(index => finishOptions.value[index]?.id ?? index)
     isCorrect = await task.finish.evaluate(selectedIds)
   } else if (task.finishType === FinishType.TYPE_CORRECT) {
+    task.answer = typeCorrectAnswer.value
     isCorrect = await task.finish.evaluate(typeCorrectAnswer.value)
   } else if (task.finishType === FinishType.AFTER_DATABASE_UPDATE) {
     isCorrect = await task.finish.evaluate(systemsStore.selectedSystem?.database)
@@ -557,8 +598,45 @@ async function evaluateFinish() {
 
   const system = systemsStore.selectedSystem
   if (system) {
-    systemsStore.updateSystem(system)
+    await systemsStore.updateSystem(system)
   }
+}
+
+async function persistSelectedSystem() {
+  const system = systemsStore.selectedSystem
+  if (system) {
+    await systemsStore.updateSystem(system)
+  }
+}
+
+function getOptionId(options: Option[], index: number): string | null {
+  const option = options[index]
+  if (!option) {
+    return null
+  }
+
+  return String(option.id ?? index)
+}
+
+function getSelectedOptionIndices(options: Option[], selectedOptionIds: string[] | undefined): number[] {
+  if (!selectedOptionIds?.length) {
+    return []
+  }
+
+  const selectedIds = new Set(selectedOptionIds.map(id => String(id)))
+  return options
+    .map((option, index) => selectedIds.has(String(option.id ?? index)) ? index : -1)
+    .filter(index => index !== -1)
+}
+
+function getTaskActivityOptions(): Option[] {
+  const activity = props.task?.activity as ({ options?: Option[] } | undefined)
+  return activity?.options ?? []
+}
+
+function getTaskFinishOptions(): Option[] {
+  const task = props.task as (Task & { finish?: { options?: Option[] } }) | null
+  return task?.finish?.options ?? []
 }
 
 function completeTask(task: Task) {
@@ -713,8 +791,7 @@ const activityLabel = computed(() => {
 const activityDescription = computed(() => props.task?.activity?.description ?? '')
 
 const activityOptions = computed<Option[]>(() => {
-  const activity = props.task?.activity as ({ options?: Option[] } | undefined)
-  return activity?.options ?? []
+  return getTaskActivityOptions()
 })
 
 const canEvaluateActivity = computed(() => {
@@ -783,7 +860,6 @@ const finishLabel = computed(() => {
 })
 
 const finishOptions = computed<Option[]>(() => {
-  const task = props.task as (Task & { finish?: { options?: Option[] } }) | null
-  return task?.finish?.options ?? []
+  return getTaskFinishOptions()
 })
 </script>

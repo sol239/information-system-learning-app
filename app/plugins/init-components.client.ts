@@ -23,7 +23,11 @@ export default defineNuxtPlugin(async (_nuxtApp) => {
 
     const systemsStore = useSystemsStore()
     for (const system of systemsStore.systems) {
-        system.defaultComponents = store.defaultComponents.map(c => Component.fromJSON(JSON.parse(JSON.stringify(c))))
-        system.actualComponents = store.defaultComponents.map(c => Component.fromJSON(JSON.parse(JSON.stringify(c))))
+        const defaultComponents = store.defaultComponents.map(c => Component.fromJSON(JSON.parse(JSON.stringify(c))))
+        system.defaultComponents = defaultComponents
+
+        if (!system.actualComponents?.length) {
+            system.actualComponents = defaultComponents.map(c => Component.fromJSON(JSON.parse(JSON.stringify(c))))
+        }
     }
 })

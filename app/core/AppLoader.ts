@@ -33,7 +33,7 @@ export class AppLoader {
         return false;
     }
 
-    public async loadFromIndexedDb() {}
+    public async loadFromIndexedDb() { }
 
     public async loadApp() {
         if (!import.meta.client) {
@@ -48,7 +48,7 @@ export class AppLoader {
 
         if (await this.isDbVersionOutdated() || await this.isAnySystemMissing(storage, preloadedSystemsIds)) {
             console.log("AppLoader: IndexedDB is outdated or missing systems. Loading systems from source.");
-            
+
             for (const systemId of preloadedSystemsIds) {
                 const systemFiles = await SystemHelper.getSystemFiles(systemId);
                 const loadResult = await InformationSystem.loadSystem(systemFiles);
@@ -62,10 +62,9 @@ export class AppLoader {
             }
         }
 
+        await systemsStore.loadSystemsFromStorage(preloadedSystemsIds);
         console.log("Systems in Pinia Store:", systemsStore.systems);
 
-
-        await systemsStore.loadSystemsFromStorage(preloadedSystemsIds);
     }
 
 }

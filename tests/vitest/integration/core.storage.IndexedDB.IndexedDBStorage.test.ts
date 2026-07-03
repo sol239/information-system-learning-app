@@ -255,4 +255,85 @@ describe("IndexedDBStorage integration flow", () => {
         expect(loadAfterDeleteResult.result).toBe(OperationResultType.FAILED);
         expect(loadAfterDeleteResult.data).toBeNull();
     });
+
+    it("preserves student activity progress and selected option ids through storage", async () => {
+        const task = Task.fromJSON({
+            id: "task-options",
+            title: "Select correct option",
+            description: "Choose the right activity option.",
+            activityType: "select-options",
+            finishType: "select-options",
+            activity: {
+                isCompleted: true,
+                selectedOptionIds: ["activity-option-1"],
+                options: [
+                    { id: "activity-option-1", text: "Correct", isCorrect: true },
+                    { id: "activity-option-2", text: "Wrong", isCorrect: false },
+                ],
+            },
+            finish: {
+                isComplete: true,
+                selectedOptionIds: ["finish-option-1"],
+                options: [
+                    { id: "finish-option-1", text: "Correct", isCorrect: true },
+                    { id: "finish-option-2", text: "Wrong", isCorrect: false },
+                ],
+            },
+        });
+
+        const informationSystem = new InformationSystem({
+            id: "progress-system",
+            name: "Progress system",
+            language: "cs",
+            description: "System with persisted progress.",
+            tasks: [task],
+        });
+
+        const storage = new IndexedDBStorage();
+        const saveResult = await storage.saveSystem(informationSystem);
+        expect(saveResult.result, saveResult.message).toBe(OperationResultType.SUCCESS);
+
+        const loadResult = await storage.getSystem("progress-system");
+        expect(loadResult.result, loadResult.message).toBe(OperationResultType.SUCCESS);
+
+        const loadedTask = loadResult.data?.tasks[0];
+        expect(loadedTask?.activity?.isCompleted).toBe(true);
+        expect(loadedTask?.activity?.selectedOptionIds).toEqual(["activity-option-1"]);
+        expect(loadedTask?.finish?.isComplete).toBe(true);
+        expect(loadedTask?.finish?.selectedOptionIds).toEqual(["finish-option-1"]);
+    });
+
+    it("preserves typed finish answers through storage", async () => {
+        const task = Task.fromJSON({
+            id: "task-type-correct",
+            title: "Type exact answer",
+            description: "Write the exact answer.",
+            answer: "Pálava",
+            activityType: "repair",
+            finishType: "type-correct",
+            finish: {
+                isComplete: true,
+                correctAnswer: "Pálava",
+            },
+        });
+
+        const informationSystem = new InformationSystem({
+            id: "typed-answer-system",
+            name: "Typed answer system",
+            language: "cs",
+            description: "System with a typed finish answer.",
+            tasks: [task],
+        });
+
+        const storage = new IndexedDBStorage();
+        const saveResult = await storage.saveSystem(informationSystem);
+        expect(saveResult.result, saveResult.message).toBe(OperationResultType.SUCCESS);
+
+        const loadResult = await storage.getSystem("typed-answer-system");
+        expect(loadResult.result, loadResult.message).toBe(OperationResultType.SUCCESS);
+
+        const loadedTask = loadResult.data?.tasks[0];
+        expect(loadedTask?.answer).toBe("Pálava");
+        expect(loadedTask?.finish?.isComplete).toBe(true);
+    });
 });

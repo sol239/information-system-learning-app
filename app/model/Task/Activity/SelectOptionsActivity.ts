@@ -12,12 +12,14 @@ export class SelectOptionsActivity implements IActivity {
 
     public isCompleted?: boolean = false;
     public substituteAfterActivity: boolean = false;
+    public selectedOptionIds: string[] = [];
 
     /**
      * Checks if the input option IDs match the correct options of the activity.
      * @param input - An array of option IDs to check against the correct options of the activity.
      */
     check(input: string[]): void {
+        this.selectedOptionIds = input.map(id => String(id));
         const correctOptionIds = this.options.filter(option => option.isCorrect).map(option => option.id);
         this.isCompleted = input.length === correctOptionIds.length && input.every(id => correctOptionIds.includes(id));
         //console.log('[SelectOptionsActivity.check] correct IDs:', correctOptionIds, '| input:', input, this.isCompleted ? '🟢' : '🔴');

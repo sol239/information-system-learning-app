@@ -6,5 +6,6 @@ export interface IActivity {
     activityComponents: Component[];
     isCompleted?: boolean;
     substituteAfterActivity?: boolean;
+    selectedOptionIds?: string[];
     check(input: any): void;
 }
