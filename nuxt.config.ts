@@ -7,7 +7,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       appMode: process.env.NUXT_PUBLIC_APP_MODE ?? '',
-      singleSystem: process.env.NUXT_PUBLIC_SINGLE_SYSTEM ?? 'true',
       htmlAvailable: process.env.NUXT_PUBLIC_HTML_AVAILABLE ?? 'true',
       cssAvailable: process.env.NUXT_PUBLIC_CSS_AVAILABLE ?? 'true',
       jsAvailable: process.env.NUXT_PUBLIC_JS_AVAILABLE ?? 'true',

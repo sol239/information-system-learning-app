@@ -41,8 +41,7 @@ Tato příručka slouží k tomu, jak aplikaci používat, konfigurovat, spustit
 - 9.5 `NUXT_PUBLIC_SQL_AVAILABLE`
 - 9.6 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
 - 9.7 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
-- 9.8 `NUXT_PUBLIC_SINGLE_SYSTEM`
-- 9.9 `NUXT_APP_BASE_URL`
+- 9.8 `NUXT_APP_BASE_URL`
 #### 10 Struktura adresáře systému
 - 10.1 `config.json`
 - 10.2 `create_schema.sql`
@@ -454,11 +453,7 @@ Určuje, jestli se v editoru komponent zobrazí část pro JavaScriptovou akci p
 
 Určuje, jestli se v editoru komponent zobrazí část pro SQL akci po kliknutí. Hodnota `true` tuto možnost zpřístupní a umožní nastavovat databázovou akci, která se provede po kliknutí na komponentu. Hodnota `false` tuto část skryje, pokud ji v úkolech nechcete používat.
 
-### 9.8 `NUXT_PUBLIC_SINGLE_SYSTEM`
-
-Určuje chování studentské verze ve chvíli, kdy je aplikace připravená s jedním nebo více systémy. Hodnota `true` studentovi zjednoduší průchod tím, že aplikace pracuje primárně s prvním dostupným systémem a nepouští ho zbytečně přes výběr systémů. Hodnota `false` ponechá viditelný seznam systémů i ve studentském režimu.
-
-### 9.9 `NUXT_APP_BASE_URL`
+### 9.8 `NUXT_APP_BASE_URL`
 
 Nastavuje základní URL cestu, ze které je aplikace dostupná, což je důležité hlavně při nasazení na GitHub Pages nebo do podadresáře. Pokud je aplikace nasazená například v repozitáři `information-system-learning-app`, hodnota bývá `/information-system-learning-app`. Při špatně nastavené hodnotě se mohou špatně načítat stránky, systémy nebo soubor `sql-wasm.wasm`.
 

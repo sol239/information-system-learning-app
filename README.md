@@ -113,7 +113,6 @@ Konfigurace je načítána v `nuxt.config.ts` přes runtime config.
 | Proměnná | Výchozí hodnota | Význam |
 | --- | --- | --- |
 | `NUXT_PUBLIC_APP_MODE` | prázdná hodnota | `TEACHER` zapne učitelský režim. Jiná hodnota spouští studentský pohled. |
-| `NUXT_PUBLIC_SINGLE_SYSTEM` | `true` | Ve studentském režimu omezuje navigaci na jeden vybraný systém. |
 | `NUXT_PUBLIC_HTML_AVAILABLE` | `true` | Zobrazí editor HTML. |
 | `NUXT_PUBLIC_CSS_AVAILABLE` | `true` | Zobrazí editor CSS. |
 | `NUXT_PUBLIC_JS_AVAILABLE` | `true` | Zobrazí editor JS. |

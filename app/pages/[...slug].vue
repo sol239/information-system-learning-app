@@ -23,13 +23,6 @@ onMounted(async () => {
     return;
   }
 
-  const config = useRuntimeConfig();
-  const singleSystem = String(config.public.singleSystem ?? 'true').trim().toLowerCase() !== 'false';
-  if (!singleSystem) {
-    await navigateTo('/systems', { replace: true });
-    return;
-  }
-
   await new AppLoader().loadApp();
 
   if (systemsStore.systems.length > 0) {
