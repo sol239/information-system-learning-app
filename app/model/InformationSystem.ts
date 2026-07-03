@@ -51,6 +51,11 @@ export class InformationSystem {
   public pages: Page[];
 
   /**
+   * Whether the database page is available for this information system.
+   */
+  public databaseAllowed: boolean;
+
+  /**
    * The user-customised component overrides for this system.
    */
   public actualComponents: Component[];
@@ -113,6 +118,7 @@ export class InformationSystem {
     tasks = [],
     defaultTasks,
     pages = [],
+    databaseAllowed = true,
     actualComponents = [],
     defaultComponents = [],
     database = null,
@@ -134,6 +140,7 @@ export class InformationSystem {
     tasks?: Task[];
     defaultTasks?: Task[];
     pages?: Page[];
+    databaseAllowed?: boolean;
     actualComponents?: Component[];
     defaultComponents?: Component[];
     database?: DatabaseWrapper | null;
@@ -155,6 +162,7 @@ export class InformationSystem {
     this.tasks = tasks;
     this.defaultTasks = defaultTasks ?? JSON.parse(JSON.stringify(tasks)).map((t: any) => Task.fromJSON(t));
     this.pages = pages;
+    this.databaseAllowed = databaseAllowed;
     this.actualComponents = actualComponents;
     this.defaultComponents = defaultComponents;
     this.database = database;
@@ -188,6 +196,23 @@ export class InformationSystem {
     return this.availableTasks().map(task => task.id);
   }
 
+  public databaseVisiblePage(name = "Database"): Page {
+    return {
+      name,
+      route: String(useRuntimeConfig().public.databasePageRoute),
+      description: "Database",
+    };
+  }
+
+  public visiblePages(databaseName = "Database"): Page[] {
+    const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
+    const pages = (this.pages ?? []).filter(page => page.route !== databasePageRoute);
+    if (!this.databaseAllowed) {
+      return pages;
+    }
+
+    return [...pages, this.databaseVisiblePage(databaseName)];
+  }
 
   public static async deserializeFromZip(zipData: ArrayBuffer): Promise<Operation<InformationSystem | null>> {
     try {
@@ -248,9 +273,15 @@ export class InformationSystem {
       }
 
       const configData = JSON.parse(configContent);
+      const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
       const pages: Page[] = (configData.pages || []).map((page: Page) => ({
         ...page,
-      }));
+      })).filter((page: Page) => page.route !== databasePageRoute);
+      const databaseAllowed = typeof configData.databaseAllowed === "boolean"
+        ? configData.databaseAllowed
+        : typeof configData.database_allowed === "boolean"
+          ? configData.database_allowed
+          : true;
 
       const sqlFile = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("create_schema.sql"));
       let database: DatabaseWrapper | null = null;
@@ -270,6 +301,7 @@ export class InformationSystem {
         description: configData.description,
         tasks: (configData.tasks || []).map((task: any) => resetTaskProgress(Task.fromJSON(task))),
         pages,
+        databaseAllowed,
         database,
         mistakes: [],
         mistakesCount: 0,

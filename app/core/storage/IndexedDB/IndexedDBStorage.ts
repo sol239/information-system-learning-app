@@ -21,6 +21,7 @@ type StoredInformationSystem = {
     language: string;
     description: string;
     pages: Page[];
+    databaseAllowed?: boolean;
     tasks: unknown[];
     defaultTasks: unknown[];
     actualComponents: unknown[];
@@ -133,6 +134,7 @@ export class IndexedDBStorage implements IStorage {
             language: system.language,
             description: system.description,
             pages: this.toPlainData(system.pages),
+            databaseAllowed: system.databaseAllowed,
             tasks: this.toPlainData(system.tasks),
             defaultTasks: this.toPlainData(system.defaultTasks),
             actualComponents: this.toPlainData(system.actualComponents),
@@ -166,6 +168,7 @@ export class IndexedDBStorage implements IStorage {
             language: record.language,
             description: record.description,
             pages: record.pages ?? [],
+            databaseAllowed: record.databaseAllowed ?? true,
             tasks: (record.tasks ?? []).map(task => Task.fromJSON(task)),
             defaultTasks: (record.defaultTasks ?? record.tasks ?? []).map(task => Task.fromJSON(task)),
             actualComponents: (record.actualComponents ?? []).map(component => Component.fromJSON(component)),

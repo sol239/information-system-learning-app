@@ -50,6 +50,7 @@ export class AppLoader {
             console.log("AppLoader: IndexedDB is outdated or missing systems. Loading systems from source.");
 
             for (const systemId of preloadedSystemsIds) {
+                
                 const systemFiles = await SystemHelper.getSystemFiles(systemId);
                 const loadResult = await InformationSystem.loadSystem(systemFiles);
                 console.log(loadResult.toString());

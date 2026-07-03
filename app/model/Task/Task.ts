@@ -46,6 +46,7 @@ export class Task {
     public isEditable: boolean = false,
     public isSubstituted: boolean = false,
     public canExecuteQuery: boolean = false,
+    public databaseAllowed: boolean = true,
     public visiblePages?: Page[],
     public codeEditPermissions?: CodeEditPermissions
   ) { }
@@ -56,6 +57,18 @@ export class Task {
     const status = Task.parseStatus(data?.status);
     const errorComponents = Task.parseComponents(data?.errorComponents ?? data?.["error-components"]);
     const finish = Task.createFinish(finishType, data?.finish, data?.finishDescription ?? "");
+
+    const visiblePages = Array.isArray(data?.visiblePages ?? data?.visible_pages)
+      ? (data.visiblePages ?? data.visible_pages)
+      : undefined;
+    const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
+    const databaseAllowed = typeof data?.databaseAllowed === "boolean"
+      ? data.databaseAllowed
+      : typeof data?.database_allowed === "boolean"
+        ? data.database_allowed
+        : Array.isArray(visiblePages)
+          ? visiblePages.some((page: Page) => page.route === databasePageRoute)
+          : true;
 
     const task = new Task(
       String(data?.id ?? ""),
@@ -77,8 +90,9 @@ export class Task {
       data?.isEditable ?? data?.is_editable ?? false,
       data?.isSubstituted ?? false,
       Boolean(data?.canExecuteQuery ?? false),
-      Array.isArray(data?.visiblePages ?? data?.visible_pages)
-        ? (data.visiblePages ?? data.visible_pages)
+      databaseAllowed,
+      Array.isArray(visiblePages)
+        ? visiblePages.filter((page: Page) => page.route !== databasePageRoute)
         : undefined,
       data?.codeEditPermissions ?? data?.code_edit_permissions
     );

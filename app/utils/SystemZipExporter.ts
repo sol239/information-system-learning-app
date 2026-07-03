@@ -55,6 +55,7 @@ export class SystemZipExporter {
       description: system.description,
       startedTasks: false,
       exploringSystem: false,
+      databaseAllowed: system.databaseAllowed,
       pages: (system.pages ?? []).map(SystemZipExporter.serializePage),
       tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(resetTaskProgressJson),
       mistakes: [],

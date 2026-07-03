@@ -47,8 +47,12 @@ export function inconsistentVisiblePageLevels(tasks: Task[], allPages: Page[] = 
 
 function visiblePagesSignature(task: Task, allPages: Page[]): string {
   const pages = Array.isArray(task.visiblePages) ? task.visiblePages : allPages
-  return pages
-    .map(page => page.route)
+  const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute)
+  const routes = pages.map(page => page.route).filter(route => route !== databasePageRoute)
+  if (task.databaseAllowed) {
+    routes.push(databasePageRoute)
+  }
+  return routes
     .sort((a, b) => a.localeCompare(b))
     .join('|')
 }

@@ -17,4 +17,9 @@ export class TaskHelper {
 
         return [...pagesByRoute.values()];
     }
+
+    public static shouldIncludeDatabasePage(tasks: Task[]): boolean {
+        const shouldInclude = tasks.every((task) => task.databaseAllowed);
+        return shouldInclude;
+    }
 }

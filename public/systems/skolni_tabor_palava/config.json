@@ -170,11 +170,6 @@
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
         }
       ],
       "codeEditPermissions": {
@@ -184,7 +179,8 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     },
     {
       "id": "384fbf48-d405-4599-9d5f-ecd8338e78c2",
@@ -344,11 +340,6 @@
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
         }
       ],
       "codeEditPermissions": {
@@ -358,7 +349,8 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     },
     {
       "id": "fee117f5-d7b0-40bb-990a-6ea6a1d418d6",
@@ -498,11 +490,6 @@
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
         }
       ],
       "codeEditPermissions": {
@@ -545,7 +532,8 @@
       "finishCorrectAnswer": "",
       "finishCheckQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;",
       "finishVariableConstraints": [],
-      "substituteAfterActivity": true
+      "substituteAfterActivity": true,
+      "databaseAllowed": true
     },
     {
       "id": "60fe51fb-bd94-4630-8ac1-e123c9f2ec1b",
@@ -664,11 +652,6 @@
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
         },
         {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
-        },
-        {
           "name": "Vedoucí",
           "route": "/vedouci",
           "description": "Seznam vedoucích tábora s možností správy jejich údajů."
@@ -681,7 +664,8 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     },
     {
       "id": "7e0f54a1-1af0-447d-aac2-8d9d02448384",
@@ -803,11 +787,6 @@
           "name": "Nástěnka",
           "route": "/nastenka",
           "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky."
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
         }
       ],
       "codeEditPermissions": {
@@ -817,7 +796,8 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     },
     {
       "id": "c134571d-6c36-4dea-8805-e596afd0e048",
@@ -914,11 +894,6 @@
           "name": "Nástěnka",
           "route": "/nastenka",
           "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky."
-        },
-        {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
         }
       ],
       "codeEditPermissions": {
@@ -940,7 +915,8 @@
       "finishCorrectAnswer": "30",
       "finishCheckQuery": "",
       "finishVariableConstraints": [],
-      "substituteAfterActivity": true
+      "substituteAfterActivity": true,
+      "databaseAllowed": true
     },
     {
       "id": "670cbb72-859b-45d3-b73e-69d1b28c3c23",
@@ -1073,11 +1049,6 @@
           "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky."
         },
         {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
-        },
-        {
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
@@ -1090,7 +1061,8 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     },
     {
       "id": "c7b429fc-8007-4bc3-ab82-d4b38158e039",
@@ -1211,11 +1183,6 @@
           "description": "Hlavní přehled o táboře, zobrazující důležité informace a statistiky."
         },
         {
-          "name": "Databáze",
-          "route": "/database",
-          "description": "Databáze"
-        },
-        {
           "name": "Účastníci",
           "route": "/ucastnici",
           "description": "Seznam všech účastníků tábora s možností správy jejich údajů."
@@ -1228,11 +1195,13 @@
         "sql": true,
         "js_click": false,
         "sql_click": true
-      }
+      },
+      "databaseAllowed": true
     }
   ],
   "mistakes": [],
   "mistakesCount": 0,
   "currentLevel": 1,
-  "levelCount": 6
+  "levelCount": 6,
+  "databaseAllowed": true
 }

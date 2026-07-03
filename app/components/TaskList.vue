@@ -196,7 +196,6 @@ import { computed } from 'vue'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { Task } from '~/model/Task/Task'
 import { inconsistentVisiblePageLevels, isTaskDone } from '~/utils/taskLevels'
-import { systemVisiblePages } from '~/utils/taskPageVisibility'
 
 const { t } = useI18n()
 
@@ -249,7 +248,7 @@ const levelsWithVisiblePagesConflict = computed(() => {
     return new Set<number>()
   }
 
-  return new Set(inconsistentVisiblePageLevels(system.tasks, systemVisiblePages(system)))
+  return new Set(inconsistentVisiblePageLevels(system.tasks, system.visiblePages()))
 })
 
 function normalizeTaskLevel(level: unknown): number {

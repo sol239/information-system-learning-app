@@ -63,6 +63,12 @@
           <p v-else class="text-sm text-gray-500">
             {{ t('task_no_pages') }}
           </p>
+          <UCheckbox
+            v-if="systemsStore.selectedSystem?.databaseAllowed !== false"
+            v-model="taskForm.databaseAllowed"
+            :label="t('database')"
+            class="mt-3"
+          />
         </UFormField>
 
         <UCheckbox
@@ -761,7 +767,6 @@ import {
   type CodeEditPermissions
 } from '~/utils/codeEditPermissions'
 import { inconsistentVisiblePageLevels } from '~/utils/taskLevels'
-import { systemVisiblePages } from '~/utils/taskPageVisibility'
 
 type TaskDetailForm = {
   id: string
@@ -786,6 +791,7 @@ type TaskDetailForm = {
   finishCheckQuery: string
   finishVariableConstraints: VariableConstraintForm[]
   substituteAfterActivity: boolean
+  databaseAllowed: boolean
   visiblePages: Page[]
   codeEditPermissions: CodeEditPermissions
 }
@@ -835,6 +841,7 @@ const props = defineProps<{
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
 const runtimeConfig = useRuntimeConfig()
+const databasePageRoute = computed(() => String(runtimeConfig.public.databasePageRoute))
 const codeEditEnvironment = computed(() =>
   codeEditEnvironmentFromRuntimeConfig(runtimeConfig.public as Record<string, unknown>)
 )
@@ -864,12 +871,14 @@ const selectedComponents = computed(() =>
 )
 const systemPages = computed(() => {
   const system = systemsStore.selectedSystem
-  return system ? systemVisiblePages(system, t('database')) : []
+  return system
+    ? system.visiblePages(t('database')).filter(page => page.route !== databasePageRoute.value)
+    : []
 })
 const systemTasks = computed(() => systemsStore.selectedSystem?.tasks ?? [])
 const inconsistentLevelVisiblePages = computed(() => {
   const system = systemsStore.selectedSystem
-  return system ? inconsistentVisiblePageLevels(system.tasks, systemVisiblePages(system)) : []
+  return system ? inconsistentVisiblePageLevels(system.tasks, system.visiblePages()) : []
 })
 const visiblePagesMismatchDescription = computed(() => {
   const levels = inconsistentLevelVisiblePages.value.join(', ')
@@ -1022,6 +1031,7 @@ const createDefaultForm = (): TaskDetailForm => ({
   finishCheckQuery: '',
   finishVariableConstraints: [],
   substituteAfterActivity: false,
+  databaseAllowed: true,
   visiblePages: [],
   codeEditPermissions: effectiveCodeEditPermissions(undefined, codeEditEnvironment.value)
 })
@@ -1119,9 +1129,12 @@ watch(
         ? ((task.finish as { constraints?: VariableConstraint[] }).constraints ?? []).map(toVariableConstraintForm)
         : [],
       substituteAfterActivity: (task.activity as any)?.substituteAfterActivity ?? false,
+      databaseAllowed: task.databaseAllowed ?? true,
       visiblePages: (Array.isArray(task.visiblePages)
         ? task.visiblePages
-        : systemPages.value).map(toTaskPage),
+        : systemPages.value)
+        .filter(page => page.route !== databasePageRoute.value)
+        .map(toTaskPage),
       codeEditPermissions: effectiveCodeEditPermissions(task.codeEditPermissions, codeEditEnvironment.value)
     })
 
@@ -1189,6 +1202,7 @@ function buildTaskUpdate(selectedTask: Task): Task {
         }))
         : undefined
     },
+    databaseAllowed: taskForm.databaseAllowed,
     visiblePages: taskForm.visiblePages.map(toTaskPage),
     codeEditPermissions: effectiveCodeEditPermissions(taskForm.codeEditPermissions, codeEditEnvironment.value)
   }

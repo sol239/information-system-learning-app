@@ -61,7 +61,7 @@
         <div class="right-actions ml-auto flex items-center">
           <NuxtLink
             id="go-to-database-button"
-            v-if="isPageAvailable(DATABASE_PAGE_ROUTE)"
+            v-if="isPageAvailable(databasePageRoute)"
             :to="databaseTo"
             class="flex items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium transition-all duration-200"
             :class="[
@@ -115,24 +115,22 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import {
-  DATABASE_PAGE_ROUTE,
-  systemVisiblePages,
-} from "~/utils/taskPageVisibility";
 import { TaskHelper } from "~/core/systems/TaskHelper";
 import { isTaskDone } from "~/utils/taskLevels";
 
 /* 2. Stores */
 const systemsStore = useSystemsStore();
 const globalSettingsStore = useGlobalSettingsStore();
+const runtimeConfig = useRuntimeConfig();
 const emit = defineEmits<{
   "open-tasks": [];
 }>();
 
 /* 3. Context hooks */
 const { t, locale } = useI18n();
+const databasePageRoute = computed(() => String(runtimeConfig.public.databasePageRoute));
 const databaseTo = computed(
-  () => `/systems/${systemsStore.selectedSystemId}${DATABASE_PAGE_ROUTE}`
+  () => `/systems/${systemsStore.selectedSystemId}${databasePageRoute.value}`
 );
 
 /* 8. Local state (ref, reactive) */
@@ -178,6 +176,21 @@ const relevantVisiblePageTasks = computed(() => {
   return tasks.filter((task) => task.level === system.currentLevel);
 });
 
+const currentLevelVisiblePageTasks = computed(() => {
+  const system = systemsStore.selectedSystem;
+
+  if (!system || taskPagesAreUnrestricted.value) {
+    return [];
+  }
+
+  const tasks = system.tasks ?? [];
+  if (!tasks.length || tasks.every(isTaskDone)) {
+    return [];
+  }
+
+  return tasks.filter((task) => task.level === system.currentLevel);
+});
+
 const availableTaskPages = computed(() =>
   TaskHelper.getVisiblePages(relevantVisiblePageTasks.value)
 );
@@ -188,8 +201,8 @@ const localItems = computed(() => {
 
   const system = systemsStore.selectedSystem;
   const pages = system
-    ? systemVisiblePages(system, t("database")).filter(
-        (page) => page.route !== DATABASE_PAGE_ROUTE
+    ? system.visiblePages(t("database")).filter(
+        (page) => page.route !== databasePageRoute.value
       )
     : [];
   return pages.map((page) => ({
@@ -203,9 +216,15 @@ const localItems = computed(() => {
 
 function isPageAvailable(pageRoute: string): boolean {
   const system = systemsStore.selectedSystem;
+  const isDatabasePage = pageRoute === databasePageRoute.value;
 
   if (!system || taskPagesAreUnrestricted.value) {
-    return true;
+    return !isDatabasePage || system?.databaseAllowed !== false;
+  }
+
+  if (isDatabasePage) {
+    return system.databaseAllowed !== false
+      && TaskHelper.shouldIncludeDatabasePage(currentLevelVisiblePageTasks.value);
   }
 
   const tasks = relevantVisiblePageTasks.value;
