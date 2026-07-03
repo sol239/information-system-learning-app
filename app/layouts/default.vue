@@ -1,24 +1,44 @@
 <script setup lang="ts">
-
-// TODO: zde je potreba jeste poresit to UI, tailwind vs ne? spis jo, 
-
+/* 1. Imports */
 import SystemToolbar from '~/components/SystemToolbar.vue'
 
-const route = useRoute()
-const { t } = useI18n()
+/* 2. Stores */
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
 
+/* 3. Context hooks */
+const route = useRoute()
+const { t } = useI18n()
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const mobileTasksOpen = ref(false)
+
+/* 9. Computed */
 const atSystemPage = computed(() => {
   const [, systemsPath, systemId] = route.path.split('/')
 
   return systemsPath === 'systems' && Boolean(systemId)
 })
+
 const isFullscreenSystemPage = computed(() => route.meta.fullscreenSystemPage === true)
 const scoreValue = computed(() => systemsStore.selectedSystem?.score.score ?? 0)
 const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount ?? 0)
 
-const mobileTasksOpen = ref(false)
+/* 10. Watchers */
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
 
 <template>
@@ -29,15 +49,15 @@ const mobileTasksOpen = ref(false)
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <slot />
-        </UScrollArea>
+          </UScrollArea>
         </div>
       </div>
 
       <aside v-if="!isFullscreenSystemPage" class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex">
-        <div >
+        <div>
           <SystemToolbar />
         </div>
-        
+
         <div class="flex flex-row mt-4 items-center justify-between px-4">
           <div>
             <h2 class="text-1xl font-bold">{{ t('tasks') }}</h2>
@@ -82,7 +102,8 @@ const mobileTasksOpen = ref(false)
               icon="i-lucide-x"
               :aria-label="t('task_close')"
               @click="mobileTasksOpen = false"
-            size="sm" />
+              size="sm"
+            />
           </div>
         </template>
 
@@ -137,10 +158,10 @@ const mobileTasksOpen = ref(false)
 <style scoped>
 .tasks-column {
   background: radial-gradient(
-  circle at top left,
-  #d6ecff,
-  #eef8ff 50%,
-  #fff8c7 100%
-);
+    circle at top left,
+    #d6ecff,
+    #eef8ff 50%,
+    #fff8c7 100%
+  );
 }
 </style>

@@ -1,10 +1,7 @@
 <template>
   <div class="p-6 flex flex-col gap-8 max-w-full mx-auto">
     <ComponentWrapper :component="dashboardHeroCard" class="justify-center mt-6" />
-    <section
-      id="entity-stat-section"
-      class="flex flex-row flex-wrap justify-start gap-4"
-    >
+    <section id="entity-stat-section" class="flex flex-row flex-wrap justify-start gap-4">
       <ComponentWrapper :component="participantsStat" />
       <ComponentWrapper :component="sessionsStat" />
       <ComponentWrapper :component="supervisorsStat" />
@@ -23,31 +20,63 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import ComponentWrapper from "~/components/ComponentWrapper.vue";
-const { systemsStore } = useSyncSystemId();
+/* 1. Imports */
+import { computed } from 'vue'
+import ComponentWrapper from '~/components/ComponentWrapper.vue'
 
+/* 2. Stores */
+const { systemsStore } = useSyncSystemId()
+
+/* 3. Context hooks */
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const dashboardHeroCard = computed(() =>
-  systemsStore.getComponentById("hlavni-karta-systemu")
-);
+  systemsStore.getComponentById('hlavni-karta-systemu')
+)
+
 const participantsStat = computed(() =>
-  systemsStore.getComponentById("statistika-ucastniku")
-);
-const sessionsStat = computed(() => systemsStore.getComponentById("statistika-turnusu"));
+  systemsStore.getComponentById('statistika-ucastniku')
+)
+
+const sessionsStat = computed(() => systemsStore.getComponentById('statistika-turnusu'))
+
 const supervisorsStat = computed(() =>
-  systemsStore.getComponentById("statistika-vedoucich")
-);
-const mealsStat = computed(() => systemsStore.getComponentById("statistika-jidel"));
+  systemsStore.getComponentById('statistika-vedoucich')
+)
+
+const mealsStat = computed(() => systemsStore.getComponentById('statistika-jidel'))
+
 const minParticipantsPerSessionStat = computed(() =>
-  systemsStore.getComponentById("statistika-min-ucastniku-turnusu")
-);
+  systemsStore.getComponentById('statistika-min-ucastniku-turnusu')
+)
+
 const maxParticipantsPerSessionStat = computed(() =>
-  systemsStore.getComponentById("statistika-max-ucastniku-turnusu")
-);
+  systemsStore.getComponentById('statistika-max-ucastniku-turnusu')
+)
+
 const totalParticipantsInSessionsStat = computed(() =>
-  systemsStore.getComponentById("statistika-celkem-ucasti-turnusu")
-);
+  systemsStore.getComponentById('statistika-celkem-ucasti-turnusu')
+)
+
 const maxParticipantAgeStat = computed(() =>
-  systemsStore.getComponentById("statistika-max-vek-ucastnika")
-);
+  systemsStore.getComponentById('statistika-max-vek-ucastnika')
+)
+
+/* 10. Watchers */
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>

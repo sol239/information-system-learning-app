@@ -69,73 +69,97 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import TasksDesignerPanel from "~/components/TasksDesignerPanel.vue";
-import { useSystemsStore } from "~/stores/systemsStore";
-import { SystemZipExporter } from "~/utils/SystemZipExporter";
+/* 1. Imports */
+import { computed, ref } from 'vue'
+import TasksDesignerPanel from '~/components/TasksDesignerPanel.vue'
+import { useSystemsStore } from '~/stores/systemsStore'
+import { SystemZipExporter } from '~/utils/SystemZipExporter'
 
+/* 2. Stores */
+const systemsStore = useSystemsStore()
+
+/* 3. Context hooks */
 definePageMeta({
-  middleware: ["teacher-designer"],
+  middleware: ['teacher-designer'],
   fullscreenSystemPage: true,
-});
+})
 
-const router = useRouter();
-const { t } = useI18n();
-const { route, systemsStore, systemId } = useSyncSystemId();
-const downloadModalOpen = ref(false);
-const downloadLoading = ref(false);
-const downloadError = ref("");
+const router = useRouter()
+const { t } = useI18n()
+const { route, systemId } = useSyncSystemId()
 
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const downloadModalOpen = ref(false)
+const downloadLoading = ref(false)
+const downloadError = ref('')
+
+/* 9. Computed */
 const firstSystemRoute = computed(() => {
-  const firstPageRoute = systemsStore.selectedSystem?.pages?.[0]?.route;
+  const firstPageRoute = systemsStore.selectedSystem?.pages?.[0]?.route
   return firstPageRoute
     ? `/systems/${systemId}${firstPageRoute}`
-    : `/systems/${systemId}/dashboard`;
-});
-const backToRoute = computed(() => {
-  const backTo = route.query.backTo;
-  return typeof backTo === "string" && backTo.length > 0
-    ? backTo
-    : firstSystemRoute.value;
-});
+    : `/systems/${systemId}/dashboard`
+})
 
+const backToRoute = computed(() => {
+  const backTo = route.query.backTo
+  return typeof backTo === 'string' && backTo.length > 0
+    ? backTo
+    : firstSystemRoute.value
+})
+
+/* 10. Watchers */
+
+/* 11. Methods */
 function goBackToSystem() {
-  router.push(backToRoute.value);
+  router.push(backToRoute.value)
 }
 
 async function downloadSystem() {
   if (!systemsStore.selectedSystem) {
-    downloadError.value = t("download_system_missing");
-    return;
+    downloadError.value = t('download_system_missing')
+    return
   }
 
-  downloadLoading.value = true;
-  downloadError.value = "";
+  downloadLoading.value = true
+  downloadError.value = ''
 
   try {
-    const blob = await SystemZipExporter.export(systemsStore.selectedSystem);
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${createDownloadName(systemsStore.selectedSystem.name)}.zip`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    downloadModalOpen.value = false;
+    const blob = await SystemZipExporter.export(systemsStore.selectedSystem)
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${createDownloadName(systemsStore.selectedSystem.name)}.zip`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    downloadModalOpen.value = false
   } catch (error) {
-    downloadError.value = error instanceof Error ? error.message : String(error);
+    downloadError.value = error instanceof Error ? error.message : String(error)
   } finally {
-    downloadLoading.value = false;
+    downloadLoading.value = false
   }
 }
 
 function createDownloadName(name: string) {
   return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || `system-${systemId}`;
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || `system-${systemId}`
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>

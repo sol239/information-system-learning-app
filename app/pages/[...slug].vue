@@ -5,9 +5,33 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+/* 1. Imports */
+import { onMounted } from 'vue'
 
+/* 2. Stores */
+
+/* 3. Context hooks */
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
+
+/* 10. Watchers */
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
 onMounted(async () => {
- await navigateTo('/systems', { replace: true });
-});
+  await navigateTo('/systems', { replace: true })
+})
+
+/* 13. defineExpose */
 </script>

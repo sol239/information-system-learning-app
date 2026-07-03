@@ -124,49 +124,57 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { SqlHandler } from '~/core/components/variables/SqlHandler'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { DatabaseHandler } from '~/utils/DatabaseHandler'
 import { DatabaseWrapper } from '~/utils/DatabaseWrapper'
 import { OperationResultType } from '~/utils/Operation/OperationResultType'
 
-const { t } = useI18n()
-const toast = useToast()
-const { route, systemsStore, systemId } = useSyncSystemId()
+/* 2. Stores */
+const systemsStore = useSystemsStore()
 const globalSettings = useGlobalSettingsStore()
 
+/* 3. Context hooks */
+const { t } = useI18n()
+const toast = useToast()
+useSyncSystemId()
+
+/* 4. Constants (non-reactive) */
 const SCHEMA_PREVIEW_VALUE = '__schema_preview__'
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
 const tableNames = ref<string[]>([])
 const value = ref(SCHEMA_PREVIEW_VALUE)
 const tableQueryResult = ref<Awaited<ReturnType<typeof DatabaseHandler.query>> | null>(null)
 const tablePage = ref(1)
 const tableTotalPages = ref(1)
 const tableRowCount = ref(0)
+const isDbReady = ref(false)
+const isInitializing = ref(false)
+const isChecking = ref(false)
+const isRefreshingDatabase = ref(false)
+const query = ref('')
+const isQueryValid = ref(false)
+const isExecuting = ref(false)
+const queryResult = ref<Awaited<ReturnType<typeof DatabaseHandler.query>> | null>(null)
+const queryPage = ref(1)
+const queryTotalPages = ref(1)
+const queryRowCount = ref(0)
+
+/* 9. Computed */
 const isSchemaPreviewSelected = computed(() => value.value === SCHEMA_PREVIEW_VALUE)
 const tableMenuItems = computed(() => [
     { value: SCHEMA_PREVIEW_VALUE, label: 'Náhled tabulek' },
     ...tableNames.value.map(tableName => ({ value: tableName, label: tableName })),
 ])
 
-watch(value, async (tableName) => {
-    tableQueryResult.value = null
-    tablePage.value = 1
-    tableTotalPages.value = 1
-    tableRowCount.value = 0
-    if (!tableName || tableName === SCHEMA_PREVIEW_VALUE) return
-    const db = systemsStore.selectedSystem?.database
-    if (!db) return
-    tableQueryResult.value = await db.query(`SELECT * FROM "${tableName}"`)
-    //console.log("Table query result: ", tableQueryResult.value)
-})
-const isDbReady = ref(false)
-const isInitializing = ref(false)
-const isChecking = ref(false)
-const isRefreshingDatabase = ref(false)
-
-const query = ref('')
-
-const isQueryValid = ref(false)
 const selectedTask = computed(() => {
     const taskId = globalSettings.selectedTaskId
     if (!taskId) {
@@ -188,6 +196,7 @@ const canExecuteQuery = computed(() => {
     return Boolean(selectedTask.value.canExecuteQuery)
 })
 
+/* 10. Watchers */
 watch(query, async (newQuery) => {
     if (!newQuery || newQuery.trim() === '') {
         isQueryValid.value = false
@@ -202,11 +211,16 @@ watch(query, async (newQuery) => {
     }
 }, { immediate: true })
 
-const isExecuting = ref(false)
-const queryResult = ref<Awaited<ReturnType<typeof DatabaseHandler.query>> | null>(null)
-const queryPage = ref(1)
-const queryTotalPages = ref(1)
-const queryRowCount = ref(0)
+watch(value, async (tableName) => {
+    tableQueryResult.value = null
+    tablePage.value = 1
+    tableTotalPages.value = 1
+    tableRowCount.value = 0
+    if (!tableName || tableName === SCHEMA_PREVIEW_VALUE) return
+    const db = systemsStore.selectedSystem?.database
+    if (!db) return
+    tableQueryResult.value = await db.query(`SELECT * FROM "${tableName}"`)
+})
 
 watch(canExecuteQuery, (isAllowed) => {
     if (isAllowed) {
@@ -217,6 +231,11 @@ watch(canExecuteQuery, (isAllowed) => {
     queryPage.value = 1
 })
 
+watch(() => systemsStore.selectedSystem?.database, loadDatabaseInfo, { immediate: true })
+
+watch(() => systemsStore.selectedSystem?.database?.dbNumber, loadDatabaseInfo)
+
+/* 11. Methods */
 async function handleExecuteQuery() {
     if (!canExecuteQuery.value) return
     if (!query.value) return
@@ -302,7 +321,7 @@ async function handleRefreshDatabase() {
 /**
  * Loads database information including ready status and table names.
  */
-const loadDatabaseInfo = async () => {
+async function loadDatabaseInfo() {
     const system = systemsStore.selectedSystem
     if (system && system.database) {
         // Use the databaseWrapper method to check if ready
@@ -330,10 +349,7 @@ const loadDatabaseInfo = async () => {
     }
 }
 
-// Reactively update info when selected system or database state changes
-watch(() => systemsStore.selectedSystem?.database, loadDatabaseInfo, { immediate: true })
+/* 12. Lifecycle */
 
-// Watch for manual database initialization triggers (dbNumber increment)
-watch(() => systemsStore.selectedSystem?.database?.dbNumber, loadDatabaseInfo)
-
+/* 13. defineExpose */
 </script>

@@ -74,90 +74,101 @@
                 icon="i-lucide-arrow-right"
                 color="teacher"
                 variant="outline"
+                size="sm"
                 @click="navigateToSystem(system.id)"
-               size="sm">
+              >
                 {{ t("enter_system") }}
               </UButton>
             </div>
           </div>
         </UCard>
       </div>
-
     </div>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
 /* 1. Imports */
-import UploadSystemModal from "~/components/UploadSystemModal.vue";
-import EditSystemModal from "~/components/EditSystemModal.vue";
-import { AppLoader } from "~/core/AppLoader";
-import { SystemHelper } from "~/core/systems/SystemHelper";
-import { TaskHelper } from "~/core/systems/TaskHelper";
-import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
-import { useSystemsStore } from "~/stores/systemsStore";
+import UploadSystemModal from '~/components/UploadSystemModal.vue'
+import EditSystemModal from '~/components/EditSystemModal.vue'
+import { AppLoader } from '~/core/AppLoader'
+import { SystemHelper } from '~/core/systems/SystemHelper'
+import { TaskHelper } from '~/core/systems/TaskHelper'
+import { useGlobalSettingsStore } from '~/stores/globalSettingsStore'
+import { useSystemsStore } from '~/stores/systemsStore'
 
 /* 2. Stores */
-const globalSettingsStore = useGlobalSettingsStore();
-const systemsStore = useSystemsStore();
+const globalSettingsStore = useGlobalSettingsStore()
+const systemsStore = useSystemsStore()
 
 /* 3. Context hooks */
-const { t } = useI18n();
-const router = useRouter();
+const { t } = useI18n()
+const router = useRouter()
 
+/* 4. Constants (non-reactive) */
 
-/* 5. Lifecycle */
-onMounted(async () => {
-  await new AppLoader().loadApp();
-});
+/* 5. Props */
 
-/* 5. Methods */
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
+
+/* 10. Watchers */
+
+/* 11. Methods */
 async function navigateToSystem(id: string) {
-  //console.log("Navigating to system " + id);
   if (!(await SystemHelper.prepareSystem(id))) {
-    return;
+    return
   }
 
-  //console.log("Navigating to first available page...");
-  await pushFirstAvailablePage();
+  await pushFirstAvailablePage()
 }
 
 async function pushFirstAvailablePage() {
-  const system = systemsStore.selectedSystem;
-  const systemId = systemsStore.selectedSystemId;
-  const availableTasks = system?.availableTasks() ?? [];
-  const availablePages = TaskHelper.getVisiblePages(availableTasks);
-  const firstPage = availablePages[0]?.route ?? "";
+  const system = systemsStore.selectedSystem
+  const systemId = systemsStore.selectedSystemId
+  const availableTasks = system?.availableTasks() ?? []
+  const availablePages = TaskHelper.getVisiblePages(availableTasks)
+  const firstPage = availablePages[0]?.route ?? ''
 
   if (!systemId || !firstPage) {
-    return;
+    return
   }
 
-  await navigateTo(`/systems/${systemId}${firstPage}`);
+  await navigateTo(`/systems/${systemId}${firstPage}`)
 }
 
 async function navigateToDesigner(id: string) {
   if (!(await SystemHelper.prepareSystem(id))) {
-    return;
+    return
   }
 
-  const system = systemsStore.getSystemById(id);
+  const system = systemsStore.getSystemById(id)
   const firstSystemRoute = system?.pages?.[0]?.route
     ? `/systems/${id}${system.pages[0].route}`
-    : `/systems/${id}/dashboard`;
+    : `/systems/${id}/dashboard`
 
   router.push({
     path: `/systems/${id}/designer`,
     query: {
       backTo: firstSystemRoute,
     },
-  });
+  })
 }
 
 async function deleteSystem(id: string) {
-  globalSettingsStore.markPreloadedSystemAsDeleted(id);
-  await systemsStore.deleteSystemById(id);
+  globalSettingsStore.markPreloadedSystemAsDeleted(id)
+  await systemsStore.deleteSystemById(id)
 }
+
+/* 12. Lifecycle */
+onMounted(async () => {
+  await new AppLoader().loadApp()
+})
+
+/* 13. defineExpose */
 </script>
