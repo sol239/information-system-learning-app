@@ -4,6 +4,7 @@ import type { IStorage } from "./storage/IStorage";
 import { IndexedDBStorage } from "./storage/IndexedDB/IndexedDBStorage";
 import { InformationSystem } from "~/model/InformationSystem";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
+import { SystemLoaderPublic } from "./systems/SystemLoaderPublic";
 
 export class AppLoader {
     // pokud DB VERSION Jje vyssi nez ta ulozena, tak se smaze indexed db a provede se fresh load
@@ -42,6 +43,8 @@ export class AppLoader {
         }
 
         const storage: IStorage = new IndexedDBStorage();
+        const systemLoader = new SystemLoaderPublic();
+
         const preloadedSystemsIds = SystemHelper.getPreloadedSystemIds();
         console.log("AppLoader: Preloaded system IDs:", preloadedSystemsIds);
         const systemsStore = useSystemsStore();
@@ -50,9 +53,7 @@ export class AppLoader {
             console.log("AppLoader: IndexedDB is outdated or missing systems. Loading systems from source.");
 
             for (const systemId of preloadedSystemsIds) {
-                
-                const systemFiles = await SystemHelper.getSystemFiles(systemId);
-                const loadResult = await InformationSystem.loadSystem(systemFiles);
+                const loadResult = await systemLoader.loadSystem(systemId);
                 console.log(loadResult.toString());
                 if (
                     loadResult.result === OperationResultType.SUCCESS &&

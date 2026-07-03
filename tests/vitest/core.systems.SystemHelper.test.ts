@@ -18,6 +18,12 @@ async function loadSystemHelper(preloadedSystems?: unknown[]) {
     return SystemHelper;
 }
 
+async function loadSystemLoaderPublic(preloadedSystems?: unknown[]) {
+    await loadSystemHelper(preloadedSystems);
+    const { SystemLoaderPublic } = await import("../../app/core/systems/SystemLoaderPublic");
+    return new SystemLoaderPublic();
+}
+
 afterEach(() => {
     vi.unstubAllGlobals();
     vi.doUnmock("~/utils/DatabaseWrapper");
@@ -108,9 +114,9 @@ describe("SystemHelper", () => {
                 return new Response(null, { status: 404 });
             });
             vi.stubGlobal("fetch", fetchMock);
-            const SystemHelper = await loadSystemHelper(["directory-system"]);
+            const systemLoader = await loadSystemLoaderPublic(["directory-system"]);
 
-            const files = await SystemHelper.getSystemFiles("directory-system");
+            const files = await systemLoader.getSystemFiles("directory-system");
 
             expect(files).toEqual([
                 {
@@ -136,9 +142,9 @@ describe("SystemHelper", () => {
 
                 return new Response(null, { status: 404 });
             }));
-            const SystemHelper = await loadSystemHelper(["directory-system"]);
+            const systemLoader = await loadSystemLoaderPublic(["directory-system"]);
 
-            const files = await SystemHelper.getSystemFiles("directory-system");
+            const files = await systemLoader.getSystemFiles("directory-system");
 
             expect(files).toEqual([
                 {
@@ -163,9 +169,9 @@ describe("SystemHelper", () => {
                 return new Response(null, { status: 404 });
             });
             vi.stubGlobal("fetch", fetchMock);
-            const SystemHelper = await loadSystemHelper(["zip-system.zip"]);
+            const systemLoader = await loadSystemLoaderPublic(["zip-system.zip"]);
 
-            const files = await SystemHelper.getSystemFiles("zip-system");
+            const files = await systemLoader.getSystemFiles("zip-system");
 
             expect(files).toEqual(expect.arrayContaining([
                 {
@@ -183,9 +189,9 @@ describe("SystemHelper", () => {
         });
 
         it("throws when the requested system is not preloaded", async () => {
-            const SystemHelper = await loadSystemHelper(["known-system"]);
+            const systemLoader = await loadSystemLoaderPublic(["known-system"]);
 
-            await expect(SystemHelper.getSystemFiles("missing-system")).rejects.toThrow(
+            await expect(systemLoader.getSystemFiles("missing-system")).rejects.toThrow(
                 'System with id "missing-system" not found in runtimeConfig.public.preloadedSystems.'
             );
         });

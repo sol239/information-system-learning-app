@@ -223,8 +223,7 @@ import { ref } from "vue";
 import { IndexedDbHandler } from "~/utils/IndexedDbHandler";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { Component } from "~/model/Component";
-import { InformationSystem } from "~/model/InformationSystem";
-import { SystemHelper } from "~/core/systems/SystemHelper";
+import { SystemLoaderPublic } from "~/core/systems/SystemLoaderPublic";
 import { TaskHelper } from "~/core/systems/TaskHelper";
 
 const highlightStore = useHighlightStore();
@@ -314,8 +313,7 @@ async function refreshSystem() {
   }
 
   try {
-    const systemFiles = await SystemHelper.getSystemFiles(currentSystemId);
-    const loadResult = await InformationSystem.loadSystem(systemFiles);
+    const loadResult = await new SystemLoaderPublic().loadSystem(currentSystemId);
 
     if (loadResult.result !== OperationResultType.SUCCESS || !loadResult.data) {
       toast.add({

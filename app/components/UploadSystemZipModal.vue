@@ -66,6 +66,7 @@ import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { SystemHelper } from '~/core/systems/SystemHelper'
+import { SystemLoaderPublic } from '~/core/systems/SystemLoaderPublic'
 import type { SystemFile } from '~/model/types/SystemFile'
 
 /* 3. Context hooks */
@@ -135,10 +136,10 @@ async function loadPreloadedSystemsList() {
 
     try {
         const systems: InformationSystem[] = []
+        const systemLoader = new SystemLoaderPublic()
 
         for (const systemId of SystemHelper.getPreloadedSystemIds()) {
-            const systemFiles = await SystemHelper.getSystemFiles(systemId)
-            const loadResult = await InformationSystem.loadSystem(systemFiles)
+            const loadResult = await systemLoader.loadSystem(systemId)
 
             if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
                 systems.push(loadResult.data)
