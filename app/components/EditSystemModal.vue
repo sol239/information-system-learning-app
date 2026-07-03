@@ -10,10 +10,6 @@
 
         <template #body>
             <div class="space-y-4">
-                <UFormField :label="t('system_id')" name="id">
-                    <UInput v-model="editForm.id" class="w-full" />
-                </UFormField>
-
                 <UFormField :label="t('system_name')" name="name">
                     <UInput v-model="editForm.name" class="w-full" />
                 </UFormField>
