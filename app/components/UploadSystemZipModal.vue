@@ -65,23 +65,18 @@ import { ref, watch, onMounted } from 'vue'
 import { SystemZipLoader } from '~/utils/SystemZipLoader'
 import { InformationSystem } from '~/model/InformationSystem'
 import { useSystemsStore } from '~/stores/systemsStore'
-import { usePreloadedSystems } from '~/composables/usePreloadedSystems'
+import { SystemHelper } from '~/core/systems/SystemHelper'
 import type { SystemFile } from '~/model/types/SystemFile'
 
 /* 3. Context hooks */
 const { t } = useI18n()
 const systemsStore = useSystemsStore()
-const {
-  systems: preloadedSystemsResult,
-  loading: loadingPreloaded,
-  errors: preloadedErrors,
-  load: loadPreloadedSystemsList,
-} = usePreloadedSystems()
 
 /* 8. Local state */
 const selectedFile = ref<File | null>(null)
 const loader = ref<SystemZipLoader | null>(null)
 const loading = ref(false)
+const loadingPreloaded = ref(false)
 const systemPreview = ref<{ name: string; description: string } | null>(null)
 const systemAlreadyExists = ref(false)
 const preloadedSystems = ref<InformationSystem[]>([])
@@ -90,7 +85,6 @@ const selectedPreloadedSystem = ref<InformationSystem | null>(null)
 /* Lifecycle */
 onMounted(async () => {
     await loadPreloadedSystemsList()
-    preloadedSystems.value = preloadedSystemsResult.value
 })
 
 /* 10. Watchers */
@@ -133,6 +127,32 @@ function selectPreloadedSystem(sys: InformationSystem) {
     loader.value = null
     systemPreview.value = null
     systemAlreadyExists.value = false
+}
+
+async function loadPreloadedSystemsList() {
+    loadingPreloaded.value = true
+    preloadedSystems.value = []
+
+    try {
+        const systems: InformationSystem[] = []
+
+        for (const systemId of SystemHelper.getPreloadedSystemIds()) {
+            const systemFiles = await SystemHelper.getSystemFiles(systemId)
+            const loadResult = await InformationSystem.loadSystem(systemFiles)
+
+            if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
+                systems.push(loadResult.data)
+            } else {
+                console.error(loadResult.message)
+            }
+        }
+
+        preloadedSystems.value = systems
+    } catch (error) {
+        console.error('Failed to load preloaded systems:', error)
+    } finally {
+        loadingPreloaded.value = false
+    }
 }
 
 function resolveCollision(sys: InformationSystem) {

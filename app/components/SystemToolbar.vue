@@ -223,6 +223,8 @@ import { ref } from "vue";
 import { IndexedDbHandler } from "~/utils/IndexedDbHandler";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { Component } from "~/model/Component";
+import { InformationSystem } from "~/model/InformationSystem";
+import { SystemHelper } from "~/core/systems/SystemHelper";
 
 const highlightStore = useHighlightStore();
 const systemsStore = useSystemsStore();
@@ -231,7 +233,6 @@ const globalSettings = useGlobalSettingsStore();
 const { t } = useI18n();
 const toast = useToast();
 const route = useRoute();
-const preloadedSystems = usePreloadedSystems();
 const { pushFirstAvailablePage } = useAvailableSystemPages();
 
 const resetPopoverOpen = ref(false);
@@ -313,12 +314,10 @@ async function refreshSystem() {
   }
 
   try {
-    await preloadedSystems.load();
-    const freshSystem = preloadedSystems.systems.value.find(
-      (system) => String(system.id) === String(currentSystemId)
-    );
+    const systemFiles = await SystemHelper.getSystemFiles(currentSystemId);
+    const loadResult = await InformationSystem.loadSystem(systemFiles);
 
-    if (!freshSystem) {
+    if (loadResult.result !== OperationResultType.SUCCESS || !loadResult.data) {
       toast.add({
         title: t("refresh_system_error"),
         color: "red",
@@ -327,6 +326,8 @@ async function refreshSystem() {
       resetPopoverOpen.value = false;
       return;
     }
+
+    const freshSystem = loadResult.data;
 
     globalSettings.selectedTaskId = null;
     globalSettings.solvedComponentIds = [];
