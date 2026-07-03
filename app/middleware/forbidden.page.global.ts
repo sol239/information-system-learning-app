@@ -25,6 +25,10 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
+  if (system.exploringSystem) {
+    return;
+  }
+
   const currentPage = to.path.slice(systemPrefix.length) || "/";
   const databasePageRoute = String(runtimeConfig.public.databasePageRoute);
   const currentLevelTasks = (system.tasks ?? []).filter((task) => task.level === system.currentLevel);

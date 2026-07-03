@@ -35,7 +35,15 @@
                 {{ t('student_welcome_modal_title') }}
               </h3>
               <p class="mt-1 text-sm leading-6 text-gray-600">
-                {{ t('student_welcome_sidebar_description', { count: taskCount, points: totalTaskPoints }) }}
+                {{ t('student_welcome_sidebar_description_before_count') }}
+                <strong class="font-semibold text-gray-900">
+                  {{ taskCount }} {{ t('student_welcome_tasks_word') }}
+                </strong>
+                {{ t('student_welcome_sidebar_description_between_tasks_points') }}
+                <strong class="font-semibold text-gray-900">
+                  {{ totalTaskPoints }} {{ t('student_welcome_points_word') }}
+                </strong>
+                {{ t('student_welcome_sidebar_description_after_points_word') }}
               </p>
             </div>
           </div>

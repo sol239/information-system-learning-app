@@ -21,7 +21,7 @@
               </p>
 
               <div class="flex flex-wrap gap-4 lg:justify-end">
-                <UploadSystemZipModal v-if="globalSettingsStore.teacherMode" />
+                <UploadSystemModal v-if="globalSettingsStore.teacherMode" />
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import UploadSystemZipModal from "~/components/UploadSystemZipModal.vue";
+import UploadSystemModal from "~/components/UploadSystemModal.vue";
 import EditSystemModal from "~/components/EditSystemModal.vue";
 import { AppLoader } from "~/core/AppLoader";
 import { SystemHelper } from "~/core/systems/SystemHelper";

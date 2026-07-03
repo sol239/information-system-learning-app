@@ -2,15 +2,33 @@
   <div>
     <UModal
       v-model:open="welcomeModalOpen"
-      :title="t('student_welcome_modal_title')"
       :dismissible="false"
       :close="false"
       :ui="{ content: 'sm:max-w-md' }"
     >
+      <template #header>
+        <div class="flex w-full items-center justify-between gap-3">
+          <h2 class="text-highlighted font-semibold">
+            {{ t('student_welcome_modal_title') }}
+          </h2>
+          <div class="flex shrink-0 items-center gap-2">
+            <SelectSystemModal />
+          </div>
+        </div>
+      </template>
+
       <template #body>
         <div class="space-y-4">
           <p class="text-sm leading-6 text-gray-600">
-            {{ t('student_welcome_sidebar_description', { count: taskCount, points: totalTaskPoints }) }}
+            {{ t('student_welcome_sidebar_description_before_count') }}
+            <strong class="font-semibold text-gray-900">
+              {{ taskCount }} {{ t('student_welcome_tasks_word') }}
+            </strong>
+            {{ t('student_welcome_sidebar_description_between_tasks_points') }}
+            <strong class="font-semibold text-gray-900">
+              {{ totalTaskPoints }} {{ t('student_welcome_points_word') }}
+            </strong>
+            {{ t('student_welcome_sidebar_description_after_points_word') }}
           </p>
 
         </div>

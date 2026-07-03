@@ -97,6 +97,27 @@ export const useSystemsStore = defineStore('systems', () => {
         return systems.value[0] ?? null;
     }
 
+    function setPrimarySystem(id: string): void {
+        const selectedIndex = systems.value.findIndex(system => String(system.id) === String(id))
+        if (selectedIndex <= 0) {
+            return
+        }
+
+        const currentPrimary = systems.value[0]
+        const selectedSystem = systems.value[selectedIndex]
+        const otherSystems = systems.value.filter((_, index) => index !== 0 && index !== selectedIndex)
+
+        systems.value = [
+            selectedSystem,
+            ...otherSystems,
+            currentPrimary,
+        ]
+    }
+
+    function getAvailableSystems(): InformationSystem[] {
+        return systems.value;
+    }
+
     return {
         systems,
         selectedSystem,
@@ -107,7 +128,9 @@ export const useSystemsStore = defineStore('systems', () => {
         loadSystemsFromStorage,
         updateSystem,
         getComponentById,
-        getPrimarySystem
+        getPrimarySystem,
+        setPrimarySystem,
+        getAvailableSystems
     }
 
 },
