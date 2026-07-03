@@ -381,7 +381,7 @@ import type { SelectActivity } from '~/model/Task/Activity/SelectActivity'
 import type { SelectOptionsActivity } from '~/model/Task/Activity/SelectOptionsActivity'
 import type { Option } from '~/model/Task/Option'
 import { TaskStatus } from '~/model/Task/TaskStatus'
-import { advanceCurrentRound } from '~/utils/taskLevels'
+import { advanceCurrentLevel } from '~/utils/taskLevels'
 
 const { t } = useI18n()
 const highlightStore = useHighlightStore()
@@ -658,7 +658,7 @@ function completeTask(task: Task) {
 
   const system = systemsStore.selectedSystem
   if (system) {
-    advanceCurrentRound(system)
+    advanceCurrentLevel(system)
   }
 }
 

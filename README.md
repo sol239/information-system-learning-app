@@ -174,7 +174,7 @@ Obsahuje metadata systemu, seznam stranek, ukoly, pocet urovni a aktualni postup
   ],
   "tasks": [],
   "mistakesCount": 0,
-  "currentRound": 1,
+  "currentLevel": 1,
   "levelCount": 1
 }
 ```

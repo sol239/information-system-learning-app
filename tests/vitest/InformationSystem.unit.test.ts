@@ -16,7 +16,7 @@ const VALID_CONFIG = `{
             "kind": "repair",
             "answer": "stats-participants-sql == SELECT COUNT(*) as count FROM účastníci && stats-meals-sql == SELECT COUNT(*) as count FROM jídla",
             "elementClass": [],
-            "round": 1,
+            "level": 1,
             "is_editable": false,
             "error-components": [
                 {
@@ -40,7 +40,7 @@ const VALID_CONFIG = `{
             "kind": "select",
             "answer": "none",
             "elementClass": ["stats-supervisors"],
-            "round": 1,
+            "level": 1,
             "is_editable": false,
             "error-components": [
                 {
@@ -60,7 +60,7 @@ const VALID_CONFIG = `{
             "answer": "tbl-účastníci == name:Tereza Svobodová Nováková",
             "elementClass": ["table-form-účastníci-alergeny"],
             "is_editable": false,
-            "round": 1,
+            "level": 1,
             "error-components": [
                 {
                     "id": "validation-name",
@@ -81,7 +81,7 @@ const VALID_CONFIG = `{
             "answer": "tbl-účastníci == jméno:Petr Novotný;alergeny:Lepek,Koryši",
             "elementClass": "stats-supervisors",
             "is_editable": false,
-            "round": 1111111,
+            "level": 1111111,
             "error-components": [
                 {
                     "id": "supervisors-edit-allergens",

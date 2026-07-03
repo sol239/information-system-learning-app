@@ -136,7 +136,7 @@
               </span>
             </template>
             <USelect
-              v-model="taskForm.round"
+              v-model="taskForm.level"
               :items="levelOptions"
               value-key="value"
               label-key="label"
@@ -770,7 +770,7 @@ type TaskDetailForm = {
   finishDescription: string
   finishType: FinishType
   finishLabel: string
-  round: number
+  level: number
   feedback: string
   pointsReward: number
   failPenalty: number
@@ -888,7 +888,7 @@ const levelOptions = computed(() =>
   })
 )
 const tasksInSelectedLevel = computed(() =>
-  systemTasks.value.filter(task => task.round === taskForm.round)
+  systemTasks.value.filter(task => task.level === taskForm.level)
 )
 const taskSelectedComponents = computed(() =>
   selectedTaskFromSettings.value?.errorComponents ?? []
@@ -1006,7 +1006,7 @@ const createDefaultForm = (): TaskDetailForm => ({
   finishDescription: '',
   finishType: FinishType.IMMEDIATE,
   finishLabel: '',
-  round: 1,
+  level: 1,
   feedback: '',
   pointsReward: 0,
   failPenalty: 1,
@@ -1039,7 +1039,7 @@ watch(
   (levelCount) => {
     const normalizedLevelCount = normalizeLevelCount(levelCount)
     systemLevelCount.value = normalizedLevelCount
-    taskForm.round = Math.min(normalizeTaskLevel(taskForm.round), normalizedLevelCount)
+    taskForm.level = Math.min(normalizeTaskLevel(taskForm.level), normalizedLevelCount)
   },
   { immediate: true }
 )
@@ -1086,7 +1086,7 @@ watch(
       finishDescription: task.finish?.description ?? '',
       finishType: task.finishType,
       finishLabel: task.finish?.label ?? '',
-      round: task.round,
+      level: task.level,
       feedback: task.feedback,
       pointsReward: task.pointsReward,
       failPenalty: task.failPenalty,

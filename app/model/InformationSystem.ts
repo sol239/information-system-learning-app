@@ -98,7 +98,7 @@ export class InformationSystem {
   /**
    * The currently unlocked task level.
    */
-  public currentRound: number;
+  public currentLevel: number;
 
   /**
    * The number of task levels available in the system.
@@ -123,7 +123,8 @@ export class InformationSystem {
     mistakesCount,
     startedTasks = false,
     exploringSystem = false,
-    currentRound = 1,
+    currentLevel,
+    currentRound,
     levelCount = 1,
   }: {
     id: string;
@@ -143,6 +144,7 @@ export class InformationSystem {
     mistakesCount?: number;
     startedTasks?: boolean;
     exploringSystem?: boolean;
+    currentLevel?: number;
     currentRound?: number;
     levelCount?: number;
   }) {
@@ -166,7 +168,7 @@ export class InformationSystem {
         : [...this.score.mistakes]
     this.startedTasks = Boolean(startedTasks);
     this.exploringSystem = Boolean(exploringSystem);
-    this.currentRound = currentRound;
+    this.currentLevel = Number(currentLevel ?? currentRound ?? 1);
     this.levelCount = levelCount;
   }
 
@@ -176,6 +178,14 @@ export class InformationSystem {
 
   public get mistakesPenalty(): number {
     return this.mistakes.reduce((sum, penalty) => sum + Number(penalty || 0), 0);
+  }
+
+  public availableTasks(): Task[] {
+    return this.tasks.filter(task => !task.isTaskLevelLocked(this.currentLevel));
+  }
+
+  public availableTaskIds(): string[] {
+    return this.availableTasks().map(task => task.id);
   }
 
 
@@ -265,7 +275,7 @@ export class InformationSystem {
         mistakesCount: 0,
         startedTasks: Boolean(configData.startedTasks),
         exploringSystem: Boolean(configData.exploringSystem),
-        currentRound: 1,
+        currentLevel: 1,
         levelCount: Number(configData.levelCount ?? 1),
         createSchemaSql: sqlFile?.content,
         configData,

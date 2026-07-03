@@ -32,7 +32,7 @@ export class Task {
     public finish?: IFinish,
     public finishType: FinishType = FinishType.IMMEDIATE,
 
-    public round: number = 1,
+    public level: number = 1,
     
     public status: TaskStatus = TaskStatus.NOT_STARTED,
 
@@ -67,7 +67,7 @@ export class Task {
       activityType,
       finish,
       finishType,
-      Number(data?.round ?? 1),
+      Number(data?.level ?? data?.round ?? 1),
       status,
       data?.feedback ?? "",
       Number(data?.pointsReward ?? 0),
@@ -84,6 +84,10 @@ export class Task {
     );
 
     return task;
+  }
+
+  public isTaskLevelLocked(currentLevel: number): boolean {
+    return this.level > currentLevel;
   }
 
   private static normalizeStringList(data: any): string[] {

@@ -59,7 +59,7 @@ export class SystemZipExporter {
       tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(resetTaskProgressJson),
       mistakes: [],
       mistakesCount: 0,
-      currentRound: 1,
+      currentLevel: 1,
       levelCount: system.levelCount,
     }
   }

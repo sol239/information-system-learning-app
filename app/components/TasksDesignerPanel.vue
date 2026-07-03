@@ -113,7 +113,7 @@
               ? 'bg-white/20 text-white'
               : 'bg-gray-200 text-gray-700'"
           >
-            {{ normalizeTaskLevel(task.round) }}
+            {{ normalizeTaskLevel(task.level) }}
           </span>
           <span class="cursor-pointer">
             {{ task.title || t('task_untitled') }}
@@ -251,10 +251,10 @@ const selectedTask = ref<Task | null>(null)
 const systemLevelCount = ref(1)
 const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? [])
 const sortedTasks = computed(() =>
-  [...tasks.value].sort((a, b) => normalizeTaskLevel(a.round) - normalizeTaskLevel(b.round))
+  [...tasks.value].sort((a, b) => normalizeTaskLevel(a.level) - normalizeTaskLevel(b.level))
 )
 const minimumLevelCount = computed(() =>
-  tasks.value.reduce((maxLevel, task) => Math.max(maxLevel, normalizeTaskLevel(task.round)), 1)
+  tasks.value.reduce((maxLevel, task) => Math.max(maxLevel, normalizeTaskLevel(task.level)), 1)
 )
 let persistSystemTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -423,7 +423,7 @@ const handleLevelCountUpdate = (levelCount: number) => {
   }
 
   system.levelCount = normalizedLevelCount
-  system.currentRound = Math.min(system.currentRound, system.levelCount)
+  system.currentLevel = Math.min(system.currentLevel, system.levelCount)
 
   queueSystemPersist(system)
 }

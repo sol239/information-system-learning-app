@@ -191,7 +191,7 @@ describe("IndexedDBStorage integration flow", () => {
             mistakes: [0.5],
             startedTasks: true,
             exploringSystem: false,
-            currentRound: 2,
+            currentLevel: 2,
             levelCount: 6,
             createSchemaSql: "CREATE TABLE jidla (id_jidla INTEGER PRIMARY KEY, nazev TEXT);",
         });
@@ -226,9 +226,11 @@ describe("IndexedDBStorage integration flow", () => {
         expect(loadResult.data?.score.score).toBe(3);
         expect(loadResult.data?.mistakes).toEqual([0.5]);
         expect(loadResult.data?.levelCount).toBe(6);
+        expect(loadResult.data?.tasks[0].isTaskLevelLocked(2)).toBe(true);
+        expect(loadResult.data?.availableTaskIds()).toEqual([]);
 
         informationSystem.name = "Skolni tabor Palava - updated";
-        informationSystem.currentRound = 3;
+        informationSystem.currentLevel = 3;
 
         const updateResult = await storage.saveSystem(informationSystem);
         expect(updateResult.result).toBe(OperationResultType.SUCCESS);
@@ -237,7 +239,10 @@ describe("IndexedDBStorage integration flow", () => {
         const updatedLoadResult = await storage.getSystem("2");
         expect(updatedLoadResult.result).toBe(OperationResultType.SUCCESS);
         expect(updatedLoadResult.data?.name).toBe("Skolni tabor Palava - updated");
-        expect(updatedLoadResult.data?.currentRound).toBe(3);
+        expect(updatedLoadResult.data?.currentLevel).toBe(3);
+        expect(updatedLoadResult.data?.availableTasks().map(task => task.id)).toEqual([
+            "4881a760-cb8d-41cb-8784-fed13faa6a76",
+        ]);
 
         const deleteResult = await storage.deleteSystem("2");
         expect(deleteResult.result).toBe(OperationResultType.SUCCESS);

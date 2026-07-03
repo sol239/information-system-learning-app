@@ -117,9 +117,10 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import {
   DATABASE_PAGE_ROUTE,
-  systemAllowsPageForTaskContext,
   systemVisiblePages,
 } from "~/utils/taskPageVisibility";
+import { TaskHelper } from "~/core/systems/TaskHelper";
+import { isTaskDone } from "~/utils/taskLevels";
 
 /* 2. Stores */
 const systemsStore = useSystemsStore();
@@ -149,6 +150,38 @@ const selectedTask = computed(() => {
   );
 });
 
+const taskPagesAreUnrestricted = computed(() => {
+  const system = systemsStore.selectedSystem;
+
+  return !system
+    || globalSettingsStore.bypassPageVisibility
+    || globalSettingsStore.teacherMode
+    || (!system.startedTasks && system.exploringSystem);
+});
+
+const relevantVisiblePageTasks = computed(() => {
+  const system = systemsStore.selectedSystem;
+
+  if (!system || taskPagesAreUnrestricted.value) {
+    return [];
+  }
+
+  if (selectedTask.value) {
+    return [selectedTask.value];
+  }
+
+  const tasks = system.tasks ?? [];
+  if (!tasks.length || tasks.every(isTaskDone)) {
+    return [];
+  }
+
+  return tasks.filter((task) => task.level === system.currentLevel);
+});
+
+const availableTaskPages = computed(() =>
+  TaskHelper.getVisiblePages(relevantVisiblePageTasks.value)
+);
+
 const localItems = computed(() => {
   // Access locale.value so the computed updates when the locale changes
   void locale.value;
@@ -170,9 +203,21 @@ const localItems = computed(() => {
 
 function isPageAvailable(pageRoute: string): boolean {
   const system = systemsStore.selectedSystem;
-  return system
-    ? systemAllowsPageForTaskContext(system, selectedTask.value, pageRoute)
-    : true;
+
+  if (!system || taskPagesAreUnrestricted.value) {
+    return true;
+  }
+
+  const tasks = relevantVisiblePageTasks.value;
+  if (!tasks.length) {
+    return true;
+  }
+
+  if (tasks.some((task) => !Array.isArray(task.visiblePages))) {
+    return true;
+  }
+
+  return availableTaskPages.value.some((page) => page.route === pageRoute);
 }
 
 /* 10. Watchers */

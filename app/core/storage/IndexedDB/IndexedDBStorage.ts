@@ -34,6 +34,7 @@ type StoredInformationSystem = {
     mistakesCount?: number;
     startedTasks?: boolean;
     exploringSystem?: boolean;
+    currentLevel?: number;
     currentRound?: number;
     levelCount?: number;
 };
@@ -148,7 +149,7 @@ export class IndexedDBStorage implements IStorage {
             mistakesCount: system.mistakesCount,
             startedTasks: system.startedTasks,
             exploringSystem: system.exploringSystem,
-            currentRound: system.currentRound,
+            currentLevel: system.currentLevel,
             levelCount: system.levelCount,
         };
     }
@@ -177,7 +178,7 @@ export class IndexedDBStorage implements IStorage {
             mistakesCount: Number(record.mistakesCount ?? mistakes.length),
             startedTasks: Boolean(record.startedTasks),
             exploringSystem: Boolean(record.exploringSystem),
-            currentRound: Number(record.currentRound ?? 1),
+            currentLevel: Number(record.currentLevel ?? record.currentRound ?? 1),
             levelCount: Number(record.levelCount ?? 1),
         });
 

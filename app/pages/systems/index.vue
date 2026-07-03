@@ -94,14 +94,14 @@
 import UploadSystemZipModal from "~/components/UploadSystemZipModal.vue";
 import EditSystemModal from "~/components/EditSystemModal.vue";
 import { AppLoader } from "~/core/AppLoader";
+import { SystemHelper } from "~/core/systems/SystemHelper";
+import { TaskHelper } from "~/core/systems/TaskHelper";
 import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
 import { useSystemsStore } from "~/stores/systemsStore";
 
 /* 2. Stores */
 const globalSettingsStore = useGlobalSettingsStore();
 const systemsStore = useSystemsStore();
-const { prepareSystem } = usePrepareSystem();
-const { pushFirstAvailablePage } = useAvailableSystemPages();
 
 /* 3. Context hooks */
 const { t } = useI18n();
@@ -116,16 +116,30 @@ onMounted(async () => {
 /* 5. Methods */
 async function navigateToSystem(id: string) {
   //console.log("Navigating to system " + id);
-  if (!(await prepareSystem(id))) {
+  if (!(await SystemHelper.prepareSystem(id))) {
     return;
   }
 
   //console.log("Navigating to first available page...");
-  await pushFirstAvailablePage(null);
+  await pushFirstAvailablePage();
+}
+
+async function pushFirstAvailablePage() {
+  const system = systemsStore.selectedSystem;
+  const systemId = systemsStore.selectedSystemId;
+  const availableTasks = system?.availableTasks() ?? [];
+  const availablePages = TaskHelper.getVisiblePages(availableTasks);
+  const firstPage = availablePages[0]?.route ?? "";
+
+  if (!systemId || !firstPage) {
+    return;
+  }
+
+  await navigateTo(`/systems/${systemId}${firstPage}`);
 }
 
 async function navigateToDesigner(id: string) {
-  if (!(await prepareSystem(id))) {
+  if (!(await SystemHelper.prepareSystem(id))) {
     return;
   }
 

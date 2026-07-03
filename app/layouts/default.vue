@@ -29,7 +29,7 @@ const mobileTasksOpen = ref(false)
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <slot />
-          </UScrollArea>
+        </UScrollArea>
         </div>
       </div>
 

@@ -109,7 +109,7 @@
         "label": "Kolik dnů trvá turnus č. 3?"
       },
       "finishType": "type-correct",
-      "round": 3,
+      "level": 3,
       "status": "not_started",
       "feedback": "Správně jste opravili komponentu. Problém byl, že výraz julianday(datum_do) - julianday(datum_od) vrací počet dnů mezi daty bez započtení koncového dne.",
       "pointsReward": 3,
@@ -264,7 +264,7 @@
         ]
       },
       "finishType": "select-options",
-      "round": 3,
+      "level": 3,
       "status": "not_started",
       "feedback": "Správně jste opravili komponentu - chyba spočívala v tom, že byla chybně uvedena podmínka pro vytvoření štítku. Turnus byl skoro plný již od 30% zaplnění.",
       "pointsReward": 3,
@@ -436,7 +436,7 @@
         "checkQuery": "SELECT 1\nFROM ucastnici_alergeny ua\nJOIN ucastnici u \n  ON u.id_ucastnika = ua.id_ucastnika\nJOIN alergeny a\n  ON a.id_alergenu = ua.id_alergenu\nWHERE u.jmeno = 'Denisa Kolmanová'\n  AND a.jmeno IN ('Sezam', 'Mléko')\nGROUP BY u.id_ucastnika\nHAVING COUNT(DISTINCT a.jmeno) = 2;"
       },
       "finishType": "after-database-update",
-      "round": 2,
+      "level": 2,
       "status": "not_started",
       "feedback": "Problém byl v návrhu výběrového menu, které podporovalo výběr pouze jednoho alergenu. Takovému menu se často říká 'radio button menu (group)'. Je nutné mít ale v takovém případě menu, které podporuje více možností - tzv. checkbox menu.",
       "pointsReward": 2,
@@ -600,7 +600,7 @@
         "checkQuery": "SELECT * FROM vedouci WHERE jmeno = 'Tomáš Garrigue Masaryk';"
       },
       "finishType": "after-database-update",
-      "round": 4,
+      "level": 4,
       "status": "not_started",
       "feedback": "Správně jste opravili komponentu, problém byl v tom, že komponenta povolovala pouze jména o 2 slovech, ale ne o 3. ",
       "pointsReward": 2,
@@ -754,7 +754,7 @@
         "label": "Napište věk nejstaršího účastníka"
       },
       "finishType": "type-correct",
-      "round": 1,
+      "level": 1,
       "status": "not_started",
       "feedback": "Správně jste odpověděli na otázku a určili věk nejstaršího účastníka.",
       "pointsReward": 1,
@@ -867,7 +867,7 @@
         "label": "Uveďte správnou hodnotu, kterou teďka komponenta zobrazuje"
       },
       "finishType": "type-correct",
-      "round": 1,
+      "level": 1,
       "status": "not_started",
       "feedback": "Správně jste označili komponentu, která způsobovala chybu - namísto tabulky 'jidla' používala tabulku 'alergeny'",
       "pointsReward": 1,
@@ -1014,7 +1014,7 @@
         "description": "Úkol bude dokončen ihned po splnění aktivity"
       },
       "finishType": "immediate",
-      "round": 2,
+      "level": 2,
       "status": "not_started",
       "feedback": "",
       "pointsReward": 2,
@@ -1164,7 +1164,7 @@
         "label": "Napiště správně věk Simony Urbanové"
       },
       "finishType": "type-correct",
-      "round": 2,
+      "level": 2,
       "status": "not_started",
       "feedback": "",
       "pointsReward": 2,
@@ -1233,6 +1233,6 @@
   ],
   "mistakes": [],
   "mistakesCount": 0,
-  "currentRound": 1,
+  "currentLevel": 1,
   "levelCount": 6
 }

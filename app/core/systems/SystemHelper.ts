@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import type { SystemFile } from "~/model/types/SystemFile";
+import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 
 export class SystemHelper {
 
@@ -35,6 +36,28 @@ export class SystemHelper {
         }
 
         return this.getSystemFilesFromDirectory(systemEntry);
+    }
+
+    public static async prepareSystem(id: string): Promise<boolean> {
+        const systemsStore = useSystemsStore();
+        systemsStore.selectedSystemId = id;
+
+        const system = systemsStore.getSystemById(id);
+        if (!system) {
+            console.error("System not found for system " + id);
+            return false;
+        }
+
+        if (!system.database) {
+            console.error("System database not found for system " + id);
+            return false;
+        }
+
+        if (!(await DatabaseWrapper.isDatabaseInitialized(system.database))) {
+            await system.database.initializeDatabase();
+        }
+
+        return true;
     }
 
     private static getPreloadedSystemEntries(): unknown[] {

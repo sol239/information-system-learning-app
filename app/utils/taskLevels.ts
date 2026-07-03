@@ -9,20 +9,20 @@ export function isTaskDone(task: Task): boolean {
     || (task.activity?.isCompleted === true && task.finish?.isComplete === true)
 }
 
-export function isTaskLevelLocked(task: Task, currentRound: number): boolean {
-  return task.round > currentRound
+export function isTaskLevelLocked(task: Task, currentLevel: number): boolean {
+  return task.isTaskLevelLocked(currentLevel)
 }
 
 export function areLevelTasksDone(tasks: Task[], level: number): boolean {
-  const levelTasks = tasks.filter(task => task.round === level)
+  const levelTasks = tasks.filter(task => task.level === level)
   return levelTasks.length > 0 && levelTasks.every(isTaskDone)
 }
 
-export function advanceCurrentRound(system: InformationSystem): boolean {
+export function advanceCurrentLevel(system: InformationSystem): boolean {
   let advanced = false
 
-  while (areLevelTasksDone(system.tasks, system.currentRound)) {
-    system.currentRound += 1
+  while (areLevelTasksDone(system.tasks, system.currentLevel)) {
+    system.currentLevel += 1
     advanced = true
   }
 
@@ -30,7 +30,7 @@ export function advanceCurrentRound(system: InformationSystem): boolean {
 }
 
 export function levelVisiblePagesMatch(tasks: Task[], level: number, allPages: Page[] = []): boolean {
-  const levelTasks = tasks.filter(task => task.round === level)
+  const levelTasks = tasks.filter(task => task.level === level)
 
   if (levelTasks.length <= 1) {
     return true
@@ -41,7 +41,7 @@ export function levelVisiblePagesMatch(tasks: Task[], level: number, allPages: P
 }
 
 export function inconsistentVisiblePageLevels(tasks: Task[], allPages: Page[] = []): number[] {
-  const levels = [...new Set(tasks.map(task => task.round))].sort((a, b) => a - b)
+  const levels = [...new Set(tasks.map(task => task.level))].sort((a, b) => a - b)
   return levels.filter(level => !levelVisiblePagesMatch(tasks, level, allPages))
 }
 
@@ -52,4 +52,3 @@ function visiblePagesSignature(task: Task, allPages: Page[]): string {
     .sort((a, b) => a.localeCompare(b))
     .join('|')
 }
-

@@ -225,6 +225,7 @@ import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { Component } from "~/model/Component";
 import { InformationSystem } from "~/model/InformationSystem";
 import { SystemHelper } from "~/core/systems/SystemHelper";
+import { TaskHelper } from "~/core/systems/TaskHelper";
 
 const highlightStore = useHighlightStore();
 const systemsStore = useSystemsStore();
@@ -233,7 +234,6 @@ const globalSettings = useGlobalSettingsStore();
 const { t } = useI18n();
 const toast = useToast();
 const route = useRoute();
-const { pushFirstAvailablePage } = useAvailableSystemPages();
 
 const resetPopoverOpen = ref(false);
 const exitPopoverOpen = ref(false);
@@ -342,7 +342,7 @@ async function refreshSystem() {
       resetPopoverOpen.value = false;
       return;
     }
-
+    globalSettings.studentWelcomeModalOpen = true;
     systemsStore.selectedSystemId = String(freshSystem.id);
     toast.add({
       title: t("refresh_system_success"),
@@ -364,19 +364,19 @@ async function refreshSystem() {
 async function refreshDatabaseFromModal() {
   refreshSystemModalOpen.value = false;
   await refreshDatabase();
-  await pushFirstAvailablePage(null);
+  await pushFirstAvailablePage();
 }
 
 async function refreshComponentsFromModal() {
   refreshSystemModalOpen.value = false;
   await refreshComponents();
-  await pushFirstAvailablePage(null);
+  await pushFirstAvailablePage();
 }
 
 async function refreshAllFromModal() {
   refreshSystemModalOpen.value = false;
   await refreshSystem();
-  await pushFirstAvailablePage(null);
+  await pushFirstAvailablePage();
 }
 
 async function refreshDatabase() {
@@ -391,6 +391,20 @@ async function refreshDatabase() {
       icon: "i-lucide-check-circle",
     });
   }
+}
+
+async function pushFirstAvailablePage() {
+  const system = systemsStore.selectedSystem;
+  const systemId = systemsStore.selectedSystemId;
+  const availableTasks = system?.availableTasks() ?? [];
+  const availablePages = TaskHelper.getVisiblePages(availableTasks);
+  const firstPage = availablePages[0]?.route ?? "";
+
+  if (!systemId || !firstPage) {
+    return;
+  }
+
+  await navigateTo(`/systems/${systemId}${firstPage}`);
 }
 
 async function leaveSystem() {

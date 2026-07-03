@@ -20,6 +20,7 @@ async function loadSystemHelper(preloadedSystems?: unknown[]) {
 
 afterEach(() => {
     vi.unstubAllGlobals();
+    vi.doUnmock("~/utils/DatabaseWrapper");
     vi.restoreAllMocks();
 });
 
@@ -187,6 +188,56 @@ describe("SystemHelper", () => {
             await expect(SystemHelper.getSystemFiles("missing-system")).rejects.toThrow(
                 'System with id "missing-system" not found in runtimeConfig.public.preloadedSystems.'
             );
+        });
+    });
+
+    describe("prepareSystem", () => {
+        it("selects the system and initializes its database when needed", async () => {
+            const isDatabaseInitialized = vi.fn(async () => false);
+            vi.doMock("~/utils/DatabaseWrapper", () => ({
+                DatabaseWrapper: {
+                    isDatabaseInitialized,
+                },
+            }));
+            const initializeDatabase = vi.fn(async () => {});
+            const store = {
+                selectedSystemId: "",
+                getSystemById: vi.fn(() => ({
+                    id: "prepared-system",
+                    database: {
+                        initializeDatabase,
+                    },
+                })),
+            };
+            vi.stubGlobal("useSystemsStore", () => store);
+            const SystemHelper = await loadSystemHelper();
+
+            await expect(SystemHelper.prepareSystem("prepared-system")).resolves.toBe(true);
+
+            expect(store.selectedSystemId).toBe("prepared-system");
+            expect(store.getSystemById).toHaveBeenCalledWith("prepared-system");
+            expect(isDatabaseInitialized).toHaveBeenCalledWith(store.getSystemById.mock.results[0].value.database);
+            expect(initializeDatabase).toHaveBeenCalledOnce();
+        });
+
+        it("returns false when the system does not exist", async () => {
+            vi.doMock("~/utils/DatabaseWrapper", () => ({
+                DatabaseWrapper: {
+                    isDatabaseInitialized: vi.fn(),
+                },
+            }));
+            vi.spyOn(console, "error").mockImplementation(() => {});
+            const store = {
+                selectedSystemId: "",
+                getSystemById: vi.fn(() => null),
+            };
+            vi.stubGlobal("useSystemsStore", () => store);
+            const SystemHelper = await loadSystemHelper();
+
+            await expect(SystemHelper.prepareSystem("missing-system")).resolves.toBe(false);
+
+            expect(store.selectedSystemId).toBe("missing-system");
+            expect(console.error).toHaveBeenCalledWith("System not found for system missing-system");
         });
     });
 });

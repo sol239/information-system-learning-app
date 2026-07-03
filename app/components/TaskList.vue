@@ -73,14 +73,14 @@
 
       <template v-for="(task, index) in tasks" :key="task.id">
         <!-- Level Divider -->
-        <div v-if="index === 0 || task.round !== tasks[index - 1].round" class="flex items-center py-3 first:pt-1">
+        <div v-if="index === 0 || task.level !== tasks[index - 1].level" class="flex items-center py-3 first:pt-1">
           <span class="pr-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-            {{ t('task_level') }} {{ task.round }}
+            {{ t('task_level') }} {{ task.level }}
           </span>
           <div class="flex-1 border-t border-gray-300"></div>
         </div>
         <UAlert
-          v-if="isFirstTaskOfLevel(index, task) && levelHasVisiblePagesConflict(task.round)"
+          v-if="isFirstTaskOfLevel(index, task) && levelHasVisiblePagesConflict(task.level)"
           color="red"
           variant="subtle"
           icon="i-lucide-alert-triangle"
@@ -195,8 +195,8 @@
 import { computed } from 'vue'
 import { useSystemsStore } from '~/stores/systemsStore'
 import { Task } from '~/model/Task/Task'
-import { inconsistentVisiblePageLevels, isTaskDone, isTaskLevelLocked } from '~/utils/taskLevels'
-import { systemPageRouteFromPath, systemVisiblePages, taskAllowsPage } from '~/utils/taskPageVisibility'
+import { inconsistentVisiblePageLevels, isTaskDone } from '~/utils/taskLevels'
+import { systemVisiblePages } from '~/utils/taskPageVisibility'
 
 const { t } = useI18n()
 
@@ -213,7 +213,7 @@ const selectedTask = computed(() => {
   return systemsStore.selectedSystem?.tasks?.find(task => task.id === taskId) ?? null
 })
 
-const currentRound = computed(() => systemsStore.selectedSystem?.currentRound ?? 1)
+const currentLevel = computed(() => systemsStore.selectedSystem?.currentLevel ?? 1)
 const taskCount = computed(() => tasks.value.length)
 const totalTaskPoints = computed(() =>
   tasks.value.reduce((sum, task) => sum + Number(task.pointsReward ?? 0), 0)
@@ -230,7 +230,7 @@ const tasks = computed(() =>
   (systemsStore.selectedSystem?.tasks ?? [])
     .map((task, index) => ({ task, index }))
     .sort((a, b) => {
-      const levelDiff = normalizeTaskRound(a.task.round) - normalizeTaskRound(b.task.round)
+      const levelDiff = normalizeTaskLevel(a.task.level) - normalizeTaskLevel(b.task.level)
       return levelDiff || a.index - b.index
     })
     .map(({ task }) => task)
@@ -252,18 +252,18 @@ const levelsWithVisiblePagesConflict = computed(() => {
   return new Set(inconsistentVisiblePageLevels(system.tasks, systemVisiblePages(system)))
 })
 
-function normalizeTaskRound(round: unknown): number {
-  const parsed = Number(round)
+function normalizeTaskLevel(level: unknown): number {
+  const parsed = Number(level)
   return Number.isFinite(parsed) ? parsed : 1
 }
 
 
 function isFirstTaskOfLevel(index: number, task: Task): boolean {
-  return index === 0 || normalizeTaskRound(task.round) !== normalizeTaskRound(tasks.value[index - 1]?.round)
+  return index === 0 || normalizeTaskLevel(task.level) !== normalizeTaskLevel(tasks.value[index - 1]?.level)
 }
 
-function levelHasVisiblePagesConflict(round: unknown): boolean {
-  return globalSettings.teacherMode && levelsWithVisiblePagesConflict.value.has(normalizeTaskRound(round))
+function levelHasVisiblePagesConflict(level: unknown): boolean {
+  return globalSettings.teacherMode && levelsWithVisiblePagesConflict.value.has(normalizeTaskLevel(level))
 }
 
 function taskDisplayTitle(task: Task, index: number): string {
@@ -344,6 +344,6 @@ async function startTaskSolving() {
 }
 
 function isTaskLocked(task: Task): boolean {
-  return !globalSettings.teacherMode && isTaskLevelLocked(task, currentRound.value)
+  return !globalSettings.teacherMode && task.isTaskLevelLocked(currentLevel.value)
 }
 </script>
