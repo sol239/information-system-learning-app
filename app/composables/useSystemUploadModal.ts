@@ -16,7 +16,7 @@ export function useSystemUploadModal() {
     const loadingPreloaded = ref(false)
     const systemPreview = ref<{ name: string; description: string } | null>(null)
     const systemAlreadyExists = ref(false)
-    const preloadedSystems = ref<InformationSystem[]>([])
+    const systemsToPreload = ref<InformationSystem[]>([])
     const selectedPreloadedSystem = ref<InformationSystem | null>(null)
 
     onMounted(async () => {
@@ -67,13 +67,13 @@ export function useSystemUploadModal() {
 
     async function loadPreloadedSystemsList() {
         loadingPreloaded.value = true
-        preloadedSystems.value = []
+        systemsToPreload.value = []
 
         try {
             const systems: InformationSystem[] = []
             const systemLoader = new SystemLoaderPublic()
 
-            for (const systemId of SystemHelper.getPreloadedSystemIds()) {
+            for (const systemId of SystemHelper.getSystemsToPreloadIds()) {
                 const loadResult = await systemLoader.loadSystem(systemId)
 
                 if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
@@ -83,7 +83,7 @@ export function useSystemUploadModal() {
                 }
             }
 
-            preloadedSystems.value = systems
+            systemsToPreload.value = systems
         } catch (error) {
             console.error('Failed to load preloaded systems:', error)
         } finally {
@@ -169,7 +169,7 @@ export function useSystemUploadModal() {
         loadingPreloaded,
         systemPreview,
         systemAlreadyExists,
-        preloadedSystems,
+        systemsToPreload,
         selectedPreloadedSystem,
         selectPreloadedSystem,
         onUpload,

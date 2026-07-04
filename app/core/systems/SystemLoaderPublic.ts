@@ -13,12 +13,12 @@ export class SystemLoaderPublic implements ISystemLoader {
     }
 
     public async getSystemFiles(systemId: string): Promise<SystemFile[]> {
-        const systemEntry = this.getPreloadedSystemEntries()
+        const systemEntry = this.getSystemsToPreloadEntries()
             .map(entry => String(entry).trim())
             .find(entry => SystemHelper.normalizePublicName(entry) === systemId);
 
         if (!systemEntry) {
-            throw new Error(`System with id "${systemId}" not found in runtimeConfig.public.preloadedSystems.`);
+            throw new Error(`System with id "${systemId}" not found in runtimeConfig.public.systemsToPreload.`);
         }
 
         if (systemEntry.toLowerCase().endsWith(".zip")) {
@@ -28,13 +28,13 @@ export class SystemLoaderPublic implements ISystemLoader {
         return this.getSystemFilesFromDirectory(systemEntry);
     }
 
-    private getPreloadedSystemEntries(): unknown[] {
-        const preloadedSystems = useRuntimeConfig().public.preloadedSystems;
-        if (!Array.isArray(preloadedSystems) || preloadedSystems.length === 0) {
-            throw new Error("No preloaded systems found in runtime config.");
+    private getSystemsToPreloadEntries(): unknown[] {
+        const systemsToPreload = useRuntimeConfig().public.systemsToPreload;
+        if (!Array.isArray(systemsToPreload) || systemsToPreload.length === 0) {
+            throw new Error("No systems to preload found in runtime config.");
         }
 
-        return preloadedSystems;
+        return systemsToPreload;
     }
 
     private async getSystemFilesFromZip(systemEntry: string): Promise<SystemFile[]> {

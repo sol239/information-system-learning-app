@@ -1,8 +1,8 @@
 import JSZip from "jszip";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-async function loadSystemHelper(preloadedSystems?: unknown[]) {
-    const configuredPreloadedSystems = arguments.length === 0 ? ["primary-system"] : preloadedSystems;
+async function loadSystemHelper(systemsToPreload?: unknown[]) {
+    const configuredSystemsToPreload = arguments.length === 0 ? ["primary-system"] : systemsToPreload;
 
     vi.resetModules();
     vi.stubGlobal("useRuntimeConfig", () => ({
@@ -10,7 +10,7 @@ async function loadSystemHelper(preloadedSystems?: unknown[]) {
             baseURL: "/app-base/",
         },
         public: {
-            preloadedSystems: configuredPreloadedSystems,
+            systemsToPreload: configuredSystemsToPreload,
         },
     }));
 
@@ -18,8 +18,8 @@ async function loadSystemHelper(preloadedSystems?: unknown[]) {
     return SystemHelper;
 }
 
-async function loadSystemLoaderPublic(preloadedSystems?: unknown[]) {
-    await loadSystemHelper(preloadedSystems);
+async function loadSystemLoaderPublic(systemsToPreload?: unknown[]) {
+    await loadSystemHelper(systemsToPreload);
     const { SystemLoaderPublic } = await import("../../app/core/systems/SystemLoaderPublic");
     return new SystemLoaderPublic();
 }
@@ -55,7 +55,7 @@ describe("SystemHelper", () => {
             const SystemHelper = await loadSystemHelper();
 
             expect(() => SystemHelper.normalizePublicName("   ")).toThrow(
-                "runtimeConfig.public.preloadedSystems contains an empty system entry."
+                "runtimeConfig.public.systemsToPreload contains an empty system entry."
             );
         });
     });
@@ -71,31 +71,31 @@ describe("SystemHelper", () => {
             const SystemHelper = await loadSystemHelper([]);
 
             expect(() => SystemHelper.getPrimarySystemId()).toThrow(
-                "No preloaded systems found in runtime config."
+                "No systems to preload found in runtime config."
             );
         });
     });
 
-    describe("getPreloadedSystemIds", () => {
-        it("returns normalized IDs for all preloaded systems", async () => {
+    describe("getSystemsToPreloadIds", () => {
+        it("returns normalized IDs for all systems to preload", async () => {
             const SystemHelper = await loadSystemHelper([
                 "primary-system.zip",
                 "secondary-system",
                 "third-system.ZIP",
             ]);
 
-            expect(SystemHelper.getPreloadedSystemIds()).toEqual([
+            expect(SystemHelper.getSystemsToPreloadIds()).toEqual([
                 "primary-system",
                 "secondary-system",
                 "third-system",
             ]);
         });
 
-        it("throws when preloaded systems are missing", async () => {
+        it("throws when systems to preload are missing", async () => {
             const SystemHelper = await loadSystemHelper(undefined);
 
-            expect(() => SystemHelper.getPreloadedSystemIds()).toThrow(
-                "No preloaded systems found in runtime config."
+            expect(() => SystemHelper.getSystemsToPreloadIds()).toThrow(
+                "No systems to preload found in runtime config."
             );
         });
     });
@@ -192,7 +192,7 @@ describe("SystemHelper", () => {
             const systemLoader = await loadSystemLoaderPublic(["known-system"]);
 
             await expect(systemLoader.getSystemFiles("missing-system")).rejects.toThrow(
-                'System with id "missing-system" not found in runtimeConfig.public.preloadedSystems.'
+                'System with id "missing-system" not found in runtimeConfig.public.systemsToPreload.'
             );
         });
     });

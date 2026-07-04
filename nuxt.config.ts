@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       indexedDbVersionKey: 'db_version', // Stores the active database version key.
       databasePageRoute: '/database', // Defines the database page route.
       publicSystemsDirPath: '/systems', // Points to public system definitions.
-      preloadedSystems: ['skolni_tabor_palava'], // Lists systems loaded at startup.
+      systemsToPreload: ['skolni_tabor_palava'], // Ids of systems which shall be preloaded.
     },
   },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt', '@nuxt/test-utils/module', '@nuxt/eslint'],

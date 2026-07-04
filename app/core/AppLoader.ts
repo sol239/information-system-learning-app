@@ -45,14 +45,14 @@ export class AppLoader {
         const storage: IStorage = new IndexedDBStorage();
         const systemLoader = new SystemLoaderPublic();
 
-        const preloadedSystemsIds = SystemHelper.getPreloadedSystemIds();
-        console.log("AppLoader: Preloaded system IDs:", preloadedSystemsIds);
+        const systemsToPreloadIds = SystemHelper.getSystemsToPreloadIds();
+        console.log("AppLoader: Systems to preload IDs:", systemsToPreloadIds);
         const systemsStore = useSystemsStore();
 
-        if (await this.isDbVersionOutdated() || await this.isAnySystemMissing(storage, preloadedSystemsIds)) {
+        if (await this.isDbVersionOutdated() || await this.isAnySystemMissing(storage, systemsToPreloadIds)) {
             console.log("AppLoader: IndexedDB is outdated or missing systems. Loading systems from source.");
 
-            for (const systemId of preloadedSystemsIds) {
+            for (const systemId of systemsToPreloadIds) {
                 const loadResult = await systemLoader.loadSystem(systemId);
                 console.log(loadResult.toString());
                 if (
@@ -64,7 +64,7 @@ export class AppLoader {
             }
         }
 
-        await systemsStore.loadSystemsFromStorage(preloadedSystemsIds);
+        await systemsStore.loadSystemsFromStorage(systemsToPreloadIds);
         console.log("Systems in Pinia Store:", systemsStore.systems);
 
     }

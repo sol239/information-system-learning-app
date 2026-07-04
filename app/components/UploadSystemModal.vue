@@ -9,7 +9,7 @@
                 <SystemZipUploadSection v-model="selectedFile" :system-preview="systemPreview" />
                 <UDivider :label="t('or')" />
                 <PreloadedSystemSuggestions
-                    :preloaded-systems="preloadedSystems"
+                    :systems-to-preload="systemsToPreload"
                     :selected-system-id="selectedPreloadedSystem?.id ?? null"
                     :loading="loadingPreloaded"
                     @select="selectPreloadedSystem"
@@ -39,7 +39,7 @@ const {
     loadingPreloaded,
     systemPreview,
     systemAlreadyExists,
-    preloadedSystems,
+    systemsToPreload,
     selectedPreloadedSystem,
     selectPreloadedSystem,
     onUpload,

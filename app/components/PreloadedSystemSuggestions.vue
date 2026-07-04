@@ -4,12 +4,12 @@
     <div v-if="loading" class="flex justify-center p-4">
       <UIcon name="i-lucide-loader-2" class="w-6 h-6 animate-spin text-gray-500" />
     </div>
-    <div v-else-if="preloadedSystems.length === 0" class="text-sm text-gray-500">
+    <div v-else-if="systemsToPreload.length === 0" class="text-sm text-gray-500">
       {{ t('no_suggestions_available') }}
     </div>
     <div v-else class="space-y-2 max-h-64 overflow-y-auto pr-2">
       <div
-        v-for="system in preloadedSystems"
+        v-for="system in systemsToPreload"
         :key="system.id"
         role="button"
         tabindex="0"
@@ -30,7 +30,7 @@
 import type { InformationSystem } from '~/model/InformationSystem'
 
 defineProps<{
-  preloadedSystems: InformationSystem[]
+  systemsToPreload: InformationSystem[]
   selectedSystemId: string | null
   loading: boolean
 }>()
