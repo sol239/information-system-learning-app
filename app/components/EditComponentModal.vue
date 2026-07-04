@@ -3,17 +3,14 @@
     v-model:open="isOpen"
     fullscreen
     :dismissible="true"
-    :ui="{
-      content: 'w-full h-full max-w-full m-0 rounded-none z-[10005]',
-      overlay: 'z-[10004]',
-    }"
+    :ui="modalUi"
   >
     <template #title>
       <div class="flex items-center gap-2">
-        <span>{{ t("edit_component") }}</span>
-        <UBadge color="neutral" variant="subtle" size="sm" class="font-mono">{{
-          props.component.name || props.component.id
-        }}</UBadge>
+        <span>{{ t('edit_component') }}</span>
+        <UBadge color="neutral" variant="subtle" size="sm" class="font-mono">
+          {{ props.component.name || props.component.id }}
+        </UBadge>
       </div>
     </template>
 
@@ -24,8 +21,9 @@
         :variant="isFormEdited ? 'solid' : 'subtle'"
         :disabled="!isFormValid"
         size="sm"
-       @click="handleSave">
-        {{ t("save_changes") }}
+        @click="handleSave"
+      >
+        {{ t('save_changes') }}
       </UButton>
     </template>
 
@@ -44,62 +42,77 @@
   </UModal>
 </template>
 
+
 <script setup lang="ts">
 /* eslint-disable no-unused-vars */
-import { ref, computed, watch } from "vue";
-import type { Component as SystemComponent } from "~/model/Component";
-import type { ComponentVariables } from "~/model/ComponentVariables";
-import EditComponentBody from "./EditComponentBody.vue";
-import { useI18n } from "vue-i18n";
-import type { CodeEditPermissions } from "~/utils/codeEditPermissions";
+/* 1. Imports */
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { Component as SystemComponent } from '~/model/Component'
+import type { ComponentVariables } from '~/model/ComponentVariables'
+import type { CodeEditPermissions } from '~/utils/codeEditPermissions'
+import EditComponentBody from './EditComponentBody.vue'
 
-const { t } = useI18n();
+/* 2. Stores */
 
+/* 3. Context hooks */
+const { t } = useI18n()
+
+/* 4. Constants (non-reactive) */
+const modalUi = {
+  content: 'w-full h-full max-w-full m-0 rounded-none z-[10005]',
+  overlay: 'z-[10004]',
+}
+
+/* 5. Props */
 const props = defineProps<{
-  open: boolean;
-  component: SystemComponent;
-  variables?: ComponentVariables;
-  codeEditPermissions?: Partial<CodeEditPermissions>;
-  ignoreTaskCodeEditPermissions?: boolean;
-}>();
+  open: boolean
+  component: SystemComponent
+  variables?: ComponentVariables
+  codeEditPermissions?: Partial<CodeEditPermissions>
+  ignoreTaskCodeEditPermissions?: boolean
+}>()
 
+/* 6. Emits */
 const emit = defineEmits<{
-  (e: "update:open", val: boolean): void;
-  (
-    e: "save",
-    payload: { updatedComponent: SystemComponent; updatedVariables: ComponentVariables }
-  ): void;
-}>();
+  (e: 'update:open', val: boolean): void
+  (e: 'save', payload: { updatedComponent: SystemComponent; updatedVariables: ComponentVariables }): void
+}>()
 
+/* 7. Template refs */
+const bodyRef = ref<InstanceType<typeof EditComponentBody> | null>(null)
+
+/* 8. State (ref, reactive) */
+const isFormValid = ref(true)
+const isFormEdited = ref(false)
+
+/* 9. Computed */
 const isOpen = computed({
   get: () => props.open,
-  set: (val) => emit("update:open", val),
-});
+  set: (val) => emit('update:open', val),
+})
 
-// A reference to the child body component so we can call its exposed method
-const bodyRef = ref<InstanceType<typeof EditComponentBody> | null>(null);
-
-// Controls whether the save button is disabled
-const isFormValid = ref(true);
-const isFormEdited = ref(false);
-
+/* 10. Watchers */
 watch(isOpen, (open) => {
   if (open) {
-    isFormValid.value = true;
-    isFormEdited.value = false;
+    isFormValid.value = true
+    isFormEdited.value = false
   }
-});
+})
 
+/* 11. Methods */
 function handleSave() {
-  if (!bodyRef.value) return;
+  if (!bodyRef.value) return
 
-  // Grab the heavily processed payload directly from the child
-  const payload = bodyRef.value.getDraftData();
-
-  // Pass it up to the main renderer file
-  emit("save", payload);
-
-  // Close the modal
-  isOpen.value = false;
+  const payload = bodyRef.value.getDraftData()
+  emit('save', payload)
+  isOpen.value = false
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
+defineExpose({
+})
+
 </script>

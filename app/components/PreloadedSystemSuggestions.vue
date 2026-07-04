@@ -14,7 +14,9 @@
         role="button"
         tabindex="0"
         class="p-3 border rounded-lg cursor-pointer transition-colors"
-        :class="String(selectedSystemId) === String(system.id) ? 'border-teacher-500 bg-teacher-50/50' : 'border-gray-200 hover:border-gray-300'"
+        :class="String(selectedSystemId) === String(system.id)
+          ? 'border-teacher-500 bg-teacher-50/50'
+          : 'border-gray-200 hover:border-gray-300'"
         @click="emit('select', system)"
         @keydown.enter="emit('select', system)"
         @keydown.space.prevent="emit('select', system)"
@@ -26,18 +28,43 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
+/* 1. Imports */
 import type { InformationSystem } from '~/model/InformationSystem'
 
+/* 2. Stores */
+
+/* 3. Context hooks */
+const { t } = useI18n()
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
 defineProps<{
   systemsToPreload: InformationSystem[]
   selectedSystemId: string | null
   loading: boolean
 }>()
 
+/* 6. Emits */
 const emit = defineEmits<{
   select: [system: InformationSystem]
 }>()
 
-const { t } = useI18n()
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
+
+/* 10. Watchers */
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
+defineExpose({
+})
 </script>

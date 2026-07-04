@@ -4,7 +4,7 @@
       v-model:open="welcomeModalOpen"
       :dismissible="false"
       :close="false"
-      :ui="{ content: 'sm:max-w-md' }"
+      :ui="modalUi"
     >
       <template #header>
         <div class="flex w-full items-center justify-between gap-3">
@@ -30,7 +30,6 @@
             </strong>
             {{ t('student_welcome_sidebar_description_after_points_word') }}
           </p>
-
         </div>
       </template>
 
@@ -46,29 +45,47 @@
             variant="solid"
             icon="i-lucide-rotate-cw"
             size="sm"
-           @click="startTasksFromModal">
+            @click="startTasksFromModal"
+          >
             {{ t('student_welcome_sidebar_start_button') }}
           </UButton>
         </div>
       </template>
     </UModal>
-
   </div>
 </template>
 
+
 <script setup lang="ts">
+/* 1. Imports */
 import { computed } from 'vue'
 
-const { t } = useI18n()
+/* 2. Stores */
 const globalSettings = useGlobalSettingsStore()
 const systemsStore = useSystemsStore()
 
+/* 3. Context hooks */
+const { t } = useI18n()
+
+/* 4. Constants (non-reactive) */
+const modalUi = {
+  content: 'sm:max-w-md'
+}
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? [])
 const taskCount = computed(() => tasks.value.length)
 const totalTaskPoints = computed(() =>
   tasks.value.reduce((sum, task) => sum + Number(task.pointsReward ?? 0), 0)
 )
-
 const welcomeModalOpen = computed({
   get: () => globalSettings.studentWelcomeModalOpen,
   set: value => {
@@ -76,6 +93,9 @@ const welcomeModalOpen = computed({
   },
 })
 
+/* 10. Watchers */
+
+/* 11. Methods */
 async function closeWelcomeModal() {
   const system = systemsStore.selectedSystem
   if (!system) {
@@ -101,4 +121,10 @@ async function startTasksFromModal() {
   welcomeModalOpen.value = false
   await systemsStore.updateSystem(system)
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
+defineExpose({
+})
 </script>

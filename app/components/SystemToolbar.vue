@@ -1,14 +1,14 @@
 <template>
-  <div class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4">
+  <div
+    class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4"
+  >
     <UButton
       v-if="globalSettings.teacherMode"
       :icon="globalSettings.teacherHighlightEnabled ? 'i-lucide-eye' : 'i-lucide-eye-off'"
       :color="globalSettings.teacherHighlightEnabled ? 'sky' : 'neutral'"
       :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'"
       size="sm"
-      @click="
-        globalSettings.teacherHighlightEnabled = !globalSettings.teacherHighlightEnabled
-      "
+      @click="globalSettings.teacherHighlightEnabled = !globalSettings.teacherHighlightEnabled"
     />
 
     <UButton
@@ -19,11 +19,10 @@
       size="sm"
       @click="openTaskDesigner"
     >
-      <span class="mobile-hidden">{{ t("designer") }}</span>
+      <span class="mobile-hidden">{{ t('designer') }}</span>
     </UButton>
 
     <UPopover>
-      <!-- <UButton icon="i-heroicons-beaker" color="neutral" variant="ghost" size="sm" /> -->
       <template #content>
         <div
           class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2"
@@ -35,9 +34,10 @@
             icon="i-heroicons-command-line"
             class="justify-start"
             size="sm"
-           @click="printTableData">
-            Print table names</UButton
+            @click="printTableData"
           >
+            Print table names
+          </UButton>
           <UButton
             block
             variant="soft"
@@ -45,8 +45,10 @@
             icon="i-heroicons-question-mark-circle"
             class="justify-start"
             size="sm"
-             @click="IsDbNull">Check DB Status</UButton
+            @click="isDbNull"
           >
+            Check DB Status
+          </UButton>
           <UButton
             block
             variant="soft"
@@ -54,30 +56,30 @@
             icon="i-heroicons-magnifying-glass-circle"
             class="justify-start"
             size="sm"
-             @click="openComponentExplorer">Component Explorer</UButton
+            @click="openComponentExplorer"
           >
+            Component Explorer
+          </UButton>
         </div>
       </template>
     </UPopover>
 
     <div v-if="!globalSettings.teacherMode" class="flex items-center gap-2">
       <UButton
-        :icon="
-          highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'
-        "
+        :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
         color="yellow"
         :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'"
         size="sm"
         @click="highlightStore.toggleEditMode"
       >
-        <span class="mobile-hidden">{{
-          highlightStore.isEditModeActive ? $t("disable_edit") : $t("enable_edit")
-        }}</span>
+        <span class="mobile-hidden">
+          {{ highlightStore.isEditModeActive ? t('disable_edit') : t('enable_edit') }}
+        </span>
       </UButton>
     </div>
 
     <UButton
-      :label="$t('refresh_system')"
+      :label="t('refresh_system')"
       size="sm"
       color="green"
       variant="subtle"
@@ -93,7 +95,7 @@
       size="sm"
       @click="leaveSystem"
     >
-      <span class="mobile-hidden">{{ $t("leave_system") }}</span>
+      <span class="mobile-hidden">{{ t('leave_system') }}</span>
     </UButton>
 
     <UButton
@@ -104,28 +106,28 @@
       size="sm"
       @click="versionSwitchModalOpen = true"
     >
-      <span class="mobile-hidden">{{ t("change_version") }}</span>
+      <span class="mobile-hidden">{{ t('change_version') }}</span>
     </UButton>
 
     <UModal
       v-model:open="refreshSystemModalOpen"
       :title="t('refresh_system_modal_title')"
-      :ui="{ content: 'w-[520px]' }"
+      :ui="refreshSystemModalUi"
     >
       <template #body>
         <div class="flex flex-col gap-4">
           <p class="text-sm text-gray-600">
-            {{ t("refresh_system_modal_description") }}
+            {{ t('refresh_system_modal_description') }}
           </p>
 
           <div class="flex flex-col gap-3">
             <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t("refresh_database") }}
+                  {{ t('refresh_database') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t("refresh_database_modal_option_description") }}
+                  {{ t('refresh_database_modal_option_description') }}
                 </span>
               </div>
               <UButton
@@ -134,18 +136,19 @@
                 variant="soft"
                 icon="i-heroicons-circle-stack"
                 size="sm"
-               @click="refreshDatabaseFromModal">
-                {{ t("refresh_database") }}
+                @click="refreshDatabaseFromModal"
+              >
+                {{ t('refresh_database') }}
               </UButton>
             </div>
 
             <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t("refresh_components") }}
+                  {{ t('refresh_components') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t("refresh_components_modal_option_description") }}
+                  {{ t('refresh_components_modal_option_description') }}
                 </span>
               </div>
               <UButton
@@ -154,18 +157,19 @@
                 variant="soft"
                 icon="i-heroicons-squares-2x2"
                 size="sm"
-               @click="refreshComponentsFromModal">
-                {{ t("refresh_components") }}
+                @click="refreshComponentsFromModal"
+              >
+                {{ t('refresh_components') }}
               </UButton>
             </div>
 
             <div class="rounded-lg border border-green-200 bg-green-50/50 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t("refresh_all") }}
+                  {{ t('refresh_all') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t("refresh_all_modal_option_description") }}
+                  {{ t('refresh_all_modal_option_description') }}
                 </span>
               </div>
               <UButton
@@ -174,8 +178,9 @@
                 variant="solid"
                 icon="i-lucide-refresh-cw"
                 size="sm"
-               @click="refreshAllFromModal">
-                {{ t("refresh_all") }}
+                @click="refreshAllFromModal"
+              >
+                {{ t('refresh_all') }}
               </UButton>
             </div>
           </div>
@@ -183,8 +188,13 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" size="sm" @click="refreshSystemModalOpen = false">
-            {{ t("cancel") }}
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            @click="refreshSystemModalOpen = false"
+          >
+            {{ t('cancel') }}
           </UButton>
         </div>
       </template>
@@ -193,24 +203,34 @@
     <UModal
       v-model:open="versionSwitchModalOpen"
       :title="t('change_version')"
-      :ui="{ content: 'w-[420px]' }"
+      :ui="versionSwitchModalUi"
     >
       <template #body>
         <p class="text-sm text-gray-600">
-          {{ t("change_version_modal_description") }}
+          {{ t('change_version_modal_description') }}
         </p>
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton color="neutral" variant="ghost" size="sm" @click="versionSwitchModalOpen = false">
-            {{ t("cancel") }}
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            @click="versionSwitchModalOpen = false"
+          >
+            {{ t('cancel') }}
           </UButton>
           <UButton
             color="teacher"
             :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
             size="sm"
-           @click="changeVersion">
-            {{ globalSettings.teacherMode ? t("switch_to_student_version") : t("switch_to_teacher_version") }}
+            @click="changeVersion"
+          >
+            {{
+              globalSettings.teacherMode
+                ? t('switch_to_student_version')
+                : t('switch_to_teacher_version')
+            }}
           </UButton>
         </div>
       </template>
@@ -218,42 +238,66 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
-import { ref } from "vue";
-import { IndexedDbHandler } from "~/utils/IndexedDbHandler";
-import { OperationResultType } from "~/utils/Operation/OperationResultType";
-import { Component } from "~/model/Component";
-import { SystemLoaderPublic } from "~/core/systems/SystemLoaderPublic";
-import { TaskHelper } from "~/core/systems/TaskHelper";
+/* 1. Imports */
+import { ref } from 'vue'
+import { SystemLoaderPublic } from '~/core/systems/SystemLoaderPublic'
+import { TaskHelper } from '~/core/systems/TaskHelper'
+import { Component } from '~/model/Component'
+import { IndexedDbHandler } from '~/utils/IndexedDbHandler'
+import { OperationResultType } from '~/utils/Operation/OperationResultType'
 
-const highlightStore = useHighlightStore();
-const systemsStore = useSystemsStore();
-const globalSettings = useGlobalSettingsStore();
+/* 2. Stores */
+const highlightStore = useHighlightStore()
+const systemsStore = useSystemsStore()
+const globalSettings = useGlobalSettingsStore()
 
-const { t } = useI18n();
-const toast = useToast();
-const route = useRoute();
+/* 3. Context hooks */
+const { t } = useI18n()
+const toast = useToast()
+const route = useRoute()
 
-const resetPopoverOpen = ref(false);
-const exitPopoverOpen = ref(false);
-const studentDrawerOpen = ref(false);
-const refreshSystemModalOpen = ref(false);
-const versionSwitchModalOpen = ref(false);
+/* 4. Constants (non-reactive) */
+const refreshSystemModalUi = {
+  content: 'w-[520px]'
+}
+const versionSwitchModalUi = {
+  content: 'w-[420px]'
+}
 
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const resetPopoverOpen = ref(false)
+const exitPopoverOpen = ref(false)
+const studentDrawerOpen = ref(false)
+const refreshSystemModalOpen = ref(false)
+const versionSwitchModalOpen = ref(false)
+
+/* 9. Computed */
+
+/* 10. Watchers */
+
+/* 11. Methods */
 async function printTableData() {}
 
-async function IsDbNull() {
-  const system = systemsStore.selectedSystem;
+async function isDbNull() {
+  const system = systemsStore.selectedSystem
   if (system) {
-    //console.log(system.database === null ? "Database is null." : "Database is not null.");
+    // console.log(system.database === null ? 'Database is null.' : 'Database is not null.')
   } else {
-    //console.log("No system selected.");
+    // console.log('No system selected.')
   }
 }
 
 function openComponentExplorer() {
-  navigateTo(`/systems/${systemsStore.selectedSystemId}/component-explorer`);
+  navigateTo(`/systems/${systemsStore.selectedSystemId}/component-explorer`)
 }
 
 function openTaskDesigner() {
@@ -262,193 +306,198 @@ function openTaskDesigner() {
     query: {
       backTo: route.fullPath,
     },
-  });
+  })
 }
 
 function openRefreshSystemModal() {
-  refreshSystemModalOpen.value = true;
+  refreshSystemModalOpen.value = true
 }
 
 async function refreshComponents() {
-  const system = systemsStore.selectedSystem;
-  if (!system) return;
+  const system = systemsStore.selectedSystem
+  if (!system) return
 
   const cloneComponent = (component: Component) =>
-    Component.fromJSON(JSON.parse(JSON.stringify(component)));
+    Component.fromJSON(JSON.parse(JSON.stringify(component)))
 
-  system.actualComponents = system.defaultComponents.map((c) =>
-    cloneComponent(c)
-  );
+  system.actualComponents = system.defaultComponents.map((component) =>
+    cloneComponent(component)
+  )
 
   const defaultTasksById = new Map(
     (system.defaultTasks ?? []).map((task) => [String(task.id), task])
-  );
+  )
 
   for (const task of system.tasks ?? []) {
-    const defaultTask = defaultTasksById.get(String(task.id));
-    if (!defaultTask) continue;
+    const defaultTask = defaultTasksById.get(String(task.id))
+    if (!defaultTask) continue
 
     task.errorComponents = (defaultTask.errorComponents ?? []).map((component) =>
       cloneComponent(component)
-    );
+    )
 
     if (task.activity && defaultTask.activity) {
       task.activity.activityComponents = (defaultTask.activity.activityComponents ?? []).map((component) =>
         cloneComponent(component)
-      );
+      )
     }
   }
 
-  await systemsStore.updateSystem(system);
+  await systemsStore.updateSystem(system)
   toast.add({
-    title: t("component_refresh_success") || "Components refreshed",
-    color: "primary",
-    icon: "i-lucide-check-circle",
-  });
+    title: t('component_refresh_success') || 'Components refreshed',
+    color: 'primary',
+    icon: 'i-lucide-check-circle',
+  })
 }
 
 async function refreshSystem() {
-  const currentSystemId = systemsStore.selectedSystemId;
+  const currentSystemId = systemsStore.selectedSystemId
   if (!currentSystemId) {
-    return;
+    return
   }
 
   try {
-    const loadResult = await new SystemLoaderPublic().loadSystem(currentSystemId);
+    const loadResult = await new SystemLoaderPublic().loadSystem(currentSystemId)
 
     if (loadResult.result !== OperationResultType.SUCCESS || !loadResult.data) {
       toast.add({
-        title: t("refresh_system_error"),
-        color: "red",
-        icon: "i-lucide-alert-triangle",
-      });
-      resetPopoverOpen.value = false;
-      return;
+        title: t('refresh_system_error'),
+        color: 'red',
+        icon: 'i-lucide-alert-triangle',
+      })
+      resetPopoverOpen.value = false
+      return
     }
 
-    const freshSystem = loadResult.data;
+    const freshSystem = loadResult.data
 
-    globalSettings.selectedTaskId = null;
-    globalSettings.solvedComponentIds = [];
+    globalSettings.selectedTaskId = null
+    globalSettings.solvedComponentIds = []
 
-    const result = await systemsStore.updateSystem(freshSystem);
+    const result = await systemsStore.updateSystem(freshSystem)
     if (result.result !== OperationResultType.SUCCESS) {
       toast.add({
-        title: t("refresh_system_error"),
-        color: "red",
-        icon: "i-lucide-alert-triangle",
-      });
-      resetPopoverOpen.value = false;
-      return;
+        title: t('refresh_system_error'),
+        color: 'red',
+        icon: 'i-lucide-alert-triangle',
+      })
+      resetPopoverOpen.value = false
+      return
     }
-    globalSettings.studentWelcomeModalOpen = true;
-    systemsStore.selectedSystemId = String(freshSystem.id);
+
+    globalSettings.studentWelcomeModalOpen = true
+    systemsStore.selectedSystemId = String(freshSystem.id)
     toast.add({
-      title: t("refresh_system_success"),
-      color: "primary",
-      icon: "i-lucide-check-circle",
-    });
+      title: t('refresh_system_success'),
+      color: 'primary',
+      icon: 'i-lucide-check-circle',
+    })
   } catch (error) {
-    console.error("System refresh failed:", error);
+    console.error('System refresh failed:', error)
     toast.add({
-      title: t("refresh_system_error"),
-      color: "red",
-      icon: "i-lucide-alert-triangle",
-    });
+      title: t('refresh_system_error'),
+      color: 'red',
+      icon: 'i-lucide-alert-triangle',
+    })
   } finally {
-    resetPopoverOpen.value = false;
+    resetPopoverOpen.value = false
   }
 }
 
 async function refreshDatabaseFromModal() {
-  refreshSystemModalOpen.value = false;
-  await refreshDatabase();
-  await pushFirstAvailablePage();
+  refreshSystemModalOpen.value = false
+  await refreshDatabase()
+  await pushFirstAvailablePage()
 }
 
 async function refreshComponentsFromModal() {
-  refreshSystemModalOpen.value = false;
-  await refreshComponents();
-  await pushFirstAvailablePage();
+  refreshSystemModalOpen.value = false
+  await refreshComponents()
+  await pushFirstAvailablePage()
 }
 
 async function refreshAllFromModal() {
-  refreshSystemModalOpen.value = false;
-  await refreshSystem();
-  await pushFirstAvailablePage();
+  refreshSystemModalOpen.value = false
+  await refreshSystem()
+  await pushFirstAvailablePage()
 }
 
 async function refreshDatabase() {
-  const system = systemsStore.selectedSystem;
-  if (!system) return;
+  const system = systemsStore.selectedSystem
+  if (!system) return
+
   if (system.database) {
-    await system.database.resetDatabase();
-    await systemsStore.updateSystem(system);
+    await system.database.resetDatabase()
+    await systemsStore.updateSystem(system)
     toast.add({
-      title: t("refresh_database_success") || "Database refreshed",
-      color: "primary",
-      icon: "i-lucide-check-circle",
-    });
+      title: t('refresh_database_success') || 'Database refreshed',
+      color: 'primary',
+      icon: 'i-lucide-check-circle',
+    })
   }
 }
 
 async function pushFirstAvailablePage() {
-  const system = systemsStore.selectedSystem;
-  const systemId = systemsStore.selectedSystemId;
-  const availableTasks = system?.availableTasks() ?? [];
-  const availablePages = TaskHelper.getVisiblePages(availableTasks);
-  const firstPage = availablePages[0]?.route ?? "";
+  const system = systemsStore.selectedSystem
+  const systemId = systemsStore.selectedSystemId
+  const availableTasks = system?.availableTasks() ?? []
+  const availablePages = TaskHelper.getVisiblePages(availableTasks)
+  const firstPage = availablePages[0]?.route ?? ''
 
   if (!systemId || !firstPage) {
-    return;
+    return
   }
 
-  await navigateTo(`/systems/${systemId}${firstPage}`);
+  await navigateTo(`/systems/${systemId}${firstPage}`)
 }
 
 async function leaveSystem() {
-  await navigateTo("/systems");
-  // await SystemReset.refreshComponentsCore();
-  // await SystemReset.refreshDatabaseCore();
-  // await SystemReset.refreshTasksCore();
+  await navigateTo('/systems')
 }
 
 function changeVersion() {
-  globalSettings.toggleTeacherMode();
-  versionSwitchModalOpen.value = false;
+  globalSettings.toggleTeacherMode()
+  versionSwitchModalOpen.value = false
 }
 
 async function leaveAndSave() {
   try {
-    const system = systemsStore.selectedSystem;
-    if (!system) throw new Error("No system selected");
-    await systemsStore.updateSystem(system);
+    const system = systemsStore.selectedSystem
+    if (!system) throw new Error('No system selected')
+
+    await systemsStore.updateSystem(system)
+
     if (system.database?.sqlJsDatabase) {
       // database is persisted as part of updateSystem.
     }
+
     toast.add({
-      title: t("save_success") || "Results saved successfully",
-      color: "primary",
-      icon: "i-lucide-check-circle",
-    });
-    await navigateTo("/systems");
-    // await SystemReset.refreshComponentsCore();
-    // await SystemReset.refreshDatabaseCore();
-    // await SystemReset.refreshTasksCore();
-    exitPopoverOpen.value = false;
+      title: t('save_success') || 'Results saved successfully',
+      color: 'primary',
+      icon: 'i-lucide-check-circle',
+    })
+    await navigateTo('/systems')
+    exitPopoverOpen.value = false
   } catch (error) {
-    console.error("Save failed:", error);
+    console.error('Save failed:', error)
     toast.add({
-      title: t("save_error") || "Save failed",
-      color: "red",
-      icon: "i-lucide-alert-triangle",
-    });
+      title: t('save_error') || 'Save failed',
+      color: 'red',
+      icon: 'i-lucide-alert-triangle',
+    })
   }
 }
 
 function stayInSystem() {
-  exitPopoverOpen.value = false;
+  exitPopoverOpen.value = false
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
+defineExpose({
+})
 </script>
 
 <style scoped>
@@ -457,5 +506,4 @@ function stayInSystem() {
     display: none;
   }
 }
-
 </style>

@@ -31,70 +31,92 @@
   </Teleport>
 </template>
 
-<script setup lang="ts">
-import { computed, onBeforeUnmount, useAttrs, watch } from 'vue';
 
+<script setup lang="ts">
+/* 1. Imports */
+import { computed, onBeforeUnmount, useAttrs, watch } from 'vue'
+
+/* 2. Stores */
+
+/* 3. Context hooks */
+const attrs = useAttrs()
+
+/* 4. Constants (non-reactive) */
 defineOptions({
   inheritAttrs: false
-});
+})
 
+/* 5. Props */
 const props = withDefaults(defineProps<{
-  open?: boolean;
-  title?: string;
-  dismissible?: boolean;
+  open?: boolean
+  title?: string
+  dismissible?: boolean
 }>(), {
   open: false,
   title: '',
   dismissible: true
-});
+})
 
+/* 6. Emits */
 const emit = defineEmits<{
-  'update:open': [value: boolean];
-}>();
+  'update:open': [value: boolean]
+}>()
 
-const attrs = useAttrs();
+/* 7. Template refs */
 
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const isOpen = computed({
   get: () => props.open,
   set: (value: boolean) => emit('update:open', value)
-});
+})
 
-const triggerWrapperClass = computed(() => attrs.class);
+const triggerWrapperClass = computed(() => attrs.class)
 
+/* 10. Watchers */
+watch(isOpen, (open) => {
+  if (import.meta.client) {
+    document.body.style.overflow = open ? 'hidden' : ''
+  }
+}, { immediate: true })
+
+/* 11. Methods */
 function openModal() {
-  isOpen.value = true;
+  isOpen.value = true
 }
 
 function closeModal() {
-  isOpen.value = false;
+  isOpen.value = false
 }
 
 function handleBackdropClick() {
-  if (!props.dismissible) return;
-  closeModal();
+  if (!props.dismissible) return
+
+  closeModal()
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Escape' || !props.dismissible || !isOpen.value) return;
-  closeModal();
+  if (event.key !== 'Escape' || !props.dismissible || !isOpen.value) return
+
+  closeModal()
 }
 
-watch(isOpen, (open) => {
-  if (import.meta.client) {
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
-}, { immediate: true });
-
+/* 12. Lifecycle */
 if (import.meta.client) {
-  window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('keydown', handleKeydown)
 }
 
 onBeforeUnmount(() => {
   if (import.meta.client) {
-    window.removeEventListener('keydown', handleKeydown);
-    document.body.style.overflow = '';
+    window.removeEventListener('keydown', handleKeydown)
+    document.body.style.overflow = ''
   }
-});
+})
+
+/* 13. defineExpose */
+defineExpose({
+})
 </script>
 
 <style scoped>

@@ -761,6 +761,7 @@ icon="i-lucide-trash-2" color="red" variant="ghost" size="sm" class="shrink-0"
 
 <script setup lang="ts">
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
+/* 1. Imports */
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import EditComponentBody from '~/components/EditComponentBody.vue'
 import { Component as SystemComponent } from '~/model/Component'
@@ -781,6 +782,18 @@ import {
   type CodeEditPermissions
 } from '~/utils/codeEditPermissions'
 import { inconsistentVisiblePageLevels } from '~/utils/taskLevels'
+
+/* 2. Stores */
+const globalSettings = useGlobalSettingsStore()
+const systemsStore = useSystemsStore()
+
+/* 3. Context hooks */
+const runtimeConfig = useRuntimeConfig()
+const { t } = useI18n()
+const toast = useToast()
+
+/* 4. Constants (non-reactive) */
+const TASK_UPDATE_DEBOUNCE_MS = 1000
 
 type TaskDetailForm = {
   id: string
@@ -849,12 +862,36 @@ type ComponentContainsComponentOption = {
   value: string
 }
 
+/* 5. Props */
 const props = defineProps<{
   selectedTask: Task | null
 }>()
-const globalSettings = useGlobalSettingsStore()
-const systemsStore = useSystemsStore()
-const runtimeConfig = useRuntimeConfig()
+
+/* 6. Emits */
+defineModel<string>({ default: '' })
+
+const emit = defineEmits<{
+  (e: 'submit' | 'evaluate'): void
+  (e: 'update:selectedTask', value: Task): void
+}>()
+
+/* 7. Template refs */
+const editComponentBodyRef = ref<InstanceType<typeof EditComponentBody> | null>(null)
+
+/* 8. State (ref, reactive) */
+const systemLevelCount = ref(1)
+const editingComponentId = ref<string | null>(null)
+const isEditingComponentValid = ref(true)
+const editingComponent = ref<SystemComponent | null>(null)
+const showPasteComponentModal = ref(false)
+const pasteComponentJsonText = ref('')
+const pasteComponentError = ref('')
+const taskForm = reactive<TaskDetailForm>(createDefaultForm())
+let taskUpdateTimeout: ReturnType<typeof setTimeout> | null = null
+let queuedTaskUpdate: Task | null = null
+let isSyncingTaskForm = false
+
+/* 9. Computed */
 const databasePageRoute = computed(() => String(runtimeConfig.public.databasePageRoute))
 const codeEditEnvironment = computed(() =>
   codeEditEnvironmentFromRuntimeConfig(runtimeConfig.public as Record<string, unknown>)
@@ -900,7 +937,6 @@ const visiblePagesMismatchDescription = computed(() => {
     ? `${t('task_level_visible_pages_mismatch_description')} ${t('task_levels')}: ${levels}`
     : t('task_level_visible_pages_mismatch_description')
 })
-const systemLevelCount = ref(1)
 const levelOptions = computed(() =>
   Array.from({ length: normalizeLevelCount(systemLevelCount.value) }, (_, index) => {
     const level = index + 1
@@ -962,15 +998,29 @@ const variableConstraintOptions = computed<VariableConstraintOption[]>(() => {
 
   return options
 })
-const editingComponentId = ref<string | null>(null)
-const isEditingComponentValid = ref(true)
-const editComponentBodyRef = ref<InstanceType<typeof EditComponentBody> | null>(null)
-const editingComponent = ref<SystemComponent | null>(null)
 
-const showPasteComponentModal = ref(false)
-const pasteComponentJsonText = ref('')
-const pasteComponentError = ref('')
+const finishTypeOptions = computed(() => [
+  { label: t('task_finish_type_after_activity'), value: FinishType.IMMEDIATE },
+  { label: t('task_finish_type_after_db_label'), value: FinishType.AFTER_DATABASE_UPDATE },
+  { label: t('task_finish_type_select_options_label'), value: FinishType.SELECT_OPTIONS },
+  { label: t('task_finish_type_correct_label'), value: FinishType.TYPE_CORRECT },
+  // Variable constraints are still supported for existing tasks, but hidden from the finish type menu for now.
+  // { label: t('task_finish_type_variable_constraint_label'), value: FinishType.VARIABLE_CONSTRAINT }
+])
 
+const activityTypeOptions = computed(() => [
+  { label: t('task_activity_repair'), value: ActivityType.REPAIR },
+  { label: t('task_activity_select'), value: ActivityType.SELECT },
+  { label: t('task_activity_select_options'), value: ActivityType.SELECT_OPTIONS }
+])
+const isRepairActivity = computed(() => taskForm.activityType === ActivityType.REPAIR)
+const substituteAfterActivityHint = computed(() =>
+  isRepairActivity.value
+    ? `${t('task_substitute_after_activity_hint')} ${t('task_substitute_after_activity_repair_disabled_hint')}`
+    : t('task_substitute_after_activity_hint')
+)
+
+/* 11. Methods */
 function handlePasteComponent() {
   pasteComponentError.value = ''
   try {
@@ -1015,49 +1065,37 @@ function handlePasteComponent() {
   }
 }
 
-defineModel<string>({ default: '' })
+function createDefaultForm(): TaskDetailForm {
+  return {
+    id: '',
+    title: '',
+    description: '',
+    finishDescription: '',
+    finishType: FinishType.IMMEDIATE,
+    finishLabel: '',
+    level: 1,
+    feedback: '',
+    pointsReward: 0,
+    failPenalty: 1,
+    canExecuteQuery: false,
+    activityType: ActivityType.REPAIR,
+    activityLabel: '',
+    activityDescription: '',
+    activityCheckRepair: false,
+    activityRepairChecks: [],
+    activityOptions: [],
+    finishOptions: [],
+    finishCorrectAnswer: '',
+    finishCheckQuery: '',
+    finishVariableConstraints: [],
+    substituteAfterActivity: false,
+    databaseAllowed: true,
+    visiblePages: [],
+    codeEditPermissions: effectiveCodeEditPermissions(undefined, codeEditEnvironment.value)
+  }
+}
 
-const emit = defineEmits<{
-  (e: 'submit' | 'evaluate'): void
-  (e: 'update:selectedTask', value: Task): void
-}>()
-
-const createDefaultForm = (): TaskDetailForm => ({
-  id: '',
-  title: '',
-  description: '',
-  finishDescription: '',
-  finishType: FinishType.IMMEDIATE,
-  finishLabel: '',
-  level: 1,
-  feedback: '',
-  pointsReward: 0,
-  failPenalty: 1,
-  canExecuteQuery: false,
-  activityType: ActivityType.REPAIR,
-  activityLabel: '',
-  activityDescription: '',
-  activityCheckRepair: false,
-  activityRepairChecks: [],
-  activityOptions: [],
-  finishOptions: [],
-  finishCorrectAnswer: '',
-  finishCheckQuery: '',
-  finishVariableConstraints: [],
-  substituteAfterActivity: false,
-  databaseAllowed: true,
-  visiblePages: [],
-  codeEditPermissions: effectiveCodeEditPermissions(undefined, codeEditEnvironment.value)
-})
-
-const taskForm = reactive<TaskDetailForm>(createDefaultForm())
-const TASK_UPDATE_DEBOUNCE_MS = 1000
-let taskUpdateTimeout: ReturnType<typeof setTimeout> | null = null
-let queuedTaskUpdate: Task | null = null
-let isSyncingTaskForm = false
-
-const { t } = useI18n()
-
+/* 10. Watchers */
 watch(
   () => systemsStore.selectedSystem?.levelCount,
   (levelCount) => {
@@ -1066,27 +1104,6 @@ watch(
     taskForm.level = Math.min(normalizeTaskLevel(taskForm.level), normalizedLevelCount)
   },
   { immediate: true }
-)
-
-const finishTypeOptions = computed(() => [
-  { label: t('task_finish_type_after_activity'), value: FinishType.IMMEDIATE },
-  { label: t('task_finish_type_after_db_label'), value: FinishType.AFTER_DATABASE_UPDATE },
-  { label: t('task_finish_type_select_options_label'), value: FinishType.SELECT_OPTIONS },
-  { label: t('task_finish_type_correct_label'), value: FinishType.TYPE_CORRECT },
-  // Variable constraints are still supported for existing tasks, but hidden from the finish type menu for now.
-  // { label: t('task_finish_type_variable_constraint_label'), value: FinishType.VARIABLE_CONSTRAINT }
-])
-
-const activityTypeOptions = computed(() => [
-  { label: t('task_activity_repair'), value: ActivityType.REPAIR },
-  { label: t('task_activity_select'), value: ActivityType.SELECT },
-  { label: t('task_activity_select_options'), value: ActivityType.SELECT_OPTIONS }
-])
-const isRepairActivity = computed(() => taskForm.activityType === ActivityType.REPAIR)
-const substituteAfterActivityHint = computed(() =>
-  isRepairActivity.value
-    ? `${t('task_substitute_after_activity_hint')} ${t('task_substitute_after_activity_repair_disabled_hint')}`
-    : t('task_substitute_after_activity_hint')
 )
 
 watch(
@@ -1295,8 +1312,6 @@ watch(
   },
   { immediate: true }
 )
-
-const toast = useToast()
 
 function exportSelectedComponent(componentId: string) {
   const selectedTask = selectedTaskFromSettings.value
