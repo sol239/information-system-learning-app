@@ -5,19 +5,19 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      appMode: 'student',
-      htmlAvailable: 'true',
-      cssAvailable: 'true',
-      jsAvailable: 'true',
-      sqlAvailable: 'true',
-      jsClickAvailable: 'false',
-      sqlClickAvailable: 'true',
-      indexedDbName: 'InformationSystemsDb',
-      indexedDbVersion: 3,
-      indexedDbVersionKey: 'db_version',
-      databasePageRoute: '/database',
-      publicSystemsDirPath: '/systems',
-      preloadedSystems: ['skolni_tabor_palava'],
+      appMode: 'student', // Sets the application mode
+      htmlAvailable: 'true', // Enables HTML code editing.
+      cssAvailable: 'true', // Enables CSS code editing.
+      jsAvailable: 'true', // Enables JavaScript code editing.
+      sqlAvailable: 'true', // Enables SQL code editing.
+      jsClickAvailable: 'false', // Controls JavaScript code editing
+      sqlClickAvailable: 'true', // Controls SQL code editing.
+      indexedDbName: 'InformationSystemsDb', // Names the browser database.
+      indexedDbVersion: 3, // Sets the browser database schema version.
+      indexedDbVersionKey: 'db_version', // Stores the active database version key.
+      databasePageRoute: '/database', // Defines the database page route.
+      publicSystemsDirPath: '/systems', // Points to public system definitions.
+      preloadedSystems: ['skolni_tabor_palava'], // Lists systems loaded at startup.
     },
   },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt', '@nuxt/test-utils/module', '@nuxt/eslint'],
