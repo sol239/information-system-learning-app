@@ -31,15 +31,15 @@ icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
                         <UPopover mode="hover" arrow>
                             <UButton
 id="reset-database-button" icon="i-heroicons-circle-stack" color="orange" variant="soft"
-                                size="sm" :loading="isRefreshingDatabase" @click="handleRefreshDatabase">
-                                {{ t('refresh_database') }}
+                                size="sm" :loading="isResettingDatabase" @click="handleResetDatabase">
+                                {{ t('reset_database') }}
                             </UButton>
                             <template #content>
                                 <div class="app-popover-content">
                                     <UIcon name="i-heroicons-circle-stack" class="app-popover-icon" />
                                     <div class="app-popover-text">
-                                        <strong class="app-popover-title">{{ t('refresh_database_popover_title') }}</strong>
-                                        <span class="app-popover-description">{{ t('refresh_database_popover_description') }}</span>
+                                        <strong class="app-popover-title">{{ t('reset_database_popover_title') }}</strong>
+                                        <span class="app-popover-description">{{ t('reset_database_popover_description') }}</span>
                                     </div>
                                 </div>
                             </template>
@@ -177,7 +177,7 @@ const tableRowCount = ref(0)
 const isDbReady = ref(false)
 const isInitializing = ref(false)
 const isChecking = ref(false)
-const isRefreshingDatabase = ref(false)
+const isResettingDatabase = ref(false)
 const query = ref('')
 const isQueryValid = ref(false)
 const isExecuting = ref(false)
@@ -303,14 +303,14 @@ async function handleInitialize() {
     }
 }
 
-async function handleRefreshDatabase() {
+async function handleResetDatabase() {
     const system = systemsStore.selectedSystem
     if (!system?.database) {
-        toast.add({ title: t('refresh_database_error'), color: 'red', icon: 'i-lucide-alert-triangle' })
+        toast.add({ title: t('reset_database_error'), color: 'red', icon: 'i-lucide-alert-triangle' })
         return
     }
 
-    isRefreshingDatabase.value = true
+    isResettingDatabase.value = true
     try {
         await system.database.resetDatabase()
         await systemsStore.updateSystem(system)
@@ -322,12 +322,12 @@ async function handleRefreshDatabase() {
         queryPage.value = 1
         await loadDatabaseInfo()
 
-        toast.add({ title: t('refresh_database_success'), color: 'primary', icon: 'i-lucide-check-circle' })
+        toast.add({ title: t('reset_database_success'), color: 'primary', icon: 'i-lucide-check-circle' })
     } catch (error) {
-        console.error("Failed to refresh database", error)
-        toast.add({ title: t('refresh_database_error'), color: 'red', icon: 'i-lucide-alert-triangle' })
+        console.error("Failed to reset database", error)
+        toast.add({ title: t('reset_database_error'), color: 'red', icon: 'i-lucide-alert-triangle' })
     } finally {
-        isRefreshingDatabase.value = false
+        isResettingDatabase.value = false
     }
 }
 

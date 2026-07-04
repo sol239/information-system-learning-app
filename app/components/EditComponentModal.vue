@@ -1,10 +1,5 @@
 <template>
-  <UModal
-    v-model:open="isOpen"
-    fullscreen
-    :dismissible="true"
-    :ui="modalUi"
-  >
+  <UModal v-model:open="isOpen" fullscreen :dismissible="true" :ui="modalUi">
     <template #title>
       <div class="flex items-center gap-2">
         <span>{{ t('edit_component') }}</span>
@@ -15,29 +10,17 @@
     </template>
 
     <template #actions>
-      <UButton
-        class="ml-auto me-10"
-        color="sky"
-        :variant="isFormEdited ? 'solid' : 'subtle'"
-        :disabled="!isFormValid"
-        size="sm"
-        @click="handleSave"
-      >
+      <UButton id="save-code-changes-button" class="ml-auto me-10" color="sky"
+        :variant="isFormEdited ? 'solid' : 'subtle'" :disabled="!isFormValid" size="sm" @click="handleSave">
         {{ t('save_changes') }}
       </UButton>
     </template>
 
     <template #body>
-      <EditComponentBody
-        v-if="isOpen"
-        ref="bodyRef"
-        :component="props.component"
-        :variables="props.variables"
+      <EditComponentBody v-if="isOpen" ref="bodyRef" :component="props.component" :variables="props.variables"
         :code-edit-permissions="props.codeEditPermissions"
         :ignore-task-code-edit-permissions="props.ignoreTaskCodeEditPermissions"
-        @validation-change="isFormValid = $event"
-        @edit-change="isFormEdited = $event"
-      />
+        @validation-change="isFormValid = $event" @edit-change="isFormEdited = $event" />
     </template>
   </UModal>
 </template>

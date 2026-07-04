@@ -16,7 +16,11 @@
       <div v-if="isJustRepaired" class="repaired-overlay" />
 
       <div v-if="!globalSettings.teacherMode">
-        <span v-if="isEditEnabled" class="edit-icon" @click.stop="handleEdit">
+        <span
+          v-if="isEditEnabled"
+          :class="['edit-icon', `edit-component-button-${String(props.component.id)}`]"
+          @click.stop="handleEdit"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="14"

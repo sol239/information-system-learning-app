@@ -1,7 +1,7 @@
 <template>
-    <UModal :title="t('upload_system')">
+    <UModal :title="t('upload_task_set')">
         <UButton class="add-new-system-button" icon="i-lucide-plus-circle" size="sm" color="teacher">
-            {{ t('add_new_system') }}
+            {{ t('add_task_set') }}
         </UButton>
 
         <template #body>
@@ -24,7 +24,7 @@ v-if="systemAlreadyExists" variant="subtle" color="red" icon="i-lucide-alert-tri
             <UButton
 color="teacher" icon="i-lucide-chevron-right" :disabled="(!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists"
                 :loading="loading" size="sm" @click="onUpload(close)">
-                {{ t('add_system') }}
+                {{ t('add_task_set') }}
             </UButton>
             <UButton color="neutral" variant="outline" size="sm" @click="close">{{ t('cancel') }}</UButton>
         </template>

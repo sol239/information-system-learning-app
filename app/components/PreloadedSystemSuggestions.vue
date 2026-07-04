@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import type { InformationSystem } from '~/model/InformationSystem'
+import type { TaskSet } from '~/model/Task/TaskSet'
 
 /* 2. Stores */
 
@@ -42,14 +42,14 @@ const { t } = useI18n()
 
 /* 5. Props */
 defineProps<{
-  systemsToPreload: InformationSystem[]
+  systemsToPreload: TaskSet[]
   selectedSystemId: string | null
   loading: boolean
 }>()
 
 /* 6. Emits */
 const emit = defineEmits<{
-  select: [system: InformationSystem]
+  select: [system: TaskSet]
 }>()
 
 /* 7. Template refs */

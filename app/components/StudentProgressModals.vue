@@ -11,9 +11,6 @@
           <h2 class="text-highlighted font-semibold">
             {{ t('student_welcome_modal_title') }}
           </h2>
-          <div class="flex shrink-0 items-center gap-2">
-            <SelectSystemModal />
-          </div>
         </div>
       </template>
 

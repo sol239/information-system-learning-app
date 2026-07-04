@@ -104,6 +104,7 @@
 
         <div v-if="canEvaluateActivity" class="flex items-center gap-3 mt-2">
           <UButton
+            id="evaluate-activity-button"
             color="primary"
             variant="solid"
             icon="i-lucide-check-circle"
@@ -216,6 +217,7 @@
 
         <div v-if="canEvaluateFinish" class="flex items-center gap-3 mt-2">
           <UButton
+            id="evaluate-finish-button"
             color="primary"
             variant="solid"
             icon="i-lucide-check-circle"
@@ -332,6 +334,7 @@
 
         <div v-if="canEvaluateFinish" class="flex items-center gap-3 mt-2">
           <UButton
+            id="evaluate-finish-button"
             color="primary"
             variant="solid"
             icon="i-lucide-check-circle"

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <p class="mb-2 font-medium">{{ t('upload_from_zip') }}</p>
+    <p class="mb-2 font-medium">{{ t('upload_tasks_json') }}</p>
     <UFileUpload
       v-model="selectedFile"
-      accept=".zip"
-      :label="t('upload_system_zip')"
+      accept=".json,application/json"
+      :label="t('upload_task_set_json')"
       icon="i-lucide-upload"
       class="w-full"
     />

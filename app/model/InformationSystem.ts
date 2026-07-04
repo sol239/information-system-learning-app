@@ -1,4 +1,5 @@
 import { Task } from "./Task/Task";
+import { TaskSet } from "./Task/TaskSet";
 import { Component } from "./Component";
 import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 import { SqljsDatabaseFactory } from "~/utils/SqljsDatabaseFactory";
@@ -37,14 +38,14 @@ export class InformationSystem {
   public description: string;
 
   /**
-   * The tasks defined for the information system.
+   * The currently selected task set for this system.
    */
-  public tasks: Task[];
+  public taskSet: TaskSet;
 
   /**
-   * The default (original) tasks for this system. Used to reset student progress.
+   * The default task set for this system. Used to reset student progress.
    */
-  public defaultTasks: Task[];
+  public defaultTaskSet: TaskSet;
 
   /**
    * The pages defined for the information system (routing, metadata).
@@ -106,11 +107,6 @@ export class InformationSystem {
    */
   public currentLevel: number;
 
-  /**
-   * The number of task levels available in the system.
-   */
-  public levelCount: number;
-
   constructor({
     id,
     name,
@@ -118,6 +114,8 @@ export class InformationSystem {
     description,
     tasks = [],
     defaultTasks,
+    taskSet,
+    defaultTaskSet,
     pages = [],
     databaseAllowed = true,
     actualComponents = [],
@@ -132,7 +130,7 @@ export class InformationSystem {
     exploringSystem = false,
     currentLevel,
     currentRound,
-    levelCount = 1,
+    levelCount,
   }: {
     id: string;
     name: string;
@@ -140,6 +138,8 @@ export class InformationSystem {
     description: string;
     tasks?: Task[];
     defaultTasks?: Task[];
+    taskSet?: TaskSet;
+    defaultTaskSet?: TaskSet;
     pages?: Page[];
     databaseAllowed?: boolean;
     actualComponents?: Component[];
@@ -160,8 +160,18 @@ export class InformationSystem {
     this.name = name;
     this.language = language;
     this.description = description;
-    this.tasks = tasks;
-    this.defaultTasks = defaultTasks ?? JSON.parse(JSON.stringify(tasks)).map((t: any) => Task.fromJSON(t));
+    this.taskSet = taskSet ?? new TaskSet({
+      id: `${id}_tasks`,
+      name: `${name} tasks`,
+      description: "",
+      tasks,
+    });
+    this.defaultTaskSet = defaultTaskSet ?? new TaskSet({
+      id: this.taskSet.id,
+      name: this.taskSet.name,
+      description: this.taskSet.description,
+      tasks: defaultTasks ?? JSON.parse(JSON.stringify(this.taskSet.tasks)).map((t: any) => Task.fromJSON(t)),
+    });
     this.pages = pages;
     this.databaseAllowed = databaseAllowed;
     this.actualComponents = actualComponents;
@@ -178,11 +188,37 @@ export class InformationSystem {
     this.startedTasks = Boolean(startedTasks);
     this.exploringSystem = Boolean(exploringSystem);
     this.currentLevel = Number(currentLevel ?? currentRound ?? 1);
-    this.levelCount = levelCount;
+    this.taskSet.levelCount = Number(levelCount ?? this.taskSet.levelCount);
+    this.defaultTaskSet.levelCount = this.taskSet.levelCount;
   }
 
   public get mistakesCount(): number {
     return this.mistakes.length;
+  }
+
+  public get tasks(): Task[] {
+    return this.taskSet.tasks;
+  }
+
+  public set tasks(tasks: Task[]) {
+    this.taskSet.tasks = tasks;
+  }
+
+  public get defaultTasks(): Task[] {
+    return this.defaultTaskSet.tasks;
+  }
+
+  public set defaultTasks(tasks: Task[]) {
+    this.defaultTaskSet.tasks = tasks;
+  }
+
+  public get levelCount(): number {
+    return this.taskSet.levelCount;
+  }
+
+  public set levelCount(levelCount: number) {
+    this.taskSet.levelCount = Math.max(1, Number(levelCount || 1));
+    this.defaultTaskSet.levelCount = this.taskSet.levelCount;
   }
 
   public get mistakesPenalty(): number {
@@ -197,16 +233,26 @@ export class InformationSystem {
     return this.availableTasks().map(task => task.id);
   }
 
+  public replaceTaskSet(taskSet: TaskSet): void {
+    this.taskSet = taskSet;
+    this.defaultTaskSet = taskSet.clone();
+    this.score = new Score();
+    this.mistakes = [];
+    this.startedTasks = false;
+    this.exploringSystem = false;
+    this.currentLevel = 1;
+  }
+
   public databaseVisiblePage(name = "Database"): Page {
     return {
       name,
-      route: String(useRuntimeConfig().public.databasePageRoute),
+      route: InformationSystem.getDatabasePageRoute(),
       description: "Database",
     };
   }
 
   public visiblePages(databaseName = "Database"): Page[] {
-    const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
+    const databasePageRoute = InformationSystem.getDatabasePageRoute();
     const pages = (this.pages ?? []).filter(page => page.route !== databasePageRoute);
     if (!this.databaseAllowed) {
       return pages;
@@ -274,7 +320,9 @@ export class InformationSystem {
       }
 
       const configData = JSON.parse(configContent);
-      const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
+      const taskSetContent = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("tasks.json"))?.content;
+      const taskSetData = taskSetContent ? JSON.parse(taskSetContent) : null;
+      const databasePageRoute = InformationSystem.getDatabasePageRoute();
       const pages: Page[] = (configData.pages || []).map((page: Page) => ({
         ...page,
       })).filter((page: Page) => page.route !== databasePageRoute);
@@ -295,12 +343,22 @@ export class InformationSystem {
         database = DatabaseWrapper.fromInstance(dbResult.data);
       }
 
+      const tasks = ((taskSetData?.tasks ?? configData.tasks) || [])
+        .map((task: any) => resetTaskProgress(Task.fromJSON(task)));
+      const taskSet = new TaskSet({
+        id: String(taskSetData?.id ?? `${configData.id}_tasks`),
+        name: String(taskSetData?.name ?? `${configData.name} tasks`),
+        description: String(taskSetData?.description ?? ""),
+        levelCount: Number(taskSetData?.levelCount ?? configData.levelCount ?? InformationSystem.resolveLevelCount(tasks)),
+        tasks,
+      });
+
       const system = new InformationSystem({
         id: String(configData.id),
         name: configData.name,
         language: configData.language,
         description: configData.description,
-        tasks: (configData.tasks || []).map((task: any) => resetTaskProgress(Task.fromJSON(task))),
+        taskSet,
         pages,
         databaseAllowed,
         database,
@@ -309,7 +367,7 @@ export class InformationSystem {
         startedTasks: Boolean(configData.startedTasks),
         exploringSystem: Boolean(configData.exploringSystem),
         currentLevel: 1,
-        levelCount: Number(configData.levelCount ?? 1),
+        levelCount: taskSet.levelCount,
         createSchemaSql: sqlFile?.content,
         configData,
       });
@@ -330,6 +388,19 @@ export class InformationSystem {
 
   private static systemFilePath(file: SystemFile): string {
     return file.path ?? file.name;
+  }
+
+  private static resolveLevelCount(tasks: Task[]): number {
+    const highestLevel = Math.max(0, ...tasks.map(task => Number(task.level ?? 1)));
+    return Math.max(1, highestLevel);
+  }
+
+  private static getDatabasePageRoute(): string {
+    try {
+      return String(useRuntimeConfig().public.databasePageRoute ?? "/database");
+    } catch {
+      return "/database";
+    }
   }
 
 }

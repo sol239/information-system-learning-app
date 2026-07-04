@@ -28,6 +28,11 @@ export class SystemZipLoader {
     public jsonConfigFileContent: string | null = null;
 
     /**
+     * The content of the JSON task-set file.
+     */
+    public jsonTasksFileContent: string | null = null;
+
+    /**
      * Loads the ZIP file and initializes the internal file structure.
      * @param zipFile The ZIP file to load.
      */
@@ -45,7 +50,9 @@ export class SystemZipLoader {
             if (!zipEntry.dir) {
                 promises.push(
                     zipEntry.async('text').then(content => {
-                        if (relativePath.endsWith('config.json')) {
+                        if (relativePath.endsWith('tasks.json')) {
+                            this.jsonTasksFileContent = content;
+                        } else if (relativePath.endsWith('config.json')) {
                             this.jsonConfigFileContent = content;
                         } else if (relativePath.endsWith('.csv')) {
                             const filename = relativePath.split('/').pop()!.replace(/\.[^/.]+$/, '');

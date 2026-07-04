@@ -1,63 +1,30 @@
 <template>
   <div
-    class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4"
-  >
-    <UButton
-      v-if="globalSettings.teacherMode"
+    class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4">
+    <UButton v-if="globalSettings.teacherMode"
       :icon="globalSettings.teacherHighlightEnabled ? 'i-lucide-eye' : 'i-lucide-eye-off'"
       :color="globalSettings.teacherHighlightEnabled ? 'sky' : 'neutral'"
-      :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'"
-      size="sm"
-      @click="globalSettings.teacherHighlightEnabled = !globalSettings.teacherHighlightEnabled"
-    />
+      :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'" size="sm"
+      @click="globalSettings.teacherHighlightEnabled = !globalSettings.teacherHighlightEnabled" />
 
-    <UButton
-      v-if="globalSettings.teacherMode"
-      icon="i-lucide-pencil-ruler"
-      color="teacher"
-      variant="subtle"
-      size="sm"
-      @click="openTaskDesigner"
-    >
+    <UButton v-if="globalSettings.teacherMode" icon="i-lucide-pencil-ruler" color="teacher" variant="subtle" size="sm"
+      @click="openTaskDesigner">
       <span class="mobile-hidden">{{ t('designer') }}</span>
     </UButton>
 
     <UPopover>
       <template #content>
-        <div
-          class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2"
-        >
-          <UButton
-            block
-            variant="soft"
-            color="neutral"
-            icon="i-heroicons-command-line"
-            class="justify-start"
-            size="sm"
-            @click="printTableData"
-          >
+        <div class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2">
+          <UButton block variant="soft" color="neutral" icon="i-heroicons-command-line" class="justify-start" size="sm"
+            @click="printTableData">
             Print table names
           </UButton>
-          <UButton
-            block
-            variant="soft"
-            color="neutral"
-            icon="i-heroicons-question-mark-circle"
-            class="justify-start"
-            size="sm"
-            @click="isDbNull"
-          >
+          <UButton block variant="soft" color="neutral" icon="i-heroicons-question-mark-circle" class="justify-start"
+            size="sm" @click="isDbNull">
             Check DB Status
           </UButton>
-          <UButton
-            block
-            variant="soft"
-            color="neutral"
-            icon="i-heroicons-magnifying-glass-circle"
-            class="justify-start"
-            size="sm"
-            @click="openComponentExplorer"
-          >
+          <UButton block variant="soft" color="neutral" icon="i-heroicons-magnifying-glass-circle" class="justify-start"
+            size="sm" @click="openComponentExplorer">
             Component Explorer
           </UButton>
         </div>
@@ -65,122 +32,75 @@
     </UPopover>
 
     <div v-if="!globalSettings.teacherMode" class="flex items-center gap-2">
-      <UButton
-        :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
-        color="yellow"
-        :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'"
-        size="sm"
-        @click="highlightStore.toggleEditMode"
-      >
+      <UButton id="toggle-edits-button"
+        :icon="highlightStore.isEditModeActive ? 'i-lucide-pencil' : 'i-lucide-pencil-off'" color="yellow"
+        :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'" size="sm"
+        @click="highlightStore.toggleEditMode">
         <span class="mobile-hidden">
           {{ highlightStore.isEditModeActive ? t('disable_edit') : t('enable_edit') }}
         </span>
       </UButton>
     </div>
 
-    <UButton
-      :label="t('refresh_system')"
-      size="sm"
-      color="green"
-      variant="subtle"
-      icon="i-lucide-refresh-cw"
-      @click="openRefreshSystemModal"
-    />
+    <UButton v-if="!globalSettings.teacherMode" id="reset-system-button" :label="t('reset_system')" size="sm" color="green" variant="subtle" icon="i-lucide-refresh-cw"
+      @click="openResetSystemModal" />
 
-    <UButton
-      v-if="globalSettings.teacherMode"
-      icon="i-heroicons-arrow-right-on-rectangle"
-      color="red"
-      variant="subtle"
-      size="sm"
-      @click="leaveSystem"
-    >
-      <span class="mobile-hidden">{{ t('leave_system') }}</span>
-    </UButton>
-
-    <UButton
-      v-if="globalSettings.teacherModeEnv"
-      :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
-      color="teacher"
-      variant="subtle"
-      size="sm"
-      @click="versionSwitchModalOpen = true"
-    >
+    <UButton v-if="globalSettings.teacherModeEnv"
+      :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'" color="teacher"
+      variant="subtle" size="sm" @click="versionSwitchModalOpen = true">
       <span class="mobile-hidden">{{ t('change_version') }}</span>
     </UButton>
 
-    <UModal
-      v-model:open="refreshSystemModalOpen"
-      :title="t('refresh_system_modal_title')"
-      :ui="refreshSystemModalUi"
-    >
+    <UModal v-model:open="resetSystemModalOpen" :title="t('reset_system_modal_title')" :ui="resetSystemModalUi">
       <template #body>
         <div class="flex flex-col gap-4">
           <p class="text-sm text-gray-600">
-            {{ t('refresh_system_modal_description') }}
+            {{ t('reset_system_modal_description') }}
           </p>
 
           <div class="flex flex-col gap-3">
             <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t('refresh_database') }}
+                  {{ t('reset_database') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t('refresh_database_modal_option_description') }}
+                  {{ t('reset_database_modal_option_description') }}
                 </span>
               </div>
-              <UButton
-                block
-                color="orange"
-                variant="soft"
-                icon="i-heroicons-circle-stack"
-                size="sm"
-                @click="refreshDatabaseFromModal"
-              >
-                {{ t('refresh_database') }}
+              <UButton id="reset-database-button" block color="orange" variant="soft" icon="i-heroicons-circle-stack" size="sm"
+                @click="resetDatabaseFromModal">
+                {{ t('reset_database') }}
               </UButton>
             </div>
 
             <div class="rounded-lg border border-gray-200 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t('refresh_components') }}
+                  {{ t('reset_components') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t('refresh_components_modal_option_description') }}
+                  {{ t('reset_components_modal_option_description') }}
                 </span>
               </div>
-              <UButton
-                block
-                color="primary"
-                variant="soft"
-                icon="i-heroicons-squares-2x2"
-                size="sm"
-                @click="refreshComponentsFromModal"
-              >
-                {{ t('refresh_components') }}
+              <UButton id="reset-components-button" block color="primary" variant="soft" icon="i-heroicons-squares-2x2" size="sm"
+                @click="resetComponentsFromModal">
+                {{ t('reset_components') }}
               </UButton>
             </div>
 
             <div class="rounded-lg border border-green-200 bg-green-50/50 p-4">
               <div class="mb-3 flex flex-col gap-1">
                 <span class="text-sm font-medium text-gray-900">
-                  {{ t('refresh_all') }}
+                  {{ t('reset_all') }}
                 </span>
                 <span class="text-xs text-gray-500">
-                  {{ t('refresh_all_modal_option_description') }}
+                  {{ t('reset_all_modal_option_description') }}
                 </span>
               </div>
-              <UButton
-                block
-                color="green"
-                variant="solid"
-                icon="i-lucide-refresh-cw"
-                size="sm"
-                @click="refreshAllFromModal"
-              >
-                {{ t('refresh_all') }}
+              <UButton id="reset-all-button" block color="green" variant="solid" icon="i-lucide-refresh-cw" size="sm"
+                @click="resetAllFromModal">
+                {{ t('reset_all') }}
               </UButton>
             </div>
           </div>
@@ -188,23 +108,14 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            @click="refreshSystemModalOpen = false"
-          >
+          <UButton  color="neutral" variant="ghost" size="sm" @click="resetSystemModalOpen = false">
             {{ t('cancel') }}
           </UButton>
         </div>
       </template>
     </UModal>
 
-    <UModal
-      v-model:open="versionSwitchModalOpen"
-      :title="t('change_version')"
-      :ui="versionSwitchModalUi"
-    >
+    <UModal v-model:open="versionSwitchModalOpen" :title="t('change_version')" :ui="versionSwitchModalUi">
       <template #body>
         <p class="text-sm text-gray-600">
           {{ t('change_version_modal_description') }}
@@ -212,20 +123,12 @@
       </template>
       <template #footer>
         <div class="flex w-full justify-end gap-2">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            @click="versionSwitchModalOpen = false"
-          >
+          <UButton color="neutral" variant="ghost" size="sm" @click="versionSwitchModalOpen = false">
             {{ t('cancel') }}
           </UButton>
-          <UButton
-            color="teacher"
-            :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'"
-            size="sm"
-            @click="changeVersion"
-          >
+          <UButton color="teacher"
+            :icon="globalSettings.teacherMode ? 'i-lucide-graduation-cap' : 'i-lucide-pencil-ruler'" size="sm"
+            @click="changeVersion">
             {{
               globalSettings.teacherMode
                 ? t('switch_to_student_version')
@@ -243,7 +146,7 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 /* 1. Imports */
 import { ref } from 'vue'
-import { SystemLoaderPublic } from '~/core/systems/SystemLoaderPublic'
+import { DefaultSystemLoader } from '~/core/systems/DefaultSystemLoader'
 import { TaskHelper } from '~/core/systems/TaskHelper'
 import { Component } from '~/model/Component'
 import { IndexedDbHandler } from '~/utils/IndexedDbHandler'
@@ -260,7 +163,7 @@ const toast = useToast()
 const route = useRoute()
 
 /* 4. Constants (non-reactive) */
-const refreshSystemModalUi = {
+const resetSystemModalUi = {
   content: 'w-[520px]'
 }
 const versionSwitchModalUi = {
@@ -277,7 +180,7 @@ const versionSwitchModalUi = {
 const resetPopoverOpen = ref(false)
 const exitPopoverOpen = ref(false)
 const studentDrawerOpen = ref(false)
-const refreshSystemModalOpen = ref(false)
+const resetSystemModalOpen = ref(false)
 const versionSwitchModalOpen = ref(false)
 
 /* 9. Computed */
@@ -285,7 +188,7 @@ const versionSwitchModalOpen = ref(false)
 /* 10. Watchers */
 
 /* 11. Methods */
-async function printTableData() {}
+async function printTableData() { }
 
 async function isDbNull() {
   const system = systemsStore.selectedSystem
@@ -309,11 +212,11 @@ function openTaskDesigner() {
   })
 }
 
-function openRefreshSystemModal() {
-  refreshSystemModalOpen.value = true
+function openResetSystemModal() {
+  resetSystemModalOpen.value = true
 }
 
-async function refreshComponents() {
+async function resetComponents() {
   const system = systemsStore.selectedSystem
   if (!system) return
 
@@ -345,27 +248,29 @@ async function refreshComponents() {
 
   await systemsStore.updateSystem(system)
   toast.add({
-    title: t('component_refresh_success') || 'Components refreshed',
+    title: t('component_reset_success') || 'Components reset',
     color: 'primary',
     icon: 'i-lucide-check-circle',
   })
 }
 
-async function refreshSystem() {
+async function resetSystem(options: { silent?: boolean } = {}) {
   const currentSystemId = systemsStore.selectedSystemId
   if (!currentSystemId) {
     return
   }
 
   try {
-    const loadResult = await new SystemLoaderPublic().loadSystem(currentSystemId)
+    const loadResult = await new DefaultSystemLoader().loadSystem(currentSystemId)
 
     if (loadResult.result !== OperationResultType.SUCCESS || !loadResult.data) {
-      toast.add({
-        title: t('refresh_system_error'),
-        color: 'red',
-        icon: 'i-lucide-alert-triangle',
-      })
+      if (!options.silent) {
+        toast.add({
+          title: t('reset_system_error'),
+          color: 'red',
+          icon: 'i-lucide-alert-triangle',
+        })
+      }
       resetPopoverOpen.value = false
       return
     }
@@ -377,53 +282,59 @@ async function refreshSystem() {
 
     const result = await systemsStore.updateSystem(freshSystem)
     if (result.result !== OperationResultType.SUCCESS) {
-      toast.add({
-        title: t('refresh_system_error'),
-        color: 'red',
-        icon: 'i-lucide-alert-triangle',
-      })
+      if (!options.silent) {
+        toast.add({
+          title: t('reset_system_error'),
+          color: 'red',
+          icon: 'i-lucide-alert-triangle',
+        })
+      }
       resetPopoverOpen.value = false
       return
     }
 
     globalSettings.studentWelcomeModalOpen = true
     systemsStore.selectedSystemId = String(freshSystem.id)
-    toast.add({
-      title: t('refresh_system_success'),
-      color: 'primary',
-      icon: 'i-lucide-check-circle',
-    })
+    if (!options.silent) {
+      toast.add({
+        title: t('reset_system_success'),
+        color: 'primary',
+        icon: 'i-lucide-check-circle',
+      })
+    }
   } catch (error) {
-    console.error('System refresh failed:', error)
-    toast.add({
-      title: t('refresh_system_error'),
-      color: 'red',
-      icon: 'i-lucide-alert-triangle',
-    })
+    console.error('System reset failed:', error)
+    if (!options.silent) {
+      toast.add({
+        title: t('reset_system_error'),
+        color: 'red',
+        icon: 'i-lucide-alert-triangle',
+      })
+    }
   } finally {
     resetPopoverOpen.value = false
   }
 }
 
-async function refreshDatabaseFromModal() {
-  refreshSystemModalOpen.value = false
-  await refreshDatabase()
+async function resetDatabaseFromModal() {
+  resetSystemModalOpen.value = false
+  await resetDatabase()
   await pushFirstAvailablePage()
 }
 
-async function refreshComponentsFromModal() {
-  refreshSystemModalOpen.value = false
-  await refreshComponents()
+async function resetComponentsFromModal() {
+  resetSystemModalOpen.value = false
+  await resetComponents()
   await pushFirstAvailablePage()
 }
 
-async function refreshAllFromModal() {
-  refreshSystemModalOpen.value = false
-  await refreshSystem()
+async function resetAllFromModal() {
+  resetSystemModalOpen.value = false
+  await resetSystem()
   await pushFirstAvailablePage()
 }
 
-async function refreshDatabase() {
+async function resetDatabase() {
   const system = systemsStore.selectedSystem
   if (!system) return
 
@@ -431,7 +342,7 @@ async function refreshDatabase() {
     await system.database.resetDatabase()
     await systemsStore.updateSystem(system)
     toast.add({
-      title: t('refresh_database_success') || 'Database refreshed',
+      title: t('reset_database_success') || 'Database reset',
       color: 'primary',
       icon: 'i-lucide-check-circle',
     })
@@ -452,13 +363,11 @@ async function pushFirstAvailablePage() {
   await navigateTo(`/systems/${systemId}${firstPage}`)
 }
 
-async function leaveSystem() {
-  await navigateTo('/systems')
-}
-
-function changeVersion() {
+async function changeVersion() {
   globalSettings.toggleTeacherMode()
   versionSwitchModalOpen.value = false
+  await resetSystem({ silent: true })
+  await pushFirstAvailablePage()
 }
 
 async function leaveAndSave() {

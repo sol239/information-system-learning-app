@@ -11,19 +11,19 @@
         </div>
 
         <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <UModal v-model:open="downloadModalOpen" :title="t('download_system')">
+          <UModal v-model:open="downloadModalOpen" :title="t('download_task_set')">
             <UButton
               size="sm"
               icon="i-lucide-download"
               color="teacher"
               variant="solid"
             >
-              {{ t("download_system") }}
+              {{ t("download_task_set") }}
             </UButton>
 
             <template #body>
               <p class="text-sm text-gray-600">
-                {{ t("download_system_description") }}
+                {{ t("download_task_set_description") }}
               </p>
               <p v-if="downloadError" class="mt-3 text-sm text-red-500">
                 {{ downloadError }}
@@ -41,7 +41,7 @@
                   color="teacher"
                   variant="solid"
                   :loading="downloadLoading"
-                  @click="downloadSystem"
+                  @click="downloadTaskSet"
                 >
                   {{ t("download") }}
                 </UButton>
@@ -73,7 +73,7 @@
 import { computed, ref } from 'vue'
 import TasksDesignerPanel from '~/components/TasksDesignerPanel.vue'
 import { useSystemsStore } from '~/stores/systemsStore'
-import { SystemZipExporter } from '~/utils/SystemZipExporter'
+import { resetTaskProgressJson } from '~/utils/taskProgress'
 
 defineOptions({
   name: 'SystemDesignerPage',
@@ -127,7 +127,7 @@ function goBackToSystem() {
   router.push(backToRoute.value)
 }
 
-async function downloadSystem() {
+async function downloadTaskSet() {
   if (!systemsStore.selectedSystem) {
     downloadError.value = t('download_system_missing')
     return
@@ -137,11 +137,11 @@ async function downloadSystem() {
   downloadError.value = ''
 
   try {
-    const blob = await SystemZipExporter.export(systemsStore.selectedSystem)
+    const blob = new Blob([JSON.stringify(createTaskSetExport(), null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `${createDownloadName(systemsStore.selectedSystem.name)}.zip`
+    link.download = 'tasks.json'
     document.body.appendChild(link)
     link.click()
     link.remove()
@@ -154,13 +154,15 @@ async function downloadSystem() {
   }
 }
 
-function createDownloadName(name: string) {
-  return name
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || `system-${systemId}`
+function createTaskSetExport() {
+  const system = systemsStore.selectedSystem!
+  return {
+    id: system.taskSet.id,
+    name: system.taskSet.name,
+    description: system.taskSet.description,
+    levelCount: system.taskSet.levelCount,
+    tasks: JSON.parse(JSON.stringify(system.tasks ?? [])).map(resetTaskProgressJson),
+  }
 }
 
 /* 12. Lifecycle */

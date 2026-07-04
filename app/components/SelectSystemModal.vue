@@ -1,7 +1,7 @@
 <template>
-  <UModal :title="t('student_welcome_change_system_button')">
+  <UModal :title="t('change_task_set')">
     <UButton color="neutral" variant="soft" size="xs">
-      {{ t('student_welcome_change_system_button') }}
+      {{ t('change_task_set') }}
     </UButton>
 
     <template #body>
@@ -34,7 +34,7 @@
         size="sm"
         @click="onUpload(close)"
       >
-        {{ t('student_welcome_change_system_button') }}
+        {{ t('change_task_set') }}
       </UButton>
       <UButton color="neutral" variant="outline" size="sm" @click="close">
         {{ t('cancel') }}

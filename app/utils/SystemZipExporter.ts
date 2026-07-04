@@ -19,6 +19,7 @@ export class SystemZipExporter {
     const config = SystemZipExporter.createConfig(system)
 
     zip.file('config.json', JSON.stringify(config, null, 2))
+    zip.file('tasks.json', JSON.stringify(SystemZipExporter.createTaskSet(system), null, 2))
 
     const createSchemaSql = SystemZipExporter.createSchemaSql(system)
     if (createSchemaSql.trim()) {
@@ -47,6 +48,7 @@ export class SystemZipExporter {
     delete baseConfig.__manifestEntry
     delete baseConfig.__preloadedEntry
     delete baseConfig.score
+    delete baseConfig.tasks
 
     return {
       ...baseConfig,
@@ -54,15 +56,17 @@ export class SystemZipExporter {
       name: system.name,
       language: system.language,
       description: system.description,
-      startedTasks: false,
-      exploringSystem: false,
-      databaseAllowed: system.databaseAllowed,
       pages: (system.pages ?? []).map(SystemZipExporter.serializePage),
+    }
+  }
+
+  private static createTaskSet(system: InformationSystem) {
+    return {
+      id: system.taskSet?.id ?? `${system.id}_tasks`,
+      name: system.taskSet?.name ?? `${system.name} tasks`,
+      description: system.taskSet?.description ?? '',
+      levelCount: system.taskSet?.levelCount ?? system.levelCount,
       tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(resetTaskProgressJson),
-      mistakes: [],
-      mistakesCount: 0,
-      currentLevel: 1,
-      levelCount: system.levelCount,
     }
   }
 

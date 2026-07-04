@@ -4,7 +4,7 @@ import type { IStorage } from "./storage/IStorage";
 import { IndexedDBStorage } from "./storage/IndexedDB/IndexedDBStorage";
 import type { InformationSystem } from "~/model/InformationSystem";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
-import { SystemLoaderPublic } from "./systems/SystemLoaderPublic";
+import { DefaultSystemLoader } from "./systems/DefaultSystemLoader";
 
 export class AppLoader {
     // pokud DB VERSION Jje vyssi nez ta ulozena, tak se smaze indexed db a provede se fresh load
@@ -38,7 +38,7 @@ export class AppLoader {
 
     public async loadApp() {
         const storage: IStorage = new IndexedDBStorage();
-        const systemLoader = new SystemLoaderPublic();
+        const systemLoader = new DefaultSystemLoader();
 
         const systemsToPreloadIds = SystemHelper.getSystemsToPreloadIds();
         console.log("AppLoader: Systems to preload IDs:", systemsToPreloadIds);

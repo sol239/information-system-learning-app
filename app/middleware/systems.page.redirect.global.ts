@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
 
     if (to.path === '/systems') {
-        if (defaultId && defaultSystem && !globalSettings.teacherMode) {
+        if (defaultId && defaultSystem) {
             globalSettings.studentWelcomeModalOpen = true;
             
             const availableTasks = defaultSystem.availableTasks() ?? [];
@@ -20,11 +20,6 @@ export default defineNuxtRouteMiddleware((to) => {
             const firstPage = availablePages[0]?.route ?? '';
 
             return navigateTo(`/systems/${defaultId}${firstPage}`, { replace: true });
-        } 
-        else if (globalSettings.teacherMode) {
-            return navigateTo(`/systems`, { replace: true })
-        } else {
-            return navigateTo(`/systems`, { replace: true })
         }
     }
 

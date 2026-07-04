@@ -62,7 +62,7 @@ export class Task {
     const visiblePages = Array.isArray(data?.visiblePages ?? data?.visible_pages)
       ? (data.visiblePages ?? data.visible_pages)
       : undefined;
-    const databasePageRoute = String(useRuntimeConfig().public.databasePageRoute);
+    const databasePageRoute = Task.getDatabasePageRoute();
     const databaseAllowed = typeof data?.databaseAllowed === "boolean"
       ? data.databaseAllowed
       : typeof data?.database_allowed === "boolean"
@@ -303,6 +303,14 @@ export class Task {
     }
 
     return TaskStatus.NOT_STARTED;
+  }
+
+  private static getDatabasePageRoute(): string {
+    try {
+      return String(useRuntimeConfig().public.databasePageRoute ?? "/database");
+    } catch {
+      return "__database_page_route_unavailable__";
+    }
   }
 
 }

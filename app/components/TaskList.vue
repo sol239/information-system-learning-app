@@ -62,6 +62,13 @@
     </div>
 
     <div v-else class="flex flex-col p-4 gap-2">
+      <div class="flex items-center justify-between gap-2">
+        <h2 class="text-sm font-semibold text-gray-900">
+          {{ t('tasks') }}
+        </h2>
+        <SelectSystemModal v-if="globalSettings.teacherMode" />
+      </div>
+
       <button
         v-if="globalSettings.teacherMode"
         type="button"
@@ -329,7 +336,7 @@ async function deleteTask(taskId: string) {
     globalSettings.selectedTaskId = null
   }
 
-  system.defaultTasks = system.tasks.map(task => Task.fromJSON(JSON.parse(JSON.stringify(task))))
+  system.defaultTaskSet = system.taskSet.clone()
   await systemsStore.updateSystem(system)
 }
 

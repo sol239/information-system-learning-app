@@ -446,7 +446,7 @@ const deleteTask = async (taskId: string) => {
 }
 
 function refreshDefaultTasks(system: InformationSystem) {
-  system.defaultTasks = system.tasks.map(task => Task.fromJSON(JSON.parse(JSON.stringify(task))))
+  system.defaultTaskSet = system.taskSet.clone()
 }
 
 function queueSystemPersist(system: InformationSystem) {

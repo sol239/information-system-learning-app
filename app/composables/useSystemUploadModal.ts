@@ -1,23 +1,20 @@
 import { onMounted, ref, watch } from 'vue'
 import { SystemHelper } from '~/core/systems/SystemHelper'
-import { SystemLoaderPublic } from '~/core/systems/SystemLoaderPublic'
-import { InformationSystem } from '~/model/InformationSystem'
-import type { SystemFile } from '~/model/types/SystemFile'
-import { OperationResultType } from '~/utils/Operation/OperationResultType'
-import type { Operation } from '~/utils/Operation/Operation'
-import { SystemZipLoader } from '~/utils/SystemZipLoader'
+import { DefaultSystemLoader } from '~/core/systems/DefaultSystemLoader'
+import { TaskSet } from '~/model/Task/TaskSet'
+import { resetTaskProgress } from '~/utils/taskProgress'
 
 export function useSystemUploadModal() {
     const systemsStore = useSystemsStore()
 
     const selectedFile = ref<File | null>(null)
-    const loader = ref<SystemZipLoader | null>(null)
+    const uploadedTaskSet = ref<TaskSet | null>(null)
     const loading = ref(false)
     const loadingPreloaded = ref(false)
     const systemPreview = ref<{ name: string; description: string } | null>(null)
     const systemAlreadyExists = ref(false)
-    const systemsToPreload = ref<InformationSystem[]>([])
-    const selectedPreloadedSystem = ref<InformationSystem | null>(null)
+    const systemsToPreload = ref<TaskSet[]>([])
+    const selectedPreloadedSystem = ref<TaskSet | null>(null)
 
     onMounted(async () => {
         await loadPreloadedSystemsList()
@@ -29,7 +26,7 @@ export function useSystemUploadModal() {
         }
 
         if (!file) {
-            loader.value = null
+            uploadedTaskSet.value = null
             systemPreview.value = null
             if (selectedPreloadedSystem.value) {
                 return
@@ -38,31 +35,25 @@ export function useSystemUploadModal() {
             return
         }
 
-        const result: Operation<SystemZipLoader | null> = await SystemZipLoader.create(file)
-        if (result.result === OperationResultType.SUCCESS && result.data) {
-            loader.value = result.data
-            try {
-                const config = JSON.parse(result.data.jsonConfigFileContent ?? '{}')
-                systemPreview.value = { name: config.name ?? '', description: config.description ?? '' }
-                systemAlreadyExists.value = systemsStore.systems.some(s => String(s.id) === String(config.id))
-            } catch {
-                systemPreview.value = null
-                systemAlreadyExists.value = false
-            }
-        } else {
-            console.error(result.message)
-            loader.value = null
+        try {
+            const taskSet = TaskSet.fromJSON(JSON.parse(await file.text()), 'uploaded_tasks')
+            uploadedTaskSet.value = taskSet
+            systemPreview.value = { name: taskSet.name, description: taskSet.description }
+            systemAlreadyExists.value = false
+        } catch (error) {
+            console.error('Failed to load tasks.json:', error)
+            uploadedTaskSet.value = null
             systemPreview.value = null
             systemAlreadyExists.value = false
         }
     })
 
-    function selectPreloadedSystem(sys: InformationSystem) {
+    function selectPreloadedSystem(sys: TaskSet) {
         selectedPreloadedSystem.value = sys
         selectedFile.value = null
-        loader.value = null
+        uploadedTaskSet.value = null
         systemPreview.value = null
-        systemAlreadyExists.value = systemsStore.systems.some(s => String(s.id) === String(sys.id))
+        systemAlreadyExists.value = false
     }
 
     async function loadPreloadedSystemsList() {
@@ -70,20 +61,7 @@ export function useSystemUploadModal() {
         systemsToPreload.value = []
 
         try {
-            const systems: InformationSystem[] = []
-            const systemLoader = new SystemLoaderPublic()
-
-            for (const systemId of SystemHelper.getSystemsToPreloadIds()) {
-                const loadResult = await systemLoader.loadSystem(systemId)
-
-                if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
-                    systems.push(loadResult.data)
-                } else {
-                    console.error(loadResult.message)
-                }
-            }
-
-            systemsToPreload.value = systems
+            systemsToPreload.value = await new DefaultSystemLoader().loadTaskSets(SystemHelper.getSystemsToPreloadIds())
         } catch (error) {
             console.error('Failed to load preloaded systems:', error)
         } finally {
@@ -91,76 +69,43 @@ export function useSystemUploadModal() {
         }
     }
 
-    function resolveCollision(sys: InformationSystem) {
-        let newId = sys.id
-        let newName = sys.name
-        let counter = 1
-
-        while (systemsStore.systems.some(s => s.id === newId || s.name === newName)) {
-            newId = `${sys.id}_${counter}`
-            newName = `${sys.name} (${counter})`
-            counter++
-        }
-
-        return { newId, newName }
-    }
-
     async function onUpload(close: () => void) {
         loading.value = true
         try {
             if (selectedPreloadedSystem.value) {
-                const sysToClone = selectedPreloadedSystem.value
-                const systemFiles: SystemFile[] = [
-                    { name: 'config.json', content: JSON.stringify(sysToClone.configData ?? {}) },
-                ]
-
-                if (sysToClone.createSchemaSql) {
-                    systemFiles.push({ name: 'create_schema.sql', content: sysToClone.createSchemaSql })
-                }
-
-                const loadResult = await InformationSystem.loadSystem(systemFiles)
-                if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
-                    const newSys = loadResult.data
-                    const resolved = resolveCollision(newSys)
-                    newSys.id = resolved.newId
-                    newSys.name = resolved.newName
-
-                    await systemsStore.addSystem(newSys)
-                } else {
-                    console.error(loadResult.message)
-                }
-
+                await replaceSelectedSystemTaskSet(selectedPreloadedSystem.value)
                 selectedPreloadedSystem.value = null
                 close()
                 return
             }
 
-            if (!selectedFile.value || !loader.value) return
+            if (!selectedFile.value || !uploadedTaskSet.value) return
 
-            const systemFiles: SystemFile[] = [
-                { name: 'config.json', content: loader.value.jsonConfigFileContent ?? '' },
-                ...entriesToSystemFiles(Object.entries(loader.value.csvFilesContent)),
-                ...entriesToSystemFiles(Object.entries(loader.value.sqlFilesContent)),
-            ]
-            const loadResult = await InformationSystem.loadSystem(systemFiles)
-            if (loadResult.result === OperationResultType.SUCCESS && loadResult.data) {
-                await systemsStore.addSystem(loadResult.data)
-            } else {
-                console.error(loadResult.message)
-            }
+            await replaceSelectedSystemTaskSet(uploadedTaskSet.value)
             selectedFile.value = null
+            uploadedTaskSet.value = null
             close()
         } finally {
             loading.value = false
         }
     }
 
-    function entriesToSystemFiles(files: Array<[string, string]>): SystemFile[] {
-        return files.map(([path, content]) => ({
-            name: path.split('/').pop() ?? path,
-            path,
-            content,
-        }))
+    async function replaceSelectedSystemTaskSet(taskSet: TaskSet) {
+        const system = systemsStore.selectedSystem ?? systemsStore.getPrimarySystem()
+        if (!system) {
+            console.error('No selected system found for task set upload.')
+            return
+        }
+
+        const resetTaskSet = new TaskSet({
+            id: taskSet.id,
+            name: taskSet.name,
+            description: taskSet.description,
+            levelCount: taskSet.levelCount,
+            tasks: taskSet.tasks.map(task => resetTaskProgress(task)),
+        })
+        system.replaceTaskSet(resetTaskSet)
+        await systemsStore.updateSystem(system)
     }
 
     return {

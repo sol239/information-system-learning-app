@@ -1,5 +1,11 @@
 const appUrl = 'http://localhost:3000/information-system-learning-app/systems/skolni_tabor_palava/nastenka';
 
+function setTeacherMode(value: boolean) {
+  return cy.window().should((win) => {
+    expect(win.__informationSystemTestApi).to.not.equal(undefined);
+  }).then((win) => win.__informationSystemTestApi!.setTeacherMode(value));
+}
+
 function clickButton(name: string, index = 0) {
   cy.get('button').filter(`:contains("${name}")`).eq(index).click()
 }
@@ -69,6 +75,8 @@ it('task', function () {
     })
   */
 
+  cy.get('#task-1 div.items-start', { timeout: 30000 }).should('be.visible');
+  setTeacherMode(false);
   cy.get('#task-1 div.items-start', { timeout: 30000 }).click();
   // The task title '1. Nejstarší účastník' is visible.
   cy.get('h2.font-bold')
@@ -106,7 +114,8 @@ it('task', function () {
       expect($el).to.not.have.class('border-gray-400')
     })
 
-  cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
   // The maximum age of a participant is now 14.
   cy.get('#statistika-max-vek-ucastnika-number')
     .should('contain.text', '14')
@@ -134,13 +143,14 @@ it('task', function () {
   cy.get('span.gap-1')
     .should('contain.text', 'Správná odpověď')
 
-  cy.get('input.ring').click();
+  cy.get('input.ring').first().click();
   cy.get('input.ring').type('14');
   // The input field now displays '14'.
   cy.get('input.ring')
     .should('have.value', '14')
 
-  cy.get('div.border.w-full button.bg-primary').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
   // The selected answer is now styled as correct.
   cy.get('div.border.w-full div.justify-between span.flex')
     .should(($el) => {
@@ -170,7 +180,7 @@ it('task', function () {
   cy.get('input.ring')
     .should('have.attr', 'disabled')
 
-  cy.get('div.flex.p-4 button:nth-child(3)').click();
+  cy.contains('button', 'Zpět na seznam').click();
   cy.get('#task-2').click();
   // The task title is now '2. Nalezení chybné komponenty'.
   cy.get('h2.font-bold')
@@ -218,7 +228,8 @@ it('task', function () {
   cy.get('div:nth-child(2) > div.flex-wrap')
     .should('contain.text', 'Statistika vedoucích')
 
-  cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
   // An 'Incorrect Answer' badge is displayed.
   cy.get('div.gap-3 span.flex')
     .should('contain.text', 'Nesprávná odpověď')
@@ -238,7 +249,8 @@ it('task', function () {
   cy.get('div[data-component-id="statistika-vedoucich"]')
     .should('not.have.class', 'is-highlighted')
 
-  cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
   // The 'statistika-jidel' component is no longer highlighted.
   cy.get('div[data-component-id="statistika-jidel"]')
     .should(($el) => {
@@ -261,15 +273,16 @@ it('task', function () {
   cy.get('div.border.w-full div.gap-3')
     .should('contain.text', 'Vyhodnotit')
 
-  cy.get('input.ring').click();
-  cy.get('input.ring').click();
-  cy.get('input.ring').click();
+  cy.get('input.ring').first().click();
+  cy.get('input.ring').first().click();
+  cy.get('input.ring').first().click();
   cy.get('input.ring').type('30');
   // The input field now displays '30'.
   cy.get('input.ring')
     .should('have.value', '30')
 
-  cy.get('div.border.w-full button.bg-primary').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
   // The answer badge is now styled as correct.
   cy.get('div.border.w-full div.justify-between span.flex')
     .should(($el) => {
@@ -299,7 +312,7 @@ it('task', function () {
   cy.get('input.ring')
     .should('have.attr', 'disabled')
 
-  cy.get('div.flex.p-4 button:nth-child(3)').click();
+  cy.contains('button', 'Zpět na seznam').click();
   // The 'Účastníci' navigation item is now an enabled link.
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"]')
     .should('be.visible')
@@ -326,29 +339,34 @@ it('task', function () {
 
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"] span.font-medium').click();
   cy.get('div:nth-child(2) > span.text-gray-800').click();
-  cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
-  cy.get('div:nth-child(6) button.ring span.truncate').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
+  cy.get('div:nth-child(6) button.ring span.truncate').first().click();
   cy.get('#edit-vstup_alergeny_ucastnika-27 label:nth-child(11)').click();
   cy.get('#edit-vstup_alergeny_ucastnika-27 input[value="11"]').check();
   cy.get('#system-edit_btn_ulozit_ucastnika').click();
-  cy.get('div.border.w-full button.bg-primary').click();
-  cy.get('div.flex.p-4 > button:nth-child(1)').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
+  cy.contains('button', 'Zpět na seznam').click();
   cy.get('#task-4 div.items-start').click();
   cy.get('div:nth-child(2) > span.text-gray-800').click();
-  cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
-  cy.get('div.flex.p-4 > button:nth-child(1)').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
+  cy.contains('button', 'Zpět na seznam').click();
   cy.get('#task-5 span.font-medium').click();
   cy.get('div:nth-child(2) > span.text-gray-800').click();
   cy.get('div:nth-child(3) > span.text-gray-800').click();
-  cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
-  cy.get('input[placeholder="Vaše odpověď..."]').click();
-  cy.get('input[placeholder="Vaše odpověď..."]').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
+  cy.get('input[placeholder="Vaše odpověď..."]').first().click();
+  cy.get('input[placeholder="Vaše odpověď..."]').first().click();
   cy.get('input[placeholder="Vaše odpověď..."]').type('10');
-  cy.get('div.border.w-full button.bg-primary').click();
-  cy.get('button:nth-child(3)').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
+  cy.contains('button', 'Zpět na seznam').click();
   cy.get('#task-6 div.items-start').click();
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/turnusy"] span.font-medium').click();
-  cy.get('span.mobile-hidden').click();
+  cy.get('span.mobile-hidden').first().click();
   // The first turnus is now in edit mode.
   cy.get('div:nth-child(1) > div.border-b.flex > div.component-wrapper > div.content-container')
     .should('have.class', 'edit-mode')
@@ -414,7 +432,8 @@ it('task', function () {
   cy.get('div.isolate')
     .should('not.have.attr', 'aria-hidden')
 
-  cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
   // The 'Dokončeno' badge is now green with a checkmark.
   cy.get('div:nth-child(2) > div.justify-between > span.flex')
     .should(($el) => {
@@ -438,9 +457,10 @@ it('task', function () {
   cy.get('div.border.w-full div.gap-3')
     .should('contain.text', 'Vyhodnotit')
 
-  cy.get('input.ring').click();
+  cy.get('input.ring').first().click();
   cy.get('input.ring').type('7');
-  cy.get('div.border.w-full button.bg-primary').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
   // The answer badge is now styled as correct.
   cy.get('div.border.w-full div.justify-between span.flex')
     .should(($el) => {
@@ -470,7 +490,7 @@ it('task', function () {
   cy.get('input.ring')
     .should('have.attr', 'disabled')
 
-  cy.get('button:nth-child(3)').click();
+  cy.contains('button', 'Zpět na seznam').click();
   // Task 8 is now visible.
   cy.get('#task-8')
     .should('have.attr', 'aria-disabled', 'true')
@@ -524,7 +544,8 @@ it('task', function () {
   cy.get('div.isolate')
     .should('not.have.attr', 'aria-hidden')
 
-  cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
+  cy.get('#evaluate-activity-button').click();
+  cy.wait(300)
   // The 'Dokončeno' badge is now green with a checkmark.
   cy.get('div:nth-child(2) > div.justify-between > span.flex')
     .should(($el) => {
@@ -569,10 +590,11 @@ it('task', function () {
       expect($el).to.not.have.class('border-gray-400')
     })
 
-  cy.get('div.border.w-full button.bg-primary').click();
-  cy.get('button:nth-child(3)').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
+  cy.contains('button', 'Zpět na seznam').click();
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/vedouci"] span.font-medium').click();
-  cy.get('div:nth-child(6) button.ring span.truncate').click();
+  cy.get('div:nth-child(6) button.ring span.truncate').first().click();
   cy.get('div[data-component-id="edit-vstup-jmeno-vedouciho"] svg').click();
   replaceCodeBlockValue('code-js', 'delka_jmena === 2', 'delka_jmena >= 2')
   cy.contains('button', 'Uložit změny').click();
@@ -583,6 +605,7 @@ it('task', function () {
     .should('not.be.disabled')
     .click();
   cy.get('#task-8 span.font-medium').click();
-  cy.get('div.mt-2 button.bg-primary').click();
+  cy.get('#evaluate-finish-button').click();
+  cy.wait(300)
   expectScore('15.5')
 });

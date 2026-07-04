@@ -4,6 +4,7 @@ import { InformationSystem } from "~/model/InformationSystem";
 import type { Page } from "~/model/Page";
 import { Score } from "~/model/Score";
 import { Task } from "~/model/Task/Task";
+import { TaskSet } from "~/model/Task/TaskSet";
 import { DatabaseWrapper } from "~/utils/DatabaseWrapper";
 import { Operation } from "~/utils/Operation/Operation";
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
@@ -24,6 +25,8 @@ type StoredInformationSystem = {
     databaseAllowed?: boolean;
     tasks: unknown[];
     defaultTasks: unknown[];
+    taskSet?: unknown;
+    defaultTaskSet?: unknown;
     actualComponents: unknown[];
     defaultComponents: unknown[];
     databaseBinary: Uint8Array | null;
@@ -137,6 +140,8 @@ export class IndexedDBStorage implements IStorage {
             databaseAllowed: system.databaseAllowed,
             tasks: this.toPlainData(system.tasks),
             defaultTasks: this.toPlainData(system.defaultTasks),
+            taskSet: this.toPlainData(system.taskSet),
+            defaultTaskSet: this.toPlainData(system.defaultTaskSet),
             actualComponents: this.toPlainData(system.actualComponents),
             defaultComponents: this.toPlainData(system.defaultComponents),
             databaseBinary: this.getDatabaseBinary(system),
@@ -152,7 +157,7 @@ export class IndexedDBStorage implements IStorage {
             startedTasks: system.startedTasks,
             exploringSystem: system.exploringSystem,
             currentLevel: system.currentLevel,
-            levelCount: system.levelCount,
+            levelCount: undefined,
         };
     }
 
@@ -169,8 +174,8 @@ export class IndexedDBStorage implements IStorage {
             description: record.description,
             pages: record.pages ?? [],
             databaseAllowed: record.databaseAllowed ?? true,
-            tasks: (record.tasks ?? []).map(task => Task.fromJSON(task)),
-            defaultTasks: (record.defaultTasks ?? record.tasks ?? []).map(task => Task.fromJSON(task)),
+            taskSet: this.toTaskSet(record.taskSet, record.tasks, `${record.id}_tasks`, record.levelCount),
+            defaultTaskSet: this.toTaskSet(record.defaultTaskSet, record.defaultTasks ?? record.tasks, `${record.id}_tasks`, record.levelCount),
             actualComponents: (record.actualComponents ?? []).map(component => Component.fromJSON(component)),
             defaultComponents: (record.defaultComponents ?? []).map(component => Component.fromJSON(component)),
             database: this.getDatabaseWrapper(record),
@@ -182,10 +187,34 @@ export class IndexedDBStorage implements IStorage {
             startedTasks: Boolean(record.startedTasks),
             exploringSystem: Boolean(record.exploringSystem),
             currentLevel: Number(record.currentLevel ?? record.currentRound ?? 1),
-            levelCount: Number(record.levelCount ?? 1),
+            levelCount: record.levelCount,
         });
 
         return system;
+    }
+
+    private toTaskSet(taskSetData: unknown, legacyTasks: unknown, fallbackId: string, legacyLevelCount?: number): TaskSet {
+        if (taskSetData) {
+            const taskSet = TaskSet.fromJSON(taskSetData, fallbackId);
+            const rawTaskSet = taskSetData && typeof taskSetData === "object"
+                ? taskSetData as Record<string, unknown>
+                : {};
+            if (!("levelCount" in rawTaskSet) && legacyLevelCount) {
+                taskSet.levelCount = Number(legacyLevelCount);
+            }
+            return taskSet;
+        }
+
+        const tasks = Array.isArray(legacyTasks)
+            ? legacyTasks.map(task => Task.fromJSON(task))
+            : [];
+
+        return new TaskSet({
+            id: fallbackId,
+            name: "Default tasks",
+            levelCount: Number(legacyLevelCount ?? 1),
+            tasks,
+        });
     }
 
     private getDatabaseBinary(system: InformationSystem): Uint8Array | null {

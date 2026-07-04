@@ -886,6 +886,9 @@ const editingComponent = ref<SystemComponent | null>(null)
 const showPasteComponentModal = ref(false)
 const pasteComponentJsonText = ref('')
 const pasteComponentError = ref('')
+const codeEditEnvironment = computed(() =>
+  codeEditEnvironmentFromRuntimeConfig(runtimeConfig.public as Record<string, unknown>)
+)
 const taskForm = reactive<TaskDetailForm>(createDefaultForm())
 let taskUpdateTimeout: ReturnType<typeof setTimeout> | null = null
 let queuedTaskUpdate: Task | null = null
@@ -893,9 +896,6 @@ let isSyncingTaskForm = false
 
 /* 9. Computed */
 const databasePageRoute = computed(() => String(runtimeConfig.public.databasePageRoute))
-const codeEditEnvironment = computed(() =>
-  codeEditEnvironmentFromRuntimeConfig(runtimeConfig.public as Record<string, unknown>)
-)
 const codeEditPermissionOptions = computed(() =>
   CODE_EDIT_PERMISSION_KEYS.map(key => ({
     key,
