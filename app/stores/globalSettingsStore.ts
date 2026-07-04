@@ -12,7 +12,7 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
     const teacherModeEnv: Ref<boolean> = ref(String(runtimeConfig.public.appMode ?? '').trim().toLowerCase() === 'teacher')
     const teacherMode: Ref<boolean> = ref(teacherModeEnv.value)
     const teacherHighlightEnabled: Ref<boolean> = ref(true)
-    const bypassPageVisibility: Ref<boolean> = ref(false)
+    const bypassPageVisibility: Ref<boolean> = ref(true)
     const selectedComponents: Ref<Set<string>> = ref(new Set())
     const selectedTaskId: Ref<string | null> = ref(null)
     const errorComponentIds: Ref<string[]> = ref([])

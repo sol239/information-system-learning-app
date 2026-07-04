@@ -1,161 +1,235 @@
 <template>
   <div
-ref="wrapperRef" :data-component-id="props.component.id" :class="['component-wrapper', {
+    ref="wrapperRef"
+    :data-component-id="props.component.id"
+    :class="['component-wrapper', {
       'highlight-active': highlightStore.isHighlightActive,
       'is-highlighted': highlightStore.isHighlightActive && highlightStore.selectedHighlightedComponentsIds.has(props.component.id),
       'teacher-outline': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled,
       'teacher-outline--selected': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled && globalSettings.selectedComponents?.has(props.component.id),
-    }]" @click="handleClick" @input="handleInput"
-    @change="handleChange">
+    }]"
+    @click="handleClick"
+    @input="handleInput"
+    @change="handleChange"
+  >
     <div :class="['content-container', { 'edit-mode': isEditEnabled }]">
-      <div v-if="isJustRepaired" class="repaired-overlay"></div>
+      <div v-if="isJustRepaired" class="repaired-overlay" />
 
       <div v-if="!globalSettings.teacherMode">
         <span v-if="isEditEnabled" class="edit-icon" @click.stop="handleEdit">
           <svg
-xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
             <path d="m15 5 4 4" />
           </svg>
         </span>
       </div>
-      <div v-else-if="globalSettings.teacherHighlightEnabled" class="teacher-mode-overlay" @click.stop="handleTeacherModeClick">
+      <div
+        v-else-if="globalSettings.teacherHighlightEnabled"
+        class="teacher-mode-overlay"
+        @click.stop="handleTeacherModeClick"
+      >
         <UBadge
-:color="globalSettings.selectedComponents?.has(props.component.id) ? 'red' : 'blue'"
-          variant="solid" size="md"
-          class="teacher-icon" style="cursor: pointer;">
+          :color="globalSettings.selectedComponents?.has(props.component.id) ? 'red' : 'blue'"
+          variant="solid"
+          size="md"
+          class="teacher-icon"
+          style="cursor: pointer;"
+        >
           {{ globalSettings.selectedComponents?.has(props.component.id) ? '✓ ' + props.component.name : props.component.name }}
         </UBadge>
       </div>
 
       <div
-:class="['component-html', { 'content-interaction-disabled': (globalSettings.teacherMode && globalSettings.teacherHighlightEnabled) || highlightStore.isHighlightActive }]"
-        v-html="resolvedComponentHtml"></div>
+        :class="['component-html', { 'content-interaction-disabled': (globalSettings.teacherMode && globalSettings.teacherHighlightEnabled) || highlightStore.isHighlightActive }]"
+        v-html="resolvedComponentHtml"
+      />
     </div>
 
     <EditComponentModal
-v-model:open="isEditModalOpened" :component="props.component" :variables="componentVariables"
+      v-model:open="isEditModalOpened"
+      :component="props.component"
+      :variables="componentVariables"
       :code-edit-permissions="selectedTaskCodeEditPermissions"
-      @save="handleModalSave" />
+      @save="handleModalSave"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-dynamic-delete, vue/no-mutating-props */
-import type { QueryExecResult } from 'sql.js';
-import { ref, onMounted, onBeforeUnmount, onBeforeUpdate, onUpdated, watch, computed, reactive, nextTick } from 'vue';
-import { SqlHandler } from '~/core/components/variables/SqlHandler.js';
-import { JsHandler } from '~/core/components/variables/JsHandler.js';
-import { HtmlHandler } from '~/core/components/variables/HtmlHandler.js';
-import type { Component as SystemComponent } from '~/model/Component';
-import { ComponentVariables, Variable } from '~/model/ComponentVariables';
-import { useSystemsStore } from '~/stores/systemsStore';
-import { useHighlightStore } from '~/stores/highlightStore';
-import { DatabaseHandler } from '~/utils/DatabaseHandler';
-import type { DatabaseWrapper } from '~/utils/DatabaseWrapper';
-import { OperationResultType } from '~/utils/Operation/OperationResultType.js';
-import { TableMap } from '~/core/components/variables/TableMap.js';
-import type { VariableType } from '~/model/types/VariableType';
-import EditComponentModal from './EditComponentModal.vue'; // Adjust path as needed
-import { useSystemInputVariables } from '~/composables/useSystemInputVariables';
-import type { CodeEditPermissions } from '~/utils/codeEditPermissions';
+/* 1. Imports */
+import type { QueryExecResult } from 'sql.js'
+import { computed, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, ref, watch } from 'vue'
+import { HtmlHandler } from '~/core/components/variables/HtmlHandler.js'
+import { JsHandler } from '~/core/components/variables/JsHandler.js'
+import { SqlHandler } from '~/core/components/variables/SqlHandler.js'
+import { TableMap } from '~/core/components/variables/TableMap.js'
+import { useSystemInputVariables } from '~/composables/useSystemInputVariables'
+import type { Component as SystemComponent } from '~/model/Component'
+import { ComponentVariables, Variable } from '~/model/ComponentVariables'
+import type { VariableType } from '~/model/types/VariableType'
+import { useHighlightStore } from '~/stores/highlightStore'
+import { useSystemsStore } from '~/stores/systemsStore'
+import { DatabaseHandler } from '~/utils/DatabaseHandler'
+import type { DatabaseWrapper } from '~/utils/DatabaseWrapper'
+import type { CodeEditPermissions } from '~/utils/codeEditPermissions'
+import { OperationResultType } from '~/utils/Operation/OperationResultType.js'
+import EditComponentModal from './EditComponentModal.vue'
 
+/* 2. Stores */
+const systemsStore = useSystemsStore()
+const highlightStore = useHighlightStore()
+const globalSettings = useGlobalSettingsStore()
+
+/* 3. Context hooks */
+const toast = useToast()
+const { t } = useI18n()
+const { systemInputVariables, upsertSystemInputVariable, upsertSystemComputedVariable, removeSystemInputVariable } = useSystemInputVariables()
+
+/* 4. Constants (non-reactive) */
+const componentCodeUpdatedEventName = 'component-code-updated'
+const componentsRepairedEventName = 'components-repaired'
+
+/* 5. Props */
 const props = defineProps<{
   component: SystemComponent
 }>()
 
+/* 6. Emits */
 const emit = defineEmits<{
   'action-completed': [payload: { componentId: string; type: 'click-sql' | 'modal-sql'; sql?: string }]
 }>()
 
-const systemsStore = useSystemsStore();
-const highlightStore = useHighlightStore();
-const globalSettings = useGlobalSettingsStore()
-const toast = useToast()
-const { t } = useI18n()
+/* 7. Template refs */
+const wrapperRef = ref<HTMLElement | null>(null)
 
-const styleId = `component-style-${props.component.id}`;
-const isEditEnabled = computed(() => highlightStore.isEditModeActive);
-const isEditModalOpened = ref(false);
-const isActionModalOpened = ref(false);
-const isSubmittingActionModal = ref(false);
-const actionModalError = ref('');
-const modalFormState = reactive<Record<string, string | number>>({});
-const wrapperRef = ref<HTMLElement | null>(null);
-const isJustRepaired = ref(false);
+/* 8. State (ref, reactive) */
+const styleId = `component-style-${props.component.id}`
+const isEditModalOpened = ref(false)
+const isActionModalOpened = ref(false)
+const isSubmittingActionModal = ref(false)
+const actionModalError = ref('')
+const modalFormState = reactive<Record<string, string | number>>({})
+const isJustRepaired = ref(false)
+const componentVariables = ref<ComponentVariables>(new ComponentVariables())
+const ownedSystemVariableNames = new Set<string>()
+const ownedComputedVariableNames = new Set<string>()
 
-const componentVariables = ref<ComponentVariables>(new ComponentVariables());
-const { systemInputVariables, upsertSystemInputVariable, upsertSystemComputedVariable, removeSystemInputVariable } = useSystemInputVariables();
-const ownedSystemVariableNames = new Set<string>();
-const ownedComputedVariableNames = new Set<string>();
-let db: DatabaseWrapper | undefined = undefined;
-let isRefreshingSqlVars = false;
-let activeInputSnapshotBeforeUpdate: ActiveInputSnapshot | null = null;
-const componentCodeUpdatedEventName = 'component-code-updated';
-const componentsRepairedEventName = 'components-repaired';
+let db: DatabaseWrapper | undefined = undefined
+let isRefreshingSqlVars = false
+let activeInputSnapshotBeforeUpdate: ActiveInputSnapshot | null = null
 
-type ComponentCodeUpdatedEvent = CustomEvent<{ componentId: string }>;
-type ComponentsRepairedEvent = CustomEvent<{ componentIds?: string[] }>;
+type ComponentCodeUpdatedEvent = CustomEvent<{ componentId: string }>
+type ComponentsRepairedEvent = CustomEvent<{ componentIds?: string[] }>
 
 type ActiveInputSnapshot = {
-  identifier: string;
-  value: string;
-  selectionStart: number | null;
-  selectionEnd: number | null;
-};
-
-type SystemFormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-
-function mergeVariablesByName(...groups: Array<Variable[] | undefined>): Variable[] {
-  const merged = new Map<string, Variable>();
-
-  for (const group of groups) {
-    for (const variable of group ?? []) {
-      merged.set(variable.name, variable);
-    }
-  }
-
-  return Array.from(merged.values());
+  identifier: string
+  value: string
+  selectionStart: number | null
+  selectionEnd: number | null
 }
 
-const declaredJsVariableNames = computed(() => new Set(JsHandler.getDeclaredVariableNames(props.component.js ?? '')));
-const selectedTaskCodeEditPermissions = computed<Partial<CodeEditPermissions> | undefined>(() => {
-  const taskId = globalSettings.selectedTaskId;
-  if (!taskId) return undefined;
+type SystemFormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
-  return systemsStore.selectedSystem?.tasks?.find(task => task.id === taskId)?.codeEditPermissions;
-});
+/* 9. Computed */
+const isEditEnabled = computed(() => highlightStore.isEditModeActive)
+const declaredJsVariableNames = computed(() => new Set(JsHandler.getDeclaredVariableNames(props.component.js ?? '')))
+const selectedTaskCodeEditPermissions = computed<Partial<CodeEditPermissions> | undefined>(() => {
+  const taskId = globalSettings.selectedTaskId
+  if (!taskId) return undefined
+
+  return systemsStore.selectedSystem?.tasks?.find(task => task.id === taskId)?.codeEditPermissions
+})
 
 const externalSystemVariables = computed(() =>
   systemInputVariables.value.filter(variable => !declaredJsVariableNames.value.has(variable.name))
-);
+)
 
 const resolvedVariables = computed<ComponentVariables>(() => {
-  const merged = new ComponentVariables();
-  merged.generalVariables = [...(componentVariables.value.generalVariables ?? [])];
-  merged.sqlVariables = [...(componentVariables.value.sqlVariables ?? [])];
+  const merged = new ComponentVariables()
+  merged.generalVariables = [...(componentVariables.value.generalVariables ?? [])]
+  merged.sqlVariables = [...(componentVariables.value.sqlVariables ?? [])]
   merged.jsVariables = mergeVariablesByName(
     componentVariables.value.jsVariables ?? [],
     externalSystemVariables.value
-  );
-  return merged;
-});
+  )
+  return merged
+})
 
 const resolvedComponentHtml = computed(() =>
   HtmlHandler.ReplaceHtmlForVariables(resolvedVariables.value, props.component.html)
-);
+)
 
-// JS header used for parsing variables correctly on initial load
 const jsVarsHeader = computed<string>(() => {
   const vars = mergeVariablesByName(
     componentVariables.value.generalVariables ?? [],
     componentVariables.value.sqlVariables ?? [],
     externalSystemVariables.value
-  );
-  if (vars.length === 0) return '';
-  return JsHandler.getVariablesIntoJs(vars);
+  )
+
+  if (vars.length === 0) return ''
+
+  return JsHandler.getVariablesIntoJs(vars)
 })
+
+/* 10. Watchers */
+watch(() => [componentVariables.value, systemInputVariables.value], () => applyStyle(props.component.css), { deep: true });
+
+watch(systemInputVariables, () => {
+  void refreshJsVariables({ preserveActiveInput: true });
+}, { deep: true });
+
+watch(() => props.component.variables?.generalVariables, (newVars) => {
+  componentVariables.value.generalVariables = newVars ?? [];
+}, { deep: true, immediate: true });
+
+watch(() => globalSettings.solvedComponentIds.includes(props.component.id), (isSolved, wasSolved) => {
+  if (isSolved && wasSolved === false) {
+    showRepairedOverlay();
+  }
+}, { immediate: true });
+
+watch(() => [props.component.html, props.component.css, props.component.js, props.component.sql], async (newVals, oldVals) => {
+  const changed = newVals.some((val, i) => val !== oldVals[i]);
+  if (changed) {
+    await refreshComponentCode();
+  }
+});
+
+watch(() => systemsStore.selectedSystem?.database?.dbNumber, async () => {
+  if (!db || !props.component.sql || isRefreshingSqlVars) return;
+  isRefreshingSqlVars = true;
+  try {
+    componentVariables.value.sqlVariables = [];
+    const replacedSql: Record<string, string> = SqlHandler.ReplaceSqlForVariablesInRecord(componentVariables.value, props.component.sql);
+    await populateSqlVariables(replacedSql);
+  } finally {
+    isRefreshingSqlVars = false;
+  }
+});
+
+/* 11. Methods */
+function mergeVariablesByName(...groups: Array<Variable[] | undefined>): Variable[] {
+  const merged = new Map<string, Variable>()
+
+  for (const group of groups) {
+    for (const variable of group ?? []) {
+      merged.set(variable.name, variable)
+    }
+  }
+
+  return Array.from(merged.values())
+}
 
 function handleEdit() {
   isEditModalOpened.value = true;
@@ -389,17 +463,6 @@ function applyStyle(css: string) {
   el.textContent = resolvedCss;
 }
 
-// Watchers for styles and variables
-watch(() => [componentVariables.value, systemInputVariables.value], () => applyStyle(props.component.css), { deep: true });
-
-watch(systemInputVariables, () => {
-  void refreshJsVariables({ preserveActiveInput: true });
-}, { deep: true });
-
-watch(() => props.component.variables?.generalVariables, (newVars) => {
-  componentVariables.value.generalVariables = newVars ?? [];
-}, { deep: true, immediate: true });
-
 function showRepairedOverlay() {
   isJustRepaired.value = false;
   void nextTick(() => {
@@ -410,32 +473,6 @@ function showRepairedOverlay() {
   });
 }
 
-watch(() => globalSettings.solvedComponentIds.includes(props.component.id), (isSolved, wasSolved) => {
-  if (isSolved && wasSolved === false) {
-    showRepairedOverlay();
-  }
-}, { immediate: true });
-
-watch(() => [props.component.html, props.component.css, props.component.js, props.component.sql], async (newVals, oldVals) => {
-  const changed = newVals.some((val, i) => val !== oldVals[i]);
-  if (changed) {
-    await refreshComponentCode();
-  }
-});
-
-watch(() => systemsStore.selectedSystem?.database?.dbNumber, async () => {
-  if (!db || !props.component.sql || isRefreshingSqlVars) return;
-  isRefreshingSqlVars = true;
-  try {
-    componentVariables.value.sqlVariables = [];
-    const replacedSql: Record<string, string> = SqlHandler.ReplaceSqlForVariablesInRecord(componentVariables.value, props.component.sql);
-    await populateSqlVariables(replacedSql);
-  } finally {
-    isRefreshingSqlVars = false;
-  }
-});
-
-// Core logic for populating variables on mount
 async function populateSqlVariables(sqlRecord: Record<string, string>) {
   const tableMap = await DatabaseHandler.getTableColumnMap(db.sqlJsDatabase!);
 
@@ -671,6 +708,7 @@ function handleComponentsRepaired(event: Event) {
   showRepairedOverlay();
 }
 
+/* 12. Lifecycle */
 onMounted(async () => {
   db = systemsStore.selectedSystem?.database ?? undefined;
 
@@ -710,6 +748,10 @@ onBeforeUnmount(() => {
     removeSystemInputVariable(variableName);
   }
 });
+
+/* 13. defineExpose */
+defineExpose({
+})
 </script>
 
 <style scoped>

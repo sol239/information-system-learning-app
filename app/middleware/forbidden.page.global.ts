@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const systemsStore = useSystemsStore();
   const globalSettings = useGlobalSettingsStore();
 
-  if (globalSettings.teacherMode || !to.path.startsWith("/systems/")) {
+  if (globalSettings.teacherMode || !to.path.startsWith("/systems/") || globalSettings.bypassPageVisibility) {
     return;
   }
 

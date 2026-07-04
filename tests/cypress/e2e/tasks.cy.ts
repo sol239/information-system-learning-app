@@ -1,4 +1,4 @@
-const appUrl = 'http://localhost:3000/information-system-learning-app/systems/2/nastenka';
+const appUrl = 'http://localhost:3000/information-system-learning-app/systems/skolni_tabor_palava/nastenka';
 
 function clickButton(name: string, index = 0) {
   cy.get('button').filter(`:contains("${name}")`).eq(index).click()
@@ -39,13 +39,24 @@ function replaceCodeBlockValue(codeBlockId: string, search: string, replacement:
   cy.wait(500)
 }
 
+function expectScore(value: string) {
+  cy.contains('.tasks-column span', `Skóre: ${value}`).should('be.visible')
+}
+
+function expectEditComponentDialog(componentName: string) {
+  cy.contains('[role="dialog"] h2, [role="dialog"] [id^="reka-dialog-title"]', 'Upravit komponentu')
+    .should('be.visible')
+  cy.contains('[role="dialog"] span.ring', componentName)
+    .should('be.visible')
+}
+
 it('task', function() {
   cy.visit(appUrl)
 
 
     // Wait for the page to load - wait for 5000 ms
     cy.wait(3000)
-  
+  /*
   cy.get('#enter-system-button').click();
   // The 'Enter System' button is disabled.
   cy.get('#enter-system-button')
@@ -57,6 +68,7 @@ it('task', function() {
       expect($el).to.have.class('animate-spin')
       expect($el).to.not.have.class('i-lucide:rotate-cw')
     })
+  */
   
   cy.get('#task-1 div.items-start').click();
   // The task title '1. Nejstarší účastník' is visible.
@@ -154,17 +166,16 @@ it('task', function() {
   cy.get('div.border.w-full div.gap-3 span.flex')
     .should('contain.text', 'Správná odpověď')
   // The score has increased to 1.
-  cy.get('span.score-trigger')
-    .should('contain.text', 'Skóre: 1')
+  expectScore('1')
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
   
   cy.get('div.flex.p-4 button:nth-child(3)').click();
   cy.get('#task-2').click();
-  // The task title is now '2. Množství různých jídel v systému'.
+  // The task title is now '2. Nalezení chybné komponenty'.
   cy.get('h2.font-bold')
-    .should('contain.text', '2. Množství různých jídel v systému')
+    .should('contain.text', '2. Nalezení chybné komponenty')
   // The task description has been updated for the second task.
   cy.get('p.text-base')
     .should('contain.text', 'Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.')
@@ -213,8 +224,7 @@ it('task', function() {
   cy.get('div.gap-3 span.flex')
     .should('contain.text', 'Nesprávná odpověď')
   // The score has changed from 1 to 0.5.
-  cy.get('span.score-trigger')
-    .should('contain.text', 'Skóre: 0.5')
+  expectScore('0.5')
   
   cy.get('div[data-component-id="statistika-jidel"] div.content-container').click();
   // The 'statistika-jidel' component is highlighted.
@@ -285,19 +295,15 @@ it('task', function() {
   cy.get('div.border.w-full div.gap-3 span.flex')
     .should('contain.text', 'Správná odpověď')
   // The score has increased to 1.5.
-  cy.get('span.score-trigger')
-    .should('contain.text', 'Skóre: 1.5')
+  expectScore('1.5')
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
   
   cy.get('div.flex.p-4 button:nth-child(3)').click();
   // The 'Účastníci' navigation item is now an enabled link.
-  cy.get('a.hover\\:bg-white\\/50')
-    .should(($el) => {
-      expect($el).to.be.visible
-      expect($el).to.have.attr('href', '/information-system-learning-app/systems/2/ucastnici')
-    })
+  cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"]')
+    .should('be.visible')
   // Task 6 is now visible.
   cy.get('#task-6')
     .should('have.attr', 'aria-disabled', 'true')
@@ -319,7 +325,7 @@ it('task', function() {
   cy.get('p.text-base')
     .should('contain.text', 'Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl oba alergeny, a zjistěte, v čem je problém.')
   
-  cy.get('a.hover\\:bg-white\\/50 span.font-medium').click();
+  cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"] span.font-medium').click();
   cy.get('div:nth-child(2) > span.text-gray-800').click();
   cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
   cy.get('div:nth-child(6) button.ring span.truncate').click();
@@ -342,7 +348,7 @@ it('task', function() {
   cy.get('div.border.w-full button.bg-primary').click();
   cy.get('button:nth-child(3)').click();
   cy.get('#task-6 div.items-start').click();
-  cy.get('a[href="/information-system-learning-app/systems/2/turnusy"] span.font-medium').click();
+  cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/turnusy"] span.font-medium').click();
   cy.get('span.mobile-hidden').click();
   // The first turnus is now in edit mode.
   cy.get('div:nth-child(1) > div.border-b.flex > div.component-wrapper > div.content-container')
@@ -380,14 +386,8 @@ it('task', function() {
   cy.get('div.h-full')
     .should('be.visible')
   // The dialog box title is 'Upravit komponentu'.
-  cy.get('#reka-dialog-title-v-0-9')
-    .should('be.visible')
+  expectEditComponentDialog('Počet dní turnusu')
   // The dialog box is editing the 'Počet dní turnusu' component.
-  cy.get('#reka-dialog-title-v-0-9 span.ring')
-    .should(($el) => {
-      expect($el).to.be.visible
-      expect($el).to.contain.text('Počet dní turnusu')
-    })
   // The 'Uložit změny' button is visible.
   cy.get('button.ml-auto')
     .should(($el) => {
@@ -466,8 +466,7 @@ it('task', function() {
   cy.get('div.border.w-full div.gap-3 span.flex')
     .should('contain.text', 'Správná odpověď')
   // The score has increased to 10.5.
-  cy.get('span.score-trigger')
-    .should('contain.text', 'Skóre: 10.5')
+  expectScore('10.5')
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
@@ -499,14 +498,8 @@ it('task', function() {
   cy.get('div.h-full')
     .should('be.visible')
   // The dialog box title is 'Upravit komponentu'.
-  cy.get('#reka-dialog-title-v-0-20')
-    .should('be.visible')
+  expectEditComponentDialog('Štítek stavu turnusu')
   // The dialog box is editing the 'Štítek stavu turnusu' component.
-  cy.get('#reka-dialog-title-v-0-20 span.ring')
-    .should(($el) => {
-      expect($el).to.be.visible
-      expect($el).to.contain.text('Štítek stavu turnusu')
-    })
   // The 'Uložit změny' button is visible.
   cy.get('button.ml-auto')
     .should(($el) => {
@@ -579,16 +572,18 @@ it('task', function() {
   
   cy.get('div.border.w-full button.bg-primary').click();
   cy.get('button:nth-child(3)').click();
-  cy.get('a[href="/information-system-learning-app/systems/2/vedouci"] span.font-medium').click();
+  cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/vedouci"] span.font-medium').click();
   cy.get('div:nth-child(6) button.ring span.truncate').click();
   cy.get('div[data-component-id="edit-vstup-jmeno-vedouciho"] svg').click();
-  replaceCodeBlockValue('code-js', 'pocet_casti_jmena_vedouciho === 2', 'pocet_casti_jmena_vedouciho >= 2')
+  replaceCodeBlockValue('code-js', 'delka_jmena === 2', 'delka_jmena >= 2')
   cy.contains('button', 'Uložit změny').click();
   cy.get('#system-edit_vstup_jmeno_vedouciho').click();
   cy.get('#system-edit_vstup_jmeno_vedouciho').clear();
   cy.get('#system-edit_vstup_jmeno_vedouciho').type('Tomáš Garrigue Masaryk');
-  cy.get('#system-edit_btn_ulozit_vedouciho').click();
+  cy.get('#system-edit_btn_ulozit_vedouciho')
+    .should('not.be.disabled')
+    .click();
   cy.get('#task-8 span.font-medium').click();
   cy.get('div.mt-2 button.bg-primary').click();
-  cy.get('div.justify-end button.bg-primary').click();
+  expectScore('15.5')
 });

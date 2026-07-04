@@ -37,11 +37,6 @@ export class AppLoader {
     public async loadFromIndexedDb() { }
 
     public async loadApp() {
-        if (!import.meta.client) {
-            console.log("AppLoader: Not running on client, skipping app load.");
-            return;
-        }
-
         const storage: IStorage = new IndexedDBStorage();
         const systemLoader = new SystemLoaderPublic();
 

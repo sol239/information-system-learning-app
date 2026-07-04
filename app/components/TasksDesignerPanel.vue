@@ -118,7 +118,7 @@
           <span class="cursor-pointer">
             {{ task.title || t('task_untitled') }}
           </span>
-          <HoverHint :text="t('task_remove_task_action')">
+          <UTooltip :text="t('task_remove_task_action')" :ui="tooltipUi">
             <UButton
               icon="i-lucide-trash-2"
               color="red"
@@ -127,7 +127,7 @@
               class="shrink-0"
               @click.stop="deleteTask(task.id)"
             />
-          </HoverHint>
+          </UTooltip>
         </span>
       </div>
     </div>
@@ -209,7 +209,6 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import HoverHint from '~/components/HoverHint.vue'
 import type { InformationSystem } from '~/model/InformationSystem'
 import { Task } from '~/model/Task/Task'
 import { useSystemsStore } from '~/stores/systemsStore'
@@ -224,6 +223,9 @@ const importAllError = ref('')
 const importAllFile = ref<File | null>(null)
 const previewStudentView = ref(false)
 const optionsOpen = ref(false)
+const tooltipUi = {
+  content: 'z-[10050]'
+}
 
 function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
