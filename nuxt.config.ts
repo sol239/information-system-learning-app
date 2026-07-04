@@ -3,17 +3,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
 
-  // .env configuration loaded into runtimeConfig.public
   runtimeConfig: {
     public: {
-      appMode: process.env.NUXT_PUBLIC_APP_MODE ?? '',
-      htmlAvailable: process.env.NUXT_PUBLIC_HTML_AVAILABLE ?? 'true',
-      cssAvailable: process.env.NUXT_PUBLIC_CSS_AVAILABLE ?? 'true',
-      jsAvailable: process.env.NUXT_PUBLIC_JS_AVAILABLE ?? 'true',
-      sqlAvailable: process.env.NUXT_PUBLIC_SQL_AVAILABLE ?? 'true',
-      jsClickAvailable: process.env.NUXT_PUBLIC_JS_CLICK_AVAILABLE ?? 'false',
-      sqlClickAvailable: process.env.NUXT_PUBLIC_SQL_CLICK_AVAILABLE ?? 'true',
-      indexedDbName: process.env.NUXT_PUBLIC_INDEXED_DB_NAME ?? 'InformationSystemsDb',
+      appMode: 'student',
+      htmlAvailable: 'true',
+      cssAvailable: 'true',
+      jsAvailable: 'true',
+      sqlAvailable: 'true',
+      jsClickAvailable: 'false',
+      sqlClickAvailable: 'true',
+      indexedDbName: 'InformationSystemsDb',
       indexedDbVersion: 3,
       indexedDbVersionKey: 'db_version',
       databasePageRoute: '/database',

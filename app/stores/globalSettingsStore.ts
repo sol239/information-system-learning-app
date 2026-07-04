@@ -9,7 +9,7 @@ export const useGlobalSettingsStore = defineStore('globalSettings', () => {
      */
     const taskMenuDisplayedAsSidebar = ref(false)
 
-    const teacherModeEnv: Ref<boolean> = ref(String(runtimeConfig.public.appMode ?? '').trim().toUpperCase() === 'TEACHER')
+    const teacherModeEnv: Ref<boolean> = ref(String(runtimeConfig.public.appMode ?? '').trim().toLowerCase() === 'teacher')
     const teacherMode: Ref<boolean> = ref(teacherModeEnv.value)
     const teacherHighlightEnabled: Ref<boolean> = ref(true)
     const bypassPageVisibility: Ref<boolean> = ref(false)
