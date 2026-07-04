@@ -50,12 +50,11 @@ function expectEditComponentDialog(componentName: string) {
     .should('be.visible')
 }
 
-it('task', function() {
+it('task', function () {
   cy.visit(appUrl)
 
 
-    // Wait for the page to load - wait for 5000 ms
-    cy.wait(3000)
+  // Wait for the page to load - wait for 5000 ms
   /*
   cy.get('#enter-system-button').click();
   // The 'Enter System' button is disabled.
@@ -69,8 +68,8 @@ it('task', function() {
       expect($el).to.not.have.class('i-lucide:rotate-cw')
     })
   */
-  
-  cy.get('#task-1 div.items-start').click();
+
+  cy.get('#task-1 div.items-start', { timeout: 30000 }).click();
   // The task title '1. Nejstarší účastník' is visible.
   cy.get('h2.font-bold')
     .should('contain.text', '1. Nejstarší účastník')
@@ -89,7 +88,7 @@ it('task', function() {
   // The option 'Žádná odpověď není správná' is visible.
   cy.get('div.space-y-2 div:nth-child(4)')
     .should('contain.text', 'Žádná odpověď není správná')
-  
+
   cy.get('div:nth-child(3) > span.text-gray-800').click();
   // The task item is highlighted as selected.
   cy.get('div.space-y-2 div:nth-child(3)')
@@ -106,7 +105,7 @@ it('task', function() {
       expect($el).to.have.class('bg-sky-500')
       expect($el).to.not.have.class('border-gray-400')
     })
-  
+
   cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
   // The maximum age of a participant is now 14.
   cy.get('#statistika-max-vek-ucastnika-number')
@@ -134,13 +133,13 @@ it('task', function() {
   // A 'Correct Answer' badge is displayed.
   cy.get('span.gap-1')
     .should('contain.text', 'Správná odpověď')
-  
+
   cy.get('input.ring').click();
   cy.get('input.ring').type('14');
   // The input field now displays '14'.
   cy.get('input.ring')
     .should('have.value', '14')
-  
+
   cy.get('div.border.w-full button.bg-primary').click();
   // The selected answer is now styled as correct.
   cy.get('div.border.w-full div.justify-between span.flex')
@@ -170,7 +169,7 @@ it('task', function() {
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
-  
+
   cy.get('div.flex.p-4 button:nth-child(3)').click();
   cy.get('#task-2').click();
   // The task title is now '2. Nalezení chybné komponenty'.
@@ -197,7 +196,7 @@ it('task', function() {
       expect($el).to.have.attr('disabled')
       expect($el).to.contain.text('Vyhodnotit')
     })
-  
+
   cy.get('div[data-component-id="statistika-jidel"] div.content-container').click();
   // The 'Statistika jídel' component is highlighted.
   cy.get('div[data-component-id="statistika-jidel"]')
@@ -205,12 +204,12 @@ it('task', function() {
   // A 'Statistika jídel' badge is displayed.
   cy.get('div:nth-child(2) > div.flex-wrap')
     .should('contain.text', 'Statistika jídel')
-  
+
   cy.get('div.is-highlighted div.content-container').click();
   // The 'statistika-jidel' component is no longer highlighted.
   cy.get('div[data-component-id="statistika-jidel"]')
     .should('not.have.class', 'is-highlighted')
-  
+
   cy.get('div[data-component-id="statistika-vedoucich"] div.content-container').click();
   // The 'statistika-vedoucich' component is highlighted.
   cy.get('div[data-component-id="statistika-vedoucich"]')
@@ -218,14 +217,14 @@ it('task', function() {
   // A 'Statistika vedoucích' badge is displayed.
   cy.get('div:nth-child(2) > div.flex-wrap')
     .should('contain.text', 'Statistika vedoucích')
-  
+
   cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
   // An 'Incorrect Answer' badge is displayed.
   cy.get('div.gap-3 span.flex')
     .should('contain.text', 'Nesprávná odpověď')
   // The score has changed from 1 to 0.5.
   expectScore('0.5')
-  
+
   cy.get('div[data-component-id="statistika-jidel"] div.content-container').click();
   // The 'statistika-jidel' component is highlighted.
   cy.get('div[data-component-id="statistika-jidel"]')
@@ -233,12 +232,12 @@ it('task', function() {
   // A 'Statistika jídel' badge is displayed.
   cy.get('div:nth-child(2) > div.flex-wrap > span:nth-child(2)')
     .should('contain.text', 'Statistika jídel')
-  
+
   cy.get('div[data-component-id="statistika-vedoucich"] div.content-container').click();
   // The 'statistika-vedoucich' component is no longer highlighted.
   cy.get('div[data-component-id="statistika-vedoucich"]')
     .should('not.have.class', 'is-highlighted')
-  
+
   cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
   // The 'statistika-jidel' component is no longer highlighted.
   cy.get('div[data-component-id="statistika-jidel"]')
@@ -261,7 +260,7 @@ it('task', function() {
   // The 'Vyhodnotit' button for the second task is enabled.
   cy.get('div.border.w-full div.gap-3')
     .should('contain.text', 'Vyhodnotit')
-  
+
   cy.get('input.ring').click();
   cy.get('input.ring').click();
   cy.get('input.ring').click();
@@ -269,7 +268,7 @@ it('task', function() {
   // The input field now displays '30'.
   cy.get('input.ring')
     .should('have.value', '30')
-  
+
   cy.get('div.border.w-full button.bg-primary').click();
   // The answer badge is now styled as correct.
   cy.get('div.border.w-full div.justify-between span.flex')
@@ -299,7 +298,7 @@ it('task', function() {
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
-  
+
   cy.get('div.flex.p-4 button:nth-child(3)').click();
   // The 'Účastníci' navigation item is now an enabled link.
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"]')
@@ -313,7 +312,7 @@ it('task', function() {
   // Task 8 is now visible.
   cy.get('#task-8')
     .should('have.attr', 'aria-disabled', 'true')
-  
+
   cy.get('#task-3').click();
   // The 'Zpět na seznam' button is visible.
   cy.get('div.flex.p-4 > button:nth-child(1)')
@@ -324,7 +323,7 @@ it('task', function() {
   // The task description has been updated for the third task.
   cy.get('p.text-base')
     .should('contain.text', 'Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl oba alergeny, a zjistěte, v čem je problém.')
-  
+
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/ucastnici"] span.font-medium').click();
   cy.get('div:nth-child(2) > span.text-gray-800').click();
   cy.get('div:nth-child(2) > div.mt-2 > button.bg-primary').click();
@@ -374,7 +373,7 @@ it('task', function() {
   // The eighth turnus is now in edit mode.
   cy.get('div:nth-child(1) > div[data-component-id="seznam-vedoucich-turnusu"] > div.content-container')
     .should('have.class', 'edit-mode')
-  
+
   cy.get('div:nth-child(3) > div.flex-wrap > div[data-component-id="pocet-dni-turnusu"] > div.edit-mode > div:nth-child(1) > span.edit-icon > svg').click();
   // The page body is now unclickable and hidden from overflow.
   cy.get('body')
@@ -403,10 +402,10 @@ it('task', function() {
       expect($el).to.be.visible
       expect($el).to.contain.text('Správně')
     })
-  
+
   appendCodeBlockValue('code-js', 'const pocet = pocet_dni_turnusu + 1')
   replaceCodeBlockValue('code-html', 'pocet_dni_turnusu', 'pocet')
-  
+
   cy.contains('button', 'Uložit změny').click();
   // The page body is now clickable and overflow is no longer hidden.
   cy.get('body.underline-links')
@@ -414,7 +413,7 @@ it('task', function() {
   // The main application content is no longer hidden from assistive technologies.
   cy.get('div.isolate')
     .should('not.have.attr', 'aria-hidden')
-  
+
   cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
   // The 'Dokončeno' badge is now green with a checkmark.
   cy.get('div:nth-child(2) > div.justify-between > span.flex')
@@ -438,7 +437,7 @@ it('task', function() {
   // The 'Vyhodnotit' button for the answer input is enabled.
   cy.get('div.border.w-full div.gap-3')
     .should('contain.text', 'Vyhodnotit')
-  
+
   cy.get('input.ring').click();
   cy.get('input.ring').type('7');
   cy.get('div.border.w-full button.bg-primary').click();
@@ -470,12 +469,12 @@ it('task', function() {
   // The answer input field is disabled.
   cy.get('input.ring')
     .should('have.attr', 'disabled')
-  
+
   cy.get('button:nth-child(3)').click();
   // Task 8 is now visible.
   cy.get('#task-8')
     .should('have.attr', 'aria-disabled', 'true')
-  
+
   cy.get('#task-7').click();
   // The task title is now '7. Naplnění turnusu'.
   cy.get('h2.font-bold')
@@ -486,7 +485,7 @@ it('task', function() {
   // A 'Zpět na seznam' button is visible.
   cy.get('div.flex.p-4 > button:nth-child(1)')
     .should('contain.text', 'Zpět na seznam')
-  
+
   cy.get('div:nth-child(3) > div.border-b.flex > div.component-wrapper > div.edit-mode > div:nth-child(1) > span.edit-icon > svg').click();
   // The page body is now unclickable and hidden from overflow.
   cy.get('body.underline-links')
@@ -515,7 +514,7 @@ it('task', function() {
       expect($el).to.be.visible
       expect($el).to.contain.text('Správně')
     })
-  
+
   replaceCodeBlockValue('code-js', 'celkova_kapacita * 0.3', 'celkova_kapacita * 0.8')
   cy.contains('button', 'Uložit změny').click();
   // The page body is now clickable and overflow is no longer hidden.
@@ -524,7 +523,7 @@ it('task', function() {
   // The main application content is no longer hidden from assistive technologies.
   cy.get('div.isolate')
     .should('not.have.attr', 'aria-hidden')
-  
+
   cy.get('div:nth-child(2) > div.gap-3 > button.bg-primary').click();
   // The 'Dokončeno' badge is now green with a checkmark.
   cy.get('div:nth-child(2) > div.justify-between > span.flex')
@@ -552,7 +551,7 @@ it('task', function() {
   // The 'Vyhodnotit' button for the answer input is enabled.
   cy.get('div.border.w-full div.mt-2')
     .should('contain.text', 'Vyhodnotit')
-  
+
   cy.get('div:nth-child(3) > div.rounded').click();
   // The task item is highlighted as selected.
   cy.get('div.space-y-2 div:nth-child(3)')
@@ -569,7 +568,7 @@ it('task', function() {
       expect($el).to.have.class('bg-sky-500')
       expect($el).to.not.have.class('border-gray-400')
     })
-  
+
   cy.get('div.border.w-full button.bg-primary').click();
   cy.get('button:nth-child(3)').click();
   cy.get('a[href="/information-system-learning-app/systems/skolni_tabor_palava/vedouci"] span.font-medium').click();

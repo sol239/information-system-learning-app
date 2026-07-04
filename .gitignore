@@ -56,3 +56,4 @@ todo.md
 /TODO/
 eslint-app-report.json
 /bakalarska_prace/
+tests/cypress/screenshots/

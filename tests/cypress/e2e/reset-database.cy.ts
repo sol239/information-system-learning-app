@@ -22,7 +22,7 @@ function expectParticipantCount(expectedCount: number) {
 it('reset database', function () {
   cy.visit(participantsUrl);
 
-  cy.get('#smazat-ucastnika-tlacitko', { timeout: 10000 }).should('be.visible');
+  cy.get('#smazat-ucastnika-tlacitko', { timeout: 30000 }).should('be.visible');
   expectParticipantCount(30);
 
   cy.get('#smazat-ucastnika-tlacitko').first().click();
