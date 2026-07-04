@@ -1,14 +1,21 @@
 import { Component } from '~/model/Component'
 
 /**
- * Nuxt plugin to load and register system components from the '~/model/SystemComponents' directory. 
+ * Nuxt plugin to load and register system components.
  */
 export default defineNuxtPlugin(async () => {
     const store = useComponentStore()
     store.clearComponents()
 
-    // Dynamically import all modules from the '~/model/SystemComponents' directory
-    const modules = import.meta.glob('~/model/SystemComponents/**/*.ts')
+    const componentGlobPath = String(useRuntimeConfig().public.systemComponentsGlobPath)
+    const moduleLoadersByGlob = {
+        '~/model/SystemComponents/**/*.ts': import.meta.glob('~/model/SystemComponents/**/*.ts'),
+    }
+    const modules = moduleLoadersByGlob[componentGlobPath as keyof typeof moduleLoadersByGlob]
+
+    if (!modules) {
+        throw new Error(`Unsupported systemComponentsGlobPath: ${componentGlobPath}`)
+    }
 
     for (const path in modules) {
         const mod = await modules[path]!() as Record<string, unknown>

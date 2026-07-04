@@ -18,6 +18,7 @@ export default defineNuxtConfig({
       databasePageRoute: '/database', // Defines the database page route.
       publicSystemsDirPath: '/systems', // Points to public system definitions.
       systemsToPreload: ['skolni_tabor_palava'], // Ids of systems which shall be preloaded.
+      systemComponentsGlobPath: '~/model/SystemComponents/**/*.ts', // Finds default system components.
     },
   },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n', 'pinia-plugin-persistedstate/nuxt', '@nuxt/test-utils/module', '@nuxt/eslint'],
