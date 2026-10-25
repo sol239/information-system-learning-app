@@ -83,7 +83,7 @@ npm run dev
 Výchozí adresa aplikace je:
 
 ```text
-http://localhost:3000/information-system-learning-app
+http://localhost:3003/information-system-learning-app
 ```
 
 Pokud Nuxt použije jiný port, přesnou adresu vypíše terminál.
@@ -221,17 +221,34 @@ Playwright:
 npx playwright test
 ```
 
-Cypress:
+Cypress s automatickým spuštěním a ukončením testovacího serveru na portu 3004:
+
+```bash
+npm run test:e2e
+```
+
+Pro ruční spuštění nejprve spusťte testovací aplikaci na portu 3004 v učitelském režimu,
+který testy potřebují pro úpravy komponent:
+
+```bash
+npx nuxt dev --envName cypress --port 3004
+```
+
+V druhém terminálu pak spusťte:
+
+```bash
+npx cypress run
+```
+
+Interaktivní Cypress nad běžícím serverem:
 
 ```bash
 npx cypress open
 ```
 
-Konfigurace Cypressu očekává aplikaci na `http://localhost:4000/information-system-learning-app`. Pokud chcete testovat přes tento port, spusťte Nuxt například takto:
-
-```bash
-npx nuxt dev --port 4000
-```
+Výchozí `baseUrl` Cypressu je `http://localhost:3004/information-system-learning-app`.
+Příkaz `npm run test:e2e` ji přepíše na vlastní testovací server na portu 3004.
+Testovací server používá učitelský režim a oddělenou složku `.nuxt-cypress`, aby nekolidoval s vývojovým serverem.
 
 Build pro produkci:
 
@@ -284,6 +301,17 @@ ESLint kontroluje JavaScript, TypeScript a Vue soubory. Lokálně lze kontrolu
 spustit příkazem `npm run lint:check`. Pre-push hook ji spouští s limitem
 nula upozornění. GitHub Actions ji také spouští při pushi, pull requestu a
 `merge_group`; jakékoli upozornění nebo chyba kontrolu shodí.
+
+## Testy před pushem
+
+Po formátování a úspěšné kontrole ESLintem pre-push hook postupně spustí:
+
+1. `npm run test:run` — všechny Vitest testy jednou, bez watch režimu.
+2. `npm run test:e2e` — Cypress testy nad vlastním serverem na portu 3004,
+   který se po dokončení automaticky ukončí.
+
+Při selhání kteréhokoli kroku se push zastaví a další krok se nespustí.
+Oba příkazy lze spustit také ručně.
 
 ## Dokumentace
 

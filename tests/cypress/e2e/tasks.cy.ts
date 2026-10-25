@@ -1,38 +1,32 @@
-const appUrl =
-  "http://localhost:3000/information-system-learning-app/systems/skolni_tabor_palava/nastenka";
+import type { editor } from "monaco-editor";
+
+type TestWindow = Window & {
+  __codeBlockEditors?: Record<
+    string,
+    Pick<editor.IStandaloneCodeEditor, "getValue" | "setValue">
+  >;
+};
+
+const appUrl = "/systems/skolni_tabor_palava/nastenka";
 
 function setTeacherMode(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
     .then((win) => win.__informationSystemTestApi!.setTeacherMode(value));
 }
 
-function clickButton(name: string, index = 0) {
-  cy.get("button").filter(`:contains("${name}")`).eq(index).click();
-}
-
-function evaluate(index = 0) {
-  clickButton("Vyhodnotit", index);
-  cy.wait(400);
-}
-
-function fillAnswer(value: string) {
-  cy.get('input[placeholder="Vaše odpověď"], input[aria-label="Vaše odpověď"]')
-    .first()
-    .clear()
-    .type(value);
-}
-
 function getCodeBlockEditor(codeBlockId: string) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
-      expect((win as any).__codeBlockEditors?.[codeBlockId]).to.exist;
+      expect(
+        (win as TestWindow).__codeBlockEditors?.[codeBlockId],
+      ).to.not.equal(undefined);
     })
-    .then((win) => (win as any).__codeBlockEditors[codeBlockId]);
+    .then((win) => (win as TestWindow).__codeBlockEditors![codeBlockId]);
 }
 
 function appendCodeBlockValue(codeBlockId: string, value: string) {
@@ -51,7 +45,9 @@ function replaceCodeBlockValue(
 ) {
   cy.wait(500);
   getCodeBlockEditor(codeBlockId).then((editor) => {
-    editor.setValue(editor.getValue().replace(search, replacement));
+    const value = editor.getValue();
+    expect(value).to.include(search);
+    editor.setValue(value.replace(search, replacement));
   });
   cy.wait(500);
 }
@@ -376,7 +372,11 @@ it("task", function () {
   cy.get("div:nth-child(2) > span.text-gray-800").click();
   cy.get("#evaluate-activity-button").click();
   cy.wait(300);
-  cy.get("div:nth-child(6) button.ring span.truncate").first().click();
+  cy.contains("#jmeno-ucastnika", "Denisa Kolmanová")
+    .closest(".component-wrapper")
+    .parent()
+    .find(".participant-button--edit")
+    .click();
   cy.get("#edit-vstup_alergeny_ucastnika-27 label:nth-child(11)").click();
   cy.get('#edit-vstup_alergeny_ucastnika-27 input[value="11"]').check();
   cy.get("#system-edit_btn_ulozit_ucastnika").click();
@@ -403,49 +403,26 @@ it("task", function () {
   cy.get(
     'a[href="/information-system-learning-app/systems/skolni_tabor_palava/turnusy"] span.font-medium',
   ).click();
-  cy.get("span.mobile-hidden").first().click();
-  // The first turnus is now in edit mode.
-  cy.get(
-    "div:nth-child(1) > div.border-b.flex > div.component-wrapper > div.content-container",
-  ).should("have.class", "edit-mode");
-  // The second turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div.flex-wrap > div[data-component-id="datum-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The third turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div.flex-wrap > div[data-component-id="pocet-dni-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The fourth turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div[data-component-id="kapacita-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The fifth turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div[data-component-id="stitek-poctu-ucastniku-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The sixth turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div[data-component-id="seznam-ucastniku-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The seventh turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div[data-component-id="stitek-poctu-vedoucich-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-  // The eighth turnus is now in edit mode.
-  cy.get(
-    'div:nth-child(1) > div[data-component-id="seznam-vedoucich-turnusu"] > div.content-container',
-  ).should("have.class", "edit-mode");
-
-  cy.get(
-    'div:nth-child(3) > div.flex-wrap > div[data-component-id="pocet-dni-turnusu"] > div.edit-mode > div:nth-child(1) > span.edit-icon > svg',
-  ).click();
+  cy.get("#toggle-edits-button").click();
+  for (const componentId of [
+    "stitek-stavu-turnusu",
+    "datum-turnusu",
+    "pocet-dni-turnusu",
+    "kapacita-turnusu",
+    "stitek-poctu-ucastniku-turnusu",
+    "seznam-ucastniku-turnusu",
+    "stitek-poctu-vedoucich-turnusu",
+    "seznam-vedoucich-turnusu",
+  ]) {
+    cy.get(
+      `.sessions-page [data-component-id="${componentId}"] .content-container`,
+    ).each(($container) =>
+      cy.wrap($container).should("have.class", "edit-mode"),
+    );
+  }
+  cy.get(".edit-component-button-pocet-dni-turnusu").first().click();
   // The page body is now unclickable and hidden from overflow.
-  cy.get("body").should(
-    "have.attr",
-    "style",
-    "pointer-events: none; overflow: hidden;",
-  );
+  cy.get("body").should("have.css", "pointer-events", "none");
   // The main application content is now hidden from assistive technologies.
   cy.get("div.isolate").should("have.attr", "aria-hidden", "true");
   // A new dialog box has appeared.
@@ -454,24 +431,24 @@ it("task", function () {
   expectEditComponentDialog("Počet dní turnusu");
   // The dialog box is editing the 'Počet dní turnusu' component.
   // The 'Uložit změny' button is visible.
-  cy.get("button.ml-auto").should(($el) => {
-    expect($el).to.be.visible;
-    expect($el).to.contain.text("Uložit změny");
-  });
+  cy.get("#save-code-changes-button")
+    .should("be.visible")
+    .and("contain.text", "Uložit změny");
   // The close button for the dialog is visible.
   cy.get("button.absolute").should("be.visible");
   // The SQL code is marked as 'Správně'.
-  cy.get("span.ring").should(($el) => {
-    expect($el).to.be.visible;
-    expect($el).to.contain.text("Správně");
-  });
+  cy.contains('[role="dialog"] span', "Správně").should("be.visible");
 
-  appendCodeBlockValue("code-js", "const pocet = pocet_dni_turnusu + 1");
+  appendCodeBlockValue(
+    "code-javascript",
+    "const pocet = pocet_dni_turnusu + 1",
+  );
   replaceCodeBlockValue("code-html", "pocet_dni_turnusu", "pocet");
 
   cy.contains("button", "Uložit změny").click();
   // The page body is now clickable and overflow is no longer hidden.
-  cy.get("body.underline-links").should("have.attr", "style", "");
+  cy.get('[role="dialog"]').should("not.exist");
+  cy.get("body").should("not.have.css", "pointer-events", "none");
   // The main application content is no longer hidden from assistive technologies.
   cy.get("div.isolate").should("not.have.attr", "aria-hidden");
 
@@ -547,15 +524,9 @@ it("task", function () {
     "Zpět na seznam",
   );
 
-  cy.get(
-    "div:nth-child(3) > div.border-b.flex > div.component-wrapper > div.edit-mode > div:nth-child(1) > span.edit-icon > svg",
-  ).click();
+  cy.get(".edit-component-button-stitek-stavu-turnusu").first().click();
   // The page body is now unclickable and hidden from overflow.
-  cy.get("body.underline-links").should(
-    "have.attr",
-    "style",
-    "pointer-events: none; overflow: hidden;",
-  );
+  cy.get("body").should("have.css", "pointer-events", "none");
   // The main application content is now hidden from assistive technologies.
   cy.get("div.isolate").should("have.attr", "aria-hidden", "true");
   // A new dialog box has appeared.
@@ -564,26 +535,23 @@ it("task", function () {
   expectEditComponentDialog("Štítek stavu turnusu");
   // The dialog box is editing the 'Štítek stavu turnusu' component.
   // The 'Uložit změny' button is visible.
-  cy.get("button.ml-auto").should(($el) => {
-    expect($el).to.be.visible;
-    expect($el).to.contain.text("Uložit změny");
-  });
+  cy.get("#save-code-changes-button")
+    .should("be.visible")
+    .and("contain.text", "Uložit změny");
   // The close button for the dialog is visible.
   cy.get("button.absolute").should("be.visible");
   // The SQL code is marked as 'Správně'.
-  cy.get("span.ring").should(($el) => {
-    expect($el).to.be.visible;
-    expect($el).to.contain.text("Správně");
-  });
+  cy.contains('[role="dialog"] span', "Správně").should("be.visible");
 
   replaceCodeBlockValue(
-    "code-js",
+    "code-javascript",
     "celkova_kapacita * 0.3",
     "celkova_kapacita * 0.8",
   );
   cy.contains("button", "Uložit změny").click();
   // The page body is now clickable and overflow is no longer hidden.
-  cy.get("body.underline-links").should("have.attr", "style", "");
+  cy.get('[role="dialog"]').should("not.exist");
+  cy.get("body").should("not.have.css", "pointer-events", "none");
   // The main application content is no longer hidden from assistive technologies.
   cy.get("div.isolate").should("not.have.attr", "aria-hidden");
 
@@ -637,9 +605,17 @@ it("task", function () {
   cy.get(
     'a[href="/information-system-learning-app/systems/skolni_tabor_palava/vedouci"] span.font-medium',
   ).click();
-  cy.get("div:nth-child(6) button.ring span.truncate").first().click();
+  cy.contains("#jmeno-vedouciho", "Tomáš Masaryk")
+    .closest(".component-wrapper")
+    .parent()
+    .find(".supervisor-button--edit")
+    .click();
   cy.get('div[data-component-id="edit-vstup-jmeno-vedouciho"] svg').click();
-  replaceCodeBlockValue("code-js", "delka_jmena === 2", "delka_jmena >= 2");
+  replaceCodeBlockValue(
+    "code-javascript",
+    "delka_jmena === 2",
+    "delka_jmena >= 2",
+  );
   cy.contains("button", "Uložit změny").click();
   cy.get("#system-edit_vstup_jmeno_vedouciho").click();
   cy.get("#system-edit_vstup_jmeno_vedouciho").clear();

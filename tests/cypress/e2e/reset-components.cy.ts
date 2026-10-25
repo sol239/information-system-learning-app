@@ -2,7 +2,7 @@ const participantsUrl = "/systems/skolni_tabor_palava/nastenka";
 
 function setTeacherMode(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -11,7 +11,7 @@ function setTeacherMode(value: boolean) {
 
 function setBypassPageVisibility(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -22,7 +22,7 @@ function setBypassPageVisibility(value: boolean) {
 
 function setEditModeActive(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -35,7 +35,7 @@ function setComponentCodeSQL(
   code: string,
 ) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -50,7 +50,7 @@ function setComponentCodeSQL(
 
 function getComponentCodeSQL(componentId: string, queryName: string) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })

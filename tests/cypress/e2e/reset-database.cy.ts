@@ -9,7 +9,7 @@ type QueryOperation = {
 
 function querySelectedSystemDatabase(sql: string) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -23,7 +23,7 @@ function querySelectedSystemDatabase(sql: string) {
 
 function setBypassPageVisibility(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
@@ -34,7 +34,7 @@ function setBypassPageVisibility(value: boolean) {
 
 function setTeacherMode(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })

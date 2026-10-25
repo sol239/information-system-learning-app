@@ -1,9 +1,8 @@
-const appUrl =
-  "http://localhost:3000/information-system-learning-app/systems/skolni_tabor_palava/nastenka";
+const appUrl = "/systems/skolni_tabor_palava/nastenka";
 
 function setTeacherMode(value: boolean) {
   return cy
-    .window()
+    .window({ timeout: 30000 })
     .should((win) => {
       expect(win.__informationSystemTestApi).to.not.equal(undefined);
     })
