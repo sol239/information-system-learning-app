@@ -9,3 +9,5 @@ if ! git diff --quiet HEAD --; then
   echo "Prettier upravil soubory. Zkontrolujte je, commitněte a zopakujte git push."
   exit 1
 fi
+
+npm run lint:check -- --max-warnings=0

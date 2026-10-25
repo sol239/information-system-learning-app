@@ -281,8 +281,9 @@ Samotnou kontrolu bez úprav souborů spustíš příkazem `npx prettier . --che
 ## Kontrola ESLintem
 
 ESLint kontroluje JavaScript, TypeScript a Vue soubory. Lokálně lze kontrolu
-spustit příkazem `npm run lint:check`. GitHub Actions ji spouští při pushi,
-pull requestu a `merge_group`; jakékoli upozornění nebo chyba kontrolu shodí.
+spustit příkazem `npm run lint:check`. Pre-push hook ji spouští s limitem
+nula upozornění. GitHub Actions ji také spouští při pushi, pull requestu a
+`merge_group`; jakékoli upozornění nebo chyba kontrolu shodí.
 
 ## Dokumentace
 
