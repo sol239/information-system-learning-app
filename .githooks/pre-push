@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+
+if ! git diff --quiet HEAD --; then
+  echo "Push zastaven: nejdřív commitněte nebo odložte rozpracované změny."
+  exit 1
+fi
+
+npm run format
+
+if ! git diff --quiet HEAD --; then
+  echo "Prettier upravil soubory. Zkontrolujte je, commitněte a zopakujte git push."
+  exit 1
+fi

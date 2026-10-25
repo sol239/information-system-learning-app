@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "prepare": "node scripts/install-git-hooks.mjs",
     "test": "vitest",
     "test:unit": "vitest run --dir test/unit",
     "test:watch": "vitest watch",

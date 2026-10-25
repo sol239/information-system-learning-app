@@ -273,6 +273,15 @@ NUXT_APP_BASE_URL=/nazev-repozitare
 
 Pro učitelskou a studentskou verzi lze použít dva samostatné repozitáře, nebo jeden repozitář s přepínáním `NUXT_PUBLIC_APP_MODE` a opětovným spuštěním workflow.
 
+## Formátování před pushem
+
+Při `npm install` nebo `npm ci` se lokálně zapne hook `.githooks/pre-push`.
+Při `git push` spustí `npm run format`, stejně jako ruční formátování celého repozitáře.
+Pokud jsou rozpracované změny, push se zastaví před formátováním.
+Pokud Prettier soubory upraví, push se zastaví: změny zkontrolujte, commitněte
+a zopakujte `git push`. Formátování tak bude součástí odesílaných commitů.
+Existující instalaci lze zapnout příkazem `npm run prepare`.
+
 ## Dokumentace
 
 - [Učitelská příručka](docs/cs/teacher.md)
