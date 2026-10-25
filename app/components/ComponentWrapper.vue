@@ -2,12 +2,23 @@
   <div
     ref="wrapperRef"
     :data-component-id="props.component.id"
-    :class="['component-wrapper', {
-      'highlight-active': highlightStore.isHighlightActive,
-      'is-highlighted': highlightStore.isHighlightActive && highlightStore.selectedHighlightedComponentsIds.has(props.component.id),
-      'teacher-outline': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled,
-      'teacher-outline--selected': globalSettings.teacherMode && globalSettings.teacherHighlightEnabled && globalSettings.selectedComponents?.has(props.component.id),
-    }]"
+    :class="[
+      'component-wrapper',
+      {
+        'highlight-active': highlightStore.isHighlightActive,
+        'is-highlighted':
+          highlightStore.isHighlightActive &&
+          highlightStore.selectedHighlightedComponentsIds.has(
+            props.component.id,
+          ),
+        'teacher-outline':
+          globalSettings.teacherMode && globalSettings.teacherHighlightEnabled,
+        'teacher-outline--selected':
+          globalSettings.teacherMode &&
+          globalSettings.teacherHighlightEnabled &&
+          globalSettings.selectedComponents?.has(props.component.id),
+      },
+    ]"
     @click="handleClick"
     @input="handleInput"
     @change="handleChange"
@@ -16,27 +27,34 @@
       <div v-if="isJustRepaired" class="repaired-overlay" />
 
       <div v-if="!globalSettings.teacherMode">
-        <UTooltip v-if="isEditEnabled" :text="t('edit_component')" :delay-duration="0">
-        <span
-          :class="['edit-icon', `edit-component-button-${String(props.component.id)}`]"
-          :aria-label="t('edit_component')"
-          @click.stop="handleEdit"
+        <UTooltip
+          v-if="isEditEnabled"
+          :text="t('edit_component')"
+          :delay-duration="0"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+          <span
+            :class="[
+              'edit-icon',
+              `edit-component-button-${String(props.component.id)}`,
+            ]"
+            :aria-label="t('edit_component')"
+            @click.stop="handleEdit"
           >
-            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-            <path d="m15 5 4 4" />
-          </svg>
-        </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+              <path d="m15 5 4 4" />
+            </svg>
+          </span>
         </UTooltip>
       </div>
       <div
@@ -45,20 +63,38 @@
         @click.stop="handleTeacherModeClick"
       >
         <UBadge
-          :color="globalSettings.selectedComponents?.has(props.component.id) ? 'red' : 'blue'"
+          :color="
+            globalSettings.selectedComponents?.has(props.component.id)
+              ? 'red'
+              : 'blue'
+          "
           variant="solid"
           size="md"
           class="teacher-icon"
-          style="cursor: pointer;"
+          style="cursor: pointer"
         >
-          {{ globalSettings.selectedComponents?.has(props.component.id) ? '✓ ' + props.component.name : props.component.name }}
+          {{
+            globalSettings.selectedComponents?.has(props.component.id)
+              ? "✓ " + props.component.name
+              : props.component.name
+          }}
         </UBadge>
       </div>
 
+      <!-- eslint-disable vue/no-v-html -- System components intentionally render their saved HTML templates. -->
       <div
-        :class="['component-html', { 'content-interaction-disabled': (globalSettings.teacherMode && globalSettings.teacherHighlightEnabled) || highlightStore.isHighlightActive }]"
+        :class="[
+          'component-html',
+          {
+            'content-interaction-disabled':
+              (globalSettings.teacherMode &&
+                globalSettings.teacherHighlightEnabled) ||
+              highlightStore.isHighlightActive,
+          },
+        ]"
         v-html="resolvedComponentHtml"
       />
+      <!-- eslint-enable vue/no-v-html -->
     </div>
 
     <EditComponentModal
@@ -74,167 +110,234 @@
 <script setup lang="ts">
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-dynamic-delete, vue/no-mutating-props */
 /* 1. Imports */
-import type { QueryExecResult } from 'sql.js'
-import { computed, nextTick, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, reactive, ref, watch } from 'vue'
-import { HtmlHandler } from '~/core/components/variables/HtmlHandler.js'
-import { JsHandler } from '~/core/components/variables/JsHandler.js'
-import { SqlHandler } from '~/core/components/variables/SqlHandler.js'
-import { TableMap } from '~/core/components/variables/TableMap.js'
-import { useSystemInputVariables } from '~/composables/useSystemInputVariables'
-import type { Component as SystemComponent } from '~/model/Component'
-import { ComponentVariables, Variable } from '~/model/ComponentVariables'
-import type { VariableType } from '~/model/types/VariableType'
-import { useHighlightStore } from '~/stores/highlightStore'
-import { useSystemsStore } from '~/stores/systemsStore'
-import { DatabaseHandler } from '~/utils/DatabaseHandler'
-import type { DatabaseWrapper } from '~/utils/DatabaseWrapper'
-import type { CodeEditPermissions } from '~/utils/codeEditPermissions'
-import { OperationResultType } from '~/utils/Operation/OperationResultType.js'
-import EditComponentModal from './EditComponentModal.vue'
+import type { QueryExecResult } from "sql.js";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onBeforeUpdate,
+  onMounted,
+  onUpdated,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import { HtmlHandler } from "~/core/components/variables/HtmlHandler.js";
+import { JsHandler } from "~/core/components/variables/JsHandler.js";
+import { SqlHandler } from "~/core/components/variables/SqlHandler.js";
+import { TableMap } from "~/core/components/variables/TableMap.js";
+import { useSystemInputVariables } from "~/composables/useSystemInputVariables";
+import type { Component as SystemComponent } from "~/model/Component";
+import { ComponentVariables, Variable } from "~/model/ComponentVariables";
+import type { VariableType } from "~/model/types/VariableType";
+import { useHighlightStore } from "~/stores/highlightStore";
+import { useSystemsStore } from "~/stores/systemsStore";
+import { DatabaseHandler } from "~/utils/DatabaseHandler";
+import type { DatabaseWrapper } from "~/utils/DatabaseWrapper";
+import type { CodeEditPermissions } from "~/utils/codeEditPermissions";
+import { OperationResultType } from "~/utils/Operation/OperationResultType.js";
+import EditComponentModal from "./EditComponentModal.vue";
 
 /* 2. Stores */
-const systemsStore = useSystemsStore()
-const highlightStore = useHighlightStore()
-const globalSettings = useGlobalSettingsStore()
+const systemsStore = useSystemsStore();
+const highlightStore = useHighlightStore();
+const globalSettings = useGlobalSettingsStore();
 
 /* 3. Context hooks */
-const toast = useToast()
-const { t } = useI18n()
-const { systemInputVariables, upsertSystemInputVariable, upsertSystemComputedVariable, removeSystemInputVariable } = useSystemInputVariables()
+const toast = useToast();
+const { t } = useI18n();
+const {
+  systemInputVariables,
+  upsertSystemInputVariable,
+  upsertSystemComputedVariable,
+  removeSystemInputVariable,
+} = useSystemInputVariables();
 
 /* 4. Constants (non-reactive) */
-const componentCodeUpdatedEventName = 'component-code-updated'
-const componentsRepairedEventName = 'components-repaired'
+const componentCodeUpdatedEventName = "component-code-updated";
+const componentsRepairedEventName = "components-repaired";
 
 /* 5. Props */
 const props = defineProps<{
-  component: SystemComponent
-}>()
+  component: SystemComponent;
+}>();
 
 /* 6. Emits */
 const emit = defineEmits<{
-  'action-completed': [payload: { componentId: string; type: 'click-sql' | 'modal-sql'; sql?: string }]
-}>()
+  "action-completed": [
+    payload: {
+      componentId: string;
+      type: "click-sql" | "modal-sql";
+      sql?: string;
+    },
+  ];
+}>();
 
 /* 7. Template refs */
-const wrapperRef = ref<HTMLElement | null>(null)
+const wrapperRef = ref<HTMLElement | null>(null);
 
 /* 8. State (ref, reactive) */
-const styleId = `component-style-${props.component.id}`
-const isEditModalOpened = ref(false)
-const isActionModalOpened = ref(false)
-const isSubmittingActionModal = ref(false)
-const actionModalError = ref('')
-const modalFormState = reactive<Record<string, string | number>>({})
-const isJustRepaired = ref(false)
-const componentVariables = ref<ComponentVariables>(new ComponentVariables())
-const ownedSystemVariableNames = new Set<string>()
-const ownedComputedVariableNames = new Set<string>()
+const styleId = `component-style-${props.component.id}`;
+const isEditModalOpened = ref(false);
+const isActionModalOpened = ref(false);
+const isSubmittingActionModal = ref(false);
+const actionModalError = ref("");
+const modalFormState = reactive<Record<string, string | number>>({});
+const isJustRepaired = ref(false);
+const componentVariables = ref<ComponentVariables>(new ComponentVariables());
+const ownedSystemVariableNames = new Set<string>();
+const ownedComputedVariableNames = new Set<string>();
 
-let db: DatabaseWrapper | undefined = undefined
-let isRefreshingSqlVars = false
-let activeInputSnapshotBeforeUpdate: ActiveInputSnapshot | null = null
+let db: DatabaseWrapper | undefined = undefined;
+let isRefreshingSqlVars = false;
+let activeInputSnapshotBeforeUpdate: ActiveInputSnapshot | null = null;
 
-type ComponentCodeUpdatedEvent = CustomEvent<{ componentId: string }>
-type ComponentsRepairedEvent = CustomEvent<{ componentIds?: string[] }>
+type ComponentCodeUpdatedEvent = CustomEvent<{ componentId: string }>;
+type ComponentsRepairedEvent = CustomEvent<{ componentIds?: string[] }>;
 
 type ActiveInputSnapshot = {
-  identifier: string
-  value: string
-  selectionStart: number | null
-  selectionEnd: number | null
-}
+  identifier: string;
+  value: string;
+  selectionStart: number | null;
+  selectionEnd: number | null;
+};
 
-type SystemFormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+type SystemFormControl =
+  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /* 9. Computed */
-const isEditEnabled = computed(() => highlightStore.isEditModeActive)
-const declaredJsVariableNames = computed(() => new Set(JsHandler.getDeclaredVariableNames(props.component.js ?? '')))
-const selectedTaskCodeEditPermissions = computed<Partial<CodeEditPermissions> | undefined>(() => {
-  const taskId = globalSettings.selectedTaskId
-  if (!taskId) return undefined
+const isEditEnabled = computed(() => highlightStore.isEditModeActive);
+const declaredJsVariableNames = computed(
+  () => new Set(JsHandler.getDeclaredVariableNames(props.component.js ?? "")),
+);
+const selectedTaskCodeEditPermissions = computed<
+  Partial<CodeEditPermissions> | undefined
+>(() => {
+  const taskId = globalSettings.selectedTaskId;
+  if (!taskId) return undefined;
 
-  return systemsStore.selectedSystem?.tasks?.find(task => task.id === taskId)?.codeEditPermissions
-})
+  return systemsStore.selectedSystem?.tasks?.find((task) => task.id === taskId)
+    ?.codeEditPermissions;
+});
 
 const externalSystemVariables = computed(() =>
-  systemInputVariables.value.filter(variable => !declaredJsVariableNames.value.has(variable.name))
-)
+  systemInputVariables.value.filter(
+    (variable) => !declaredJsVariableNames.value.has(variable.name),
+  ),
+);
 
 const resolvedVariables = computed<ComponentVariables>(() => {
-  const merged = new ComponentVariables()
-  merged.generalVariables = [...(componentVariables.value.generalVariables ?? [])]
-  merged.sqlVariables = [...(componentVariables.value.sqlVariables ?? [])]
+  const merged = new ComponentVariables();
+  merged.generalVariables = [
+    ...(componentVariables.value.generalVariables ?? []),
+  ];
+  merged.sqlVariables = [...(componentVariables.value.sqlVariables ?? [])];
   merged.jsVariables = mergeVariablesByName(
     componentVariables.value.jsVariables ?? [],
-    externalSystemVariables.value
-  )
-  return merged
-})
+    externalSystemVariables.value,
+  );
+  return merged;
+});
 
 const resolvedComponentHtml = computed(() =>
-  HtmlHandler.ReplaceHtmlForVariables(resolvedVariables.value, props.component.html)
-)
+  HtmlHandler.ReplaceHtmlForVariables(
+    resolvedVariables.value,
+    props.component.html,
+  ),
+);
 
 const jsVarsHeader = computed<string>(() => {
   const vars = mergeVariablesByName(
     componentVariables.value.generalVariables ?? [],
     componentVariables.value.sqlVariables ?? [],
-    externalSystemVariables.value
-  )
+    externalSystemVariables.value,
+  );
 
-  if (vars.length === 0) return ''
+  if (vars.length === 0) return "";
 
-  return JsHandler.getVariablesIntoJs(vars)
-})
+  return JsHandler.getVariablesIntoJs(vars);
+});
 
 /* 10. Watchers */
-watch(() => [componentVariables.value, systemInputVariables.value], () => applyStyle(props.component.css), { deep: true });
+watch(
+  () => [componentVariables.value, systemInputVariables.value],
+  () => applyStyle(props.component.css),
+  { deep: true },
+);
 
-watch(systemInputVariables, () => {
-  void refreshJsVariables({ preserveActiveInput: true });
-}, { deep: true });
+watch(
+  systemInputVariables,
+  () => {
+    void refreshJsVariables({ preserveActiveInput: true });
+  },
+  { deep: true },
+);
 
-watch(() => props.component.variables?.generalVariables, (newVars) => {
-  componentVariables.value.generalVariables = newVars ?? [];
-}, { deep: true, immediate: true });
+watch(
+  () => props.component.variables?.generalVariables,
+  (newVars) => {
+    componentVariables.value.generalVariables = newVars ?? [];
+  },
+  { deep: true, immediate: true },
+);
 
-watch(() => globalSettings.solvedComponentIds.includes(props.component.id), (isSolved, wasSolved) => {
-  if (isSolved && wasSolved === false) {
-    showRepairedOverlay();
-  }
-}, { immediate: true });
+watch(
+  () => globalSettings.solvedComponentIds.includes(props.component.id),
+  (isSolved, wasSolved) => {
+    if (isSolved && wasSolved === false) {
+      showRepairedOverlay();
+    }
+  },
+  { immediate: true },
+);
 
-watch(() => [props.component.html, props.component.css, props.component.js, props.component.sql], async (newVals, oldVals) => {
-  const changed = newVals.some((val, i) => val !== oldVals[i]);
-  if (changed) {
-    await refreshComponentCode();
-  }
-});
+watch(
+  () => [
+    props.component.html,
+    props.component.css,
+    props.component.js,
+    props.component.sql,
+  ],
+  async (newVals, oldVals) => {
+    const changed = newVals.some((val, i) => val !== oldVals[i]);
+    if (changed) {
+      await refreshComponentCode();
+    }
+  },
+);
 
-watch(() => systemsStore.selectedSystem?.database?.dbNumber, async () => {
-  if (!db || !props.component.sql || isRefreshingSqlVars) return;
-  isRefreshingSqlVars = true;
-  try {
-    componentVariables.value.sqlVariables = [];
-    const replacedSql: Record<string, string> = SqlHandler.ReplaceSqlForVariablesInRecord(componentVariables.value, props.component.sql);
-    await populateSqlVariables(replacedSql);
-  } finally {
-    isRefreshingSqlVars = false;
-  }
-});
+watch(
+  () => systemsStore.selectedSystem?.database?.dbNumber,
+  async () => {
+    if (!db || !props.component.sql || isRefreshingSqlVars) return;
+    isRefreshingSqlVars = true;
+    try {
+      componentVariables.value.sqlVariables = [];
+      const replacedSql: Record<string, string> =
+        SqlHandler.ReplaceSqlForVariablesInRecord(
+          componentVariables.value,
+          props.component.sql,
+        );
+      await populateSqlVariables(replacedSql);
+    } finally {
+      isRefreshingSqlVars = false;
+    }
+  },
+);
 
 /* 11. Methods */
-function mergeVariablesByName(...groups: Array<Variable[] | undefined>): Variable[] {
-  const merged = new Map<string, Variable>()
+function mergeVariablesByName(
+  ...groups: Array<Variable[] | undefined>
+): Variable[] {
+  const merged = new Map<string, Variable>();
 
   for (const group of groups) {
     for (const variable of group ?? []) {
-      merged.set(variable.name, variable)
+      merged.set(variable.name, variable);
     }
   }
 
-  return Array.from(merged.values())
+  return Array.from(merged.values());
 }
 
 function handleEdit() {
@@ -242,33 +345,42 @@ function handleEdit() {
 }
 
 function handleTeacherModeClick() {
-  if (!globalSettings.selectedTaskId) return
-  const system = systemsStore.selectedSystem
-  if (!system) return
+  if (!globalSettings.selectedTaskId) return;
+  const system = systemsStore.selectedSystem;
+  if (!system) return;
 
-  const task = system.tasks?.find(t => t.id === globalSettings.selectedTaskId)
-  if (!task) return
+  const task = system.tasks?.find(
+    (t) => t.id === globalSettings.selectedTaskId,
+  );
+  if (!task) return;
 
-  const componentId = props.component.id
+  const componentId = props.component.id;
   if (globalSettings.selectedComponents?.has(componentId)) {
-    task.errorComponents = task.errorComponents.filter(c => c.id !== componentId)
-    globalSettings.selectedComponents.delete(componentId)
+    task.errorComponents = task.errorComponents.filter(
+      (c) => c.id !== componentId,
+    );
+    globalSettings.selectedComponents.delete(componentId);
   } else {
-    task.errorComponents.push(props.component)
-    globalSettings.selectedComponents.add(componentId)
+    task.errorComponents.push(props.component);
+    globalSettings.selectedComponents.add(componentId);
   }
-  void systemsStore.updateSystem(system)
+  void systemsStore.updateSystem(system);
 }
 
 function hasDisabledActionControl() {
-  return !!wrapperRef.value?.querySelector('button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"]');
+  return !!wrapperRef.value?.querySelector(
+    'button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"]',
+  );
 }
 
 function resolveActionTemplate(template: string) {
-  return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_match, key: string) => {
-    const value = modalFormState[key];
-    return String(value ?? '').replace(/'/g, "''");
-  });
+  return template.replace(
+    /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g,
+    (_match, key: string) => {
+      const value = modalFormState[key];
+      return String(value ?? "").replace(/'/g, "''");
+    },
+  );
 }
 
 function validateActionModal() {
@@ -277,27 +389,38 @@ function validateActionModal() {
 
   for (const field of modalConfig.fields) {
     const rawValue = modalFormState[field.name];
-    const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
+    const value = typeof rawValue === "string" ? rawValue.trim() : rawValue;
 
-    if (field.required && (value === '' || value === undefined || value === null)) {
+    if (
+      field.required &&
+      (value === "" || value === undefined || value === null)
+    ) {
       return `Field "${field.label}" is required.`;
     }
 
-    if (field.type === 'number' && value !== '' && Number.isNaN(Number(value))) {
+    if (
+      field.type === "number" &&
+      value !== "" &&
+      Number.isNaN(Number(value))
+    ) {
       return `Field "${field.label}" must be a valid number.`;
     }
   }
 
-  if ('from' in modalFormState && 'to' in modalFormState) {
+  if ("from" in modalFormState && "to" in modalFormState) {
     const fromDate = new Date(String(modalFormState.from));
     const toDate = new Date(String(modalFormState.to));
-    if (!Number.isNaN(fromDate.getTime()) && !Number.isNaN(toDate.getTime()) && fromDate > toDate) {
+    if (
+      !Number.isNaN(fromDate.getTime()) &&
+      !Number.isNaN(toDate.getTime()) &&
+      fromDate > toDate
+    ) {
       return 'The "from" date must be earlier than or equal to the "to" date.';
     }
   }
 
-  if ('capacity' in modalFormState && Number(modalFormState.capacity) < 1) {
-    return 'Capacity must be at least 1.';
+  if ("capacity" in modalFormState && Number(modalFormState.capacity) < 1) {
+    return "Capacity must be at least 1.";
   }
 
   return null;
@@ -306,12 +429,12 @@ function validateActionModal() {
 async function executeActionSql(sql: string) {
   //console.log('Executing SQL:', sql);
   if (!db) {
-    throw new Error('Database is not ready.');
+    throw new Error("Database is not ready.");
   }
 
   const trimmedSql = sql.trim();
   if (!trimmedSql) {
-    throw new Error('SQL query is empty.');
+    throw new Error("SQL query is empty.");
   }
 
   const operation = /^\s*select\b/i.test(trimmedSql)
@@ -333,7 +456,7 @@ async function handleActionModalSubmit() {
   const modalConfig = props.component.modal;
   if (!modalConfig) return;
 
-  actionModalError.value = '';
+  actionModalError.value = "";
   const validationError = validateActionModal();
   if (validationError) {
     actionModalError.value = validationError;
@@ -341,11 +464,13 @@ async function handleActionModalSubmit() {
   }
 
   const sqlFieldName = modalConfig.submitSqlFieldName;
-  const sqlTemplate = sqlFieldName ? String(modalFormState[sqlFieldName] ?? '') : '';
+  const sqlTemplate = sqlFieldName
+    ? String(modalFormState[sqlFieldName] ?? "")
+    : "";
   const resolvedSql = resolveActionTemplate(sqlTemplate);
 
   if (!resolvedSql.trim()) {
-    actionModalError.value = 'SQL query is empty.';
+    actionModalError.value = "SQL query is empty.";
     return;
   }
 
@@ -356,30 +481,41 @@ async function handleActionModalSubmit() {
     await persistDatabaseChanges();
 
     toast.add({
-      title: modalConfig.successMessage ?? 'Action completed successfully.',
-      color: 'primary',
-      icon: 'i-heroicons-check'
+      title: modalConfig.successMessage ?? "Action completed successfully.",
+      color: "primary",
+      icon: "i-heroicons-check",
     });
 
     isActionModalOpened.value = false;
-    emit('action-completed', { componentId: props.component.id, type: 'modal-sql', sql: resolvedSql });
+    emit("action-completed", {
+      componentId: props.component.id,
+      type: "modal-sql",
+      sql: resolvedSql,
+    });
   } catch (error) {
-    actionModalError.value = error instanceof Error ? error.message : String(error);
+    actionModalError.value =
+      error instanceof Error ? error.message : String(error);
   } finally {
     isSubmittingActionModal.value = false;
   }
 }
 
-async function handleModalSave(payload: { updatedComponent: SystemComponent, updatedVariables: ComponentVariables }) {
+async function handleModalSave(payload: {
+  updatedComponent: SystemComponent;
+  updatedVariables: ComponentVariables;
+}) {
   const originalComponent = systemsStore.getComponentById(props.component.id);
   if (originalComponent) {
     // Update the original component so all instances are updated and it successfully synchronizes to DB
     Object.assign(originalComponent, payload.updatedComponent);
-    
+
     // If the current component is a clone (Object.create), avoid masking the prototype with own properties
     if (originalComponent !== props.component) {
       for (const key in payload.updatedComponent) {
-        if (Object.prototype.hasOwnProperty.call(props.component, key) && key !== 'variables') {
+        if (
+          Object.prototype.hasOwnProperty.call(props.component, key) &&
+          key !== "variables"
+        ) {
           delete (props.component as any)[key];
         }
       }
@@ -396,9 +532,11 @@ async function handleModalSave(payload: { updatedComponent: SystemComponent, upd
   applyStyle(props.component.css);
 
   if (import.meta.client) {
-    window.dispatchEvent(new CustomEvent(componentCodeUpdatedEventName, {
-      detail: { componentId: props.component.id }
-    }));
+    window.dispatchEvent(
+      new CustomEvent(componentCodeUpdatedEventName, {
+        detail: { componentId: props.component.id },
+      }),
+    );
   }
 
   if (systemsStore.selectedSystem) {
@@ -419,7 +557,9 @@ function handleClick(event: MouseEvent) {
   const target = event.target;
   if (
     target instanceof Element &&
-    target.closest('button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"]')
+    target.closest(
+      'button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"]',
+    )
   ) {
     return;
   }
@@ -431,11 +571,19 @@ function handleClick(event: MouseEvent) {
   // execute js code on click if exists
   if (props.component.js_click) {
     try {
-      const resolvedJs = HtmlHandler.ReplaceTextForVariables(resolvedVariables.value, props.component.js_click);
-      const fullCode = jsVarsHeader.value ? `${jsVarsHeader.value}\n${resolvedJs}` : resolvedJs;
-      componentVariables.value.jsVariables = JsHandler.getJsVariables(fullCode, resolvedJs);
+      const resolvedJs = HtmlHandler.ReplaceTextForVariables(
+        resolvedVariables.value,
+        props.component.js_click,
+      );
+      const fullCode = jsVarsHeader.value
+        ? `${jsVarsHeader.value}\n${resolvedJs}`
+        : resolvedJs;
+      componentVariables.value.jsVariables = JsHandler.getJsVariables(
+        fullCode,
+        resolvedJs,
+      );
     } catch (e) {
-      console.error('Error executing click JS code:', e);
+      console.error("Error executing click JS code:", e);
     }
   }
 
@@ -444,15 +592,20 @@ function handleClick(event: MouseEvent) {
     void (async () => {
       try {
         for (const sql of Object.values(props.component.sql_click)) {
-          const resolvedSql = HtmlHandler.ReplaceTextForVariables(resolvedVariables.value, sql);
+          const resolvedSql = HtmlHandler.ReplaceTextForVariables(
+            resolvedVariables.value,
+            sql,
+          );
           await executeActionSql(resolvedSql);
         }
 
         await persistDatabaseChanges();
-        emit('action-completed', { componentId: props.component.id, type: 'click-sql' });
-      }
-      catch (e) {
-        console.error('Error executing click SQL code:', e);
+        emit("action-completed", {
+          componentId: props.component.id,
+          type: "click-sql",
+        });
+      } catch (e) {
+        console.error("Error executing click SQL code:", e);
       }
     })();
   }
@@ -461,11 +614,14 @@ function handleClick(event: MouseEvent) {
 function applyStyle(css: string) {
   let el = document.getElementById(styleId);
   if (!el) {
-    el = document.createElement('style');
+    el = document.createElement("style");
     el.id = styleId;
     document.head.appendChild(el);
   }
-  const resolvedCss = HtmlHandler.ReplaceCssForVariables(resolvedVariables.value, css);
+  const resolvedCss = HtmlHandler.ReplaceCssForVariables(
+    resolvedVariables.value,
+    css,
+  );
   el.textContent = resolvedCss;
 }
 
@@ -483,36 +639,50 @@ async function populateSqlVariables(sqlRecord: Record<string, string>) {
   const tableMap = await DatabaseHandler.getTableColumnMap(db.sqlJsDatabase!);
 
   for (const [queryName, sql] of Object.entries(sqlRecord)) {
-    const result: QueryExecResult[] = (await DatabaseHandler.query(db!.sqlJsDatabase!, sql)).data ?? [];
+    const result: QueryExecResult[] =
+      (await DatabaseHandler.query(db!.sqlJsDatabase!, sql)).data ?? [];
     const values = result.length > 0 ? Object.values(result[0].values) : [];
 
-    const vars: TableMap[] = SqlHandler.GetSqlVariableNames(sql, tableMap.data ?? {}, result);
+    const vars: TableMap[] = SqlHandler.GetSqlVariableNames(
+      sql,
+      tableMap.data ?? {},
+      result,
+    );
 
     if (vars === undefined || vars.length === 0) continue;
 
     const pushIfUnique = (variable: Variable) => {
-      if (!componentVariables.value.sqlVariables.some(v => v.name === variable.name)) {
+      if (
+        !componentVariables.value.sqlVariables.some(
+          (v) => v.name === variable.name,
+        )
+      ) {
         componentVariables.value.sqlVariables.push(variable);
       }
     };
 
     if (values.length == 1) {
       for (let i = 0; i < vars.length; i++) {
-        const varType: VariableType = TableMap.getVariableTypeFromColumnType(vars[i].columnType) || 'unknown';
+        const varType: VariableType =
+          TableMap.getVariableTypeFromColumnType(vars[i].columnType) ||
+          "unknown";
         const rawValue = values[0][i];
-        const value: VariableType = varType instanceof Date && rawValue !== null
-          ? new Date(rawValue as string)
-          : rawValue as VariableType;
+        const value: VariableType =
+          varType instanceof Date && rawValue !== null
+            ? new Date(rawValue as string)
+            : (rawValue as VariableType);
         pushIfUnique(new Variable(vars[i].variableAsName, value));
       }
     } else if (values.length > 1) {
       for (let i = 0; i < vars.length; i++) {
-        const varType: VariableType = TableMap.getVariableTypeFromColumnType(vars[i].columnType) || 'unknown';
-        const columnValues: VariableType[] = values.map(row => {
+        const varType: VariableType =
+          TableMap.getVariableTypeFromColumnType(vars[i].columnType) ||
+          "unknown";
+        const columnValues: VariableType[] = values.map((row) => {
           const rawValue = row[i];
           return varType instanceof Date && rawValue !== null
             ? new Date(rawValue as string)
-            : rawValue as VariableType;
+            : (rawValue as VariableType);
         });
         pushIfUnique(new Variable(vars[i].variableAsName, columnValues));
       }
@@ -530,12 +700,12 @@ function getVariableValue(input: SystemFormControl): VariableType | null {
   }
 
   switch (input.type) {
-    case 'number':
-      return input.value === '' ? '' : Number(input.value);
+    case "number":
+      return input.value === "" ? "" : Number(input.value);
 
-    case 'date':
-    case 'datetime-local':
-      return input.value === '' ? '' : new Date(input.value);
+    case "date":
+    case "datetime-local":
+      return input.value === "" ? "" : new Date(input.value);
 
     default:
       return input.value; // string
@@ -548,12 +718,12 @@ function getInputIdentifier(input: SystemFormControl) {
 
 function syncSystemInput(input: SystemFormControl) {
   const inputIdentifier = getInputIdentifier(input);
-  if (!inputIdentifier.startsWith('system-')) return;
+  if (!inputIdentifier.startsWith("system-")) return;
 
   const value = getVariableValue(input);
   if (value === null) return;
 
-  const varName = inputIdentifier.replace(/^system-/, '');
+  const varName = inputIdentifier.replace(/^system-/, "");
   ownedSystemVariableNames.add(varName);
   upsertSystemInputVariable(varName, value);
 }
@@ -567,16 +737,20 @@ function captureActiveSystemInput(): ActiveInputSnapshot | null {
     !(activeElement instanceof HTMLInputElement) &&
     !(activeElement instanceof HTMLSelectElement) &&
     !(activeElement instanceof HTMLTextAreaElement)
-  ) return null;
+  )
+    return null;
   if (!wrapperRef.value.contains(activeElement)) return null;
 
   const identifier = getInputIdentifier(activeElement);
-  if (!identifier.startsWith('system-')) return null;
+  if (!identifier.startsWith("system-")) return null;
 
   let selectionStart: number | null = null;
   let selectionEnd: number | null = null;
   try {
-    if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) {
+    if (
+      activeElement instanceof HTMLInputElement ||
+      activeElement instanceof HTMLTextAreaElement
+    ) {
       selectionStart = activeElement.selectionStart;
       selectionEnd = activeElement.selectionEnd;
     }
@@ -598,8 +772,13 @@ async function restoreActiveSystemInput(snapshot: ActiveInputSnapshot | null) {
 
   await nextTick();
 
-  const input = Array.from(wrapperRef.value.querySelectorAll<SystemFormControl>('input, select, textarea'))
-    .find(inputElement => getInputIdentifier(inputElement) === snapshot.identifier);
+  const input = Array.from(
+    wrapperRef.value.querySelectorAll<SystemFormControl>(
+      "input, select, textarea",
+    ),
+  ).find(
+    (inputElement) => getInputIdentifier(inputElement) === snapshot.identifier,
+  );
 
   if (!input) return;
 
@@ -607,7 +786,8 @@ async function restoreActiveSystemInput(snapshot: ActiveInputSnapshot | null) {
   input.focus({ preventScroll: true });
 
   if (
-    (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) &&
+    (input instanceof HTMLInputElement ||
+      input instanceof HTMLTextAreaElement) &&
     snapshot.selectionStart !== null &&
     snapshot.selectionEnd !== null
   ) {
@@ -626,7 +806,8 @@ function handleInput(event: Event) {
     !(target instanceof HTMLInputElement) &&
     !(target instanceof HTMLSelectElement) &&
     !(target instanceof HTMLTextAreaElement)
-  ) return;
+  )
+    return;
 
   syncSystemInput(target);
 }
@@ -639,7 +820,11 @@ async function handleChange() {
 function registerInitialSystemInputs() {
   if (!wrapperRef.value) return;
 
-  const inputs = Array.from(wrapperRef.value.querySelectorAll<SystemFormControl>('input, select, textarea'));
+  const inputs = Array.from(
+    wrapperRef.value.querySelectorAll<SystemFormControl>(
+      "input, select, textarea",
+    ),
+  );
   for (const input of inputs) {
     syncSystemInput(input);
   }
@@ -651,29 +836,42 @@ async function refreshComponentCode() {
 
   componentVariables.value.sqlVariables = [];
   if (db && props.component.sql) {
-    const replacedSql: Record<string, string> = SqlHandler.ReplaceSqlForVariablesInRecord(componentVariables.value, props.component.sql);
+    const replacedSql: Record<string, string> =
+      SqlHandler.ReplaceSqlForVariablesInRecord(
+        componentVariables.value,
+        props.component.sql,
+      );
     await populateSqlVariables(replacedSql);
   }
 
   await refreshJsVariables();
 }
 
-async function refreshJsVariables(options: { preserveActiveInput?: boolean } = {}) {
-  const activeInputSnapshot = options.preserveActiveInput ? captureActiveSystemInput() : null;
+async function refreshJsVariables(
+  options: { preserveActiveInput?: boolean } = {},
+) {
+  const activeInputSnapshot = options.preserveActiveInput
+    ? captureActiveSystemInput()
+    : null;
 
   if (props.component.js) {
     try {
-      const fullCode = jsVarsHeader.value ? `${jsVarsHeader.value}\n${props.component.js}` : props.component.js;
-      const nextJsVariables = JsHandler.getJsVariables(fullCode, props.component.js);
+      const fullCode = jsVarsHeader.value
+        ? `${jsVarsHeader.value}\n${props.component.js}`
+        : props.component.js;
+      const nextJsVariables = JsHandler.getJsVariables(
+        fullCode,
+        props.component.js,
+      );
       componentVariables.value.jsVariables = nextJsVariables;
       syncComputedSystemVariables();
 
-      if (props.component.js.includes('document.')) {
+      if (props.component.js.includes("document.")) {
         await nextTick();
         JsHandler.getJsVariables(fullCode, props.component.js);
       }
     } catch (e) {
-      console.error('Error parsing JS variables:', e);
+      console.error("Error parsing JS variables:", e);
       componentVariables.value.jsVariables = [];
     }
   } else {
@@ -687,7 +885,7 @@ function syncComputedSystemVariables() {
   const nextComputedNames = new Set<string>();
 
   for (const variable of componentVariables.value.jsVariables) {
-    if (typeof variable.variable !== 'boolean') continue;
+    if (typeof variable.variable !== "boolean") continue;
 
     nextComputedNames.add(variable.name);
     ownedComputedVariableNames.add(variable.name);
@@ -710,7 +908,12 @@ function handleComponentCodeUpdated(event: Event) {
 
 function handleComponentsRepaired(event: Event) {
   const detail = (event as ComponentsRepairedEvent).detail;
-  if (!detail?.componentIds?.some(id => String(id) === String(props.component.id))) return;
+  if (
+    !detail?.componentIds?.some(
+      (id) => String(id) === String(props.component.id),
+    )
+  )
+    return;
   showRepairedOverlay();
 }
 
@@ -718,15 +921,22 @@ function handleComponentsRepaired(event: Event) {
 onMounted(async () => {
   db = systemsStore.selectedSystem?.database ?? undefined;
 
-  componentVariables.value.generalVariables = props.component.variables?.generalVariables ?? [];
+  componentVariables.value.generalVariables =
+    props.component.variables?.generalVariables ?? [];
   await refreshComponentCode();
 
   await nextTick();
   registerInitialSystemInputs();
 
   if (import.meta.client) {
-    window.addEventListener(componentCodeUpdatedEventName, handleComponentCodeUpdated);
-    window.addEventListener(componentsRepairedEventName, handleComponentsRepaired);
+    window.addEventListener(
+      componentCodeUpdatedEventName,
+      handleComponentCodeUpdated,
+    );
+    window.addEventListener(
+      componentsRepairedEventName,
+      handleComponentsRepaired,
+    );
   }
 });
 
@@ -742,8 +952,14 @@ onUpdated(() => {
 
 onBeforeUnmount(() => {
   if (import.meta.client) {
-    window.removeEventListener(componentCodeUpdatedEventName, handleComponentCodeUpdated);
-    window.removeEventListener(componentsRepairedEventName, handleComponentsRepaired);
+    window.removeEventListener(
+      componentCodeUpdatedEventName,
+      handleComponentCodeUpdated,
+    );
+    window.removeEventListener(
+      componentsRepairedEventName,
+      handleComponentsRepaired,
+    );
   }
 
   for (const variableName of ownedSystemVariableNames) {
@@ -756,13 +972,13 @@ onBeforeUnmount(() => {
 });
 
 /* 13. defineExpose */
-defineExpose({
-})
+defineExpose({});
 </script>
 
 <style scoped>
 @keyframes glow-yellow {
-  0%, 100% {
+  0%,
+  100% {
     outline: 4px solid rgba(250, 204, 21, 0.4);
     background-color: rgba(250, 204, 21, 0.05);
   }
@@ -773,7 +989,8 @@ defineExpose({
 }
 
 @keyframes glow-orange {
-  0%, 100% {
+  0%,
+  100% {
     outline: 4px solid rgba(249, 115, 22, 0.6);
     background-color: rgba(249, 115, 22, 0.15);
   }
@@ -784,7 +1001,8 @@ defineExpose({
 }
 
 @keyframes glow-border {
-  0%, 100% {
+  0%,
+  100% {
     outline: 4px solid rgba(249, 115, 22, 0.4);
     background-color: transparent;
   }
@@ -902,35 +1120,45 @@ defineExpose({
   max-width: 100%;
 }
 
-.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-karta),
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-card) {
+.component-wrapper[data-component-id="statistika-jidel"]
+  :deep(#statistika-jidel-karta),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-card) {
   padding: 10px !important;
   gap: 10px !important;
   width: 158px !important;
   max-width: 158px !important;
 }
 
-.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-ikona),
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-icon) {
+.component-wrapper[data-component-id="statistika-jidel"]
+  :deep(#statistika-jidel-ikona),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-icon) {
   font-size: 21px !important;
 }
 
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-icon) {
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-icon) {
   font-size: 14px !important;
 }
 
-.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-pocet),
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-number) {
+.component-wrapper[data-component-id="statistika-jidel"]
+  :deep(#statistika-jidel-pocet),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-number) {
   font-size: 20px !important;
 }
 
-.component-wrapper[data-component-id="statistika-jidel"] :deep(#statistika-jidel-popisek),
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-label) {
+.component-wrapper[data-component-id="statistika-jidel"]
+  :deep(#statistika-jidel-popisek),
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-label) {
   font-size: 11px !important;
   margin-top: 2px !important;
 }
 
-.component-wrapper[data-component-id="statistika-max-vek-ucastnika"] :deep(#statistika-max-vek-ucastnika-label) {
+.component-wrapper[data-component-id="statistika-max-vek-ucastnika"]
+  :deep(#statistika-max-vek-ucastnika-label) {
   max-width: 95px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -973,7 +1201,9 @@ defineExpose({
 @keyframes glow-emerald {
   0% {
     background-color: rgba(16, 185, 129, 0.6);
-    box-shadow: 0 0 4px rgba(16, 185, 129, 0.6), 0 0 16px rgba(16, 185, 129, 0.8);
+    box-shadow:
+      0 0 4px rgba(16, 185, 129, 0.6),
+      0 0 16px rgba(16, 185, 129, 0.8);
     opacity: 1;
   }
   70% {
