@@ -276,11 +276,10 @@ Pro učitelskou a studentskou verzi lze použít dva samostatné repozitáře, n
 ## Formátování před pushem
 
 Při `npm install` nebo `npm ci` se lokálně zapne hook `.githooks/pre-push`.
-Při `git push` spustí `npm run format`, stejně jako ruční formátování celého repozitáře.
-Pokud jsou rozpracované změny, push se zastaví před formátováním.
-Pokud Prettier soubory upraví, push se zastaví: změny zkontrolujte, commitněte
-a zopakujte `git push`. Formátování tak bude součástí odesílaných commitů.
-Existující instalaci lze zapnout příkazem `npm run prepare`.
+Při `git push` spustí `npm run format` nad celým repozitářem. Pokud Prettier
+něco upraví, hook push zastaví, aby šly změny zkontrolovat a commitnout.
+Pak lze `git push` zopakovat. Existující instalaci lze zapnout příkazem
+`npm run prepare`.
 
 ## Dokumentace
 
