@@ -5,8 +5,19 @@ import type { Operation } from "~/utils/Operation/Operation"
 import { OperationResultType } from "~/utils/Operation/OperationResultType"
 
 import { emptyComponent } from "~/model/SystemComponents/EmptyComponent"
+import { formatSystemCode } from '~/utils/formatSystemCode'
 
 export const useSystemsStore = defineStore('systems', () => {
+    const runtimeConfig = useRuntimeConfig()
+
+    async function formatLoadedSystem(system: InformationSystem): Promise<void> {
+        if (String(runtimeConfig.public.formatCodeOnSystemLoad) !== 'true') return
+        try {
+            await formatSystemCode(system)
+        } catch (error) {
+            console.warn('Could not initialize code formatting; loading the system without formatting.', error)
+        }
+    }
 
     const selectedSystemId = ref<string | null>(null)
     const globalSettingsStore = useGlobalSettingsStore()
@@ -53,7 +64,8 @@ export const useSystemsStore = defineStore('systems', () => {
         return result
     }
 
-    async function updateSystem(system: InformationSystem): Promise<Operation<null>> {
+    async function updateSystem(system: InformationSystem, options: { formatCode?: boolean } = {}): Promise<Operation<null>> {
+        if (options.formatCode) await formatLoadedSystem(system)
         const result = await storage.saveSystem(system)
         if (result.result === OperationResultType.SUCCESS) {
             const index = systems.value.findIndex(s => s.id === system.id)
@@ -65,6 +77,7 @@ export const useSystemsStore = defineStore('systems', () => {
     }
 
     async function addSystem(system: InformationSystem): Promise<Operation<null>> {
+        await formatLoadedSystem(system)
         const result = await storage.saveSystem(system)
         if (result.result === OperationResultType.SUCCESS) {
             const index = systems.value.findIndex(existingSystem => String(existingSystem.id) === String(system.id))
@@ -83,6 +96,10 @@ export const useSystemsStore = defineStore('systems', () => {
         for (const systemId of systemIds) {
             const result = await storage.getSystem(systemId)
             if (result.result === OperationResultType.SUCCESS && result.data) {
+                await formatLoadedSystem(result.data)
+                if (String(runtimeConfig.public.formatCodeOnSystemLoad) === 'true') {
+                    await storage.saveSystem(result.data)
+                }
                 loadedSystems.push(result.data)
             }
         }

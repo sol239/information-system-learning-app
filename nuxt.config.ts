@@ -6,6 +6,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      formatCodeOnSystemLoad: false, // Formats and saves component code when loading or restoring a system.
       appMode: 'student', // Sets the application mode ( teacher | student)
       htmlAvailable: 'true', // Enables HTML code editing.
       cssAvailable: 'true', // Enables CSS code editing.

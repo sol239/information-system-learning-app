@@ -3,4 +3,5 @@ export type Page = {
     route: string;
     description?: string;
     icon?: string;
+    activeColor?: string;
 }

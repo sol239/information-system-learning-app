@@ -9,6 +9,7 @@ type ExportablePage = {
   route: string
   description?: string
   icon?: string
+  activeColor?: string
 }
 
 export class SystemZipExporter {
@@ -76,6 +77,7 @@ export class SystemZipExporter {
       route: page.route,
       description: page.description,
       icon: page.icon,
+      activeColor: page.activeColor,
     }
   }
 

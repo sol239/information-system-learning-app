@@ -3,4 +3,5 @@ export type SystemPage = {
   route: string
   description?: string
   icon?: string
+  activeColor?: string
 }

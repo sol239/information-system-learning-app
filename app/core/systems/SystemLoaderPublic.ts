@@ -95,7 +95,9 @@ export class SystemLoaderPublic implements ISystemLoader {
     private publicSystemUrl(path: string): string {
         const runtimeConfig = useRuntimeConfig();
         const baseURL = String(runtimeConfig.app?.baseURL ?? "").replace(/\/$/, "");
-        return `${baseURL}/systems/${path}`;
+        const systemsDir = String(runtimeConfig.public.publicSystemsDirPath ?? "/systems")
+            .replace(/^\/+|\/+$/g, "");
+        return `${baseURL}/${systemsDir ? `${systemsDir}/` : ""}${path.replace(/^\/+/, "")}`;
     }
 
     private async fetchRequiredTextFile(url: string, label: string): Promise<string> {
