@@ -1,5 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  $env: {
+    cypress: {
+      buildDir: ".nuxt-cypress",
+      runtimeConfig: {
+        public: {
+          appMode: "teacher",
+        },
+      },
+    },
+  },
   devServer: { port: 3003 },
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
@@ -15,7 +25,7 @@ export default defineNuxtConfig({
       jsClickAvailable: "false", // Controls JavaScript code editing
       sqlClickAvailable: "true", // Controls SQL code editing.
       indexedDbName: "InformationSystemsDb", // Names the browser database.
-      indexedDbVersion: 3, // Sets the browser database schema version.
+      indexedDbVersion: 4, // Sets the browser database schema version.
       indexedDbVersionKey: "db_version", // Stores the active database version key.
       databasePageRoute: "/database", // Defines the database page route.
       publicSystemsDirPath: "/systems", // Points to public system definitions.
