@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      appMode: 'teacher', // Sets the application mode
+      appMode: 'student', // Sets the application mode ( teacher | student)
       htmlAvailable: 'true', // Enables HTML code editing.
       cssAvailable: 'true', // Enables CSS code editing.
       jsAvailable: 'true', // Enables JavaScript code editing.
