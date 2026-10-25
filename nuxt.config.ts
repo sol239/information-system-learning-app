@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  devServer: { port: 3003 },
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
 
@@ -53,7 +54,7 @@ export default defineNuxtConfig({
     detectBrowserLanguage: false
   },
   app: {
-    baseURL: process.env.NUXT_APP_BASE_URL ?? '/information-system-learning-app',
+    baseURL: '/information-system-learning-app',
   },
   ui: {
     theme: {
