@@ -276,6 +276,13 @@ Při `git push` spustí `npm run format` nad celým repozitářem. Pokud Prettie
 něco upraví, hook push zastaví, aby šly změny zkontrolovat a commitnout.
 Pak lze `git push` zopakovat. Existující instalaci lze zapnout příkazem
 `npm run prepare`.
+Samotnou kontrolu bez úprav souborů spustíš příkazem `npx prettier . --check`.
+
+## Kontrola ESLintem
+
+ESLint kontroluje JavaScript, TypeScript a Vue soubory. Lokálně lze kontrolu
+spustit příkazem `npm run lint:check`. GitHub Actions ji spouští při pushi,
+pull requestu a `merge_group`; jakékoli upozornění nebo chyba kontrolu shodí.
 
 ## Dokumentace
 

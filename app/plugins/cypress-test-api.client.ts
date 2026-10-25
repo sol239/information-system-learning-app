@@ -1,24 +1,20 @@
 import { ComponentHelper } from "~/core/systems/ComponentHelper";
 
+/* Cypress exposes these parameter names to test callers through the global API type. */
+/* eslint-disable no-unused-vars */
 declare global {
   interface Window {
     Cypress?: unknown;
     __informationSystemTestApi?: {
-      // eslint-disable-next-line no-unused-vars
       selectedSystemDatabaseQuery(sql: string): Promise<unknown>;
-      // eslint-disable-next-line no-unused-vars
       setBypassPageVisibility(value: boolean): void;
-      // eslint-disable-next-line no-unused-vars
       setTeacherMode(value: boolean): void;
-      // eslint-disable-next-line no-unused-vars
       setEditModeActive(value: boolean): void;
-      // eslint-disable-next-line no-unused-vars
       setComponentCodeSQL(
         componentId: string,
         queryName: string,
         code: string,
       ): Promise<unknown>;
-      // eslint-disable-next-line no-unused-vars
       getComponentCodeSQL(
         componentId: string,
         queryName: string,
@@ -26,6 +22,7 @@ declare global {
     };
   }
 }
+/* eslint-enable no-unused-vars */
 
 export default defineNuxtPlugin(() => {
   const isLocalhost = ["localhost", "127.0.0.1"].includes(
