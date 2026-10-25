@@ -24,7 +24,7 @@ describe("SqljsDatabaseFactory Integration", () => {
       const header = "id_jidla[INTEGER],datum[DATE]";
       const dataLines = ["1,2025-07-01", "11,2025-07-01"];
       const result = SqljsDatabaseFactory.GetInsertDataSql(
-        "kniha_jidel",
+        "jidelnicek",
         header,
         dataLines,
       );
@@ -32,19 +32,19 @@ describe("SqljsDatabaseFactory Integration", () => {
       expect(result.result).toBe(OperationResultType.SUCCESS);
       // DATE values must be wrapped in quotes, integers must not be
       expect(result.data).toBe(
-        "INSERT INTO kniha_jidel (id_jidla, datum) VALUES (1, '2025-07-01'), (11, '2025-07-01');",
+        "INSERT INTO jidelnicek (id_jidla, datum) VALUES (1, '2025-07-01'), (11, '2025-07-01');",
       );
     });
 
     it("should store DATE column as a string in the DB, not as arithmetic (2025-7-1 ≠ 2017)", async () => {
       const csvContents = {
-        kniha_jidel:
+        jidelnicek:
           "id_jidla[INTEGER],datum[DATE]\n1,2025-07-01\n11,2025-07-01",
       };
       const result = await SqljsDatabaseFactory.createDatabase(csvContents);
       expect(result.result).toBe(OperationResultType.SUCCESS);
 
-      const rows = result.data!.exec("SELECT * FROM kniha_jidel");
+      const rows = result.data!.exec("SELECT * FROM jidelnicek");
       expect(rows[0].values[0]).toEqual([1, "2025-07-01"]);
       expect(rows[0].values[1]).toEqual([11, "2025-07-01"]);
       result.data!.close();
@@ -95,7 +95,7 @@ describe("SqljsDatabaseFactory Integration", () => {
       expect(
         db.exec("SELECT COUNT(*) FROM ucastnici")[0].values[0][0],
       ).toBeGreaterThan(0);
-      const dates = db.exec("SELECT datum FROM kniha_jidel LIMIT 2")[0].values;
+      const dates = db.exec("SELECT datum FROM jidelnicek LIMIT 2")[0].values;
       expect(dates).toHaveLength(2);
       for (const [date] of dates) expect(date).toMatch(/^\d{4}-\d{2}-\d{2}/);
       const tables = await DatabaseHandler.getTableNames(db);

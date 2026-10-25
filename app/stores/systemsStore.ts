@@ -6,6 +6,7 @@ import { OperationResultType } from "~/utils/Operation/OperationResultType";
 
 import { emptyComponent } from "~/model/SystemComponents/EmptyComponent";
 import { formatSystemCode } from "~/utils/formatSystemCode";
+import { migrateMealPlanNaming } from "~/utils/migrateMealPlanNaming";
 
 export const useSystemsStore = defineStore(
   "systems",
@@ -99,6 +100,7 @@ export const useSystemsStore = defineStore(
     async function addSystem(
       system: InformationSystem,
     ): Promise<Operation<null>> {
+      await migrateMealPlanNaming(system);
       await formatLoadedSystem(system);
       const result = await storage.saveSystem(system);
       if (result.result === OperationResultType.SUCCESS) {
@@ -120,8 +122,12 @@ export const useSystemsStore = defineStore(
       for (const systemId of systemIds) {
         const result = await storage.getSystem(systemId);
         if (result.result === OperationResultType.SUCCESS && result.data) {
+          const migrated = await migrateMealPlanNaming(result.data);
           await formatLoadedSystem(result.data);
-          if (String(runtimeConfig.public.formatCodeOnSystemLoad) === "true") {
+          if (
+            migrated ||
+            String(runtimeConfig.public.formatCodeOnSystemLoad) === "true"
+          ) {
             await storage.saveSystem(result.data);
           }
           loadedSystems.push(result.data);

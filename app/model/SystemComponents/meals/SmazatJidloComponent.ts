@@ -34,7 +34,7 @@ export const smazatJidloKomponenta = new Component({
   sql: {},
   sql_click: {
     "smazat-jidlo-alergeny": `DELETE FROM jidla_alergeny WHERE id_jidla = idJidla`,
-    "smazat-jidlo-kniha-jidel": `DELETE FROM kniha_jidel WHERE id_jidla = idJidla`,
+    "smazat-jidlo-jidelnicek": `DELETE FROM jidelnicek WHERE id_jidla = idJidla`,
     "smazat-jidlo-ucastnici": `DELETE FROM ucastnici_jidla WHERE id_jidla = idJidla`,
     "smazat-jidlo-vedouci": `DELETE FROM jidla_vedouci WHERE id_jidla = idJidla`,
     "smazat-jidlo": `DELETE FROM jidla WHERE id_jidla = idJidla`,

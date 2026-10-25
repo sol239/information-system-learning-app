@@ -365,7 +365,7 @@ const stav_tlacitka_pridat_jidlo_osobe = jidelnicek_tlacitko_validni ? '' : 'dis
 `,
   sql: {},
   sql_click: {
-    "pridat-do-knihy-jidel": `INSERT OR IGNORE INTO kniha_jidel (id_jidla, datum) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
+    "pridat-do-jidelnicku": `INSERT OR IGNORE INTO jidelnicek (id_jidla, datum) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
     "pridat-ucastnikovi-jidlo": `INSERT OR IGNORE INTO ucastnici_jidla (id_jidla, id_ucastnika, datum_podavani) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), CAST('vstup_id_osoby_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_typ_osoby_jidlo_osobe' = 'ucastnik' AND 'vstup_id_osoby_jidlo_osobe' <> '' AND 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
     "pridat-vedoucimu-jidlo": `INSERT OR IGNORE INTO jidla_vedouci (id_jidla, id_vedouciho, datum_podavani) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), CAST('vstup_id_osoby_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_typ_osoby_jidlo_osobe' = 'vedouci' AND 'vstup_id_osoby_jidlo_osobe' <> '' AND 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
   },

@@ -5,6 +5,16 @@ import { TaskHelper } from "~/core/systems/TaskHelper";
  * This middleware redirects the user the the primary system (STUDENT version), or keeps the user on the /systems page (TEACHER version).
  */
 export default defineNuxtRouteMiddleware((to) => {
+  if (/^\/systems\/[^/]+\/kniha-jidel\/?$/.test(to.path)) {
+    return navigateTo(
+      {
+        path: to.path.replace(/\/kniha-jidel\/?$/, "/jidelnicek"),
+        query: to.query,
+        hash: to.hash,
+      },
+      { replace: true },
+    );
+  }
   const systemsStore = useSystemsStore();
   const globalSettings = useGlobalSettingsStore();
   const defaultSystem = systemsStore.getPrimarySystem();

@@ -60,7 +60,7 @@ export const jidelnicekPocetJidelDneKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-pocet-jidel-dne": `SELECT COUNT(DISTINCT id_jidla) AS pocet_unikatnich_jidel_dne FROM kniha_jidel WHERE DATE(datum) = DATE('datumDne')`,
+    "jidelnicek-pocet-jidel-dne": `SELECT COUNT(DISTINCT id_jidla) AS pocet_unikatnich_jidel_dne FROM jidelnicek WHERE DATE(datum) = DATE('datumDne')`,
   },
   sql_click: {},
 });

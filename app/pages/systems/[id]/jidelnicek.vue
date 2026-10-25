@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="meal-book-page p-6 flex flex-col gap-5 max-w-7xl mx-auto text-xs">
+  <div class="meal-plan-page p-6 flex flex-col gap-5 max-w-7xl mx-auto text-xs">
     <h1 class="system-page-heading" style="--system-heading-color: #6b7280">
       {{ t("meal_plan") }}
     </h1>
@@ -235,7 +235,7 @@
         class="w-16 h-16 mx-auto mb-4 text-gray-400"
       />
       <h3 class="text-base font-semibold text-gray-900 mb-2">
-        {{ t("no_meal_plan") }}
+        {{ t("no_meal_plan_data") }}
       </h3>
     </div>
   </div>
@@ -403,7 +403,7 @@ const loadDays = async (sId: number) => {
   if (!db) return;
   try {
     const result = await db.query(
-      `SELECT DISTINCT kj.datum FROM kniha_jidel kj JOIN turnusy t ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = ${sId} ORDER BY kj.datum`,
+      `SELECT DISTINCT kj.datum FROM jidelnicek kj JOIN turnusy t ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = ${sId} ORDER BY kj.datum`,
     );
     if (result.data?.[0]?.values) {
       sessionDays.value = {
@@ -422,7 +422,7 @@ const loadMeals = async (sId: number, date: string) => {
   const key = `${sId}|${date}`;
   try {
     const result = await db.query(
-      `SELECT DISTINCT id_jidla FROM kniha_jidel WHERE datum = '${date}' ORDER BY id_jidla`,
+      `SELECT DISTINCT id_jidla FROM jidelnicek WHERE datum = '${date}' ORDER BY id_jidla`,
     );
     if (result.data?.[0]?.values) {
       dayMeals.value = {
@@ -464,7 +464,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.meal-book-page
+.meal-plan-page
   :deep(
     .component-html
       :where(*):not(
@@ -477,24 +477,24 @@ onMounted(() => {
   font-size: 12px;
 }
 
-.meal-book-page :deep(#jidelnicek-turnusu-popisek) {
+.meal-plan-page :deep(#jidelnicek-turnusu-popisek) {
   font-size: 14px;
 }
 
-.meal-book-page :deep(#jidelnicek-dne-datum) {
+.meal-plan-page :deep(#jidelnicek-dne-datum) {
   font-size: 12px;
 }
 
-.meal-book-page :deep(#jidelnicek-jidlo-nazev) {
+.meal-plan-page :deep(#jidelnicek-jidlo-nazev) {
   font-size: 12px;
 }
 
-.meal-book-page :deep(.component-html label) {
+.meal-plan-page :deep(.component-html label) {
   font-size: 14px;
   font-weight: 500;
 }
 
-.meal-book-page :deep(.component-html select) {
+.meal-plan-page :deep(.component-html select) {
   box-sizing: border-box;
   height: 26px;
   min-height: 26px;
@@ -503,13 +503,13 @@ onMounted(() => {
   font-size: 12px;
 }
 
-.meal-book-page :deep(#jidelnicek-turnusu-datum-stitek),
-.meal-book-page :deep(#jidelnicek-turnusu-jidla-stitek),
-.meal-book-page :deep(#jidelnicek-turnusu-porci-stitek),
-.meal-book-page :deep(#jidelnicek-dne-jidla-stitek),
-.meal-book-page :deep(#jidelnicek-dne-porci-stitek),
-.meal-book-page :deep(#jidelnicek-jidlo-doba-stitek),
-.meal-book-page :deep(.pilulka-alergenu-jidelnicku) {
+.meal-plan-page :deep(#jidelnicek-turnusu-datum-stitek),
+.meal-plan-page :deep(#jidelnicek-turnusu-jidla-stitek),
+.meal-plan-page :deep(#jidelnicek-turnusu-porci-stitek),
+.meal-plan-page :deep(#jidelnicek-dne-jidla-stitek),
+.meal-plan-page :deep(#jidelnicek-dne-porci-stitek),
+.meal-plan-page :deep(#jidelnicek-jidlo-doba-stitek),
+.meal-plan-page :deep(.pilulka-alergenu-jidelnicku) {
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
@@ -519,8 +519,8 @@ onMounted(() => {
   border-radius: 8px;
 }
 
-.meal-book-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe),
-.meal-book-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
+.meal-plan-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe),
+.meal-plan-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
   box-sizing: border-box;
   min-width: 0;
   min-height: 26px;
@@ -534,29 +534,29 @@ onMounted(() => {
   transition: background-color 0.15s;
 }
 
-.meal-book-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe) {
+.meal-plan-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe) {
   border-color: #22c55e;
   background: #f0fdf4;
   color: #15803d;
 }
 
-.meal-book-page
+.meal-plan-page
   :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe:hover:not(:disabled)) {
   background: #dcfce7;
 }
 
-.meal-book-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
+.meal-plan-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
   border-color: #ef4444;
   background: #fef2f2;
   color: #dc2626;
 }
 
-.meal-book-page
+.meal-plan-page
   :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe:hover:not(:disabled)) {
   background: #fee2e2;
 }
 
-.meal-book-page :deep(.component-html button:disabled) {
+.meal-plan-page :deep(.component-html button:disabled) {
   cursor: not-allowed;
   opacity: 0.5;
 }

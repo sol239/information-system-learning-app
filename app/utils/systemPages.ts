@@ -40,8 +40,8 @@ export const SYSTEM_NAVBAR_PAGES: SystemPage[] = [
     icon: "i-lucide-utensils",
   },
   {
-    name: "Kniha jídel",
-    route: "/kniha-jidel",
+    name: "Jídelníček",
+    route: "/jidelnicek",
     activeColor: "#6b7280",
     description:
       "Podrobný přehled o tom, kdy se budou podávat jednotlivá jídla, včetně informací o alergenech.",

@@ -21,7 +21,7 @@ CREATE TABLE jidla_alergeny (
     FOREIGN KEY (id_jidla) REFERENCES jidla(id_jidla)
 );
 
-CREATE TABLE kniha_jidel (
+CREATE TABLE jidelnicek (
     id_jidla INTEGER,
     datum DATE,
     PRIMARY KEY (id_jidla, datum),
@@ -164,7 +164,7 @@ INSERT INTO jidla_alergeny (id_alergenu, id_jidla) VALUES
 (4,23),(1,23),(1,24),(7,24),(3,25),(1,25),(1,26),(1,27),(7,27),(3,27),
 (7,28),(3,28),(1,28),(1,30),(7,30);
 
-INSERT INTO kniha_jidel (id_jidla, datum) VALUES
+INSERT INTO jidelnicek (id_jidla, datum) VALUES
 (1,'2025-07-04'),(11,'2025-07-04'),(21,'2025-07-04'),
 (2,'2025-07-05'),(12,'2025-07-05'),(22,'2025-07-05'),
 (3,'2025-07-06'),(13,'2025-07-06'),(23,'2025-07-06'),
@@ -643,7 +643,7 @@ INSERT INTO ucastnici_jidla (id_jidla, id_ucastnika, datum_podavani) VALUES
 
 INSERT OR IGNORE INTO ucastnici_jidla (id_jidla, id_ucastnika, datum_podavani)
 SELECT kj.id_jidla, tu.id_ucastnika, kj.datum
-FROM kniha_jidel kj
+FROM jidelnicek kj
 JOIN turnusy t
   ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)
 JOIN turnusy_ucastnici tu

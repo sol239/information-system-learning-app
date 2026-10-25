@@ -87,7 +87,7 @@ export const jidelnicekPocetJidelTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-pocet-jidel-turnusu": `SELECT COUNT(DISTINCT kj.id_jidla) AS pocet_unikatnich_jidel FROM turnusy t LEFT JOIN kniha_jidel kj ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = idTurnusu GROUP BY t.id_turnusu`,
+    "jidelnicek-pocet-jidel-turnusu": `SELECT COUNT(DISTINCT kj.id_jidla) AS pocet_unikatnich_jidel FROM turnusy t LEFT JOIN jidelnicek kj ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = idTurnusu GROUP BY t.id_turnusu`,
   },
   sql_click: {},
 });
