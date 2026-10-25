@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
 import { SqljsDatabaseFactory } from "../../app/utils/SqljsDatabaseFactory";
-import { OperationResultType } from "../../app/utils/OperationResultType";
+import { OperationResultType } from "../../app/utils/Operation/OperationResultType";
 
 // Mock sql.js so that it doesn't attempt to load the wasm from the absolute public path in Node
 vi.mock("sql.js", async (importOriginal) => {
   const original = await importOriginal<typeof import("sql.js")>();
   return {
-    default: async (config?: any) => {
+    default: async () => {
       return await original.default();
     },
     __esModule: true,
@@ -93,67 +93,37 @@ describe("SqljsDatabaseFactory", () => {
       expect(result.message).toContain("Invalid column definition");
     });
 
-    // NOTE: we mock initSqlJs or expect it to work if wasm can be loaded.
-    // We test integration behavior next.
-    it("should return db instance when successfully created", async () => {
-      const csvContent = {
+    it("creates a queryable database from CSV", async () => {
+      const result = await SqljsDatabaseFactory.createDatabase({
         test_table: 'id[INTEGER],name[TEXT]\n1,"Alice"\n2,"Bob"',
-      };
-
+      });
+      expect(result.result, result.message).toBe(OperationResultType.SUCCESS);
       try {
-        const result = await SqljsDatabaseFactory.createDatabase(csvContent);
-
-        // If it successfully loads wasm and creates DB:
-        expect(result.result).toBe(OperationResultType.SUCCESS);
-        expect(result.data).toBeDefined();
-        expect(typeof result.data?.exec).toBe("function");
-
-        const selectResult = result.data?.exec("SELECT * FROM test_table");
-        expect(selectResult?.[0].values.length).toBe(2);
-        expect(selectResult?.[0].values[0][0]).toBe(1);
-        expect(selectResult?.[0].values[0][1]).toBe("Alice");
-      } catch (error: any) {
-        // If the wasm loading fails in node environment due to absolute URL locateFile
-        if (error.message && error.message.includes("sql-wasm.wasm")) {
-          console.warn(
-            "Skipping actual DB creation check in Node because of wasm locateFile path",
-          );
-        } else {
-          throw error;
-        }
+        expect(result.data!.exec("SELECT * FROM test_table")[0].values).toEqual(
+          [
+            [1, "Alice"],
+            [2, "Bob"],
+          ],
+        );
+      } finally {
+        result.data?.close();
       }
     });
 
-    it("should catch db.run error during table creation and return error", async () => {
-      // "123_invalid" without quotes is an invalid syntax in Sqlite
-      const csvContent = { "123_invalid": "id[INTEGER]\n1" };
-      try {
-        const result = await SqljsDatabaseFactory.createDatabase(csvContent);
-        expect(result.result).toBe(OperationResultType.ERROR);
-        expect(result.message).toContain("Error creating table");
-      } catch (error: any) {
-        if (error.message && error.message.includes("sql-wasm")) {
-          // Ignore wasm fetch error
-        } else {
-          throw error;
-        }
-      }
+    it("reports invalid table names", async () => {
+      const result = await SqljsDatabaseFactory.createDatabase({
+        "123_invalid": "id[INTEGER]\n1",
+      });
+      expect(result.result).toBe(OperationResultType.ERROR);
+      expect(result.message).toContain("Error creating table");
     });
 
-    it("should return error if GetInsertDataSql yields invalid SQL that throws on db.run", async () => {
-      // Empty data rows means the insertion SQL will be INSERT INTO test (...) VALUES (which is incomplete)
-      const csvContent = { test: "id[INTEGER]" };
-      try {
-        const result = await SqljsDatabaseFactory.createDatabase(csvContent);
-        expect(result.result).toBe(OperationResultType.ERROR);
-        expect(result.message).toContain("Error inserting data into table");
-      } catch (error: any) {
-        if (error.message && error.message.includes("sql-wasm")) {
-          // Ignore wasm error
-        } else {
-          throw error;
-        }
-      }
+    it("reports an incomplete INSERT when CSV contains only a header", async () => {
+      const result = await SqljsDatabaseFactory.createDatabase({
+        test: "id[INTEGER]",
+      });
+      expect(result.result).toBe(OperationResultType.ERROR);
+      expect(result.message).toContain("Error inserting data into table");
     });
   });
 });

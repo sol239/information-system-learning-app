@@ -174,7 +174,14 @@ export class SqlHandler {
         }
         continue;
       } else {
-        const afterAsIndex = afterAsIndexes.find((i) => parts[i] === name);
+        // SQLite preserves alias case in result columns; SQL tokens are normalized.
+        const normalizedName = name.toLowerCase();
+        const afterAsIndex = afterAsIndexes.find((i) => {
+          const token = parts[i];
+          if (!token) return false;
+          const alias = token.replace(/^(["'`])(.*)\1$/, "$2");
+          return alias === normalizedName;
+        });
         if (afterAsIndex) {
           const asIndex = afterAsIndex - 1;
           const tableColonColumnPart = parts[asIndex - 1];

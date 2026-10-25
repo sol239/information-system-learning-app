@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { SqlHandler } from "../../app/core/SqlHandler";
-import { TableMap } from "../../app/core/TableMap";
+import { SqlHandler } from "../../app/core/components/variables/SqlHandler";
+import { TableMap } from "../../app/core/components/variables/TableMap";
 import { ColumnType } from "../../app/utils/ColumnType";
 import type { ColumnDefinition } from "../../app/utils/ColumnDefinition";
 

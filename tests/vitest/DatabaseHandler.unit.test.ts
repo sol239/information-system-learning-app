@@ -1,18 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Database, Statement } from "sql.js";
+import type { Database } from "sql.js";
 import { DatabaseHandler } from "~/utils/DatabaseHandler";
-import { OperationResultType } from "~/utils/OperationResultType";
+import { OperationResultType } from "~/utils/Operation/OperationResultType";
 import { ColumnType } from "~/utils/ColumnType";
 
 describe("DatabaseHandler", () => {
-  let mockDb: any;
+  let mockDb: Database & {
+    exec: ReturnType<typeof vi.fn>;
+    run: ReturnType<typeof vi.fn>;
+    prepare: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     mockDb = {
       exec: vi.fn(),
       run: vi.fn(),
       prepare: vi.fn(),
-    } as unknown as Database;
+    } as unknown as typeof mockDb;
   });
 
   describe("query", () => {
@@ -94,7 +98,7 @@ describe("DatabaseHandler", () => {
       const result = await DatabaseHandler.getTableNames(mockDb);
 
       expect(mockDb.exec).toHaveBeenCalledWith(
-        "SELECT name FROM sqlite_master WHERE type='table';",
+        "SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence';",
       );
       expect(result.result).toBe(OperationResultType.SUCCESS);
       expect(result.data).toEqual(["users", "posts"]);

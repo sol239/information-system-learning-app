@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { readFileSync, existsSync } from "fs";
+import { readFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 import { SystemZipLoader } from "../../app/utils/SystemZipLoader";
-import { OperationResultType } from "../../app/utils/OperationResultType";
+import { OperationResultType } from "../../app/utils/Operation/OperationResultType";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +18,7 @@ describe("SystemZipLoader", () => {
       "testing_information_system.zip",
     );
     const buffer: Buffer = readFileSync(zipPath);
-    const zipFile: File = buffer.buffer as File;
+    const zipFile: File = buffer as unknown as File;
     const result = await SystemZipLoader.create(zipFile);
     if (result.result === OperationResultType.SUCCESS && result.data) {
       loader = result.data;
@@ -33,7 +33,7 @@ describe("SystemZipLoader", () => {
         "testing_information_system.zip",
       );
       const buffer: Buffer = readFileSync(zipPath);
-      const zipFile: File = buffer.buffer as File;
+      const zipFile: File = buffer as unknown as File;
       const result = await SystemZipLoader.create(zipFile);
       expect(result.result).toBe(OperationResultType.SUCCESS);
       expect(result.data).toBeInstanceOf(SystemZipLoader);
@@ -41,7 +41,7 @@ describe("SystemZipLoader", () => {
 
     it("should return error operation when given an invalid / non-ZIP buffer", async () => {
       const invalidBuffer = Buffer.from("this is not a zip file");
-      const invalidFile = invalidBuffer.buffer as File;
+      const invalidFile = invalidBuffer as unknown as File;
       const result = await SystemZipLoader.create(invalidFile);
       expect(result.result).toBe(OperationResultType.ERROR);
       expect(result.data).toBeNull();

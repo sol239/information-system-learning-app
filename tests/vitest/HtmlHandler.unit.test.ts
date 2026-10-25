@@ -1,14 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { HtmlHandler } from "../../app/core/HtmlHandler";
+import { HtmlHandler } from "../../app/core/components/variables/HtmlHandler";
 import {
   ComponentVariables,
   Variable,
 } from "../../app/model/ComponentVariables";
 
-function variables(...items: Array<[string, unknown]>) {
+function variables(
+  ...items: Array<[string, ConstructorParameters<typeof Variable>[1]]>
+) {
   const result = new ComponentVariables();
   result.generalVariables = items.map(
-    ([name, value]) => new Variable(name, value as any),
+    ([name, value]) => new Variable(name, value),
   );
   return result;
 }
