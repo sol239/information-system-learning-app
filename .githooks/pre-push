@@ -11,3 +11,7 @@ if ! git diff --quiet HEAD --; then
 fi
 
 npm run lint:check -- --max-warnings=0
+
+npm run test:run
+
+npm run test:e2e
