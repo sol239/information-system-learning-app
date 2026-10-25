@@ -1,36 +1,102 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div class="flex items-center gap-2 justify-end -mt-2">
-      <UTooltip :text="t('decrease_font')" :ui="tooltipUi">
-        <UButton
-          icon="i-lucide-minus"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          @click="sizeMultiplier -= 0.05"
-        />
-      </UTooltip>
-      <span class="text-xs text-gray-500 font-medium w-10 text-center">
-        {{ Math.round(sizeMultiplier * 100) }}%
-      </span>
-      <UTooltip :text="t('increase_font')" :ui="tooltipUi">
-        <UButton
-          icon="i-lucide-plus"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          @click="sizeMultiplier += 0.05"
-        />
-      </UTooltip>
+    <div class="flex flex-wrap items-start gap-4">
+      <div v-if="generalVariableNames.length > 0" class="text-left">
+        <div class="mb-2 flex items-center gap-1">
+          <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600">
+            {{ t('available_general_variables') }}
+          </p>
+          <UPopover mode="hover" arrow :ui="popoverUi">
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_general_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('general_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
+        </div>
+        <div class="flex flex-wrap gap-2 text-left">
+          <button v-for="name in generalVariableNames" :key="name" type="button" class="general-var-card text-left" :title="t('copy_variable_name')" @click="copyVariableName(name, 'general')">
+            <span class="general-var-name inline-flex items-center gap-1.5">
+              {{ name }}
+              <UIcon :name="copiedVariable === 'general:' + name ? 'i-lucide-clipboard-check' : 'i-lucide-clipboard'" class="size-3.5 shrink-0" aria-hidden="true" />
+            </span>
+            <span class="general-var-value">{{ formatVariablesPreview(name, localVariables.generalVariables) }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div v-if="sqlVariableNames.length > 0">
+        <div class="mb-2 flex items-center gap-1">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#ca8a04]">
+            {{ t('available_sql_variables') }}
+          </p>
+          <UPopover mode="hover" arrow :ui="popoverUi">
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_sql_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('sql_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button v-for="name in sqlVariableNames" :key="name" type="button" class="sql-var-card" :title="t('copy_variable_name')" @click="copyVariableName(name, 'sql')">
+            <span class="sql-var-name inline-flex items-center gap-1.5">
+              {{ name }}
+              <UIcon :name="copiedVariable === 'sql:' + name ? 'i-lucide-clipboard-check' : 'i-lucide-clipboard'" class="size-3.5 shrink-0" aria-hidden="true" />
+            </span>
+            <span class="sql-var-value">{{ formatVariablesPreview(name, localVariables.sqlVariables) }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div v-if="jsVariableNames.length > 0">
+        <div class="mb-2 flex items-center gap-1">
+          <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+            {{ t('available_js_variables') }}
+          </p>
+          <UPopover mode="hover" arrow :ui="popoverUi">
+            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
+            <template #content>
+              <div class="app-popover-content">
+                <UIcon name="i-lucide-info" class="app-popover-icon" />
+                <div class="app-popover-text">
+                  <strong class="app-popover-title">{{ t('available_js_variables') }}</strong>
+                  <span class="app-popover-description">{{ t('js_variables_info_description') }}</span>
+                </div>
+              </div>
+            </template>
+          </UPopover>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button v-for="name in jsVariableNames" :key="name" type="button" class="js-var-card" :title="t('copy_variable_name')" @click="copyVariableName(name, 'js')">
+            <span class="js-var-name inline-flex items-center gap-1.5">
+              {{ name }}
+              <UIcon :name="copiedVariable === 'js:' + name ? 'i-lucide-clipboard-check' : 'i-lucide-clipboard'" class="size-3.5 shrink-0" aria-hidden="true" />
+            </span>
+            <span class="js-var-value">{{ formatVariablesPreview(name, localVariables.jsVariables) }}</span>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-4 items-start gap-4 w-full">
       <CodeBlock
         v-if="htmlAvailable"
         v-model:code="editedHtml"
+        :highlighted-variables="availableVariableNames"
         language="html"
         label="HTML"
-        height="400px"
+        height="324px"
         :correct="undefined"
         :info-title="t('html_block_info_title')"
         :info-description="t('html_block_info_description')"
@@ -40,9 +106,10 @@
       <CodeBlock
         v-if="cssAvailable"
         v-model:code="editedCss"
+        :highlighted-variables="availableVariableNames"
         language="css"
         label="CSS"
-        height="400px"
+        height="324px"
         :correct="undefined"
         :info-title="t('css_block_info_title')"
         :info-description="t('css_block_info_description')"
@@ -52,9 +119,10 @@
       <CodeBlock
         v-if="jsAvailable"
         v-model:code="editedJs"
+        :highlighted-variables="availableVariableNames"
         language="typescript"
-        label="JS"
-        height="400px"
+        label="JavaScript"
+        height="324px"
         :correct="undefined"
         :info-title="t('js_block_info_title')"
         :info-description="t('js_block_info_description')"
@@ -76,13 +144,13 @@
           />
           <div class="flex gap-1">
             <UTooltip :text="t('add_sql_query')" :ui="tooltipUi">
-              <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addQuery" />
+              <UButton icon="i-lucide-plus" size="xs" variant="subtle" @click="addQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_query')" :ui="tooltipUi">
               <UButton
                 icon="i-lucide-trash-2"
-                size="sm"
-                variant="ghost"
+                size="xs"
+                variant="subtle"
                 color="red"
                 :disabled="sqlQueryNames.length <= 1"
                 @click="removeQuery"
@@ -92,9 +160,10 @@
         </div>
         <CodeBlock
           v-model:code="editedSql"
+          :highlighted-variables="availableVariableNames"
           language="sql"
           label="SQL"
-          height="400px"
+          height="292px"
           :correct="isEditedSqlValid"
           :info-title="t('sql_block_info_title')"
           :info-description="t('sql_block_info_description')"
@@ -140,7 +209,7 @@
           <UButton
             v-if="!editedJsClick"
             icon="i-lucide-plus"
-            size="sm"
+            size="xs"
             variant="ghost"
             :label="t('add_action')"
             @click="editedJsClick = '// click logic here'"
@@ -148,7 +217,7 @@
           <UButton
             v-else
             icon="i-lucide-trash-2"
-            size="sm"
+            size="xs"
             variant="ghost"
             color="red"
             @click="editedJsClick = ''"
@@ -158,6 +227,7 @@
         <CodeBlock
           v-if="editedJsClick"
           v-model:code="editedJsClick"
+          :highlighted-variables="availableVariableNames"
           language="typescript"
           height="200px"
           label="JS Click"
@@ -185,7 +255,7 @@
             v-if="sqlClickQueryNames.length > 0"
             v-model="selectedSqlClickQuery"
             :items="sqlClickQueryNames"
-            placeholder="Select SQL click query"
+            :placeholder="t('select_sql_click_query')"
             size="xs"
             class="flex-1"
             :disabled="sqlClickQueryNames.length <= 1"
@@ -193,13 +263,13 @@
           />
           <div class="flex gap-1">
             <UTooltip :text="t('add_sql_click_query')" :ui="tooltipUi">
-              <UButton icon="i-lucide-plus" size="sm" variant="ghost" @click="addClickQuery" />
+              <UButton icon="i-lucide-plus" size="xs" variant="subtle" @click="addClickQuery" />
             </UTooltip>
             <UTooltip :text="t('remove_sql_click_query')" :ui="tooltipUi">
               <UButton
                 icon="i-lucide-trash-2"
-                size="sm"
-                variant="ghost"
+                size="xs"
+                variant="subtle"
                 color="red"
                 :disabled="sqlClickQueryNames.length === 0"
                 @click="removeClickQuery"
@@ -211,6 +281,7 @@
         <div v-if="sqlClickQueryNames.length > 0" class="flex flex-col gap-2">
           <CodeBlock
             v-model:code="editedSqlClick"
+          :highlighted-variables="availableVariableNames"
             language="sql"
             height="200px"
             label="SQL Click"
@@ -231,87 +302,7 @@
       </div>
     </div>
 
-    <USeparator />
 
-    <div class="flex flex-wrap items-start gap-4">
-      <div v-if="generalVariableNames.length > 0" class="text-left">
-        <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs text-left font-semibold uppercase tracking-wider text-indigo-600">
-            {{ t('available_general_variables') }}
-          </p>
-          <UPopover mode="hover" arrow :ui="popoverUi">
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
-            <template #content>
-              <div class="app-popover-content">
-                <UIcon name="i-lucide-info" class="app-popover-icon" />
-                <div class="app-popover-text">
-                  <strong class="app-popover-title">{{ t('available_general_variables') }}</strong>
-                  <span class="app-popover-description">{{ t('general_variables_info_description') }}</span>
-                </div>
-              </div>
-            </template>
-          </UPopover>
-        </div>
-        <div class="flex flex-wrap gap-2 text-left">
-          <div v-for="name in generalVariableNames" :key="name" class="general-var-card text-left">
-            <span class="general-var-name">{{ name }}</span>
-            <span class="general-var-value">{{ formatVariablesPreview(name, localVariables.generalVariables) }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="sqlVariableNames.length > 0">
-        <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs font-semibold uppercase tracking-wider text-sky-600">
-            {{ t('available_sql_variables') }}
-          </p>
-          <UPopover mode="hover" arrow :ui="popoverUi">
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
-            <template #content>
-              <div class="app-popover-content">
-                <UIcon name="i-lucide-info" class="app-popover-icon" />
-                <div class="app-popover-text">
-                  <strong class="app-popover-title">{{ t('available_sql_variables') }}</strong>
-                  <span class="app-popover-description">{{ t('sql_variables_info_description') }}</span>
-                </div>
-              </div>
-            </template>
-          </UPopover>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <div v-for="name in sqlVariableNames" :key="name" class="sql-var-card">
-            <span class="sql-var-name">{{ name }}</span>
-            <span class="sql-var-value">{{ formatVariablesPreview(name, localVariables.sqlVariables) }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="jsVariableNames.length > 0">
-        <div class="mb-2 flex items-center gap-1">
-          <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">
-            {{ t('available_js_variables') }}
-          </p>
-          <UPopover mode="hover" arrow :ui="popoverUi">
-            <UButton icon="i-lucide-info" color="neutral" variant="ghost" size="sm" :aria-label="t('show_info')" />
-            <template #content>
-              <div class="app-popover-content">
-                <UIcon name="i-lucide-info" class="app-popover-icon" />
-                <div class="app-popover-text">
-                  <strong class="app-popover-title">{{ t('available_js_variables') }}</strong>
-                  <span class="app-popover-description">{{ t('js_variables_info_description') }}</span>
-                </div>
-              </div>
-            </template>
-          </UPopover>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <div v-for="name in jsVariableNames" :key="name" class="js-var-card">
-            <span class="js-var-name">{{ name }}</span>
-            <span class="js-var-value">{{ formatVariablesPreview(name, localVariables.jsVariables) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -320,7 +311,7 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-dynamic-delete, @typescript-eslint/unified-signatures */
 /* 1. Imports */
 import type { QueryExecResult } from 'sql.js'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { JsHandler } from '~/core/components/variables/JsHandler'
 import { SqlHandler } from '~/core/components/variables/SqlHandler'
@@ -343,6 +334,7 @@ const systemsStore = useSystemsStore()
 /* 3. Context hooks */
 const { t } = useI18n()
 const runtimeConfig = useRuntimeConfig()
+const toast = useToast()
 
 /* 4. Constants (non-reactive) */
 const selectOverlayUi = {
@@ -361,24 +353,34 @@ const props = defineProps<{
   variables?: ComponentVariables
   codeEditPermissions?: Partial<CodeEditPermissions>
   ignoreTaskCodeEditPermissions?: boolean
+  sizeMultiplier: number
+  highlightAvailableVariables?: boolean
 }>()
 
 /* 6. Emits */
 const emit = defineEmits<{
   (e: 'validation-change', isValid: boolean): void
   (e: 'edit-change', isEdited: boolean): void
+  (e: 'update:sizeMultiplier', value: number): void
 }>()
 
 /* 7. Template refs */
 
 /* 8. State (ref, reactive) */
+const copiedVariable = ref<string | null>(null)
+let copyFeedbackTimer: ReturnType<typeof setTimeout> | undefined
+onBeforeUnmount(() => clearTimeout(copyFeedbackTimer))
+
 const editedHtml = ref(props.component.html)
 const editedCss = ref(props.component.css)
 const editedJs = ref(props.component.js)
 const editedSql = ref('')
 const editedJsClick = ref(props.component.js_click || '')
 const editedSqlClick = ref('')
-const sizeMultiplier = ref(0.7)
+const sizeMultiplier = computed({
+  get: () => props.sizeMultiplier,
+  set: (value: number) => emit('update:sizeMultiplier', value),
+})
 const selectedSqlQuery = ref<string>('')
 const selectedSqlClickQuery = ref<string>('')
 const isEditedSqlValid = ref(true)
@@ -411,6 +413,11 @@ const sqlClickQueryNames = computed(() => Object.keys(sqlClickRecord.value))
 const sqlVariableNames = computed(() => localVariables.value.sqlVariables.map(v => v.name))
 const jsVariableNames = computed(() => localVariables.value.jsVariables.map(v => v.name))
 const generalVariableNames = computed(() => localVariables.value.generalVariables.map(v => v.name))
+const availableVariableNames = computed(() => props.highlightAvailableVariables === false ? [] : [
+  ...generalVariableNames.value,
+  ...sqlVariableNames.value,
+  ...jsVariableNames.value,
+])
 const isBodyEdited = computed(() => {
   return Object.values(codeBlockEdited).some(Boolean)
     || editedHtml.value !== props.component.html
@@ -477,6 +484,19 @@ watch(selectedSqlClickQuery, (newQuery) => {
 })
 
 /* 11. Methods */
+async function copyVariableName(name: string, group: 'general' | 'sql' | 'js') {
+  try {
+    await navigator.clipboard.writeText(name)
+    copiedVariable.value = `${group}:${name}`
+    clearTimeout(copyFeedbackTimer)
+    copyFeedbackTimer = setTimeout(() => {
+      copiedVariable.value = null
+    }, 2000)
+  } catch {
+    toast.add({ title: t('variable_copy_failed'), color: 'error' })
+  }
+}
+
 function recordsEqual(first: Record<string, string>, second: Record<string, string>) {
   const firstKeys = Object.keys(first).sort()
   const secondKeys = Object.keys(second).sort()
@@ -631,29 +651,31 @@ defineExpose({
   padding: 8px 14px;
   border-radius: 10px;
   min-width: 80px;
+  cursor: pointer;
+  text-align: left;
   transition: border-color 0.15s, background 0.15s;
 }
 
 .sql-var-card {
-  border: 1px solid rgba(14, 165, 233, 0.25);
-  background: rgba(14, 165, 233, 0.06);
+  border: 1px solid rgba(202, 138, 4, 0.25);
+  background: rgba(202, 138, 4, 0.06);
 }
 
 .sql-var-card:hover {
-  border-color: rgba(14, 165, 233, 0.5);
-  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(202, 138, 4, 0.5);
+  background: rgba(202, 138, 4, 0.1);
 }
 
 .sql-var-name {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #0ea5e9;
-  opacity: 0.8;
+  color: #ca8a04;
 }
 
 .sql-var-value {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+  font-weight: 500;
   color: #1e293b !important;
   white-space: nowrap;
   overflow: hidden;
@@ -680,7 +702,8 @@ defineExpose({
 
 .js-var-value {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+  font-weight: 500;
   color: #1e293b !important;
   white-space: nowrap;
   overflow: hidden;
@@ -707,7 +730,8 @@ defineExpose({
 
 .general-var-value {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+  font-weight: 500;
   color: #1e293b !important;
   white-space: nowrap;
   overflow: hidden;

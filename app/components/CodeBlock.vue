@@ -55,6 +55,7 @@
       class="editor-container"
       :data-code-editor-id="codeBlockId"
       :style="{ height: height }"
+      @wheel.capture="onEditorWheel"
     >
       <vue-monaco-editor
         :language="transformedLanguage"
@@ -89,6 +90,7 @@ interface Props {
   sizeMultiplier?: number
   infoTitle?: string
   infoDescription?: string
+  highlightedVariables?: string[]
 }
 
 /* 2. Stores */
@@ -112,6 +114,7 @@ const props = withDefaults(defineProps<Props>(), {
   sizeMultiplier: 0.7,
   infoTitle: undefined,
   infoDescription: undefined,
+  highlightedVariables: () => [],
 })
 
 /* 6. Emits */
@@ -122,6 +125,8 @@ const emit = defineEmits(['update:code', 'change', 'isEdited'])
 /* 8. State (ref, reactive) */
 const initialCode = ref(props.code || '')
 let monacoEditorInstance: any = null
+let variableDecorations: any = null
+const highlightSubscriptions: { dispose: () => void }[] = []
 let isUndoing = false
 
 /* 9. Computed */
@@ -173,6 +178,7 @@ const getLanguageClass = computed(() => {
   const lang = props.language.toLowerCase()
 
   if (lang === 'vue' || lang.endsWith('.vue')) return 'html-label'
+  if (lang === 'js' || lang === 'javascript' || lang === 'ts' || lang === 'typescript') return 'js-label'
 
   return `${lang}-label`
 })
@@ -182,6 +188,7 @@ const editorOptions = computed(() => ({
   wordWrap: 'on' as const,
   automaticLayout: true,
   scrollBeyondLastLine: false,
+  scrollbar: { alwaysConsumeMouseWheel: true },
   fontSize: Math.max(8, 14 * props.sizeMultiplier),
   fontFamily: "'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace",
   readOnly: props.readOnly,
@@ -198,8 +205,38 @@ const editorOptions = computed(() => ({
 
 /* 10. Watchers */
 watch(isEdited, (value) => emit('isEdited', value), { immediate: true })
+watch(() => props.highlightedVariables, updateVariableHighlights, { deep: true })
 
 /* 11. Methods */
+function updateVariableHighlights() {
+  const model = monacoEditorInstance?.getModel()
+  if (!model || !variableDecorations) return
+
+  const wordSeparators = "~!@#%^&*()-=+[{]}\\|;:'\",.<>/? \t\r\n"
+  const decorations = [...new Set(props.highlightedVariables)]
+    .filter(name => name.length > 0)
+    .flatMap(name => model.findMatches(name, false, false, true, wordSeparators, false)
+      .map((match: any) => ({
+        range: match.range,
+        options: { inlineClassName: 'available-variable-highlight' },
+      })))
+  variableDecorations.set(decorations)
+}
+
+function onEditorWheel(event: WheelEvent) {
+  const editor = monacoEditorInstance
+  const layout = editor?.getLayoutInfo()
+  const canScrollVertically = layout && editor.getScrollHeight() > layout.height
+  const canScrollHorizontally = layout && editor.getScrollWidth() > layout.contentWidth
+  const canScroll = (event.deltaY !== 0 && canScrollVertically)
+    || (event.deltaX !== 0 && canScrollHorizontally)
+
+  // Let Monaco consume the wheel whenever its content overflows, even without focus.
+  if (!canScroll) {
+    event.stopPropagation()
+  }
+}
+
 function onCodeChange(value: string | undefined) {
   if (props.protectedPrefix !== undefined) return
 
@@ -211,6 +248,12 @@ function onCodeChange(value: string | undefined) {
 function onEditorMount(editor: any, monaco: any) {
   monacoEditorInstance = editor
   setupProtectionListener(editor, monaco)
+  variableDecorations = editor.createDecorationsCollection()
+  highlightSubscriptions.push(
+    editor.onDidChangeModelContent(updateVariableHighlights),
+    editor.onDidChangeModel(updateVariableHighlights),
+  )
+  updateVariableHighlights()
   registerCodeBlockEditorForTests()
 }
 
@@ -313,6 +356,8 @@ function formatCode() {
 
 /* 12. Lifecycle */
 onBeforeUnmount(() => {
+  highlightSubscriptions.forEach(subscription => subscription.dispose())
+  variableDecorations?.clear()
   if (typeof window === 'undefined') return
 
   const win = window as typeof window & {
@@ -330,6 +375,12 @@ defineExpose({
 </script>
 
 <style scoped>
+.editor-container :deep(.available-variable-highlight) {
+  background-color: rgba(99, 102, 241, 0.14);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.65);
+  border-radius: 2px;
+}
+
 .code-block-wrapper {
   display: flex;
   flex-direction: column;
@@ -372,8 +423,8 @@ defineExpose({
 }
 
 .sql-label {
-  color: #facc15;
-  background: rgba(250, 204, 21, 0.1);
+  color: #ca8a04;
+  background: rgba(202, 138, 4, 0.1);
 }
 
 .js-label {

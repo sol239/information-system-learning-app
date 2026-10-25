@@ -40,6 +40,8 @@
           {{ highlightStore.isEditModeActive ? t('disable_edit') : t('enable_edit') }}
         </span>
       </UButton>
+      <UButton id="reset-components-toolbar-button" :label="t('reset_components')" size="sm" color="primary"
+        variant="subtle" icon="i-heroicons-squares-2x2" @click="resetComponents" />
     </div>
 
     <UButton v-if="!globalSettings.teacherMode" id="reset-system-button" :label="t('reset_system')" size="sm" color="green" variant="subtle" icon="i-lucide-refresh-cw"
@@ -246,7 +248,7 @@ async function resetComponents() {
     }
   }
 
-  await systemsStore.updateSystem(system)
+  await systemsStore.updateSystem(system, { formatCode: true })
   toast.add({
     title: t('component_reset_success') || 'Components reset',
     color: 'primary',
@@ -280,7 +282,7 @@ async function resetSystem(options: { silent?: boolean } = {}) {
     globalSettings.selectedTaskId = null
     globalSettings.solvedComponentIds = []
 
-    const result = await systemsStore.updateSystem(freshSystem)
+    const result = await systemsStore.updateSystem(freshSystem, { formatCode: true })
     if (result.result !== OperationResultType.SUCCESS) {
       if (!options.silent) {
         toast.add({

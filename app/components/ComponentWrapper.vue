@@ -16,9 +16,10 @@
       <div v-if="isJustRepaired" class="repaired-overlay" />
 
       <div v-if="!globalSettings.teacherMode">
+        <UTooltip v-if="isEditEnabled" :text="t('edit_component')" :delay-duration="0">
         <span
-          v-if="isEditEnabled"
           :class="['edit-icon', `edit-component-button-${String(props.component.id)}`]"
+          :aria-label="t('edit_component')"
           @click.stop="handleEdit"
         >
           <svg
@@ -36,6 +37,7 @@
             <path d="m15 5 4 4" />
           </svg>
         </span>
+        </UTooltip>
       </div>
       <div
         v-else-if="globalSettings.teacherHighlightEnabled"

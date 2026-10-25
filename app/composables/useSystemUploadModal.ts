@@ -105,7 +105,7 @@ export function useSystemUploadModal() {
             tasks: taskSet.tasks.map(task => resetTaskProgress(task)),
         })
         system.replaceTaskSet(resetTaskSet)
-        await systemsStore.updateSystem(system)
+        await systemsStore.updateSystem(system, { formatCode: true })
     }
 
     return {

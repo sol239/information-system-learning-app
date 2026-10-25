@@ -1,6 +1,23 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+.system-page-heading {
+  color: #000000;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.system-page-heading::after {
+  content: '';
+  display: block;
+  width: 5ch;
+  height: 2px;
+  margin-top: 4px;
+  border-radius: 9999px;
+  background-color: var(--system-heading-color, #6366f1);
+}
+
 html,
 body,
 #__nuxt {
@@ -55,4 +72,72 @@ body {
 .app-popover-trigger-full {
   display: block;
   width: 100%;
+}
+
+.entity-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.entity-modal-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 26px;
+  padding: 6px 14px;
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.entity-modal-actions button:hover:not(:disabled) {
+  background: #dcfce7;
+}
+
+.entity-modal-actions--edit button {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.entity-modal-actions--edit button:hover:not(:disabled) {
+  background: #dbeafe;
+}
+
+.entity-modal-actions button.entity-modal-cancel {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.entity-modal-actions button.entity-modal-cancel:hover {
+  background: #e2e8f0;
+}
+
+.entity-modal-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.entity-modal-form .component-html .form-radek > label {
+  font-size: 14px;
+}
+
+.entity-modal-form .component-html input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.entity-modal-form .component-html select {
+  box-sizing: border-box;
+  height: 26px;
+  min-height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
 }
