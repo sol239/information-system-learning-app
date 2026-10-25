@@ -94,7 +94,7 @@ export const sessionSupervisorsListComponent = new Component({
   }`,
   js_click: ``,
   sql: {
-    "seznam-vedoucich-turnusu": `SELECT jmeno as jmena FROM vedouci v JOIN vedouci_turnusy vt ON v.id_vedouciho = vt.id_vedouciho WHERE vt.id_turnusu = idTurnusu`
+    "seznam-vedoucich-turnusu": `SELECT jmeno as jmena FROM vedouci v JOIN vedouci_turnusy vt ON v.id_vedouciho = vt.id_vedouciho WHERE vt.id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });

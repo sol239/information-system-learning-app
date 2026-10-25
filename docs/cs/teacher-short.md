@@ -136,9 +136,7 @@ Například, pokud jste stáhli systém `muj-system.zip` a vložili ho do `publi
 
 ```json
 {
-  "systems": [
-    "muj-system.zip"
-  ]
+  "systems": ["muj-system.zip"]
 }
 ```
 

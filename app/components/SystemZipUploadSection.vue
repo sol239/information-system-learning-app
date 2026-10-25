@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="mb-2 font-medium">{{ t('upload_tasks_json') }}</p>
+    <p class="mb-2 font-medium">{{ t("upload_tasks_json") }}</p>
     <UFileUpload
       v-model="selectedFile"
       accept=".json,application/json"
@@ -15,28 +15,27 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from 'vue'
+import { computed } from "vue";
 
 /* 2. Stores */
 
 /* 3. Context hooks */
-const { t } = useI18n()
+const { t } = useI18n();
 
 /* 4. Constants (non-reactive) */
 
 /* 5. Props */
 const props = defineProps<{
-  modelValue: File | null
-  systemPreview: { name: string; description: string } | null
-}>()
+  modelValue: File | null;
+  systemPreview: { name: string; description: string } | null;
+}>();
 
 /* 6. Emits */
 const emit = defineEmits<{
-  'update:modelValue': [value: File | null]
-}>()
+  "update:modelValue": [value: File | null];
+}>();
 
 /* 7. Template refs */
 
@@ -45,8 +44,8 @@ const emit = defineEmits<{
 /* 9. Computed */
 const selectedFile = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value),
-})
+  set: (value) => emit("update:modelValue", value),
+});
 
 /* 10. Watchers */
 
@@ -55,6 +54,5 @@ const selectedFile = computed({
 /* 12. Lifecycle */
 
 /* 13. defineExpose */
-defineExpose({
-})
+defineExpose({});
 </script>

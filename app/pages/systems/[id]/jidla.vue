@@ -220,16 +220,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, reactive } from 'vue';
-import { useI18n } from 'vue-i18n';
-import ComponentWrapper from '~/components/ComponentWrapper.vue';
-import ModalContainer from '~/components/ModalContainer.vue';
-import { ComponentVariables, Variable } from '~/model/ComponentVariables';
-import { useSystemInputVariables } from '~/composables/useSystemInputVariables';
+import { ref, computed, watch, onMounted, reactive } from "vue";
+import { useI18n } from "vue-i18n";
+import ComponentWrapper from "~/components/ComponentWrapper.vue";
+import ModalContainer from "~/components/ModalContainer.vue";
+import { ComponentVariables, Variable } from "~/model/ComponentVariables";
+import { useSystemInputVariables } from "~/composables/useSystemInputVariables";
 
 defineOptions({
-  name: 'SystemMealsPage',
-})
+  name: "SystemMealsPage",
+});
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function withVars(comp: any, vars: Variable[]) {
@@ -244,102 +244,143 @@ const { systemInputVariables } = useSystemInputVariables();
 const { t } = useI18n();
 const { systemsStore } = useSyncSystemId();
 
-const isDbReady = computed(() => !!systemsStore.selectedSystem?.database?.sqlJsDatabase);
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
 const createModalOpen = ref(false);
 const editModalOpen = reactive<Record<number, boolean>>({});
 
 // Display components
-const cardInfoComponent = computed(() => systemsStore.getComponentById('karta-jidla'));
-const allergenListComponent = computed(() => systemsStore.getComponentById('seznam-alergenu-jidla'));
-const countBarComponent = computed(() => systemsStore.getComponentById('celkovy-pocet-jidel'));
-const razeniComponent = computed(() => systemsStore.getComponentById('razeni-jidel'));
+const cardInfoComponent = computed(() =>
+  systemsStore.getComponentById("karta-jidla"),
+);
+const allergenListComponent = computed(() =>
+  systemsStore.getComponentById("seznam-alergenu-jidla"),
+);
+const countBarComponent = computed(() =>
+  systemsStore.getComponentById("celkovy-pocet-jidel"),
+);
+const razeniComponent = computed(() =>
+  systemsStore.getComponentById("razeni-jidel"),
+);
 
 // Create components
-const vstupNazevComponent = computed(() => systemsStore.getComponentById('vstup-nazev-jidla'));
-const vstupDobaComponent = computed(() => systemsStore.getComponentById('vstup-doba-podavani'));
-const vstupAlergenyComponent = computed(() => systemsStore.getComponentById('vstup-alergeny-jidla'));
-const btnUlozitComponent = computed(() => systemsStore.getComponentById('btn-ulozit-jidlo'));
+const vstupNazevComponent = computed(() =>
+  systemsStore.getComponentById("vstup-nazev-jidla"),
+);
+const vstupDobaComponent = computed(() =>
+  systemsStore.getComponentById("vstup-doba-podavani"),
+);
+const vstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("vstup-alergeny-jidla"),
+);
+const btnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("btn-ulozit-jidlo"),
+);
 
 // Edit components
-const editVstupNazevComponent = computed(() => systemsStore.getComponentById('edit-vstup-nazev-jidla'));
-const editVstupDobaComponent = computed(() => systemsStore.getComponentById('edit-vstup-doba-podavani'));
-const editVstupAlergenyComponent = computed(() => systemsStore.getComponentById('edit-vstup-alergeny-jidla'));
-const editBtnUlozitComponent = computed(() => systemsStore.getComponentById('edit-btn-ulozit-jidlo'));
+const editVstupNazevComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-nazev-jidla"),
+);
+const editVstupDobaComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-doba-podavani"),
+);
+const editVstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-alergeny-jidla"),
+);
+const editBtnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("edit-btn-ulozit-jidlo"),
+);
 
 // Delete component
-const smazatComponent = computed(() => systemsStore.getComponentById('smazat-jidlo'));
+const smazatComponent = computed(() =>
+  systemsStore.getComponentById("smazat-jidlo"),
+);
 
 // Meal data
 interface MealRow {
-    id: number;
-    time: string;
-    name: string;
-    allergenCount: number;
+  id: number;
+  time: string;
+  name: string;
+  allergenCount: number;
 }
 const meals = ref<MealRow[]>([]);
 
 // Filter
-const filterText = ref('');
+const filterText = ref("");
 const selectedTime = ref<string | null>(null);
 
 const timeFilterItems = computed(() => [
-    { label: t('all_meals'), value: null },
-    { label: 'snídaně', value: 'snídaně' },
-    { label: 'oběd', value: 'oběd' },
-    { label: 'večeře', value: 'večeře' },
+  { label: t("all_meals"), value: null },
+  { label: "snídaně", value: "snídaně" },
+  { label: "oběd", value: "oběd" },
+  { label: "večeře", value: "večeře" },
 ]);
 
-const normalizedFilterText = computed(() => filterText.value.trim().toLocaleLowerCase('cs-CZ'));
+const normalizedFilterText = computed(() =>
+  filterText.value.trim().toLocaleLowerCase("cs-CZ"),
+);
 
 const orderBy = computed(() => {
-    const value = systemInputVariables.value.find(variable => variable.name === 'razeni_jidel')?.variable;
-    const normalizedValue = String(value ?? 'nazev');
-    return ['nazev', 'doba', 'alergeny'].includes(normalizedValue) ? normalizedValue : 'nazev';
+  const value = systemInputVariables.value.find(
+    (variable) => variable.name === "razeni_jidel",
+  )?.variable;
+  const normalizedValue = String(value ?? "nazev");
+  return ["nazev", "doba", "alergeny"].includes(normalizedValue)
+    ? normalizedValue
+    : "nazev";
 });
 
 const filteredMealIds = computed(() => {
-    let filteredMeals = meals.value;
-    if (selectedTime.value) {
-        filteredMeals = filteredMeals.filter(m => m.time === selectedTime.value);
+  let filteredMeals = meals.value;
+  if (selectedTime.value) {
+    filteredMeals = filteredMeals.filter((m) => m.time === selectedTime.value);
+  }
+
+  if (normalizedFilterText.value) {
+    filteredMeals = filteredMeals.filter((m) =>
+      m.name.toLocaleLowerCase("cs-CZ").includes(normalizedFilterText.value),
+    );
+  }
+
+  const uniqueMeals: MealRow[] = [];
+  const seenIds = new Set<number>();
+  for (const m of filteredMeals) {
+    if (seenIds.has(m.id)) continue;
+    seenIds.add(m.id);
+    uniqueMeals.push(m);
+  }
+
+  const collator = new Intl.Collator("cs-CZ", {
+    sensitivity: "base",
+    numeric: true,
+  });
+  uniqueMeals.sort((a, b) => {
+    if (orderBy.value === "doba") {
+      return collator.compare(a.time, b.time) || a.id - b.id;
     }
 
-    if (normalizedFilterText.value) {
-        filteredMeals = filteredMeals.filter(m =>
-            m.name.toLocaleLowerCase('cs-CZ').includes(normalizedFilterText.value)
-        );
+    if (orderBy.value === "alergeny") {
+      return (
+        a.allergenCount - b.allergenCount ||
+        collator.compare(a.name, b.name) ||
+        a.id - b.id
+      );
     }
 
-    const uniqueMeals: MealRow[] = [];
-    const seenIds = new Set<number>();
-    for (const m of filteredMeals) {
-        if (seenIds.has(m.id)) continue;
-        seenIds.add(m.id);
-        uniqueMeals.push(m);
-    }
+    return collator.compare(a.name, b.name) || a.id - b.id;
+  });
 
-    const collator = new Intl.Collator('cs-CZ', { sensitivity: 'base', numeric: true });
-    uniqueMeals.sort((a, b) => {
-        if (orderBy.value === 'doba') {
-            return collator.compare(a.time, b.time) || a.id - b.id;
-        }
-
-        if (orderBy.value === 'alergeny') {
-            return a.allergenCount - b.allergenCount || collator.compare(a.name, b.name) || a.id - b.id;
-        }
-
-        return collator.compare(a.name, b.name) || a.id - b.id;
-    });
-
-    return uniqueMeals.map(m => m.id);
+  return uniqueMeals.map((m) => m.id);
 });
 
 const loadData = async () => {
-    const db = systemsStore.selectedSystem?.database;
-    if (!db) return;
+  const db = systemsStore.selectedSystem?.database;
+  if (!db) return;
 
-    try {
-        const result = await db.query(
-            `SELECT
+  try {
+    const result = await db.query(
+      `SELECT
                 j.id_jidla,
                 j.doba_podavani,
                 j.jmeno,
@@ -350,41 +391,51 @@ const loadData = async () => {
                 FROM jidla_alergeny
                 GROUP BY id_jidla
              ) alergeny ON j.id_jidla = alergeny.id_jidla
-             ORDER BY j.id_jidla`
-        );
-        if (result.data?.[0]?.values) {
-            meals.value = result.data[0].values.map(row => ({
-                id: Number(row[0]),
-                time: String(row[1] || ''),
-                name: String(row[2] || ''),
-                allergenCount: Number(row[3] || 0)
-            }));
-        }
-    } catch (e) {
-        console.error('Failed to load meals:', e);
+             ORDER BY j.id_jidla`,
+    );
+    if (result.data?.[0]?.values) {
+      meals.value = result.data[0].values.map((row) => ({
+        id: Number(row[0]),
+        time: String(row[1] || ""),
+        name: String(row[2] || ""),
+        allergenCount: Number(row[3] || 0),
+      }));
     }
+  } catch (e) {
+    console.error("Failed to load meals:", e);
+  }
 };
 
 const reloadAfterDelete = () => {
-    window.setTimeout(() => { loadData(); }, 50);
+  window.setTimeout(() => {
+    loadData();
+  }, 50);
 };
 
 const handleMealCreated = () => {
-    createModalOpen.value = false;
-    window.setTimeout(() => { loadData(); }, 50);
+  createModalOpen.value = false;
+  window.setTimeout(() => {
+    loadData();
+  }, 50);
 };
 
 const handleMealUpdated = (mealId: number) => {
-    editModalOpen[mealId] = false;
-    window.setTimeout(() => { loadData(); }, 50);
+  editModalOpen[mealId] = false;
+  window.setTimeout(() => {
+    loadData();
+  }, 50);
 };
 
-watch(() => systemsStore.selectedSystem?.database?.sqlJsDatabase, (db) => {
+watch(
+  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
+  (db) => {
     if (db) loadData();
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
-    if (systemsStore.selectedSystem?.database?.sqlJsDatabase) loadData();
+  if (systemsStore.selectedSystem?.database?.sqlJsDatabase) loadData();
 });
 </script>
 
@@ -398,135 +449,135 @@ onMounted(() => {
 .meal-form :deep(input),
 .meal-form :deep(select),
 .meal-form :deep(label) {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .meal-select,
 .meals-page :deep(#razeni-jidel) {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 26px;
-    box-sizing: border-box;
-    padding: 0 12px;
-    border: 1px solid #065f46;
-    border-radius: 8px;
-    background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid #065f46;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .meal-select select {
-    border: 0;
-    background: transparent;
-    color: #111827;
-    font-size: 12px;
-    cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .meal-select:focus-within {
-    outline: 2px solid #065f46;
-    outline-offset: 2px;
+  outline: 2px solid #065f46;
+  outline-offset: 2px;
 }
 
 .meal-button,
 .meals-page :deep(#smazat-jidlo-tlacitko) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 26px;
-    box-sizing: border-box;
-    padding: 0 14px;
-    border: 1px solid;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 
 .meal-button--add {
-    border-color: #22c55e;
-    background: #f0fdf4;
-    color: #15803d;
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
 .meal-button--add:hover {
-    background: #dcfce7;
+  background: #dcfce7;
 }
 
 .meal-button--edit {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #2563eb;
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .meal-button--edit:hover {
-    background: #dbeafe;
+  background: #dbeafe;
 }
 
 .meal-button--edit,
 .meals-page :deep(#smazat-jidlo-tlacitko) {
-    height: auto;
-    min-height: 26px;
-    padding: 6px 14px;
-    line-height: 1.4;
-    white-space: normal;
-    text-align: center;
+  height: auto;
+  min-height: 26px;
+  padding: 6px 14px;
+  line-height: 1.4;
+  white-space: normal;
+  text-align: center;
 }
 
 .meals-page :deep(#smazat-jidlo-tlacitko) {
-    border-color: #ef4444;
+  border-color: #ef4444;
 }
 
 .meals-page :deep(#smazat-jidlo-tlacitko:hover) {
-    background: #fee2e2;
+  background: #fee2e2;
 }
 
 .meals-page :deep(#stitek-doby-podavani),
 .meals-page :deep(.pilulka-alergenu-jidla),
 .meals-page :deep(#widget-poctu-jidel) {
-    display: inline-flex;
-    align-items: center;
-    box-sizing: border-box;
-    height: 26px;
-    padding-top: 0;
-    padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 26px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .meal-edit-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .meal-edit-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 
 .meal-edit-close:hover {
-    background: #f1f5f9;
+  background: #f1f5f9;
 }
 
 .modal-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1rem;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .meals-page :deep(#stitek-doby-podavani),
@@ -534,8 +585,10 @@ onMounted(() => {
 .meals-page :deep(#widget-poctu-jidel),
 .meals-page :deep(button),
 .meal-form :deep(button) {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
-.meals-page :deep(#nazev-jidla) { font-size: 16px; }
+.meals-page :deep(#nazev-jidla) {
+  font-size: 16px;
+}
 </style>

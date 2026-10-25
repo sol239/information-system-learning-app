@@ -4,7 +4,8 @@ export const editVstupAlergenyJidlaKomponenta = new Component({
   id: "edit-vstup-alergeny-jidla",
   name: "Vstup – Edit alergeny jídla",
   tags: ["jídla"],
-  description: "Vícenásobný výběr alergenů jídla. Vyžaduje generalVariable: idJidla.",
+  description:
+    "Vícenásobný výběr alergenů jídla. Vyžaduje generalVariable: idJidla.",
 
   html: `
 <div class="form-radek">
@@ -51,6 +52,6 @@ if (checkboxesAlergenuEditJidla.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyJidla: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN ja.id_jidla IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN jidla_alergeny ja ON ja.id_alergenu = a.id_alergenu AND ja.id_jidla = idJidla ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_jidla`
+    nacistAlergenyJidla: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN ja.id_jidla IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN jidla_alergeny ja ON ja.id_alergenu = a.id_alergenu AND ja.id_jidla = idJidla ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_jidla`,
   },
 });

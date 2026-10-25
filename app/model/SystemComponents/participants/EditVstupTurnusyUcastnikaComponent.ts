@@ -4,7 +4,8 @@ export const editVstupTurnusyUcastnikaKomponenta = new Component({
   id: "edit-vstup-turnusy-ucastnika",
   name: "Vstup – Edit turnusy účastníka",
   tags: ["účastníci", "turnusy"],
-  description: "Vícenásobný výběr turnusů účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Vícenásobný výběr turnusů účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `
 <div class="form-radek">
@@ -49,6 +50,6 @@ if (checkboxesTurnusuEditUcastnika.length > 0) {
 }
 `,
   sql: {
-    nacistTurnusyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || t.id_turnusu || '"' || CASE WHEN tu.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')</label>', '') FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON tu.id_turnusu = t.id_turnusu AND tu.id_ucastnika = idUcastnika ORDER BY t.id_turnusu) AS moznosti_turnusu_edit_ucastnika`
+    nacistTurnusyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || t.id_turnusu || '"' || CASE WHEN tu.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> Turnus ' || t.id_turnusu || ' (' || strftime('%d. %m.', t.datum_od) || ' - ' || strftime('%d. %m. %Y', t.datum_do) || ')</label>', '') FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON tu.id_turnusu = t.id_turnusu AND tu.id_ucastnika = idUcastnika ORDER BY t.id_turnusu) AS moznosti_turnusu_edit_ucastnika`,
   },
 });

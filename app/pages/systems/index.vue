@@ -40,9 +40,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3">
                 <div>
-                  <h3
-                    class="system-name text-lg font-semibold text-gray-900"
-                  >
+                  <h3 class="system-name text-lg font-semibold text-gray-900">
                     {{ system.name }}
                   </h3>
                 </div>
@@ -89,24 +87,24 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import UploadSystemModal from '~/components/UploadSystemModal.vue'
-import EditSystemModal from '~/components/EditSystemModal.vue'
-import { AppLoader } from '~/core/AppLoader'
-import { SystemHelper } from '~/core/systems/SystemHelper'
-import { TaskHelper } from '~/core/systems/TaskHelper'
-import { useGlobalSettingsStore } from '~/stores/globalSettingsStore'
-import { useSystemsStore } from '~/stores/systemsStore'
+import UploadSystemModal from "~/components/UploadSystemModal.vue";
+import EditSystemModal from "~/components/EditSystemModal.vue";
+import { AppLoader } from "~/core/AppLoader";
+import { SystemHelper } from "~/core/systems/SystemHelper";
+import { TaskHelper } from "~/core/systems/TaskHelper";
+import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
+import { useSystemsStore } from "~/stores/systemsStore";
 
 defineOptions({
-  name: 'SystemsIndexPage',
-})
+  name: "SystemsIndexPage",
+});
 
 /* 2. Stores */
-const globalSettingsStore = useGlobalSettingsStore()
-const systemsStore = useSystemsStore()
+const globalSettingsStore = useGlobalSettingsStore();
+const systemsStore = useSystemsStore();
 
 /* 3. Context hooks */
-const { t } = useI18n()
+const { t } = useI18n();
 
 /* 4. Constants (non-reactive) */
 
@@ -125,35 +123,35 @@ const { t } = useI18n()
 /* 11. Methods */
 async function navigateToSystem(id: string) {
   if (!(await SystemHelper.prepareSystem(id))) {
-    return
+    return;
   }
 
-  await pushFirstAvailablePage()
+  await pushFirstAvailablePage();
 }
 
 async function pushFirstAvailablePage() {
-  const system = systemsStore.selectedSystem
-  const systemId = systemsStore.selectedSystemId
-  const availableTasks = system?.availableTasks() ?? []
-  const availablePages = TaskHelper.getVisiblePages(availableTasks)
-  const firstPage = availablePages[0]?.route ?? ''
+  const system = systemsStore.selectedSystem;
+  const systemId = systemsStore.selectedSystemId;
+  const availableTasks = system?.availableTasks() ?? [];
+  const availablePages = TaskHelper.getVisiblePages(availableTasks);
+  const firstPage = availablePages[0]?.route ?? "";
 
   if (!systemId || !firstPage) {
-    return
+    return;
   }
 
-  await navigateTo(`/systems/${systemId}${firstPage}`)
+  await navigateTo(`/systems/${systemId}${firstPage}`);
 }
 
 async function deleteSystem(id: string) {
-  globalSettingsStore.markPreloadedSystemAsDeleted(id)
-  await systemsStore.deleteSystemById(id)
+  globalSettingsStore.markPreloadedSystemAsDeleted(id);
+  await systemsStore.deleteSystemById(id);
 }
 
 /* 12. Lifecycle */
 onMounted(async () => {
-  await new AppLoader().loadApp()
-})
+  await new AppLoader().loadApp();
+});
 
 /* 13. defineExpose */
 </script>

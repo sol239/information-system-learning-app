@@ -51,7 +51,7 @@ export const statistikaVedoucichKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-vedoucich": `SELECT COUNT(*) as pocet_vedoucich FROM vedouci`
+    "statistika-vedoucich": `SELECT COUNT(*) as pocet_vedoucich FROM vedouci`,
   },
-  sql_click: {}
+  sql_click: {},
 });

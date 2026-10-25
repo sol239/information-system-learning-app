@@ -31,36 +31,38 @@
   </Teleport>
 </template>
 
-
 <script setup lang="ts">
 /* 1. Imports */
-import { computed, onBeforeUnmount, useAttrs, watch } from 'vue'
+import { computed, onBeforeUnmount, useAttrs, watch } from "vue";
 
 /* 2. Stores */
 
 /* 3. Context hooks */
-const attrs = useAttrs()
+const attrs = useAttrs();
 
 /* 4. Constants (non-reactive) */
 defineOptions({
-  inheritAttrs: false
-})
+  inheritAttrs: false,
+});
 
 /* 5. Props */
-const props = withDefaults(defineProps<{
-  open?: boolean
-  title?: string
-  dismissible?: boolean
-}>(), {
-  open: false,
-  title: '',
-  dismissible: true
-})
+const props = withDefaults(
+  defineProps<{
+    open?: boolean;
+    title?: string;
+    dismissible?: boolean;
+  }>(),
+  {
+    open: false,
+    title: "",
+    dismissible: true,
+  },
+);
 
 /* 6. Emits */
 const emit = defineEmits<{
-  'update:open': [value: boolean]
-}>()
+  "update:open": [value: boolean];
+}>();
 
 /* 7. Template refs */
 
@@ -69,54 +71,57 @@ const emit = defineEmits<{
 /* 9. Computed */
 const isOpen = computed({
   get: () => props.open,
-  set: (value: boolean) => emit('update:open', value)
-})
+  set: (value: boolean) => emit("update:open", value),
+});
 
-const triggerWrapperClass = computed(() => attrs.class)
+const triggerWrapperClass = computed(() => attrs.class);
 
 /* 10. Watchers */
-watch(isOpen, (open) => {
-  if (import.meta.client) {
-    document.body.style.overflow = open ? 'hidden' : ''
-  }
-}, { immediate: true })
+watch(
+  isOpen,
+  (open) => {
+    if (import.meta.client) {
+      document.body.style.overflow = open ? "hidden" : "";
+    }
+  },
+  { immediate: true },
+);
 
 /* 11. Methods */
 function openModal() {
-  isOpen.value = true
+  isOpen.value = true;
 }
 
 function closeModal() {
-  isOpen.value = false
+  isOpen.value = false;
 }
 
 function handleBackdropClick() {
-  if (!props.dismissible) return
+  if (!props.dismissible) return;
 
-  closeModal()
+  closeModal();
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Escape' || !props.dismissible || !isOpen.value) return
+  if (event.key !== "Escape" || !props.dismissible || !isOpen.value) return;
 
-  closeModal()
+  closeModal();
 }
 
 /* 12. Lifecycle */
 if (import.meta.client) {
-  window.addEventListener('keydown', handleKeydown)
+  window.addEventListener("keydown", handleKeydown);
 }
 
 onBeforeUnmount(() => {
   if (import.meta.client) {
-    window.removeEventListener('keydown', handleKeydown)
-    document.body.style.overflow = ''
+    window.removeEventListener("keydown", handleKeydown);
+    document.body.style.overflow = "";
   }
-})
+});
 
 /* 13. defineExpose */
-defineExpose({
-})
+defineExpose({});
 </script>
 
 <style scoped>
@@ -165,7 +170,9 @@ defineExpose({
 
 .modal-fade-enter-active .modal-panel,
 .modal-fade-leave-active .modal-panel {
-  transition: transform 0.18s ease, opacity 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
 }
 
 .modal-fade-enter-from,

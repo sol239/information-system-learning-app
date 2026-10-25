@@ -5,7 +5,11 @@ export default defineNuxtRouteMiddleware((to) => {
   const systemsStore = useSystemsStore();
   const globalSettings = useGlobalSettingsStore();
 
-  if (globalSettings.teacherMode || !to.path.startsWith("/systems/") || globalSettings.bypassPageVisibility) {
+  if (
+    globalSettings.teacherMode ||
+    !to.path.startsWith("/systems/") ||
+    globalSettings.bypassPageVisibility
+  ) {
     return;
   }
 
@@ -14,7 +18,9 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
-  const system = systemsStore.getSystemById(routeSystemId) ?? systemsStore.getPrimarySystem();
+  const system =
+    systemsStore.getSystemById(routeSystemId) ??
+    systemsStore.getPrimarySystem();
   const systemId = system?.id;
   if (!system || !systemId) {
     return;
@@ -31,16 +37,20 @@ export default defineNuxtRouteMiddleware((to) => {
 
   const currentPage = to.path.slice(systemPrefix.length) || "/";
   const databasePageRoute = String(runtimeConfig.public.databasePageRoute);
-  const currentLevelTasks = (system.tasks ?? []).filter((task) => task.level === system.currentLevel);
+  const currentLevelTasks = (system.tasks ?? []).filter(
+    (task) => task.level === system.currentLevel,
+  );
 
-  if (currentPage.endsWith(databasePageRoute) && TaskHelper.shouldIncludeDatabasePage(currentLevelTasks)) {
+  if (
+    currentPage.endsWith(databasePageRoute) &&
+    TaskHelper.shouldIncludeDatabasePage(currentLevelTasks)
+  ) {
     return;
   }
 
   const availableTasks = system.availableTasks() ?? [];
   const availablePages = TaskHelper.getVisiblePages(availableTasks);
   const firstPage = availablePages[0]?.route ?? "";
-
 
   if (!firstPage || availablePages.some((page) => page.route === currentPage)) {
     return;

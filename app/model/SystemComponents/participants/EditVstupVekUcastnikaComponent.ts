@@ -4,7 +4,8 @@ export const editVstupVekUcastnikaKomponenta = new Component({
   id: "edit-vstup-vek-ucastnika",
   name: "Vstup – Edit Věk účastníka",
   tags: ["účastníci"],
-  description: "Pole pro úpravu věku účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Pole pro úpravu věku účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `
 <div class="form-radek">
@@ -29,6 +30,6 @@ if (je_vek_validni) {
     barva_ramecku = "#ff4f92";
 }`,
   sql: {
-    nacistVekUcastnika: `SELECT vek AS edit_vstup_vek_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`
+    nacistVekUcastnika: `SELECT vek AS edit_vstup_vek_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`,
   },
 });

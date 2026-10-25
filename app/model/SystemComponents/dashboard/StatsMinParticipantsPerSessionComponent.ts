@@ -48,7 +48,7 @@ export const statsMinParticipantsPerSessionComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-min-ucastniku-turnusu": `SELECT MIN(pocet_zapsanych) as minimalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);`
+    "statistika-min-ucastniku-turnusu": `SELECT MIN(pocet_zapsanych) as minimalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);`,
   },
-  sql_click: {}
+  sql_click: {},
 });

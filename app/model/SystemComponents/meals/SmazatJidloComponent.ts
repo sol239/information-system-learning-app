@@ -37,6 +37,6 @@ export const smazatJidloKomponenta = new Component({
     "smazat-jidlo-kniha-jidel": `DELETE FROM kniha_jidel WHERE id_jidla = idJidla`,
     "smazat-jidlo-ucastnici": `DELETE FROM ucastnici_jidla WHERE id_jidla = idJidla`,
     "smazat-jidlo-vedouci": `DELETE FROM jidla_vedouci WHERE id_jidla = idJidla`,
-    "smazat-jidlo": `DELETE FROM jidla WHERE id_jidla = idJidla`
-  }
+    "smazat-jidlo": `DELETE FROM jidla WHERE id_jidla = idJidla`,
+  },
 });

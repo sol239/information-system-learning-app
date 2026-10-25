@@ -11,5 +11,7 @@ export default defineNuxtRouteMiddleware((to) => {
   }
 
   const systemId = String(to.params.id ?? "");
-  return navigateTo(systemId ? `/systems/${systemId}` : "/systems", { replace: true });
+  return navigateTo(systemId ? `/systems/${systemId}` : "/systems", {
+    replace: true,
+  });
 });

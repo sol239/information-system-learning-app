@@ -19,6 +19,6 @@ export const tlacitkoUlozitKomponenta = new Component({
 const stav_tlacitka = je_validni ? "" : "disabled";`,
   sql: {},
   sql_click: {
-    insertTurnus: `INSERT INTO turnusy (datum_od, datum_do, kapacita) VALUES (DATE('vstup_datum_od'), DATE('vstup_datum_do'), vstup_kapacita)`
+    insertTurnus: `INSERT INTO turnusy (datum_od, datum_do, kapacita) VALUES (DATE('vstup_datum_od'), DATE('vstup_datum_do'), vstup_kapacita)`,
   },
 });

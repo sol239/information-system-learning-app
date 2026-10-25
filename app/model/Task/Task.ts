@@ -29,15 +29,15 @@ export class Task {
 
     public activity?: IActivity,
     public activityType: ActivityType = ActivityType.REPAIR,
-    
+
     public finish?: IFinish,
     public finishType: FinishType = FinishType.IMMEDIATE,
 
     public level: number = 1,
-    
+
     public status: TaskStatus = TaskStatus.NOT_STARTED,
 
-    public feedback: string = '',
+    public feedback: string = "",
 
     public pointsReward: number = 0,
     public failPenalty: number = 1,
@@ -49,27 +49,40 @@ export class Task {
     public canExecuteQuery: boolean = false,
     public databaseAllowed: boolean = true,
     public visiblePages?: Page[],
-    public codeEditPermissions?: CodeEditPermissions
-  ) { }
+    public codeEditPermissions?: CodeEditPermissions,
+  ) {}
 
   public static fromJSON(data: any): Task {
-    const activityType = Task.parseActivityType(data?.activityType ?? data?.type ?? data?.kind);
+    const activityType = Task.parseActivityType(
+      data?.activityType ?? data?.type ?? data?.kind,
+    );
     const finishType = Task.parseFinishType(data?.finishType);
     const status = Task.parseStatus(data?.status);
-    const errorComponents = Task.parseComponents(data?.errorComponents ?? data?.["error-components"]);
-    const finish = Task.createFinish(finishType, data?.finish, data?.finishDescription ?? "");
+    const errorComponents = Task.parseComponents(
+      data?.errorComponents ?? data?.["error-components"],
+    );
+    const finish = Task.createFinish(
+      finishType,
+      data?.finish,
+      data?.finishDescription ?? "",
+    );
 
-    const visiblePages = Array.isArray(data?.visiblePages ?? data?.visible_pages)
+    const visiblePages = Array.isArray(
+      data?.visiblePages ?? data?.visible_pages,
+    )
       ? (data.visiblePages ?? data.visible_pages)
       : undefined;
     const databasePageRoute = Task.getDatabasePageRoute();
-    const databaseAllowed = typeof data?.databaseAllowed === "boolean"
-      ? data.databaseAllowed
-      : typeof data?.database_allowed === "boolean"
-        ? data.database_allowed
-        : Array.isArray(visiblePages)
-          ? visiblePages.some((page: Page) => page.route === databasePageRoute)
-          : true;
+    const databaseAllowed =
+      typeof data?.databaseAllowed === "boolean"
+        ? data.databaseAllowed
+        : typeof data?.database_allowed === "boolean"
+          ? data.database_allowed
+          : Array.isArray(visiblePages)
+            ? visiblePages.some(
+                (page: Page) => page.route === databasePageRoute,
+              )
+            : true;
 
     const task = new Task(
       String(data?.id ?? ""),
@@ -77,7 +90,15 @@ export class Task {
       data?.description ?? "",
       data?.componentsRepaired ?? false,
       data?.completed ?? status === TaskStatus.COMPLETED,
-      Task.createActivity(activityType, data?.activity, data?.description ?? "", errorComponents, data?.substituteAfterActivity ?? data?.activity?.substituteAfterActivity ?? false),
+      Task.createActivity(
+        activityType,
+        data?.activity,
+        data?.description ?? "",
+        errorComponents,
+        data?.substituteAfterActivity ??
+          data?.activity?.substituteAfterActivity ??
+          false,
+      ),
       activityType,
       finish,
       finishType,
@@ -95,7 +116,7 @@ export class Task {
       Array.isArray(visiblePages)
         ? visiblePages.filter((page: Page) => page.route !== databasePageRoute)
         : undefined,
-      data?.codeEditPermissions ?? data?.code_edit_permissions
+      data?.codeEditPermissions ?? data?.code_edit_permissions,
     );
 
     return task;
@@ -110,7 +131,7 @@ export class Task {
       return [];
     }
 
-    return data.map(item => String(item));
+    return data.map((item) => String(item));
   }
 
   private static parseComponents(data: any): Component[] {
@@ -121,10 +142,18 @@ export class Task {
     return data.map((component: any) => {
       // Legacy schema support: previously, component properties like html/js/sql might have been nested under `variables` alongside `error-component-name`.
       // The current schema stores html/js/sql at the component root level.
-      if (component?.variables && (typeof component.variables.html === 'string' || component.variables.sql)) {
+      if (
+        component?.variables &&
+        (typeof component.variables.html === "string" ||
+          component.variables.sql)
+      ) {
         return Component.fromJSON({
           id: component.id ?? "",
-          name: component["error-component-name"] ?? component.name ?? component.id ?? "",
+          name:
+            component["error-component-name"] ??
+            component.name ??
+            component.id ??
+            "",
           description: component.description ?? "",
           html: component.variables.html ?? component.html ?? "",
           css: component.variables.css ?? component.css ?? "",
@@ -134,7 +163,7 @@ export class Task {
           sql_click: component.variables.sql_click ?? component.sql_click ?? {},
           tags: component.tags ?? [],
           edited: component.edited ?? false,
-          variables: component.variables
+          variables: component.variables,
         });
       }
 
@@ -159,11 +188,12 @@ export class Task {
     activity: any,
     _description: string,
     activityComponents: Component[],
-    substituteAfterActivity: boolean = false
+    substituteAfterActivity: boolean = false,
   ): IActivity {
     const activityDescription = activity?.description;
     const parsedComponents = Task.parseComponents(activity?.activityComponents);
-    const components = parsedComponents.length > 0 ? parsedComponents : activityComponents;
+    const components =
+      parsedComponents.length > 0 ? parsedComponents : activityComponents;
     const label = activity?.label;
 
     const activityOptions = Task.normalizeOptions(activity?.options);
@@ -174,7 +204,12 @@ export class Task {
         instance = new SelectActivity(activityDescription, components, label);
         break;
       case ActivityType.SELECT_OPTIONS:
-        instance = new SelectOptionsActivity(activityDescription, components, label, activityOptions);
+        instance = new SelectOptionsActivity(
+          activityDescription,
+          components,
+          label,
+          activityOptions,
+        );
         break;
       case ActivityType.REPAIR:
       default:
@@ -183,19 +218,23 @@ export class Task {
           components,
           label,
           Boolean(activity?.checkRepair ?? activity?.checkRepairComponents),
-          Task.normalizeComponentContainsConstraints(activity?.repairChecks ?? activity?.componentContainsConstraints)
+          Task.normalizeComponentContainsConstraints(
+            activity?.repairChecks ?? activity?.componentContainsConstraints,
+          ),
         );
     }
     instance.substituteAfterActivity = substituteAfterActivity;
     instance.isCompleted = Boolean(activity?.isCompleted);
-    instance.selectedOptionIds = Task.normalizeStringList(activity?.selectedOptionIds);
+    instance.selectedOptionIds = Task.normalizeStringList(
+      activity?.selectedOptionIds,
+    );
     return instance;
   }
 
   public static createFinish(
     finishType: FinishType,
     finish: any,
-    fallbackDescription?: string
+    fallbackDescription?: string,
   ): IFinish {
     const description = finish?.description ?? fallbackDescription;
     const label = finish?.label;
@@ -206,24 +245,28 @@ export class Task {
         taskFinish = new AfterDatabaseUpdateFinish(
           description,
           label,
-          finish?.checkQuery ?? finish?.query ?? ""
+          finish?.checkQuery ?? finish?.query ?? "",
         );
         break;
       case FinishType.SELECT_OPTIONS:
         taskFinish = new SelectOptionsFinish(
           description,
           label,
-          Task.normalizeOptions(finish?.options)
+          Task.normalizeOptions(finish?.options),
         );
         break;
       case FinishType.TYPE_CORRECT:
-        taskFinish = new TypeCorrectFinish(description, finish?.correctAnswer ?? "", label);
+        taskFinish = new TypeCorrectFinish(
+          description,
+          finish?.correctAnswer ?? "",
+          label,
+        );
         break;
       case FinishType.VARIABLE_CONSTRAINT:
         taskFinish = new VariableConstraintFinish(
           description,
           label,
-          Array.isArray(finish?.constraints) ? finish.constraints : []
+          Array.isArray(finish?.constraints) ? finish.constraints : [],
         );
         break;
       case FinishType.IMMEDIATE:
@@ -232,7 +275,9 @@ export class Task {
     }
 
     taskFinish.isComplete = Boolean(finish?.isComplete);
-    taskFinish.selectedOptionIds = Task.normalizeStringList(finish?.selectedOptionIds);
+    taskFinish.selectedOptionIds = Task.normalizeStringList(
+      finish?.selectedOptionIds,
+    );
     return taskFinish;
   }
 
@@ -244,7 +289,7 @@ export class Task {
     return data.map((option: any) => ({
       id: String(option?.id ?? Task.createOptionId()),
       text: option?.text ?? "",
-      isCorrect: Boolean(option?.isCorrect)
+      isCorrect: Boolean(option?.isCorrect),
     }));
   }
 
@@ -257,22 +302,29 @@ export class Task {
     return `option-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
-  private static normalizeComponentContainsConstraints(data: any): ComponentContainsConstraint[] {
+  private static normalizeComponentContainsConstraints(
+    data: any,
+  ): ComponentContainsConstraint[] {
     if (!Array.isArray(data)) {
-      return []
+      return [];
     }
 
     return data.map((constraint: any) => ({
       id: constraint?.id ? String(constraint.id) : undefined,
-      componentId: String(constraint?.componentId ?? ''),
+      componentId: String(constraint?.componentId ?? ""),
       componentName: constraint?.componentName ?? undefined,
-      operator: constraint?.operator === 'not-contains' ? 'not-contains' : 'contains',
-      text: String(constraint?.text ?? '')
-    }))
+      operator:
+        constraint?.operator === "not-contains" ? "not-contains" : "contains",
+      text: String(constraint?.text ?? ""),
+    }));
   }
 
   private static parseActivityType(value: unknown): ActivityType {
-    if (value === ActivityType.SELECT || value === ActivityType.SELECT_OPTIONS || value === ActivityType.REPAIR) {
+    if (
+      value === ActivityType.SELECT ||
+      value === ActivityType.SELECT_OPTIONS ||
+      value === ActivityType.REPAIR
+    ) {
       return value;
     }
 
@@ -312,5 +364,4 @@ export class Task {
       return "__database_page_route_unavailable__";
     }
   }
-
 }

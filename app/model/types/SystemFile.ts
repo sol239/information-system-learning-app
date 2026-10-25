@@ -1,5 +1,5 @@
 export type SystemFile = {
-    name: string;
-    path?: string;
-    content: string;
-}
+  name: string;
+  path?: string;
+  content: string;
+};

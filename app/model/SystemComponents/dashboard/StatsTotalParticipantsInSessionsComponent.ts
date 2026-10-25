@@ -48,7 +48,7 @@ export const statsTotalParticipantsInSessionsComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-celkem-ucasti-turnusu": `SELECT COUNT(*) AS celkem_ucasti_v_turnusech FROM turnusy_ucastnici`
+    "statistika-celkem-ucasti-turnusu": `SELECT COUNT(*) AS celkem_ucasti_v_turnusech FROM turnusy_ucastnici`,
   },
-  sql_click: {}
+  sql_click: {},
 });

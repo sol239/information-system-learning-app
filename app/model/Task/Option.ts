@@ -1,5 +1,5 @@
 export type Option = {
-    id: string;
-    text: string;
-    isCorrect: boolean;
-}
+  id: string;
+  text: string;
+  isCorrect: boolean;
+};

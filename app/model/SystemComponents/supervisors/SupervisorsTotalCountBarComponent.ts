@@ -37,7 +37,7 @@ export const celkovyPocetVedoucichKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "celkovy-pocet-vedoucich": `SELECT COUNT(*) AS celkovy_pocet_vedoucich FROM vedouci`
+    "celkovy-pocet-vedoucich": `SELECT COUNT(*) AS celkovy_pocet_vedoucich FROM vedouci`,
   },
-  sql_click: {}
+  sql_click: {},
 });

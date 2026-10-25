@@ -1,7 +1,7 @@
 export type Page = {
-    name: string;
-    route: string;
-    description?: string;
-    icon?: string;
-    activeColor?: string;
-}
+  name: string;
+  route: string;
+  description?: string;
+  icon?: string;
+  activeColor?: string;
+};

@@ -4,7 +4,8 @@ export const editTlacitkoUlozitUcastnikaKomponenta = new Component({
   id: "edit-btn-ulozit-ucastnika",
   name: "Tlačítko – Upravit účastníka",
   tags: ["účastníci"],
-  description: "Tlačítko pro uložení změn existujícího účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Tlačítko pro uložení změn existujícího účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `
 <button id="system-edit_btn_ulozit_ucastnika" class="btn-uspech" {{ stav_tlacitka }}>Upravit účastníka</button>
@@ -23,6 +24,6 @@ const stav_tlacitka = je_validni ? "" : "disabled";`,
     smazatAlergenyUcastnika: `DELETE FROM ucastnici_alergeny WHERE id_ucastnika = idUcastnika`,
     vlozitAlergenyUcastnika: `INSERT OR IGNORE INTO ucastnici_alergeny (id_ucastnika, id_alergenu) SELECT idUcastnika, id_alergenu FROM alergeny WHERE id_alergenu IN (edit_vstup_alergeny_ucastnika)`,
     smazatTurnusyUcastnika: `DELETE FROM turnusy_ucastnici WHERE id_ucastnika = idUcastnika`,
-    vlozitTurnusyUcastnika: `INSERT OR IGNORE INTO turnusy_ucastnici (id_ucastnika, id_turnusu) SELECT idUcastnika, id_turnusu FROM turnusy WHERE id_turnusu IN (edit_vstup_turnusy_ucastnika)`
+    vlozitTurnusyUcastnika: `INSERT OR IGNORE INTO turnusy_ucastnici (id_ucastnika, id_turnusu) SELECT idUcastnika, id_turnusu FROM turnusy WHERE id_turnusu IN (edit_vstup_turnusy_ucastnika)`,
   },
 });

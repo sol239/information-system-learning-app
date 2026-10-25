@@ -4,7 +4,8 @@ export const editVstupAlergenyVedoucihoKomponenta = new Component({
   id: "edit-vstup-alergeny-vedouciho",
   name: "Vstup – Edit alergeny vedoucího",
   tags: ["vedoucí"],
-  description: "Vícenásobný výběr alergenů vedoucího. Vyžaduje generalVariable: idVedouciho.",
+  description:
+    "Vícenásobný výběr alergenů vedoucího. Vyžaduje generalVariable: idVedouciho.",
 
   html: `
 <div class="form-radek">
@@ -51,6 +52,6 @@ if (checkboxesAlergenuEditVedouciho.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN va.id_vedouciho IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN vedouci_alergeny va ON va.id_alergenu = a.id_alergenu AND va.id_vedouciho = idVedouciho ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_vedouciho`
+    nacistAlergenyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || a.id_alergenu || '"' || CASE WHEN va.id_vedouciho IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN vedouci_alergeny va ON va.id_alergenu = a.id_alergenu AND va.id_vedouciho = idVedouciho ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_vedouciho`,
   },
 });

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { InformationSystem } from '../../app/model/InformationSystem'
+import { describe, it, expect } from "vitest";
+import { InformationSystem } from "../../app/model/InformationSystem";
 
 const VALID_CONFIG = `{
     "id": 2,
@@ -92,69 +92,79 @@ const VALID_CONFIG = `{
             "feedback": "Správně jsi odpověděl, že komponenta využívala špatný SQL dotaz."
         }
     ]
-}`
+}`;
 
-describe('InformationSystem.fromConfig', () => {
-    describe('valid config', () => {
-        it('should map id from config', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.id).toBe('2')
-        })
+describe("InformationSystem.fromConfig", () => {
+  describe("valid config", () => {
+    it("should map id from config", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.id).toBe("2");
+    });
 
-        it('should map name from config', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.name).toBe('Školní tábor Pálava')
-        })
+    it("should map name from config", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.name).toBe("Školní tábor Pálava");
+    });
 
-        it('should map language from config', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.language).toBe('cs')
-        })
+    it("should map language from config", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.language).toBe("cs");
+    });
 
-        it('should map description from config', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.description).toBe('Školní tábor v Pálavě, zaměřený na výuku a zábavu pro děti.')
-        })
+    it("should map description from config", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.description).toBe(
+        "Školní tábor v Pálavě, zaměřený na výuku a zábavu pro děti.",
+      );
+    });
 
-        it('should default tasks to an empty array (tasks mapping is commented out)', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.tasks).toEqual([])
-        })
+    it("should default tasks to an empty array (tasks mapping is commented out)", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.tasks).toEqual([]);
+    });
 
-        it('should default actualComponents to an empty array', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system.actualComponents).toEqual([])
-        })
+    it("should default actualComponents to an empty array", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system.actualComponents).toEqual([]);
+    });
 
-        it('should return an instance of InformationSystem', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect(system).toBeInstanceOf(InformationSystem)
-        })
+    it("should return an instance of InformationSystem", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect(system).toBeInstanceOf(InformationSystem);
+    });
 
-        it('should ignore extra fields not used by the constructor (e.g. directory)', () => {
-            const system = InformationSystem.fromConfig(VALID_CONFIG)
-            expect((system as any).directory).toBeUndefined()
-        })
-    })
+    it("should ignore extra fields not used by the constructor (e.g. directory)", () => {
+      const system = InformationSystem.fromConfig(VALID_CONFIG);
+      expect((system as any).directory).toBeUndefined();
+    });
+  });
 
-    describe('edge cases', () => {
-        it('should throw on invalid JSON', () => {
-            expect(() => InformationSystem.fromConfig('not valid json')).toThrow(SyntaxError)
-        })
+  describe("edge cases", () => {
+    it("should throw on invalid JSON", () => {
+      expect(() => InformationSystem.fromConfig("not valid json")).toThrow(
+        SyntaxError,
+      );
+    });
 
-        it('should produce undefined fields when required keys are missing', () => {
-            const minimal = JSON.stringify({ id: 99 })
-            const system = InformationSystem.fromConfig(minimal)
-            expect(system.id).toBe('99')
-            expect(system.name).toBeUndefined()
-            expect(system.language).toBeUndefined()
-            expect(system.description).toBeUndefined()
-        })
+    it("should produce undefined fields when required keys are missing", () => {
+      const minimal = JSON.stringify({ id: 99 });
+      const system = InformationSystem.fromConfig(minimal);
+      expect(system.id).toBe("99");
+      expect(system.name).toBeUndefined();
+      expect(system.language).toBeUndefined();
+      expect(system.description).toBeUndefined();
+    });
 
-        it('should handle empty tasks array in config and still default to []', () => {
-            const config = JSON.stringify({ id: 1, name: 'Test', language: 'en', description: 'Desc', tasks: [] })
-            const system = InformationSystem.fromConfig(config)
-            expect(system.tasks).toEqual([])
-        })
-    })
-})
+    it("should handle empty tasks array in config and still default to []", () => {
+      const config = JSON.stringify({
+        id: 1,
+        name: "Test",
+        language: "en",
+        description: "Desc",
+        tasks: [],
+      });
+      const system = InformationSystem.fromConfig(config);
+      expect(system.tasks).toEqual([]);
+    });
+  });
+});

@@ -1,18 +1,18 @@
 <script setup lang="ts">
 /* 1. Imports */
-import SystemToolbar from '~/components/SystemToolbar.vue'
+import SystemToolbar from "~/components/SystemToolbar.vue";
 
 defineOptions({
-  name: 'DefaultLayout',
-})
+  name: "DefaultLayout",
+});
 
 /* 2. Stores */
-const globalSettings = useGlobalSettingsStore()
-const systemsStore = useSystemsStore()
+const globalSettings = useGlobalSettingsStore();
+const systemsStore = useSystemsStore();
 
 /* 3. Context hooks */
-const route = useRoute()
-const { t } = useI18n()
+const route = useRoute();
+const { t } = useI18n();
 
 /* 4. Constants (non-reactive) */
 
@@ -23,18 +23,24 @@ const { t } = useI18n()
 /* 7. Template refs */
 
 /* 8. State (ref, reactive) */
-const mobileTasksOpen = ref(false)
+const mobileTasksOpen = ref(false);
 
 /* 9. Computed */
 const atSystemPage = computed(() => {
-  const [, systemsPath, systemId] = route.path.split('/')
+  const [, systemsPath, systemId] = route.path.split("/");
 
-  return systemsPath === 'systems' && Boolean(systemId)
-})
+  return systemsPath === "systems" && Boolean(systemId);
+});
 
-const isFullscreenSystemPage = computed(() => route.meta.fullscreenSystemPage === true)
-const scoreValue = computed(() => systemsStore.selectedSystem?.score.score ?? 0)
-const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount ?? 0)
+const isFullscreenSystemPage = computed(
+  () => route.meta.fullscreenSystemPage === true,
+);
+const scoreValue = computed(
+  () => systemsStore.selectedSystem?.score.score ?? 0,
+);
+const mistakesCount = computed(
+  () => systemsStore.selectedSystem?.mistakesCount ?? 0,
+);
 
 /* 10. Watchers */
 
@@ -48,8 +54,16 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
 <template>
   <div>
     <div v-if="atSystemPage" class="flex h-screen overflow-hidden">
-      <div :class="['system-column flex min-h-0 w-full min-w-0 flex-col', isFullscreenSystemPage ? '' : 'lg:w-[65%]']">
-        <SystemNavbar v-if="!isFullscreenSystemPage" @open-tasks="mobileTasksOpen = true" />
+      <div
+        :class="[
+          'system-column flex min-h-0 w-full min-w-0 flex-col',
+          isFullscreenSystemPage ? '' : 'lg:w-[65%]',
+        ]"
+      >
+        <SystemNavbar
+          v-if="!isFullscreenSystemPage"
+          @open-tasks="mobileTasksOpen = true"
+        />
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <slot />
@@ -57,19 +71,27 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
         </div>
       </div>
 
-      <aside v-if="!isFullscreenSystemPage" class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex">
+      <aside
+        v-if="!isFullscreenSystemPage"
+        class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex"
+      >
         <div>
           <SystemToolbar />
         </div>
 
         <div class="flex flex-row mt-4 items-center justify-between px-4">
           <div>
-            <h2 class="text-1xl font-bold">{{ t('tasks') }}</h2>
+            <h2 class="text-1xl font-bold">{{ t("tasks") }}</h2>
           </div>
           <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
             <span>
-              <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-list-todo">
-                {{ t('score') }}: {{ scoreValue }}
+              <UBadge
+                color="red"
+                variant="subtle"
+                size="lg"
+                icon="i-lucide-list-todo"
+              >
+                {{ t("score") }}: {{ scoreValue }}
               </UBadge>
             </span>
 
@@ -77,8 +99,10 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
               <div class="app-popover-content">
                 <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
                 <div class="app-popover-text">
-                  <strong class="app-popover-title">{{ t('score') }}</strong>
-                  <span class="app-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+                  <strong class="app-popover-title">{{ t("score") }}</strong>
+                  <span class="app-popover-description">{{
+                    t("score_mistakes_count", { count: mistakesCount })
+                  }}</span>
                 </div>
               </div>
             </template>
@@ -119,12 +143,17 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
 
             <div class="mt-4 flex items-center justify-between px-1">
               <div>
-                <h2 class="text-2xl font-bold">{{ t('tasks') }}</h2>
+                <h2 class="text-2xl font-bold">{{ t("tasks") }}</h2>
               </div>
               <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
                 <span>
-                  <UBadge color="red" variant="subtle" size="lg" icon="i-lucide-list-todo">
-                    {{ t('score') }}: {{ scoreValue }}
+                  <UBadge
+                    color="red"
+                    variant="subtle"
+                    size="lg"
+                    icon="i-lucide-list-todo"
+                  >
+                    {{ t("score") }}: {{ scoreValue }}
                   </UBadge>
                 </span>
 
@@ -132,8 +161,12 @@ const mistakesCount = computed(() => systemsStore.selectedSystem?.mistakesCount 
                   <div class="app-popover-content">
                     <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
                     <div class="app-popover-text">
-                      <strong class="app-popover-title">{{ t('score') }}</strong>
-                      <span class="app-popover-description">{{ t('score_mistakes_count', { count: mistakesCount }) }}</span>
+                      <strong class="app-popover-title">{{
+                        t("score")
+                      }}</strong>
+                      <span class="app-popover-description">{{
+                        t("score_mistakes_count", { count: mistakesCount })
+                      }}</span>
                     </div>
                   </div>
                 </template>

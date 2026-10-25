@@ -12,11 +12,11 @@
 /* 2. Stores */
 
 /* 3. Context hooks */
-const colorMode = useColorMode()
+const colorMode = useColorMode();
 
 /* 4. Constants (non-reactive) */
-colorMode.preference = 'light'
-colorMode.value = 'light'
+colorMode.preference = "light";
+colorMode.value = "light";
 
 /* 5. Props */
 

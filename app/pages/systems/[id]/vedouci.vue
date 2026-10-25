@@ -278,8 +278,8 @@ import { ComponentVariables, Variable } from "~/model/ComponentVariables";
 import { useSystemInputVariables } from "~/composables/useSystemInputVariables";
 
 defineOptions({
-  name: 'SystemSupervisorsPage',
-})
+  name: "SystemSupervisorsPage",
+});
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function withVars(comp: any, vars: Variable[]) {
@@ -294,79 +294,85 @@ const { systemInputVariables } = useSystemInputVariables();
 const { t } = useI18n();
 const { systemsStore } = useSyncSystemId();
 
-const isDbReady = computed(() => !!systemsStore.selectedSystem?.database?.sqlJsDatabase);
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
 const createModalOpen = ref(false);
 const editModalOpen = reactive<Record<number, boolean>>({});
 
 // Display components
 const cardInfoComponent = computed(() =>
-  systemsStore.getComponentById("karta-vedouciho")
+  systemsStore.getComponentById("karta-vedouciho"),
 );
 const sessionBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-turnusu-vedouciho")
+  systemsStore.getComponentById("stitek-turnusu-vedouciho"),
 );
 const allergenBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-alergenu-vedouciho")
+  systemsStore.getComponentById("stitek-alergenu-vedouciho"),
 );
 const countBarComponent = computed(() =>
-  systemsStore.getComponentById("celkovy-pocet-vedoucich")
+  systemsStore.getComponentById("celkovy-pocet-vedoucich"),
 );
-const orderComponent = computed(() => systemsStore.getComponentById("razeni-vedoucich"));
+const orderComponent = computed(() =>
+  systemsStore.getComponentById("razeni-vedoucich"),
+);
 
 // Create components
 const vstupJmenoComponent = computed(() =>
-  systemsStore.getComponentById("vstup-jmeno-vedouciho")
+  systemsStore.getComponentById("vstup-jmeno-vedouciho"),
 );
 const vstupEmailComponent = computed(() =>
-  systemsStore.getComponentById("vstup-email-vedouciho")
+  systemsStore.getComponentById("vstup-email-vedouciho"),
 );
 const vstupTelefonComponent = computed(() =>
-  systemsStore.getComponentById("vstup-telefon-vedouciho")
+  systemsStore.getComponentById("vstup-telefon-vedouciho"),
 );
 const vstupAdresaComponent = computed(() =>
-  systemsStore.getComponentById("vstup-adresa-vedouciho")
+  systemsStore.getComponentById("vstup-adresa-vedouciho"),
 );
 const vstupVekComponent = computed(() =>
-  systemsStore.getComponentById("vstup-vek-vedouciho")
+  systemsStore.getComponentById("vstup-vek-vedouciho"),
 );
 const vstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("vstup-alergeny-vedouciho")
+  systemsStore.getComponentById("vstup-alergeny-vedouciho"),
 );
 const vstupTurnusyComponent = computed(() =>
-  systemsStore.getComponentById("vstup-turnusy-vedouciho")
+  systemsStore.getComponentById("vstup-turnusy-vedouciho"),
 );
 const btnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("btn-ulozit-vedouciho")
+  systemsStore.getComponentById("btn-ulozit-vedouciho"),
 );
 
 // Edit components
 const editVstupJmenoComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-jmeno-vedouciho")
+  systemsStore.getComponentById("edit-vstup-jmeno-vedouciho"),
 );
 const editVstupEmailComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-email-vedouciho")
+  systemsStore.getComponentById("edit-vstup-email-vedouciho"),
 );
 const editVstupTelefonComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-telefon-vedouciho")
+  systemsStore.getComponentById("edit-vstup-telefon-vedouciho"),
 );
 const editVstupAdresaComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-adresa-vedouciho")
+  systemsStore.getComponentById("edit-vstup-adresa-vedouciho"),
 );
 const editVstupVekComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-vek-vedouciho")
+  systemsStore.getComponentById("edit-vstup-vek-vedouciho"),
 );
 const editVstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-alergeny-vedouciho")
+  systemsStore.getComponentById("edit-vstup-alergeny-vedouciho"),
 );
 const editVstupTurnusyComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-turnusy-vedouciho")
+  systemsStore.getComponentById("edit-vstup-turnusy-vedouciho"),
 );
 const editBtnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("edit-btn-ulozit-vedouciho")
+  systemsStore.getComponentById("edit-btn-ulozit-vedouciho"),
 );
 
 // Delete component
-const smazatComponent = computed(() => systemsStore.getComponentById("smazat-vedouciho"));
+const smazatComponent = computed(() =>
+  systemsStore.getComponentById("smazat-vedouciho"),
+);
 
 // Supervisor data
 interface SupervisorRow {
@@ -397,12 +403,12 @@ const sessionFilterItems = computed<SessionItem[]>(() => [
 ]);
 
 const normalizedFilterText = computed(() =>
-  filterText.value.trim().toLocaleLowerCase("cs-CZ")
+  filterText.value.trim().toLocaleLowerCase("cs-CZ"),
 );
 
 const orderBy = computed(() => {
   const value = systemInputVariables.value.find(
-    (variable) => variable.name === "razeni_vedoucich"
+    (variable) => variable.name === "razeni_vedoucich",
   )?.variable;
   const normalizedValue = String(value ?? "jmeno");
   return ["jmeno", "vek", "email", "alergeny"].includes(normalizedValue)
@@ -414,17 +420,25 @@ const filteredSupervisorIds = computed(() => {
   let filteredSupervisors = supervisors.value;
   if (selectedSessionId.value !== null) {
     filteredSupervisors = filteredSupervisors.filter(
-      (s) => s.sessionId === selectedSessionId.value
+      (s) => s.sessionId === selectedSessionId.value,
     );
   }
 
   if (normalizedFilterText.value) {
     filteredSupervisors = filteredSupervisors.filter(
       (s) =>
-        s.name.toLocaleLowerCase("cs-CZ").includes(normalizedFilterText.value) ||
-        s.email.toLocaleLowerCase("cs-CZ").includes(normalizedFilterText.value) ||
-        s.phone.toLocaleLowerCase("cs-CZ").includes(normalizedFilterText.value) ||
-        s.address.toLocaleLowerCase("cs-CZ").includes(normalizedFilterText.value)
+        s.name
+          .toLocaleLowerCase("cs-CZ")
+          .includes(normalizedFilterText.value) ||
+        s.email
+          .toLocaleLowerCase("cs-CZ")
+          .includes(normalizedFilterText.value) ||
+        s.phone
+          .toLocaleLowerCase("cs-CZ")
+          .includes(normalizedFilterText.value) ||
+        s.address
+          .toLocaleLowerCase("cs-CZ")
+          .includes(normalizedFilterText.value),
     );
   }
 
@@ -436,7 +450,10 @@ const filteredSupervisorIds = computed(() => {
     uniqueSupervisors.push(supervisor);
   }
 
-  const collator = new Intl.Collator("cs-CZ", { sensitivity: "base", numeric: true });
+  const collator = new Intl.Collator("cs-CZ", {
+    sensitivity: "base",
+    numeric: true,
+  });
   uniqueSupervisors.sort((a, b) => {
     if (orderBy.value === "vek") {
       return a.age - b.age || a.id - b.id;
@@ -483,7 +500,7 @@ const loadData = async () => {
                 FROM vedouci_alergeny
                 GROUP BY id_vedouciho
              ) alergeny ON alergeny.id_vedouciho = v.id_vedouciho
-             ORDER BY vt.id_turnusu, v.id_vedouciho`
+             ORDER BY vt.id_turnusu, v.id_vedouciho`,
     );
     if (vResult.data?.[0]?.values) {
       supervisors.value = vResult.data[0].values.map((row) => ({
@@ -499,7 +516,9 @@ const loadData = async () => {
     }
 
     // Load sessions for the filter dropdown
-    const sResult = await db.query(`SELECT id_turnusu FROM turnusy ORDER BY id_turnusu`);
+    const sResult = await db.query(
+      `SELECT id_turnusu FROM turnusy ORDER BY id_turnusu`,
+    );
     if (sResult.data?.[0]?.values) {
       sessions.value = sResult.data[0].values.map((row) => ({
         id: Number(row[0]),
@@ -536,7 +555,7 @@ watch(
   (db) => {
     if (db) loadData();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -546,7 +565,7 @@ onMounted(() => {
 
 <style scoped>
 .supervisors-page :deep(#kontaktni-udaje-oddeleni) {
-    border-top-color: #9ca3af;
+  border-top-color: #9ca3af;
 }
 
 .supervisors-page :deep(.component-html :where(*):not(#jmeno-vedouciho)),
@@ -558,135 +577,135 @@ onMounted(() => {
 .supervisor-form :deep(input),
 .supervisor-form :deep(select),
 .supervisor-form :deep(label) {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .supervisor-select,
 .supervisors-page :deep(#razeni-vedoucich) {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 26px;
-    box-sizing: border-box;
-    padding: 0 12px;
-    border: 1px solid #7c3aed;
-    border-radius: 8px;
-    background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid #7c3aed;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .supervisor-select select {
-    border: 0;
-    background: transparent;
-    color: #111827;
-    font-size: 12px;
-    cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .supervisor-select:focus-within {
-    outline: 2px solid #7c3aed;
-    outline-offset: 2px;
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
 }
 
 .supervisor-button,
 .supervisors-page :deep(#smazat-vedouciho-tlacitko) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 26px;
-    box-sizing: border-box;
-    padding: 0 14px;
-    border: 1px solid;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 
 .supervisor-button--add {
-    border-color: #22c55e;
-    background: #f0fdf4;
-    color: #15803d;
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
 .supervisor-button--add:hover {
-    background: #dcfce7;
+  background: #dcfce7;
 }
 
 .supervisor-button--edit {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #2563eb;
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .supervisor-button--edit:hover {
-    background: #dbeafe;
+  background: #dbeafe;
 }
 
 .supervisor-button--edit,
 .supervisors-page :deep(#smazat-vedouciho-tlacitko) {
-    height: auto;
-    min-height: 26px;
-    padding: 6px 14px;
-    line-height: 1.4;
-    white-space: normal;
-    text-align: center;
+  height: auto;
+  min-height: 26px;
+  padding: 6px 14px;
+  line-height: 1.4;
+  white-space: normal;
+  text-align: center;
 }
 
 .supervisors-page :deep(#smazat-vedouciho-tlacitko) {
-    border-color: #ef4444;
+  border-color: #ef4444;
 }
 
 .supervisors-page :deep(#smazat-vedouciho-tlacitko:hover) {
-    background: #fee2e2;
+  background: #fee2e2;
 }
 
 .supervisors-page :deep(#vek-vedouciho-stitek),
 .supervisors-page :deep(.stitek-alergenu-vedouciho),
 .supervisors-page :deep(#widget-poctu-vedoucich) {
-    display: inline-flex;
-    align-items: center;
-    box-sizing: border-box;
-    height: 26px;
-    padding-top: 0;
-    padding-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 26px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .supervisor-edit-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .supervisor-edit-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 
 .supervisor-edit-close:hover {
-    background: #f1f5f9;
+  background: #f1f5f9;
 }
 
 .modal-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1rem;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .supervisors-page :deep(#vek-vedouciho-stitek),
@@ -694,8 +713,10 @@ onMounted(() => {
 .supervisors-page :deep(#widget-poctu-vedoucich),
 .supervisors-page :deep(button),
 .supervisor-form :deep(button) {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
-.supervisors-page :deep(#jmeno-vedouciho) { font-size: 16px; }
+.supervisors-page :deep(#jmeno-vedouciho) {
+  font-size: 16px;
+}
 </style>

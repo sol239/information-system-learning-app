@@ -27,12 +27,7 @@
               "pocet-dni-turnusu": "SELECT CAST(julianday(datum_do) - julianday(datum_od) AS INTEGER) AS pocet_dni_turnusu FROM turnusy WHERE id_turnusu = idTurnusu"
             },
             "sql_click": {},
-            "tags": [
-              "turnusy",
-              "html",
-              "css",
-              "sql"
-            ],
+            "tags": ["turnusy", "html", "css", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [
@@ -89,12 +84,7 @@
             "pocet-dni-turnusu": "SELECT CAST(julianday(datum_do) - julianday(datum_od) AS INTEGER) AS pocet_dni_turnusu FROM turnusy WHERE id_turnusu = idTurnusu"
           },
           "sql_click": {},
-          "tags": [
-            "turnusy",
-            "html",
-            "css",
-            "sql"
-          ],
+          "tags": ["turnusy", "html", "css", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [
@@ -166,13 +156,7 @@
               "ziskat-obsazenost": "SELECT COUNT(*) AS aktualni_pocet FROM turnusy_ucastnici WHERE id_turnusu = idTurnusu"
             },
             "sql_click": {},
-            "tags": [
-              "turnusy",
-              "html",
-              "css",
-              "js",
-              "sql"
-            ],
+            "tags": ["turnusy", "html", "css", "js", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [
@@ -241,13 +225,7 @@
             "ziskat-obsazenost": "SELECT COUNT(*) AS aktualni_pocet FROM turnusy_ucastnici WHERE id_turnusu = idTurnusu"
           },
           "sql_click": {},
-          "tags": [
-            "turnusy",
-            "html",
-            "css",
-            "js",
-            "sql"
-          ],
+          "tags": ["turnusy", "html", "css", "js", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [
@@ -336,13 +314,7 @@
               "nacistAlergenyUcastnika": "SELECT (SELECT GROUP_CONCAT('<label class=\"volba-radek\"><input type=\"checkbox\" value=\"' || a.id_alergenu || '\"' || CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END || '> ' || a.jmeno || '</label>', '') FROM alergeny a LEFT JOIN ucastnici_alergeny ua ON ua.id_alergenu = a.id_alergenu AND ua.id_ucastnika = idUcastnika ORDER BY a.id_alergenu) AS moznosti_alergenu_edit_ucastnika"
             },
             "sql_click": {},
-            "tags": [
-              "účastníci",
-              "html",
-              "css",
-              "js",
-              "sql"
-            ],
+            "tags": ["účastníci", "html", "css", "js", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [
@@ -408,13 +380,7 @@
             "nacistAlergenyUcastnika": "SELECT (\n  SELECT GROUP_CONCAT(\n    '<label class=\"volba-radek\">' ||\n      '<input type=\"radio\" name=\"system-edit_vstup_alergeny_ucastnika\" value=\"' || a.id_alergenu || '\"' ||\n      CASE WHEN ua.id_ucastnika IS NULL THEN '' ELSE ' checked' END ||\n      '> ' || a.jmeno ||\n    '</label>',\n    ''\n  )\n  FROM alergeny a\n  LEFT JOIN ucastnici_alergeny ua\n    ON ua.id_alergenu = a.id_alergenu\n   AND ua.id_ucastnika = idUcastnika\n  ORDER BY a.id_alergenu\n) AS moznosti_alergenu_edit_ucastnika"
           },
           "sql_click": {},
-          "tags": [
-            "účastníci",
-            "html",
-            "css",
-            "js",
-            "sql"
-          ],
+          "tags": ["účastníci", "html", "css", "js", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [
@@ -518,13 +484,7 @@
               "nacistJmenoVedouciho": "SELECT jmeno AS edit_vstup_jmeno_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho"
             },
             "sql_click": {},
-            "tags": [
-              "vedoucí",
-              "html",
-              "css",
-              "js",
-              "sql"
-            ],
+            "tags": ["vedoucí", "html", "css", "js", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [
@@ -568,13 +528,7 @@
             "nacistJmenoVedouciho": "SELECT jmeno AS edit_vstup_jmeno_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho"
           },
           "sql_click": {},
-          "tags": [
-            "vedoucí",
-            "html",
-            "css",
-            "js",
-            "sql"
-          ],
+          "tags": ["vedoucí", "html", "css", "js", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [
@@ -782,13 +736,7 @@
               "statistika-jidel": "SELECT COUNT(*) as pocet_jidel FROM jidla"
             },
             "sql_click": {},
-            "tags": [
-              "statistika",
-              "jídel",
-              "html",
-              "css",
-              "sql"
-            ],
+            "tags": ["statistika", "jídel", "html", "css", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [],
@@ -827,13 +775,7 @@
             "statistika-jidel": "SELECT COUNT(*) as pocet_jidel FROM alergeny"
           },
           "sql_click": {},
-          "tags": [
-            "statistika",
-            "jídel",
-            "html",
-            "css",
-            "sql"
-          ],
+          "tags": ["statistika", "jídel", "html", "css", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [],
@@ -901,13 +843,7 @@
               "pocet-alergenu-ucastnika": "SELECT COUNT(ua.id_alergenu) AS pocet_alergenu_ucastnika\nFROM ucastnici u\nJOIN ucastnici_alergeny ua \n  ON u.id_ucastnika = ua.id_ucastnika\nWHERE u.id_ucastnika = idUcastnika;"
             },
             "sql_click": {},
-            "tags": [
-              "účastníci",
-              "html",
-              "css",
-              "js",
-              "sql"
-            ],
+            "tags": ["účastníci", "html", "css", "js", "sql"],
             "edited": false,
             "variables": {
               "generalVariables": [
@@ -970,13 +906,7 @@
             "pocet-alergenu-ucastnika": "SELECT COUNT(ua.id_alergenu) AS pocet_alergenu_ucastnika\nFROM ucastnici u\nJOIN ucastnici_alergeny ua \n  ON u.id_ucastnika = ua.id_ucastnika\nWHERE u.id_ucastnika = idUcastnika;"
           },
           "sql_click": {},
-          "tags": [
-            "účastníci",
-            "html",
-            "css",
-            "js",
-            "sql"
-          ],
+          "tags": ["účastníci", "html", "css", "js", "sql"],
           "edited": false,
           "variables": {
             "generalVariables": [
@@ -1050,13 +980,7 @@
               "ucastnici-serazeni-podle-poctu-alergenu": "\nSELECT\n  u.id_ucastnika AS id_ucastnika_razeni_alergeny,\n  COUNT(ua.id_alergenu) AS pocet_alergenu_razeni_ucastnika\nFROM ucastnici u\nLEFT JOIN ucastnici_alergeny ua\n  ON ua.id_ucastnika = u.id_ucastnika\nGROUP BY u.id_ucastnika\nORDER BY COUNT(ua.id_alergenu), u.id_ucastnika\n"
             },
             "sql_click": {},
-            "tags": [
-              "účastníci",
-              "řazení",
-              "sql",
-              "html",
-              "css"
-            ],
+            "tags": ["účastníci", "řazení", "sql", "html", "css"],
             "edited": false,
             "variables": {
               "generalVariables": [],
@@ -1119,13 +1043,7 @@
             "ucastnici-serazeni-podle-poctu-alergenu": "\nSELECT\n  u.id_ucastnika AS id_ucastnika_razeni_alergeny,\n  COUNT(ua.id_alergenu) AS pocet_alergenu_razeni_ucastnika\nFROM ucastnici u\nLEFT JOIN ucastnici_alergeny ua\n  ON ua.id_ucastnika = u.id_ucastnika\nGROUP BY u.id_ucastnika\nORDER BY COUNT(ua.id_alergenu), u.id_ucastnika\n"
           },
           "sql_click": {},
-          "tags": [
-            "účastníci",
-            "řazení",
-            "sql",
-            "html",
-            "css"
-          ],
+          "tags": ["účastníci", "řazení", "sql", "html", "css"],
           "edited": false,
           "variables": {
             "generalVariables": [],

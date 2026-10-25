@@ -80,8 +80,7 @@ export const kartaVedoucihoKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "karta-vedouciho": `SELECT v.jmeno, v.vek, v.email, v.telefon, v.adresa FROM vedouci v WHERE v.id_vedouciho = idVedouciho`
+    "karta-vedouciho": `SELECT v.jmeno, v.vek, v.email, v.telefon, v.adresa FROM vedouci v WHERE v.id_vedouciho = idVedouciho`,
   },
-  sql_click: {}
+  sql_click: {},
 });
-

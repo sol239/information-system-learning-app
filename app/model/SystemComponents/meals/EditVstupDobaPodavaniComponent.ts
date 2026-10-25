@@ -4,7 +4,8 @@ export const editVstupDobaPodavaniKomponenta = new Component({
   id: "edit-vstup-doba-podavani",
   name: "Vstup – Edit Doba podávání",
   tags: ["jídla"],
-  description: "Výběr doby podávání jídla při editaci. Vyžaduje generalVariable: idJidla.",
+  description:
+    "Výběr doby podávání jídla při editaci. Vyžaduje generalVariable: idJidla.",
 
   html: `
 <div class="form-radek">
@@ -35,6 +36,6 @@ if (edit_vstup_doba_podavani === "snídaně") {
   vecere_selected = "selected";
 }`,
   sql: {
-    nacistDobuPodavani: `SELECT doba_podavani AS edit_vstup_doba_podavani FROM jidla WHERE id_jidla = idJidla`
+    nacistDobuPodavani: `SELECT doba_podavani AS edit_vstup_doba_podavani FROM jidla WHERE id_jidla = idJidla`,
   },
 });

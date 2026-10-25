@@ -4,7 +4,8 @@ export const smazatUcastnikaKomponenta = new Component({
   id: "smazat-ucastnika",
   name: "Smazat účastníka",
   tags: ["účastníci"],
-  description: "Tlačítko pro smazání účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Tlačítko pro smazání účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `
 <div id="smazat-ucastnika-tlacitko">
@@ -36,6 +37,6 @@ export const smazatUcastnikaKomponenta = new Component({
     "smazat-ucastnika-turnusy": `DELETE FROM turnusy_ucastnici WHERE id_ucastnika = idUcastnika`,
     "smazat-ucastnika-alergeny": `DELETE FROM ucastnici_alergeny WHERE id_ucastnika = idUcastnika`,
     "smazat-ucastnika-jidla": `DELETE FROM ucastnici_jidla WHERE id_ucastnika = idUcastnika`,
-    "smazat-ucastnika": `DELETE FROM ucastnici WHERE id_ucastnika = idUcastnika`
-  }
+    "smazat-ucastnika": `DELETE FROM ucastnici WHERE id_ucastnika = idUcastnika`,
+  },
 });

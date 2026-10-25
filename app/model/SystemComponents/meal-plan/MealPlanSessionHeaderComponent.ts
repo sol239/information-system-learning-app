@@ -31,7 +31,7 @@ export const jidelnicekHlavickaTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {},
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekDatumTurnusuKomponenta = new Component({
@@ -58,9 +58,9 @@ export const jidelnicekDatumTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-datum-turnusu": `SELECT strftime('%d. %m. %Y', datum_od) AS datum_od_jidelnicku, strftime('%d. %m. %Y', datum_do) AS datum_do_jidelnicku FROM turnusy WHERE id_turnusu = idTurnusu`
+    "jidelnicek-datum-turnusu": `SELECT strftime('%d. %m. %Y', datum_od) AS datum_od_jidelnicku, strftime('%d. %m. %Y', datum_do) AS datum_do_jidelnicku FROM turnusy WHERE id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekPocetJidelTurnusuKomponenta = new Component({
@@ -87,9 +87,9 @@ export const jidelnicekPocetJidelTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-pocet-jidel-turnusu": `SELECT COUNT(DISTINCT kj.id_jidla) AS pocet_unikatnich_jidel FROM turnusy t LEFT JOIN kniha_jidel kj ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = idTurnusu GROUP BY t.id_turnusu`
+    "jidelnicek-pocet-jidel-turnusu": `SELECT COUNT(DISTINCT kj.id_jidla) AS pocet_unikatnich_jidel FROM turnusy t LEFT JOIN kniha_jidel kj ON DATE(kj.datum) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) WHERE t.id_turnusu = idTurnusu GROUP BY t.id_turnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekPocetPorciTurnusuKomponenta = new Component({
@@ -124,7 +124,7 @@ export const jidelnicekPocetPorciTurnusuKomponenta = new Component({
   SELECT COUNT(*)
   FROM jidla_vedouci jv
   WHERE DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)
-) AS pocet_porci FROM turnusy t WHERE t.id_turnusu = idTurnusu`
+) AS pocet_porci FROM turnusy t WHERE t.id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });

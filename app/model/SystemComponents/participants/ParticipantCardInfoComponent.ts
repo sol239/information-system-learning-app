@@ -85,8 +85,7 @@ export const kartaUcastnikaKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "karta-ucastnika": `SELECT u.jmeno, u.vek, u.email, u.telefon, u.adresa FROM ucastnici u WHERE u.id_ucastnika = idUcastnika`
+    "karta-ucastnika": `SELECT u.jmeno, u.vek, u.email, u.telefon, u.adresa FROM ucastnici u WHERE u.id_ucastnika = idUcastnika`,
   },
-  sql_click: {}
+  sql_click: {},
 });
-

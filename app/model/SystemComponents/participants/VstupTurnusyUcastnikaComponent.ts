@@ -49,6 +49,6 @@ if (checkboxesTurnusuVstupUcastnika.length > 0) {
 }
 `,
   sql: {
-    nacistTurnusyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_turnusu || '"> Turnus ' || id_turnusu || ' (' || strftime('%d. %m.', datum_od) || ' - ' || strftime('%d. %m. %Y', datum_do) || ')</label>', '') FROM turnusy ORDER BY id_turnusu) AS moznosti_turnusu_vstup_ucastnika`
+    nacistTurnusyUcastnika: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_turnusu || '"> Turnus ' || id_turnusu || ' (' || strftime('%d. %m.', datum_od) || ' - ' || strftime('%d. %m. %Y', datum_do) || ')</label>', '') FROM turnusy ORDER BY id_turnusu) AS moznosti_turnusu_vstup_ucastnika`,
   },
 });

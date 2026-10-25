@@ -4,7 +4,8 @@ export const editVstupJmenoUcastnikaKomponenta = new Component({
   id: "edit-vstup-jmeno-ucastnika",
   name: "Vstup – Edit Jméno účastníka",
   tags: ["účastníci"],
-  description: "Pole pro úpravu jména účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Pole pro úpravu jména účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `<div class="form-radek">
   <label>Jméno:</label>
@@ -28,6 +29,6 @@ if (je_jmeno_validni) {
     barva_ramecku = "#ff4f92";
 }`,
   sql: {
-    nacistJmenoUcastnika: `SELECT jmeno AS edit_vstup_jmeno_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`
+    nacistJmenoUcastnika: `SELECT jmeno AS edit_vstup_jmeno_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`,
   },
 });

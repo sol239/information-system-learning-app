@@ -82,9 +82,9 @@ FROM (
   WHERE uj.id_jidla = idJidla
     AND DATE(uj.datum_podavani) = DATE('datumDne')
   ORDER BY u.jmeno
-)`
+)`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekVedouciJidlaKomponenta = new Component({
@@ -169,7 +169,7 @@ FROM (
   WHERE jv.id_jidla = idJidla
     AND DATE(jv.datum_podavani) = DATE('datumDne')
   ORDER BY v.jmeno
-)`
+)`,
   },
-  sql_click: {}
+  sql_click: {},
 });

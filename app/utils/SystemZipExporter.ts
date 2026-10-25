@@ -1,55 +1,61 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-import JSZip from 'jszip'
-import type { Database } from 'sql.js'
-import type { InformationSystem } from '~/model/InformationSystem'
-import { resetTaskProgressJson } from '~/utils/taskProgress'
+import JSZip from "jszip";
+import type { Database } from "sql.js";
+import type { InformationSystem } from "~/model/InformationSystem";
+import { resetTaskProgressJson } from "~/utils/taskProgress";
 
 type ExportablePage = {
-  name: string
-  route: string
-  description?: string
-  icon?: string
-  activeColor?: string
-}
+  name: string;
+  route: string;
+  description?: string;
+  icon?: string;
+  activeColor?: string;
+};
 
 export class SystemZipExporter {
   public static async export(system: InformationSystem): Promise<Blob> {
-    await system.database?.initializeDatabase()
+    await system.database?.initializeDatabase();
 
-    const zip = new JSZip()
-    const config = SystemZipExporter.createConfig(system)
+    const zip = new JSZip();
+    const config = SystemZipExporter.createConfig(system);
 
-    zip.file('config.json', JSON.stringify(config, null, 2))
-    zip.file('tasks.json', JSON.stringify(SystemZipExporter.createTaskSet(system), null, 2))
+    zip.file("config.json", JSON.stringify(config, null, 2));
+    zip.file(
+      "tasks.json",
+      JSON.stringify(SystemZipExporter.createTaskSet(system), null, 2),
+    );
 
-    const createSchemaSql = SystemZipExporter.createSchemaSql(system)
+    const createSchemaSql = SystemZipExporter.createSchemaSql(system);
     if (createSchemaSql.trim()) {
-      zip.file('create_schema.sql', createSchemaSql)
+      zip.file("create_schema.sql", createSchemaSql);
     }
 
-    return zip.generateAsync({ type: 'blob' })
+    return zip.generateAsync({ type: "blob" });
   }
 
   private static createSchemaSql(system: InformationSystem): string {
     if (system.database?.sqlJsDatabase) {
-      const dumpedSql = SystemZipExporter.dumpDatabase(system.database.sqlJsDatabase)
+      const dumpedSql = SystemZipExporter.dumpDatabase(
+        system.database.sqlJsDatabase,
+      );
       if (SystemZipExporter.hasSchemaContent(dumpedSql)) {
-        return dumpedSql
+        return dumpedSql;
       }
     }
 
-    return system.createSchemaSql ?? ''
+    return system.createSchemaSql ?? "";
   }
 
   private static createConfig(system: InformationSystem) {
-    const baseConfig = system.configData && typeof system.configData === 'object'
-      ? JSON.parse(JSON.stringify(system.configData))
-      : {}
+    const baseConfig =
+      system.configData && typeof system.configData === "object"
+        ? JSON.parse(JSON.stringify(system.configData))
+        : {};
 
-    delete baseConfig.__manifestEntry
-    delete baseConfig.__preloadedEntry
-    delete baseConfig.score
-    delete baseConfig.tasks
+    delete baseConfig.__manifestEntry;
+    delete baseConfig.__preloadedEntry;
+    delete baseConfig.score;
+    delete baseConfig.tasks;
 
     return {
       ...baseConfig,
@@ -58,17 +64,19 @@ export class SystemZipExporter {
       language: system.language,
       description: system.description,
       pages: (system.pages ?? []).map(SystemZipExporter.serializePage),
-    }
+    };
   }
 
   private static createTaskSet(system: InformationSystem) {
     return {
       id: system.taskSet?.id ?? `${system.id}_tasks`,
       name: system.taskSet?.name ?? `${system.name} tasks`,
-      description: system.taskSet?.description ?? '',
+      description: system.taskSet?.description ?? "",
       levelCount: system.taskSet?.levelCount ?? system.levelCount,
-      tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(resetTaskProgressJson),
-    }
+      tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(
+        resetTaskProgressJson,
+      ),
+    };
   }
 
   private static serializePage(page: ExportablePage): ExportablePage {
@@ -78,18 +86,20 @@ export class SystemZipExporter {
       description: page.description,
       icon: page.icon,
       activeColor: page.activeColor,
-    }
+    };
   }
 
   private static dumpDatabase(db: Database): string {
     const statements: string[] = [
-      '-- ============================================================',
-      '-- SCHEMA',
-      '-- ============================================================',
-      '',
-    ]
+      "-- ============================================================",
+      "-- SCHEMA",
+      "-- ============================================================",
+      "",
+    ];
 
-    const schemaRows = SystemZipExporter.selectRows(db, `
+    const schemaRows = SystemZipExporter.selectRows(
+      db,
+      `
       SELECT type, name, sql
       FROM sqlite_master
       WHERE sql IS NOT NULL
@@ -102,77 +112,105 @@ export class SystemZipExporter {
         WHEN 'view' THEN 3
         ELSE 4
       END, name
-    `)
+    `,
+    );
 
-    const tableNames: string[] = []
+    const tableNames: string[] = [];
     for (const row of schemaRows) {
-      if (row.type === 'table') {
-        tableNames.push(String(row.name))
+      if (row.type === "table") {
+        tableNames.push(String(row.name));
       }
-      statements.push(`${String(row.sql).trim().replace(/;+\s*$/, '')};`)
+      statements.push(
+        `${String(row.sql)
+          .trim()
+          .replace(/;+\s*$/, "")};`,
+      );
     }
 
-    statements.push('', '-- ============================================================', '-- DATA', '-- ============================================================', '')
+    statements.push(
+      "",
+      "-- ============================================================",
+      "-- DATA",
+      "-- ============================================================",
+      "",
+    );
 
     for (const tableName of tableNames) {
-      const rows = SystemZipExporter.selectRows(db, `SELECT * FROM ${SystemZipExporter.quoteIdentifier(tableName)}`)
+      const rows = SystemZipExporter.selectRows(
+        db,
+        `SELECT * FROM ${SystemZipExporter.quoteIdentifier(tableName)}`,
+      );
       if (rows.length === 0) {
-        continue
+        continue;
       }
 
-      const columns = Object.keys(rows[0])
-      const columnSql = columns.map(SystemZipExporter.quoteIdentifier).join(', ')
+      const columns = Object.keys(rows[0]);
+      const columnSql = columns
+        .map(SystemZipExporter.quoteIdentifier)
+        .join(", ");
       const valuesSql = rows
-        .map(row => `(${columns.map(column => SystemZipExporter.sqlValue(row[column])).join(', ')})`)
-        .join(',\n')
+        .map(
+          (row) =>
+            `(${columns.map((column) => SystemZipExporter.sqlValue(row[column])).join(", ")})`,
+        )
+        .join(",\n");
 
-      statements.push(`INSERT INTO ${SystemZipExporter.quoteIdentifier(tableName)} (${columnSql}) VALUES`)
-      statements.push(`${valuesSql};`, '')
+      statements.push(
+        `INSERT INTO ${SystemZipExporter.quoteIdentifier(tableName)} (${columnSql}) VALUES`,
+      );
+      statements.push(`${valuesSql};`, "");
     }
 
-    return `${statements.join('\n').trim()}\n`
+    return `${statements.join("\n").trim()}\n`;
   }
 
   private static hasSchemaContent(sql: string): boolean {
-    return /\bCREATE\s+(TABLE|INDEX|TRIGGER|VIEW)\b/i.test(sql)
-      || /\bINSERT\s+INTO\b/i.test(sql)
+    return (
+      /\bCREATE\s+(TABLE|INDEX|TRIGGER|VIEW)\b/i.test(sql) ||
+      /\bINSERT\s+INTO\b/i.test(sql)
+    );
   }
 
-  private static selectRows(db: Database, sql: string): Record<string, unknown>[] {
-    const result = db.exec(sql)
+  private static selectRows(
+    db: Database,
+    sql: string,
+  ): Record<string, unknown>[] {
+    const result = db.exec(sql);
     if (!result.length) {
-      return []
+      return [];
     }
 
-    const { columns, values } = result[0]
+    const { columns, values } = result[0];
     if (!Array.isArray(columns) || !Array.isArray(values)) {
-      return []
+      return [];
     }
 
-    return values.map(row => Object.fromEntries(columns.map((column, index) => [column, row[index]])))
+    return values.map((row) =>
+      Object.fromEntries(columns.map((column, index) => [column, row[index]])),
+    );
   }
 
   private static quoteIdentifier(identifier: string): string {
-    return `"${identifier.replace(/"/g, '""')}"`
+    return `"${identifier.replace(/"/g, '""')}"`;
   }
 
   private static sqlValue(value: unknown): string {
     if (value === null || value === undefined) {
-      return 'NULL'
+      return "NULL";
     }
 
-    if (typeof value === 'number') {
-      return Number.isFinite(value) ? String(value) : 'NULL'
+    if (typeof value === "number") {
+      return Number.isFinite(value) ? String(value) : "NULL";
     }
 
     if (value instanceof Uint8Array) {
-      return `X'${Array.from(value, byte => byte.toString(16).padStart(2, '0')).join('')}'`
+      return `X'${Array.from(value, (byte) => byte.toString(16).padStart(2, "0")).join("")}'`;
     }
 
-    return `'${String(value).replace(/'/g, "''")}'`
+    return `'${String(value).replace(/'/g, "''")}'`;
   }
 
   private static toPlainJson<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value))
+    return JSON.parse(JSON.stringify(value));
   }
 }

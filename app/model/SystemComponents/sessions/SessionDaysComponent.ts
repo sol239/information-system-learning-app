@@ -28,8 +28,7 @@ export const pocetDniTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "pocet-dni-turnusu": `SELECT CAST(julianday(datum_do) - julianday(datum_od) + 1 AS INTEGER) AS pocet_dni_turnusu FROM turnusy WHERE id_turnusu = idTurnusu`
+    "pocet-dni-turnusu": `SELECT CAST(julianday(datum_do) - julianday(datum_od) + 1 AS INTEGER) AS pocet_dni_turnusu FROM turnusy WHERE id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });
-

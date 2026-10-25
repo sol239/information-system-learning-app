@@ -3,61 +3,61 @@ import { v4 as uuidv4 } from "uuid";
 import type { OperationResultType } from "./OperationResultType";
 
 /**
- * Defines the Operation class, which encapsulates the result of an operation, including its status, message, and datetime. 
+ * Defines the Operation class, which encapsulates the result of an operation, including its status, message, and datetime.
  */
 export class Operation<T = any> {
-    /**
-     * A unique identifier for the operation, which can be used to track or reference the specific operation that was performed.
-     */
-    public id: string;
+  /**
+   * A unique identifier for the operation, which can be used to track or reference the specific operation that was performed.
+   */
+  public id: string;
 
-    /**
-     * The result of the operation, represented as an OperationResultType enum value.
-     */
-    public result: OperationResultType;
+  /**
+   * The result of the operation, represented as an OperationResultType enum value.
+   */
+  public result: OperationResultType;
 
-    /**
-     * A message providing additional information about the performed operation.
-     */
-    public message: string;
+  /**
+   * A message providing additional information about the performed operation.
+   */
+  public message: string;
 
-    /**
-     * The datetime when the operation was performed.
-     */
-    public datetime: Date;
+  /**
+   * The datetime when the operation was performed.
+   */
+  public datetime: Date;
 
-    /**
-     * The data associated with the operation, which can be of any type T.
-     */
-    public data: T | null;
+  /**
+   * The data associated with the operation, which can be of any type T.
+   */
+  public data: T | null;
 
-    constructor(
-        result: OperationResultType,
-        message: string,
-        data: T,
-        datetime?: Date,
-        id: string = uuidv4()
-    ) {
-        this.id = id;
-        this.result = result;
-        this.message = message;
-        this.data = data;
-        this.datetime = datetime ?? new Date();
-        
-        // ISO standardization:
-        if (this.datetime) {
-            this.datetime = new Date(this.datetime.toISOString());
-        } else {
-            this.datetime = new Date(new Date().toISOString());
-        }
+  constructor(
+    result: OperationResultType,
+    message: string,
+    data: T,
+    datetime?: Date,
+    id: string = uuidv4(),
+  ) {
+    this.id = id;
+    this.result = result;
+    this.message = message;
+    this.data = data;
+    this.datetime = datetime ?? new Date();
+
+    // ISO standardization:
+    if (this.datetime) {
+      this.datetime = new Date(this.datetime.toISOString());
+    } else {
+      this.datetime = new Date(new Date().toISOString());
     }
+  }
 
-    /**
-     * Returns a string representation of the operation, including its datetime, result, message, and whether the data is null.
-     * It can be used for logging or debugging purposes to quickly understand the outcome of the operation.
-     * @returns A string summarizing the operation's details.
-     */
-    public toString(): string {
-        return `${this.datetime.toISOString()} | ${this.result} | ${this.message} | Data is null: ${this.data === null}`;
-    }
+  /**
+   * Returns a string representation of the operation, including its datetime, result, message, and whether the data is null.
+   * It can be used for logging or debugging purposes to quickly understand the outcome of the operation.
+   * @returns A string summarizing the operation's details.
+   */
+  public toString(): string {
+    return `${this.datetime.toISOString()} | ${this.result} | ${this.message} | Data is null: ${this.data === null}`;
+  }
 }

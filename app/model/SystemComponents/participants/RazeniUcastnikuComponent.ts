@@ -4,7 +4,8 @@ export const razeniUcastnikuKomponenta = new Component({
   id: "razeni-ucastniku",
   name: "Řazení účastníků",
   tags: ["účastníci", "řazení", "sql"],
-  description: "Výběr řazení účastníků podle jména, věku, emailu nebo počtu alergenů.",
+  description:
+    "Výběr řazení účastníků podle jména, věku, emailu nebo počtu alergenů.",
 
   html: `
 <div id="razeni-ucastniku">
@@ -74,6 +75,6 @@ LEFT JOIN ucastnici_alergeny ua
   ON ua.id_ucastnika = u.id_ucastnika
 GROUP BY u.id_ucastnika
 ORDER BY COUNT(ua.id_alergenu), u.id_ucastnika
-`
+`,
   },
 });

@@ -29,7 +29,7 @@ export const stitekAlergenuVedoucihoKomponenta = new Component({
 FROM vedouci v
 JOIN vedouci_alergeny va
   ON v.id_vedouciho = va.id_vedouciho
-WHERE v.id_vedouciho = idVedouciho;`
+WHERE v.id_vedouciho = idVedouciho;`,
   },
-  sql_click: {}
+  sql_click: {},
 });

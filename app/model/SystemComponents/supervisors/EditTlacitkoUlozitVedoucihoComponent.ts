@@ -4,7 +4,8 @@ export const editTlacitkoUlozitVedoucihoKomponenta = new Component({
   id: "edit-btn-ulozit-vedouciho",
   name: "Tlačítko – Upravit vedoucího",
   tags: ["vedoucí"],
-  description: "Tlačítko pro uložení změn existujícího vedoucího. Vyžaduje generalVariable: idVedouciho.",
+  description:
+    "Tlačítko pro uložení změn existujícího vedoucího. Vyžaduje generalVariable: idVedouciho.",
 
   html: `
 <button id="system-edit_btn_ulozit_vedouciho" class="btn-uspech" {{ stav_tlacitka }}>Upravit vedoucího</button>
@@ -23,6 +24,6 @@ const stav_tlacitka = je_validni ? "" : "disabled";`,
     smazatAlergenyVedouciho: `DELETE FROM vedouci_alergeny WHERE id_vedouciho = idVedouciho`,
     vlozitAlergenyVedouciho: `INSERT OR IGNORE INTO vedouci_alergeny (id_vedouciho, id_alergenu) SELECT idVedouciho, id_alergenu FROM alergeny WHERE id_alergenu IN (edit_vstup_alergeny_vedouciho)`,
     smazatTurnusyVedouciho: `DELETE FROM vedouci_turnusy WHERE id_vedouciho = idVedouciho`,
-    vlozitTurnusyVedouciho: `INSERT OR IGNORE INTO vedouci_turnusy (id_vedouciho, id_turnusu) SELECT idVedouciho, id_turnusu FROM turnusy WHERE id_turnusu IN (edit_vstup_turnusy_vedouciho)`
+    vlozitTurnusyVedouciho: `INSERT OR IGNORE INTO vedouci_turnusy (id_vedouciho, id_turnusu) SELECT idVedouciho, id_turnusu FROM turnusy WHERE id_turnusu IN (edit_vstup_turnusy_vedouciho)`,
   },
 });

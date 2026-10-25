@@ -64,7 +64,7 @@ export const celkovaKapacitaUcastnikuKomponenta = new Component({
   (
     SELECT SUM(kapacita)
     FROM turnusy
-  ) AS celkova_kapacita`
+  ) AS celkova_kapacita`,
   },
-  sql_click: {}
+  sql_click: {},
 });

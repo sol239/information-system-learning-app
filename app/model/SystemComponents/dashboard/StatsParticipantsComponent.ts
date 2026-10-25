@@ -51,7 +51,7 @@ export const statistikaUcastnikuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-ucastniku": `SELECT COUNT(*) as pocet_ucastniku FROM ucastnici`
+    "statistika-ucastniku": `SELECT COUNT(*) as pocet_ucastniku FROM ucastnici`,
   },
-  sql_click: {}
+  sql_click: {},
 });

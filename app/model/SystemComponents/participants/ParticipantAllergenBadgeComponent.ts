@@ -29,7 +29,7 @@ export const stitekAlergenuUcastnikaKomponenta = new Component({
 FROM ucastnici u
 JOIN ucastnici_alergeny ua 
   ON u.id_ucastnika = ua.id_ucastnika
-WHERE u.id_ucastnika = idUcastnika;`
+WHERE u.id_ucastnika = idUcastnika;`,
   },
-  sql_click: {}
+  sql_click: {},
 });

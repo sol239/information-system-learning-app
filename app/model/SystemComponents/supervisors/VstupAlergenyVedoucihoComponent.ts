@@ -51,6 +51,6 @@ if (checkboxesAlergenuVstupVedouciho.length > 0) {
 }
 `,
   sql: {
-    nacistAlergenyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu) AS moznosti_alergenu_vstup_vedouciho`
+    nacistAlergenyVedouciho: `SELECT (SELECT GROUP_CONCAT('<label class="volba-radek"><input type="checkbox" value="' || id_alergenu || '"> ' || jmeno || '</label>', '') FROM alergeny ORDER BY id_alergenu) AS moznosti_alergenu_vstup_vedouciho`,
   },
 });

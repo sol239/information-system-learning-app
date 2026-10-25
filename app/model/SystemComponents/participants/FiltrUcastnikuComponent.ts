@@ -61,6 +61,6 @@ WHERE TRIM('filtr_ucastniku') = ''
    OR LOWER(u.jmeno) LIKE '%' || LOWER(TRIM('filtr_ucastniku')) || '%'
    OR LOWER(u.email) LIKE '%' || LOWER(TRIM('filtr_ucastniku')) || '%'
 ORDER BY u.jmeno, u.id_ucastnika
-`
+`,
   },
 });

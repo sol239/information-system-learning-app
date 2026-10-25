@@ -26,9 +26,9 @@ Create a new subfolder for each page/domain. Every `.ts` file in any subfolder i
 import { Component } from "~/model/Component";
 
 export const myComponent = new Component({
-  id: "my-component-id",          // unique kebab-case, used by getComponentById()
-  name: "My Component",           // human-readable label
-  tags: ["sessions"],             // page/domain grouping
+  id: "my-component-id", // unique kebab-case, used by getComponentById()
+  name: "My Component", // human-readable label
+  tags: ["sessions"], // page/domain grouping
   description: `Short description. Mention required generalVariables here.`,
 
   html: `
@@ -48,14 +48,14 @@ export const myComponent = new Component({
 }
 `,
 
-  js: ``,          // runs on mount; declared variables become jsVariables
-  js_click: ``,   // runs when the component is clicked
+  js: ``, // runs on mount; declared variables become jsVariables
+  js_click: ``, // runs when the component is clicked
 
   sql: {
-    "query-name": `SELECT my_column AS sql_column_alias FROM my_table WHERE id = generalVarName`
+    "query-name": `SELECT my_column AS sql_column_alias FROM my_table WHERE id = generalVarName`,
   },
 
-  sql_click: {}   // SQL executed on click (optional)
+  sql_click: {}, // SQL executed on click (optional)
 });
 ```
 
@@ -114,7 +114,8 @@ And in HTML:
 Multiple variables:
 
 ```vue
-:generalVariables="[new Variable('mealId', mealId), new Variable('dayDate', date)]"
+:generalVariables="[new Variable('mealId', mealId), new Variable('dayDate',
+date)]"
 ```
 
 ---
@@ -164,7 +165,7 @@ css: `
 .badge { ... }
 .badge-available { background: #dcfce7; color: #16a34a; }
 .badge-full      { background: #fee2e2; color: #dc2626; }
-`
+`;
 ```
 
 ---
@@ -204,7 +205,7 @@ sql_click: {
 Tags are auto-enriched with technology tags (`html`, `css`, `js`, `sql`) based on non-empty fields. Add at least one domain tag for filtering in the component browser:
 
 ```ts
-tags: ["sessions"]   // → stored as ["sessions", "html", "css", "sql"]
+tags: ["sessions"]; // → stored as ["sessions", "html", "css", "sql"]
 ```
 
 ---
@@ -216,27 +217,30 @@ tags: ["sessions"]   // → stored as ["sessions", "html", "css", "sql"]
 3. In the page, retrieve it via the store and pass to `ComponentWrapper`:
 
 ```ts
-const myComp = computed(() => systemsStore.getComponentById('my-component-id'));
+const myComp = computed(() => systemsStore.getComponentById("my-component-id"));
 ```
 
 ```vue
 <ComponentWrapper :component="myComp" />
 <!-- or with generalVariables: -->
-<ComponentWrapper :component="myComp" :generalVariables="[new Variable('sessionId', sessionId)]" />
+<ComponentWrapper
+  :component="myComp"
+  :generalVariables="[new Variable('sessionId', sessionId)]"
+/>
 ```
 
 ---
 
 ## 11. Naming conventions
 
-| Thing | Convention | Example |
-|---|---|---|
-| File name | `PascalCase` + `Component.ts` | `SessionStatusBadgeComponent.ts` |
-| Exported constant | `camelCase` + `Component` | `sessionStatusBadgeComponent` |
-| Component `id` | `kebab-case`, suffix `-genvar` if needs injection | `session-status-badge-genvar` |
-| SQL query keys | same as `id` or short descriptive name | `"session-status-badge-genvar"` |
-| HTML element `id`s | short prefix + descriptor, no generic names | `#sess-status-wrapper` |
-| CSS classes in SQL | prefix matching the component | `.sess-status-badge` |
+| Thing              | Convention                                        | Example                          |
+| ------------------ | ------------------------------------------------- | -------------------------------- |
+| File name          | `PascalCase` + `Component.ts`                     | `SessionStatusBadgeComponent.ts` |
+| Exported constant  | `camelCase` + `Component`                         | `sessionStatusBadgeComponent`    |
+| Component `id`     | `kebab-case`, suffix `-genvar` if needs injection | `session-status-badge-genvar`    |
+| SQL query keys     | same as `id` or short descriptive name            | `"session-status-badge-genvar"`  |
+| HTML element `id`s | short prefix + descriptor, no generic names       | `#sess-status-wrapper`           |
+| CSS classes in SQL | prefix matching the component                     | `.sess-status-badge`             |
 
 ---
 
@@ -249,7 +253,8 @@ export const sessionDayCountBadgeComponent = new Component({
   id: "session-day-count-badge-genvar",
   name: "Session Day Count Badge",
   tags: ["sessions"],
-  description: "Shows how many days a session lasts. Requires generalVariable: sessionId.",
+  description:
+    "Shows how many days a session lasts. Requires generalVariable: sessionId.",
 
   html: `
 <div id="day-count-badge">
@@ -279,10 +284,10 @@ export const sessionDayCountBadgeComponent = new Component({
       SELECT CAST(julianday(datum_do) - julianday(datum_od) + 1 AS INTEGER) AS sess_days
       FROM turnusy
       WHERE id_turnusu = sessionId
-    `
+    `,
   },
 
-  sql_click: {}
+  sql_click: {},
 });
 ```
 

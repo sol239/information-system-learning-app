@@ -31,7 +31,7 @@ export const sessionSupervisorsCountBadgeComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "stitek-poctu-vedoucich-turnusu": `SELECT COUNT(*) AS pocet_vedoucich_turnusu FROM vedouci v JOIN vedouci_turnusy vt ON v.id_vedouciho = vt.id_vedouciho WHERE vt.id_turnusu = idTurnusu`
+    "stitek-poctu-vedoucich-turnusu": `SELECT COUNT(*) AS pocet_vedoucich_turnusu FROM vedouci v JOIN vedouci_turnusy vt ON v.id_vedouciho = vt.id_vedouciho WHERE vt.id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });

@@ -37,7 +37,7 @@ export const celkovyPocetJidelKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "celkovy-pocet-jidel": `SELECT COUNT(*) AS celkovy_pocet_jidel FROM jidla`
+    "celkovy-pocet-jidel": `SELECT COUNT(*) AS celkovy_pocet_jidel FROM jidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });

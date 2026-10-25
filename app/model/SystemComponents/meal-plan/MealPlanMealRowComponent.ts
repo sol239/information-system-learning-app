@@ -33,9 +33,9 @@ export const jidelnicekRadekJidlaKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-radek-jidla": `SELECT j.jmeno AS nazev_jidla_jidelnicku FROM jidla j WHERE j.id_jidla = idJidla`
+    "jidelnicek-radek-jidla": `SELECT j.jmeno AS nazev_jidla_jidelnicku FROM jidla j WHERE j.id_jidla = idJidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekAlergenyJidlaKomponenta = new Component({
@@ -68,9 +68,9 @@ export const jidelnicekAlergenyJidlaKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-alergeny-jidla": `SELECT GROUP_CONCAT('<span class="pilulka-alergenu-jidelnicku">' || a.jmeno || '</span>', '') AS pilulky_alergenu_jidelnicku FROM alergeny a JOIN jidla_alergeny ja ON a.id_alergenu = ja.id_alergenu WHERE ja.id_jidla = idJidla`
+    "jidelnicek-alergeny-jidla": `SELECT GROUP_CONCAT('<span class="pilulka-alergenu-jidelnicku">' || a.jmeno || '</span>', '') AS pilulky_alergenu_jidelnicku FROM alergeny a JOIN jidla_alergeny ja ON a.id_alergenu = ja.id_alergenu WHERE ja.id_jidla = idJidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekDobaPodavaniJidlaKomponenta = new Component({
@@ -98,7 +98,7 @@ export const jidelnicekDobaPodavaniJidlaKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-doba-podavani-jidla": `SELECT j.doba_podavani AS doba_podavani_jidelnicku FROM jidla j WHERE j.id_jidla = idJidla`
+    "jidelnicek-doba-podavani-jidla": `SELECT j.doba_podavani AS doba_podavani_jidelnicku FROM jidla j WHERE j.id_jidla = idJidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });

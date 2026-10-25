@@ -28,7 +28,8 @@ export class TaskSet {
   }
 
   public static fromJSON(data: unknown, fallbackId = "default_tasks"): TaskSet {
-    const raw = data && typeof data === "object" ? data as Record<string, unknown> : {};
+    const raw =
+      data && typeof data === "object" ? (data as Record<string, unknown>) : {};
     const tasksSource = Array.isArray(raw.tasks)
       ? raw.tasks
       : Array.isArray(data)
@@ -39,8 +40,10 @@ export class TaskSet {
       id: String(raw.id ?? fallbackId),
       name: String(raw.name ?? "Default tasks"),
       description: String(raw.description ?? ""),
-      levelCount: Number(raw.levelCount ?? TaskSet.resolveLevelCount(tasksSource)),
-      tasks: tasksSource.map(task => Task.fromJSON(task)),
+      levelCount: Number(
+        raw.levelCount ?? TaskSet.resolveLevelCount(tasksSource),
+      ),
+      tasks: tasksSource.map((task) => Task.fromJSON(task)),
     });
   }
 
@@ -51,10 +54,13 @@ export class TaskSet {
   private static resolveLevelCount(tasks: unknown[]): number {
     const highestLevel = Math.max(
       0,
-      ...tasks.map(task => {
-        const raw = task && typeof task === "object" ? task as Record<string, unknown> : {};
+      ...tasks.map((task) => {
+        const raw =
+          task && typeof task === "object"
+            ? (task as Record<string, unknown>)
+            : {};
         return Number(raw.level ?? raw.round ?? 1);
-      })
+      }),
     );
     return Math.max(1, highestLevel);
   }

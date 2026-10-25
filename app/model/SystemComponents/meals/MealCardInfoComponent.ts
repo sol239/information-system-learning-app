@@ -43,8 +43,7 @@ export const kartaJidlaKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "karta-jidla": `SELECT jmeno, doba_podavani FROM jidla WHERE id_jidla = idJidla`
+    "karta-jidla": `SELECT jmeno, doba_podavani FROM jidla WHERE id_jidla = idJidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });
-

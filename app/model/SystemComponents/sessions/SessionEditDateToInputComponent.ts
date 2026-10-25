@@ -4,7 +4,8 @@ export const editVstupDatumDoKomponenta = new Component({
   id: "edit-vstup-datum-do",
   name: "Vstup – Edit Datum do",
   tags: ["turnusy"],
-  description: "Pole pro úpravu koncového data turnusu. Vyžaduje generalVariable: idTurnusu.",
+  description:
+    "Pole pro úpravu koncového data turnusu. Vyžaduje generalVariable: idTurnusu.",
 
   html: `
 <div class="form-radek">
@@ -35,6 +36,6 @@ if (je_datum_do_validni) {
     barva_ramecku = "#ff4f92";
 }`,
   sql: {
-    nacistDatumDoTurnusu: `SELECT DATE(datum_do) AS edit_vstup_datum_do FROM turnusy WHERE id_turnusu = idTurnusu`
+    nacistDatumDoTurnusu: `SELECT DATE(datum_do) AS edit_vstup_datum_do FROM turnusy WHERE id_turnusu = idTurnusu`,
   },
 });

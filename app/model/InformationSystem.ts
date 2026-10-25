@@ -160,18 +160,26 @@ export class InformationSystem {
     this.name = name;
     this.language = language;
     this.description = description;
-    this.taskSet = taskSet ?? new TaskSet({
-      id: `${id}_tasks`,
-      name: `${name} tasks`,
-      description: "",
-      tasks,
-    });
-    this.defaultTaskSet = defaultTaskSet ?? new TaskSet({
-      id: this.taskSet.id,
-      name: this.taskSet.name,
-      description: this.taskSet.description,
-      tasks: defaultTasks ?? JSON.parse(JSON.stringify(this.taskSet.tasks)).map((t: any) => Task.fromJSON(t)),
-    });
+    this.taskSet =
+      taskSet ??
+      new TaskSet({
+        id: `${id}_tasks`,
+        name: `${name} tasks`,
+        description: "",
+        tasks,
+      });
+    this.defaultTaskSet =
+      defaultTaskSet ??
+      new TaskSet({
+        id: this.taskSet.id,
+        name: this.taskSet.name,
+        description: this.taskSet.description,
+        tasks:
+          defaultTasks ??
+          JSON.parse(JSON.stringify(this.taskSet.tasks)).map((t: any) =>
+            Task.fromJSON(t),
+          ),
+      });
     this.pages = pages;
     this.databaseAllowed = databaseAllowed;
     this.actualComponents = actualComponents;
@@ -181,10 +189,10 @@ export class InformationSystem {
     this.createSchemaSql = createSchemaSql;
     this.score = score ?? new Score();
     this.mistakes = Array.isArray(mistakes)
-      ? mistakes.map(penalty => Number(penalty || 0))
+      ? mistakes.map((penalty) => Number(penalty || 0))
       : Number.isFinite(Number(mistakesCount)) && Number(mistakesCount) > 0
         ? Array.from({ length: Number(mistakesCount) }, () => 0)
-        : [...this.score.mistakes]
+        : [...this.score.mistakes];
     this.startedTasks = Boolean(startedTasks);
     this.exploringSystem = Boolean(exploringSystem);
     this.currentLevel = Number(currentLevel ?? currentRound ?? 1);
@@ -222,15 +230,20 @@ export class InformationSystem {
   }
 
   public get mistakesPenalty(): number {
-    return this.mistakes.reduce((sum, penalty) => sum + Number(penalty || 0), 0);
+    return this.mistakes.reduce(
+      (sum, penalty) => sum + Number(penalty || 0),
+      0,
+    );
   }
 
   public availableTasks(): Task[] {
-    return this.tasks.filter(task => !task.isTaskLevelLocked(this.currentLevel));
+    return this.tasks.filter(
+      (task) => !task.isTaskLevelLocked(this.currentLevel),
+    );
   }
 
   public availableTaskIds(): string[] {
-    return this.availableTasks().map(task => task.id);
+    return this.availableTasks().map((task) => task.id);
   }
 
   public replaceTaskSet(taskSet: TaskSet): void {
@@ -253,7 +266,9 @@ export class InformationSystem {
 
   public visiblePages(databaseName = "Database"): Page[] {
     const databasePageRoute = InformationSystem.getDatabasePageRoute();
-    const pages = (this.pages ?? []).filter(page => page.route !== databasePageRoute);
+    const pages = (this.pages ?? []).filter(
+      (page) => page.route !== databasePageRoute,
+    );
     if (!this.databaseAllowed) {
       return pages;
     }
@@ -261,7 +276,9 @@ export class InformationSystem {
     return [...pages, this.databaseVisiblePage(databaseName)];
   }
 
-  public static async deserializeFromZip(zipData: ArrayBuffer): Promise<Operation<InformationSystem | null>> {
+  public static async deserializeFromZip(
+    zipData: ArrayBuffer,
+  ): Promise<Operation<InformationSystem | null>> {
     try {
       const zip = await JSZip.loadAsync(zipData);
       const systemFiles: SystemFile[] = [];
@@ -273,13 +290,13 @@ export class InformationSystem {
         }
 
         readFiles.push(
-          zipEntry.async("text").then(content => {
+          zipEntry.async("text").then((content) => {
             systemFiles.push({
               name: relativePath.split("/").pop() ?? relativePath,
               path: relativePath,
               content,
             });
-          })
+          }),
         );
       });
 
@@ -289,53 +306,78 @@ export class InformationSystem {
     } catch (error) {
       return new Operation(
         OperationResultType.ERROR,
-        "Failed to deserialize system zip: " + (error instanceof Error ? error.message : String(error)),
-        null
+        "Failed to deserialize system zip: " +
+          (error instanceof Error ? error.message : String(error)),
+        null,
       );
     }
   }
 
-  public static async loadSystem(systemFiles: SystemFile[]): Promise<Operation<InformationSystem | null>> {
+  public static async loadSystem(
+    systemFiles: SystemFile[],
+  ): Promise<Operation<InformationSystem | null>> {
     try {
       const system = await InformationSystem.deserializeFromFiles(systemFiles);
       if (!system) {
-        return new Operation(OperationResultType.ERROR, "Failed to load system.", null);
+        return new Operation(
+          OperationResultType.ERROR,
+          "Failed to load system.",
+          null,
+        );
       }
 
-      return new Operation(OperationResultType.SUCCESS, "System loaded successfully.", system);
+      return new Operation(
+        OperationResultType.SUCCESS,
+        "System loaded successfully.",
+        system,
+      );
     } catch (error) {
       return new Operation(
         OperationResultType.ERROR,
-        "Failed to load system: " + (error instanceof Error ? error.message : String(error)),
-        null
+        "Failed to load system: " +
+          (error instanceof Error ? error.message : String(error)),
+        null,
       );
     }
   }
 
-  private static async deserializeFromFiles(systemFiles: SystemFile[]): Promise<InformationSystem | null> {
+  private static async deserializeFromFiles(
+    systemFiles: SystemFile[],
+  ): Promise<InformationSystem | null> {
     try {
-      const configContent = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("config.json"))?.content;
+      const configContent = systemFiles.find((file) =>
+        InformationSystem.systemFilePath(file).endsWith("config.json"),
+      )?.content;
       if (!configContent) {
         return null;
       }
 
       const configData = JSON.parse(configContent);
-      const taskSetContent = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("tasks.json"))?.content;
+      const taskSetContent = systemFiles.find((file) =>
+        InformationSystem.systemFilePath(file).endsWith("tasks.json"),
+      )?.content;
       const taskSetData = taskSetContent ? JSON.parse(taskSetContent) : null;
       const databasePageRoute = InformationSystem.getDatabasePageRoute();
-      const pages: Page[] = (configData.pages || []).map((page: Page) => ({
-        ...page,
-      })).filter((page: Page) => page.route !== databasePageRoute);
-      const databaseAllowed = typeof configData.databaseAllowed === "boolean"
-        ? configData.databaseAllowed
-        : typeof configData.database_allowed === "boolean"
-          ? configData.database_allowed
-          : true;
+      const pages: Page[] = (configData.pages || [])
+        .map((page: Page) => ({
+          ...page,
+        }))
+        .filter((page: Page) => page.route !== databasePageRoute);
+      const databaseAllowed =
+        typeof configData.databaseAllowed === "boolean"
+          ? configData.databaseAllowed
+          : typeof configData.database_allowed === "boolean"
+            ? configData.database_allowed
+            : true;
 
-      const sqlFile = systemFiles.find(file => InformationSystem.systemFilePath(file).endsWith("create_schema.sql"));
+      const sqlFile = systemFiles.find((file) =>
+        InformationSystem.systemFilePath(file).endsWith("create_schema.sql"),
+      );
       let database: DatabaseWrapper | null = null;
       if (sqlFile) {
-        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(sqlFile.content);
+        const dbResult = await SqljsDatabaseFactory.createDatabaseFromSql(
+          sqlFile.content,
+        );
         if (dbResult.result !== OperationResultType.SUCCESS || !dbResult.data) {
           return null;
         }
@@ -343,13 +385,18 @@ export class InformationSystem {
         database = DatabaseWrapper.fromInstance(dbResult.data);
       }
 
-      const tasks = ((taskSetData?.tasks ?? configData.tasks) || [])
-        .map((task: any) => resetTaskProgress(Task.fromJSON(task)));
+      const tasks = ((taskSetData?.tasks ?? configData.tasks) || []).map(
+        (task: any) => resetTaskProgress(Task.fromJSON(task)),
+      );
       const taskSet = new TaskSet({
         id: String(taskSetData?.id ?? `${configData.id}_tasks`),
         name: String(taskSetData?.name ?? `${configData.name} tasks`),
         description: String(taskSetData?.description ?? ""),
-        levelCount: Number(taskSetData?.levelCount ?? configData.levelCount ?? InformationSystem.resolveLevelCount(tasks)),
+        levelCount: Number(
+          taskSetData?.levelCount ??
+            configData.levelCount ??
+            InformationSystem.resolveLevelCount(tasks),
+        ),
         tasks,
       });
 
@@ -373,8 +420,12 @@ export class InformationSystem {
       });
 
       const componentStore = useComponentStore();
-      system.defaultComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
-      system.actualComponents = InformationSystem.cloneComponents(componentStore.defaultComponents);
+      system.defaultComponents = InformationSystem.cloneComponents(
+        componentStore.defaultComponents,
+      );
+      system.actualComponents = InformationSystem.cloneComponents(
+        componentStore.defaultComponents,
+      );
 
       return system;
     } catch {
@@ -383,7 +434,9 @@ export class InformationSystem {
   }
 
   private static cloneComponents(components: Component[]): Component[] {
-    return Component.arrayFromJSON(JSON.parse(JSON.stringify(components ?? [])));
+    return Component.arrayFromJSON(
+      JSON.parse(JSON.stringify(components ?? [])),
+    );
   }
 
   private static systemFilePath(file: SystemFile): string {
@@ -391,7 +444,10 @@ export class InformationSystem {
   }
 
   private static resolveLevelCount(tasks: Task[]): number {
-    const highestLevel = Math.max(0, ...tasks.map(task => Number(task.level ?? 1)));
+    const highestLevel = Math.max(
+      0,
+      ...tasks.map((task) => Number(task.level ?? 1)),
+    );
     return Math.max(1, highestLevel);
   }
 
@@ -402,5 +458,4 @@ export class InformationSystem {
       return "/database";
     }
   }
-
 }

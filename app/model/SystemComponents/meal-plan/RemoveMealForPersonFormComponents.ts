@@ -84,7 +84,7 @@ if (select_turnusu_odebrat_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-turnus-odebrat-jidlo-osobe": `SELECT DISTINCT t.id_turnusu AS id_turnusu_odebrat_jidlo_osobe, DATE(t.datum_od) AS datum_od_odebrat_jidlo_osobe, DATE(t.datum_do) AS datum_do_odebrat_jidlo_osobe FROM turnusy t WHERE EXISTS (SELECT 1 FROM ucastnici_jidla uj WHERE DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)) OR EXISTS (SELECT 1 FROM jidla_vedouci jv WHERE DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)) ORDER BY t.id_turnusu`
+    "jidelnicek-vstup-turnus-odebrat-jidlo-osobe": `SELECT DISTINCT t.id_turnusu AS id_turnusu_odebrat_jidlo_osobe, DATE(t.datum_od) AS datum_od_odebrat_jidlo_osobe, DATE(t.datum_do) AS datum_do_odebrat_jidlo_osobe FROM turnusy t WHERE EXISTS (SELECT 1 FROM ucastnici_jidla uj WHERE DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)) OR EXISTS (SELECT 1 FROM jidla_vedouci jv WHERE DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do)) ORDER BY t.id_turnusu`,
   },
 });
 
@@ -172,7 +172,7 @@ if (select_osoby_odebrat_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-osoba-odebrat-jidlo-osobe": `SELECT DISTINCT 'ucastnik' AS typ_osoby_odebrat_jidlo_osobe, u.id_ucastnika AS id_osoby_odebrat_jidlo_osobe, u.jmeno AS jmeno_osoby_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_osoby_odebrat_jidlo_osobe FROM ucastnici u JOIN ucastnici_jidla uj ON uj.id_ucastnika = u.id_ucastnika JOIN turnusy t ON DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) UNION ALL SELECT DISTINCT 'vedouci' AS typ_osoby_odebrat_jidlo_osobe, v.id_vedouciho AS id_osoby_odebrat_jidlo_osobe, v.jmeno AS jmeno_osoby_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_osoby_odebrat_jidlo_osobe FROM vedouci v JOIN jidla_vedouci jv ON jv.id_vedouciho = v.id_vedouciho JOIN turnusy t ON DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) ORDER BY jmeno_osoby_odebrat_jidlo_osobe`
+    "jidelnicek-vstup-osoba-odebrat-jidlo-osobe": `SELECT DISTINCT 'ucastnik' AS typ_osoby_odebrat_jidlo_osobe, u.id_ucastnika AS id_osoby_odebrat_jidlo_osobe, u.jmeno AS jmeno_osoby_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_osoby_odebrat_jidlo_osobe FROM ucastnici u JOIN ucastnici_jidla uj ON uj.id_ucastnika = u.id_ucastnika JOIN turnusy t ON DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) UNION ALL SELECT DISTINCT 'vedouci' AS typ_osoby_odebrat_jidlo_osobe, v.id_vedouciho AS id_osoby_odebrat_jidlo_osobe, v.jmeno AS jmeno_osoby_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_osoby_odebrat_jidlo_osobe FROM vedouci v JOIN jidla_vedouci jv ON jv.id_vedouciho = v.id_vedouciho JOIN turnusy t ON DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) ORDER BY jmeno_osoby_odebrat_jidlo_osobe`,
   },
 });
 
@@ -244,7 +244,7 @@ if (select_datum_odebrat_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-datum-odebrat-jidlo-osobe": `SELECT DISTINCT 'ucastnik' AS typ_osoby_datum_odebrat_jidlo_osobe, uj.id_ucastnika AS id_osoby_datum_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_datum_odebrat_jidlo_osobe, DATE(uj.datum_podavani) AS datum_odebrat_jidlo_osobe FROM ucastnici_jidla uj JOIN turnusy t ON DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) UNION SELECT DISTINCT 'vedouci' AS typ_osoby_datum_odebrat_jidlo_osobe, jv.id_vedouciho AS id_osoby_datum_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_datum_odebrat_jidlo_osobe, DATE(jv.datum_podavani) AS datum_odebrat_jidlo_osobe FROM jidla_vedouci jv JOIN turnusy t ON DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) ORDER BY datum_odebrat_jidlo_osobe`
+    "jidelnicek-vstup-datum-odebrat-jidlo-osobe": `SELECT DISTINCT 'ucastnik' AS typ_osoby_datum_odebrat_jidlo_osobe, uj.id_ucastnika AS id_osoby_datum_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_datum_odebrat_jidlo_osobe, DATE(uj.datum_podavani) AS datum_odebrat_jidlo_osobe FROM ucastnici_jidla uj JOIN turnusy t ON DATE(uj.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) UNION SELECT DISTINCT 'vedouci' AS typ_osoby_datum_odebrat_jidlo_osobe, jv.id_vedouciho AS id_osoby_datum_odebrat_jidlo_osobe, t.id_turnusu AS id_turnusu_datum_odebrat_jidlo_osobe, DATE(jv.datum_podavani) AS datum_odebrat_jidlo_osobe FROM jidla_vedouci jv JOIN turnusy t ON DATE(jv.datum_podavani) BETWEEN DATE(t.datum_od) AND DATE(t.datum_do) ORDER BY datum_odebrat_jidlo_osobe`,
   },
 });
 
@@ -320,7 +320,7 @@ if (select_jidla_odebrat_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-jidlo-odebrat-jidlo-osobe": `SELECT 'ucastnik' AS typ_osoby_jidlo_odebrat_jidlo_osobe, uj.id_ucastnika AS id_osoby_jidlo_odebrat_jidlo_osobe, DATE(uj.datum_podavani) AS datum_jidla_odebrat_jidlo_osobe, j.id_jidla AS id_jidla_odebrat_jidlo_osobe, j.jmeno AS nazev_jidla_odebrat_jidlo_osobe, j.doba_podavani AS doba_jidla_odebrat_jidlo_osobe FROM ucastnici_jidla uj JOIN jidla j ON j.id_jidla = uj.id_jidla UNION ALL SELECT 'vedouci' AS typ_osoby_jidlo_odebrat_jidlo_osobe, jv.id_vedouciho AS id_osoby_jidlo_odebrat_jidlo_osobe, DATE(jv.datum_podavani) AS datum_jidla_odebrat_jidlo_osobe, j.id_jidla AS id_jidla_odebrat_jidlo_osobe, j.jmeno AS nazev_jidla_odebrat_jidlo_osobe, j.doba_podavani AS doba_jidla_odebrat_jidlo_osobe FROM jidla_vedouci jv JOIN jidla j ON j.id_jidla = jv.id_jidla ORDER BY datum_jidla_odebrat_jidlo_osobe, doba_jidla_odebrat_jidlo_osobe, nazev_jidla_odebrat_jidlo_osobe`
+    "jidelnicek-vstup-jidlo-odebrat-jidlo-osobe": `SELECT 'ucastnik' AS typ_osoby_jidlo_odebrat_jidlo_osobe, uj.id_ucastnika AS id_osoby_jidlo_odebrat_jidlo_osobe, DATE(uj.datum_podavani) AS datum_jidla_odebrat_jidlo_osobe, j.id_jidla AS id_jidla_odebrat_jidlo_osobe, j.jmeno AS nazev_jidla_odebrat_jidlo_osobe, j.doba_podavani AS doba_jidla_odebrat_jidlo_osobe FROM ucastnici_jidla uj JOIN jidla j ON j.id_jidla = uj.id_jidla UNION ALL SELECT 'vedouci' AS typ_osoby_jidlo_odebrat_jidlo_osobe, jv.id_vedouciho AS id_osoby_jidlo_odebrat_jidlo_osobe, DATE(jv.datum_podavani) AS datum_jidla_odebrat_jidlo_osobe, j.id_jidla AS id_jidla_odebrat_jidlo_osobe, j.jmeno AS nazev_jidla_odebrat_jidlo_osobe, j.doba_podavani AS doba_jidla_odebrat_jidlo_osobe FROM jidla_vedouci jv JOIN jidla j ON j.id_jidla = jv.id_jidla ORDER BY datum_jidla_odebrat_jidlo_osobe, doba_jidla_odebrat_jidlo_osobe, nazev_jidla_odebrat_jidlo_osobe`,
   },
 });
 
@@ -373,6 +373,6 @@ const stav_tlacitka_odebrat_jidlo_osobe = jidelnicek_odebrat_validni ? '' : 'dis
   sql: {},
   sql_click: {
     "odebrat-ucastnikovi-jidlo": `DELETE FROM ucastnici_jidla WHERE 'odebrat_typ_osoby_jidlo_osobe' = 'ucastnik' AND id_ucastnika = CAST('odebrat_id_osoby_jidlo_osobe' AS INTEGER) AND id_jidla = CAST('odebrat_id_jidla_jidlo_osobe' AS INTEGER) AND DATE(datum_podavani) = DATE('odebrat_datum_jidlo_osobe')`,
-    "odebrat-vedoucimu-jidlo": `DELETE FROM jidla_vedouci WHERE 'odebrat_typ_osoby_jidlo_osobe' = 'vedouci' AND id_vedouciho = CAST('odebrat_id_osoby_jidlo_osobe' AS INTEGER) AND id_jidla = CAST('odebrat_id_jidla_jidlo_osobe' AS INTEGER) AND DATE(datum_podavani) = DATE('odebrat_datum_jidlo_osobe')`
+    "odebrat-vedoucimu-jidlo": `DELETE FROM jidla_vedouci WHERE 'odebrat_typ_osoby_jidlo_osobe' = 'vedouci' AND id_vedouciho = CAST('odebrat_id_osoby_jidlo_osobe' AS INTEGER) AND id_jidla = CAST('odebrat_id_jidla_jidlo_osobe' AS INTEGER) AND DATE(datum_podavani) = DATE('odebrat_datum_jidlo_osobe')`,
   },
 });

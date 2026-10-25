@@ -73,7 +73,7 @@ if (kapacita_turnusu > 0) {
 `,
   js_click: ``,
   sql: {
-    "ziskej_data_turnusu": `SELECT COUNT(tu.id_ucastnika) AS pocet_prihlasenych, t.kapacita AS kapacita_turnusu FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON t.id_turnusu = tu.id_turnusu WHERE t.id_turnusu = idTurnusu GROUP BY t.kapacita`
+    ziskej_data_turnusu: `SELECT COUNT(tu.id_ucastnika) AS pocet_prihlasenych, t.kapacita AS kapacita_turnusu FROM turnusy t LEFT JOIN turnusy_ucastnici tu ON t.id_turnusu = tu.id_turnusu WHERE t.id_turnusu = idTurnusu GROUP BY t.kapacita`,
   },
-  sql_click: {}
+  sql_click: {},
 });

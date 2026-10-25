@@ -11,7 +11,10 @@
         </div>
 
         <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <UModal v-model:open="downloadModalOpen" :title="t('download_task_set')">
+          <UModal
+            v-model:open="downloadModalOpen"
+            :title="t('download_task_set')"
+          >
             <UButton
               size="sm"
               icon="i-lucide-download"
@@ -32,7 +35,12 @@
 
             <template #footer>
               <div class="flex justify-end gap-2">
-                <UButton size="sm" color="neutral" variant="ghost" @click="downloadModalOpen = false">
+                <UButton
+                  size="sm"
+                  color="neutral"
+                  variant="ghost"
+                  @click="downloadModalOpen = false"
+                >
                   {{ t("cancel") }}
                 </UButton>
                 <UButton
@@ -70,27 +78,27 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed, ref } from 'vue'
-import TasksDesignerPanel from '~/components/TasksDesignerPanel.vue'
-import { useSystemsStore } from '~/stores/systemsStore'
-import { resetTaskProgressJson } from '~/utils/taskProgress'
+import { computed, ref } from "vue";
+import TasksDesignerPanel from "~/components/TasksDesignerPanel.vue";
+import { useSystemsStore } from "~/stores/systemsStore";
+import { resetTaskProgressJson } from "~/utils/taskProgress";
 
 defineOptions({
-  name: 'SystemDesignerPage',
-})
+  name: "SystemDesignerPage",
+});
 
 /* 2. Stores */
-const systemsStore = useSystemsStore()
+const systemsStore = useSystemsStore();
 
 /* 3. Context hooks */
 definePageMeta({
-  middleware: ['teacher-designer'],
+  middleware: ["teacher-designer"],
   fullscreenSystemPage: true,
-})
+});
 
-const router = useRouter()
-const { t } = useI18n()
-const { route, systemId } = useSyncSystemId()
+const router = useRouter();
+const { t } = useI18n();
+const { route, systemId } = useSyncSystemId();
 
 /* 4. Constants (non-reactive) */
 
@@ -101,68 +109,73 @@ const { route, systemId } = useSyncSystemId()
 /* 7. Template refs */
 
 /* 8. State (ref, reactive) */
-const downloadModalOpen = ref(false)
-const downloadLoading = ref(false)
-const downloadError = ref('')
+const downloadModalOpen = ref(false);
+const downloadLoading = ref(false);
+const downloadError = ref("");
 
 /* 9. Computed */
 const firstSystemRoute = computed(() => {
-  const firstPageRoute = systemsStore.selectedSystem?.pages?.[0]?.route
+  const firstPageRoute = systemsStore.selectedSystem?.pages?.[0]?.route;
   return firstPageRoute
     ? `/systems/${systemId}${firstPageRoute}`
-    : `/systems/${systemId}/dashboard`
-})
+    : `/systems/${systemId}/dashboard`;
+});
 
 const backToRoute = computed(() => {
-  const backTo = route.query.backTo
-  return typeof backTo === 'string' && backTo.length > 0
+  const backTo = route.query.backTo;
+  return typeof backTo === "string" && backTo.length > 0
     ? backTo
-    : firstSystemRoute.value
-})
+    : firstSystemRoute.value;
+});
 
 /* 10. Watchers */
 
 /* 11. Methods */
 function goBackToSystem() {
-  router.push(backToRoute.value)
+  router.push(backToRoute.value);
 }
 
 async function downloadTaskSet() {
   if (!systemsStore.selectedSystem) {
-    downloadError.value = t('download_system_missing')
-    return
+    downloadError.value = t("download_system_missing");
+    return;
   }
 
-  downloadLoading.value = true
-  downloadError.value = ''
+  downloadLoading.value = true;
+  downloadError.value = "";
 
   try {
-    const blob = new Blob([JSON.stringify(createTaskSetExport(), null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'tasks.json'
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
-    downloadModalOpen.value = false
+    const blob = new Blob([JSON.stringify(createTaskSetExport(), null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "tasks.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    downloadModalOpen.value = false;
   } catch (error) {
-    downloadError.value = error instanceof Error ? error.message : String(error)
+    downloadError.value =
+      error instanceof Error ? error.message : String(error);
   } finally {
-    downloadLoading.value = false
+    downloadLoading.value = false;
   }
 }
 
 function createTaskSetExport() {
-  const system = systemsStore.selectedSystem!
+  const system = systemsStore.selectedSystem!;
   return {
     id: system.taskSet.id,
     name: system.taskSet.name,
     description: system.taskSet.description,
     levelCount: system.taskSet.levelCount,
-    tasks: JSON.parse(JSON.stringify(system.tasks ?? [])).map(resetTaskProgressJson),
-  }
+    tasks: JSON.parse(JSON.stringify(system.tasks ?? [])).map(
+      resetTaskProgressJson,
+    ),
+  };
 }
 
 /* 12. Lifecycle */

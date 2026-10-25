@@ -31,9 +31,9 @@ export const jidelnicekHlavickaDneKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-hlavicka-dne": `SELECT strftime('%d. %m. %Y', 'datumDne') AS zobrazeni_dne`
+    "jidelnicek-hlavicka-dne": `SELECT strftime('%d. %m. %Y', 'datumDne') AS zobrazeni_dne`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekPocetJidelDneKomponenta = new Component({
@@ -60,9 +60,9 @@ export const jidelnicekPocetJidelDneKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "jidelnicek-pocet-jidel-dne": `SELECT COUNT(DISTINCT id_jidla) AS pocet_unikatnich_jidel_dne FROM kniha_jidel WHERE DATE(datum) = DATE('datumDne')`
+    "jidelnicek-pocet-jidel-dne": `SELECT COUNT(DISTINCT id_jidla) AS pocet_unikatnich_jidel_dne FROM kniha_jidel WHERE DATE(datum) = DATE('datumDne')`,
   },
-  sql_click: {}
+  sql_click: {},
 });
 
 export const jidelnicekPocetPorciDneKomponenta = new Component({
@@ -97,7 +97,7 @@ export const jidelnicekPocetPorciDneKomponenta = new Component({
   SELECT COUNT(*)
   FROM jidla_vedouci jv
   WHERE DATE(jv.datum_podavani) = DATE('datumDne')
-) AS pocet_porci_dne`
+) AS pocet_porci_dne`,
   },
-  sql_click: {}
+  sql_click: {},
 });

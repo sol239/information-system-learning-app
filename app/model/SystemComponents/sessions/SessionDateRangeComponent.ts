@@ -28,7 +28,7 @@ export const datumTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "ziskej_data_turnusu": `SELECT strftime('%d. %m.', datum_od) AS datum_od_turnusu, strftime('%d. %m. %Y', datum_do) AS datum_do_turnusu FROM turnusy WHERE id_turnusu = idTurnusu`
+    ziskej_data_turnusu: `SELECT strftime('%d. %m.', datum_od) AS datum_od_turnusu, strftime('%d. %m. %Y', datum_do) AS datum_do_turnusu FROM turnusy WHERE id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });

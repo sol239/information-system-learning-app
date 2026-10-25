@@ -1,7 +1,13 @@
 <template>
   <div class="p-6 flex flex-col gap-8 max-w-full mx-auto">
-    <ComponentWrapper :component="dashboardHeroCard" class="justify-center mt-6" />
-    <section id="entity-stat-section" class="-mt-[22px] -mb-4 flex flex-wrap gap-4 md:flex-nowrap">
+    <ComponentWrapper
+      :component="dashboardHeroCard"
+      class="justify-center mt-6"
+    />
+    <section
+      id="entity-stat-section"
+      class="-mt-[22px] -mb-4 flex flex-wrap gap-4 md:flex-nowrap"
+    >
       <ComponentWrapper :component="participantsStat" class="md:flex-1" />
       <ComponentWrapper :component="sessionsStat" class="md:flex-1" />
       <ComponentWrapper :component="supervisorsStat" class="md:flex-1" />
@@ -11,9 +17,18 @@
 
     <h2 class="system-page-heading -my-4">Souhrnné statistiky</h2>
     <section id="agg-stat-section" class="grid grid-cols-2 gap-4">
-      <ComponentWrapper :component="minParticipantsPerSessionStat" class="w-full" />
-      <ComponentWrapper :component="maxParticipantsPerSessionStat" class="w-full" />
-      <ComponentWrapper :component="totalParticipantsInSessionsStat" class="w-full" />
+      <ComponentWrapper
+        :component="minParticipantsPerSessionStat"
+        class="w-full"
+      />
+      <ComponentWrapper
+        :component="maxParticipantsPerSessionStat"
+        class="w-full"
+      />
+      <ComponentWrapper
+        :component="totalParticipantsInSessionsStat"
+        class="w-full"
+      />
       <ComponentWrapper :component="maxParticipantAgeStat" class="w-full" />
     </section>
   </div>
@@ -21,15 +36,15 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from 'vue'
-import ComponentWrapper from '~/components/ComponentWrapper.vue'
+import { computed } from "vue";
+import ComponentWrapper from "~/components/ComponentWrapper.vue";
 
 defineOptions({
-  name: 'SystemDashboardPage',
-})
+  name: "SystemDashboardPage",
+});
 
 /* 2. Stores */
-const { systemsStore } = useSyncSystemId()
+const { systemsStore } = useSyncSystemId();
 
 /* 3. Context hooks */
 
@@ -45,36 +60,40 @@ const { systemsStore } = useSyncSystemId()
 
 /* 9. Computed */
 const dashboardHeroCard = computed(() =>
-  systemsStore.getComponentById('hlavni-karta-systemu')
-)
+  systemsStore.getComponentById("hlavni-karta-systemu"),
+);
 
 const participantsStat = computed(() =>
-  systemsStore.getComponentById('statistika-ucastniku')
-)
+  systemsStore.getComponentById("statistika-ucastniku"),
+);
 
-const sessionsStat = computed(() => systemsStore.getComponentById('statistika-turnusu'))
+const sessionsStat = computed(() =>
+  systemsStore.getComponentById("statistika-turnusu"),
+);
 
 const supervisorsStat = computed(() =>
-  systemsStore.getComponentById('statistika-vedoucich')
-)
+  systemsStore.getComponentById("statistika-vedoucich"),
+);
 
-const mealsStat = computed(() => systemsStore.getComponentById('statistika-jidel'))
+const mealsStat = computed(() =>
+  systemsStore.getComponentById("statistika-jidel"),
+);
 
 const minParticipantsPerSessionStat = computed(() =>
-  systemsStore.getComponentById('statistika-min-ucastniku-turnusu')
-)
+  systemsStore.getComponentById("statistika-min-ucastniku-turnusu"),
+);
 
 const maxParticipantsPerSessionStat = computed(() =>
-  systemsStore.getComponentById('statistika-max-ucastniku-turnusu')
-)
+  systemsStore.getComponentById("statistika-max-ucastniku-turnusu"),
+);
 
 const totalParticipantsInSessionsStat = computed(() =>
-  systemsStore.getComponentById('statistika-celkem-ucasti-turnusu')
-)
+  systemsStore.getComponentById("statistika-celkem-ucasti-turnusu"),
+);
 
 const maxParticipantAgeStat = computed(() =>
-  systemsStore.getComponentById('statistika-max-vek-ucastnika')
-)
+  systemsStore.getComponentById("statistika-max-vek-ucastnika"),
+);
 
 /* 10. Watchers */
 

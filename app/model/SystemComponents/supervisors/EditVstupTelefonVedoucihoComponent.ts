@@ -4,7 +4,8 @@ export const editVstupTelefonVedoucihoKomponenta = new Component({
   id: "edit-vstup-telefon-vedouciho",
   name: "Vstup – Edit Telefon vedoucího",
   tags: ["vedoucí"],
-  description: "Pole pro úpravu telefonu vedoucího. Vyžaduje generalVariable: idVedouciho.",
+  description:
+    "Pole pro úpravu telefonu vedoucího. Vyžaduje generalVariable: idVedouciho.",
 
   html: `
 <div class="form-radek">
@@ -29,6 +30,6 @@ if (je_cislo_validni) {
     barva_ramecku = "#ff4f92";
 }`,
   sql: {
-    nacistTelefonVedouciho: `SELECT telefon AS edit_vstup_telefon_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho`
+    nacistTelefonVedouciho: `SELECT telefon AS edit_vstup_telefon_vedouciho FROM vedouci WHERE id_vedouciho = idVedouciho`,
   },
 });

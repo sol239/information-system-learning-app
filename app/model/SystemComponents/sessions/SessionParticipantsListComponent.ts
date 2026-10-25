@@ -94,7 +94,7 @@ export const sessionParticipantsListComponent = new Component({
   }`,
   js_click: ``,
   sql: {
-    "seznam-ucastniku-turnusu": `SELECT jmeno as jmena FROM ucastnici u JOIN turnusy_ucastnici tu ON u.id_ucastnika = tu.id_ucastnika WHERE tu.id_turnusu = idTurnusu`
+    "seznam-ucastniku-turnusu": `SELECT jmeno as jmena FROM ucastnici u JOIN turnusy_ucastnici tu ON u.id_ucastnika = tu.id_ucastnika WHERE tu.id_turnusu = idTurnusu`,
   },
-  sql_click: {}
+  sql_click: {},
 });

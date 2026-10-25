@@ -84,7 +84,7 @@ if (select_turnusu_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-turnus-jidlo-osobe": `SELECT id_turnusu AS id_turnusu_jidlo_osobe, DATE(datum_od) AS datum_od_jidlo_osobe, DATE(datum_do) AS datum_do_jidlo_osobe FROM turnusy ORDER BY id_turnusu`
+    "jidelnicek-vstup-turnus-jidlo-osobe": `SELECT id_turnusu AS id_turnusu_jidlo_osobe, DATE(datum_od) AS datum_od_jidlo_osobe, DATE(datum_do) AS datum_do_jidlo_osobe FROM turnusy ORDER BY id_turnusu`,
   },
 });
 
@@ -173,7 +173,7 @@ if (select_osoby_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-osoba-jidlo-osobe": `SELECT 'ucastnik' AS typ_osoby_jidlo_osobe, u.id_ucastnika AS id_osoby_jidlo_osobe, u.jmeno AS jmeno_osoby_jidlo_osobe, tu.id_turnusu AS id_turnusu_osoby_jidlo_osobe FROM ucastnici u JOIN turnusy_ucastnici tu ON tu.id_ucastnika = u.id_ucastnika UNION ALL SELECT 'vedouci' AS typ_osoby_jidlo_osobe, v.id_vedouciho AS id_osoby_jidlo_osobe, v.jmeno AS jmeno_osoby_jidlo_osobe, vt.id_turnusu AS id_turnusu_osoby_jidlo_osobe FROM vedouci v JOIN vedouci_turnusy vt ON vt.id_vedouciho = v.id_vedouciho ORDER BY jmeno_osoby_jidlo_osobe`
+    "jidelnicek-vstup-osoba-jidlo-osobe": `SELECT 'ucastnik' AS typ_osoby_jidlo_osobe, u.id_ucastnika AS id_osoby_jidlo_osobe, u.jmeno AS jmeno_osoby_jidlo_osobe, tu.id_turnusu AS id_turnusu_osoby_jidlo_osobe FROM ucastnici u JOIN turnusy_ucastnici tu ON tu.id_ucastnika = u.id_ucastnika UNION ALL SELECT 'vedouci' AS typ_osoby_jidlo_osobe, v.id_vedouciho AS id_osoby_jidlo_osobe, v.jmeno AS jmeno_osoby_jidlo_osobe, vt.id_turnusu AS id_turnusu_osoby_jidlo_osobe FROM vedouci v JOIN vedouci_turnusy vt ON vt.id_vedouciho = v.id_vedouciho ORDER BY jmeno_osoby_jidlo_osobe`,
   },
 });
 
@@ -259,7 +259,7 @@ if (select_datum_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-datum-jidlo-osobe": `SELECT id_turnusu AS id_turnusu_datum_jidlo_osobe, DATE(datum_od) AS datum_od_datum_jidlo_osobe, DATE(datum_do) AS datum_do_datum_jidlo_osobe FROM turnusy ORDER BY id_turnusu`
+    "jidelnicek-vstup-datum-jidlo-osobe": `SELECT id_turnusu AS id_turnusu_datum_jidlo_osobe, DATE(datum_od) AS datum_od_datum_jidlo_osobe, DATE(datum_do) AS datum_do_datum_jidlo_osobe FROM turnusy ORDER BY id_turnusu`,
   },
 });
 
@@ -313,7 +313,7 @@ if (select_jidla_jidlo_osobe) {
 }
 `,
   sql: {
-    "jidelnicek-vstup-jidlo-jidlo-osobe": `SELECT id_jidla AS id_jidla_jidlo_osobe, jmeno AS nazev_jidla_jidlo_osobe, doba_podavani AS doba_jidla_jidlo_osobe FROM jidla ORDER BY doba_podavani, jmeno`
+    "jidelnicek-vstup-jidlo-jidlo-osobe": `SELECT id_jidla AS id_jidla_jidlo_osobe, jmeno AS nazev_jidla_jidlo_osobe, doba_podavani AS doba_jidla_jidlo_osobe FROM jidla ORDER BY doba_podavani, jmeno`,
   },
 });
 
@@ -367,6 +367,6 @@ const stav_tlacitka_pridat_jidlo_osobe = jidelnicek_tlacitko_validni ? '' : 'dis
   sql_click: {
     "pridat-do-knihy-jidel": `INSERT OR IGNORE INTO kniha_jidel (id_jidla, datum) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
     "pridat-ucastnikovi-jidlo": `INSERT OR IGNORE INTO ucastnici_jidla (id_jidla, id_ucastnika, datum_podavani) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), CAST('vstup_id_osoby_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_typ_osoby_jidlo_osobe' = 'ucastnik' AND 'vstup_id_osoby_jidlo_osobe' <> '' AND 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
-    "pridat-vedoucimu-jidlo": `INSERT OR IGNORE INTO jidla_vedouci (id_jidla, id_vedouciho, datum_podavani) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), CAST('vstup_id_osoby_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_typ_osoby_jidlo_osobe' = 'vedouci' AND 'vstup_id_osoby_jidlo_osobe' <> '' AND 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`
+    "pridat-vedoucimu-jidlo": `INSERT OR IGNORE INTO jidla_vedouci (id_jidla, id_vedouciho, datum_podavani) SELECT CAST('vstup_id_jidla_jidlo_osobe' AS INTEGER), CAST('vstup_id_osoby_jidlo_osobe' AS INTEGER), DATE('vstup_datum_jidlo_osobe') WHERE 'vstup_typ_osoby_jidlo_osobe' = 'vedouci' AND 'vstup_id_osoby_jidlo_osobe' <> '' AND 'vstup_id_jidla_jidlo_osobe' <> '' AND 'vstup_datum_jidlo_osobe' <> ''`,
   },
 });

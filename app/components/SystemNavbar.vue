@@ -24,12 +24,19 @@
                 :name="item.icon || 'i-lucide-file'"
                 class="w-5 h-5 lg:max-[1441px]:size-[18px]"
               />
-              <span class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]">{{ item.label }}</span>
+              <span
+                class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
+                >{{ item.label }}</span
+              >
 
               <div
                 v-if="$route.path === item.to"
                 class="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary-500 rounded-full"
-                :style="item.activeColor ? { backgroundColor: item.activeColor } : undefined"
+                :style="
+                  item.activeColor
+                    ? { backgroundColor: item.activeColor }
+                    : undefined
+                "
               />
             </NuxtLink>
 
@@ -39,8 +46,14 @@
                 class="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-gray-400 opacity-70 lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
                 :aria-label="`${item.label}: ${t('task_page_unavailable_description')}`"
               >
-                <UIcon :name="item.icon || 'i-lucide-lock'" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
-                <span class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]">{{ item.label }}</span>
+                <UIcon
+                  :name="item.icon || 'i-lucide-lock'"
+                  class="h-5 w-5 lg:max-[1441px]:size-[18px]"
+                />
+                <span
+                  class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
+                  >{{ item.label }}</span
+                >
               </button>
               <template #content>
                 <div class="app-popover-content">
@@ -71,7 +84,10 @@
                 : 'text-gray-600 hover:bg-white/70 hover:text-gray-900',
             ]"
           >
-            <UIcon name="i-heroicons-table-cells" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
+            <UIcon
+              name="i-heroicons-table-cells"
+              class="h-5 w-5 lg:max-[1441px]:size-[18px]"
+            />
             <span>{{ t("database") }}</span>
           </NuxtLink>
 
@@ -81,12 +97,18 @@
               class="flex cursor-not-allowed items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium text-gray-400 opacity-70 lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
               :aria-label="`${t('database')}: ${t('task_page_unavailable_description')}`"
             >
-              <UIcon name="i-heroicons-table-cells" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
+              <UIcon
+                name="i-heroicons-table-cells"
+                class="h-5 w-5 lg:max-[1441px]:size-[18px]"
+              />
               <span>{{ t("database") }}</span>
             </button>
             <template #content>
               <div class="app-popover-content">
-                <UIcon name="i-heroicons-table-cells" class="app-popover-icon" />
+                <UIcon
+                  name="i-heroicons-table-cells"
+                  class="app-popover-icon"
+                />
                 <div class="app-popover-text">
                   <strong class="app-popover-title">{{
                     t("task_page_unavailable_title")
@@ -130,9 +152,11 @@ const emit = defineEmits<{
 
 /* 3. Context hooks */
 const { t, locale } = useI18n();
-const databasePageRoute = computed(() => String(runtimeConfig.public.databasePageRoute));
+const databasePageRoute = computed(() =>
+  String(runtimeConfig.public.databasePageRoute),
+);
 const databaseTo = computed(
-  () => `/systems/${systemsStore.selectedSystemId}${databasePageRoute.value}`
+  () => `/systems/${systemsStore.selectedSystemId}${databasePageRoute.value}`,
 );
 
 /* 8. Local state (ref, reactive) */
@@ -146,17 +170,21 @@ const selectedTask = computed(() => {
   }
 
   return (
-    systemsStore.selectedSystem?.tasks?.find((task) => task.id === selectedTaskId) ?? null
+    systemsStore.selectedSystem?.tasks?.find(
+      (task) => task.id === selectedTaskId,
+    ) ?? null
   );
 });
 
 const taskPagesAreUnrestricted = computed(() => {
   const system = systemsStore.selectedSystem;
 
-  return !system
-    || globalSettingsStore.bypassPageVisibility
-    || globalSettingsStore.teacherMode
-    || (!system.startedTasks && system.exploringSystem);
+  return (
+    !system ||
+    globalSettingsStore.bypassPageVisibility ||
+    globalSettingsStore.teacherMode ||
+    (!system.startedTasks && system.exploringSystem)
+  );
 });
 
 const relevantVisiblePageTasks = computed(() => {
@@ -194,7 +222,7 @@ const currentLevelVisiblePageTasks = computed(() => {
 });
 
 const availableTaskPages = computed(() =>
-  TaskHelper.getVisiblePages(relevantVisiblePageTasks.value)
+  TaskHelper.getVisiblePages(relevantVisiblePageTasks.value),
 );
 
 const localItems = computed(() => {
@@ -203,15 +231,19 @@ const localItems = computed(() => {
 
   const system = systemsStore.selectedSystem;
   const pages = system
-    ? system.visiblePages(t("database")).filter(
-        (page) => page.route !== databasePageRoute.value
-      )
+    ? system
+        .visiblePages(t("database"))
+        .filter((page) => page.route !== databasePageRoute.value)
     : [];
   return pages.map((page) => ({
     label: page.name,
     route: page.route,
     icon: page.icon,
-    activeColor: page.activeColor || SYSTEM_NAVBAR_PAGES.find((defaultPage) => defaultPage.route === page.route)?.activeColor,
+    activeColor:
+      page.activeColor ||
+      SYSTEM_NAVBAR_PAGES.find(
+        (defaultPage) => defaultPage.route === page.route,
+      )?.activeColor,
     to: `/systems/${systemsStore.selectedSystemId}${page.route}`,
     data_target: page.route.replace(/^\//, "").replace(/\//g, "-"),
   }));
@@ -226,8 +258,10 @@ function isPageAvailable(pageRoute: string): boolean {
   }
 
   if (isDatabasePage) {
-    return system.databaseAllowed !== false
-      && TaskHelper.shouldIncludeDatabasePage(currentLevelVisiblePageTasks.value);
+    return (
+      system.databaseAllowed !== false &&
+      TaskHelper.shouldIncludeDatabasePage(currentLevelVisiblePageTasks.value)
+    );
   }
 
   const tasks = relevantVisiblePageTasks.value;

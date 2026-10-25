@@ -51,7 +51,7 @@ export const statistikaTurnusuKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-turnusu": `SELECT COUNT(*) as pocet_turnusu FROM turnusy`
+    "statistika-turnusu": `SELECT COUNT(*) as pocet_turnusu FROM turnusy`,
   },
-  sql_click: {}
+  sql_click: {},
 });

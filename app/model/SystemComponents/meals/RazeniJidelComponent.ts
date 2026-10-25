@@ -4,7 +4,8 @@ export const razeniJidelKomponenta = new Component({
   id: "razeni-jidel",
   name: "Řazení jídel",
   tags: ["jídla", "řazení", "sql"],
-  description: "Výběr řazení jídel podle názvu, doby podávání nebo počtu alergenů.",
+  description:
+    "Výběr řazení jídel podle názvu, doby podávání nebo počtu alergenů.",
 
   html: `
 <div id="razeni-jidel">
@@ -68,6 +69,6 @@ LEFT JOIN jidla_alergeny ja
   ON ja.id_jidla = j.id_jidla
 GROUP BY j.id_jidla
 ORDER BY COUNT(ja.id_alergenu), j.id_jidla
-`
+`,
   },
 });

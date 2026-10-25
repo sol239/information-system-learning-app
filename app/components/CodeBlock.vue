@@ -15,17 +15,12 @@
           variant="subtle"
           size="sm"
         >
-          {{ correct ? t('correct_badge') : t('incorrect_badge') }}
+          {{ correct ? t("correct_badge") : t("incorrect_badge") }}
         </UBadge>
       </div>
 
       <div class="header-actions flex items-center justify-end gap-2">
-        <UPopover
-          v-if="infoDescription"
-          mode="hover"
-          arrow
-          :ui="popoverUi"
-        >
+        <UPopover v-if="infoDescription" mode="hover" arrow :ui="popoverUi">
           <UButton
             icon="i-lucide-info"
             color="neutral"
@@ -70,43 +65,42 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 /* 1. Imports */
-import { computed, getCurrentInstance, onBeforeUnmount, ref, watch } from 'vue'
-import { VueMonacoEditor } from '@guolao/vue-monaco-editor'
-import { useI18n } from 'vue-i18n'
+import { computed, getCurrentInstance, onBeforeUnmount, ref, watch } from "vue";
+import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
+import { useI18n } from "vue-i18n";
 
 interface Props {
-  code: string
-  language: string
-  label?: string
-  height?: string
-  readOnly?: boolean
-  correct?: boolean
-  protectedPrefix?: string
-  originalCode?: string
-  sizeMultiplier?: number
-  infoTitle?: string
-  infoDescription?: string
-  highlightedVariables?: string[]
+  code: string;
+  language: string;
+  label?: string;
+  height?: string;
+  readOnly?: boolean;
+  correct?: boolean;
+  protectedPrefix?: string;
+  originalCode?: string;
+  sizeMultiplier?: number;
+  infoTitle?: string;
+  infoDescription?: string;
+  highlightedVariables?: string[];
 }
 
 /* 2. Stores */
 
 /* 3. Context hooks */
-const { t } = useI18n()
-const instance = getCurrentInstance()
+const { t } = useI18n();
+const instance = getCurrentInstance();
 
 /* 4. Constants (non-reactive) */
-const monacoTheme = 'vs-light'
-const popoverUi = { content: 'z-[10050]' }
+const monacoTheme = "vs-light";
+const popoverUi = { content: "z-[10050]" };
 
 /* 5. Props */
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
-  height: '300px',
+  height: "300px",
   readOnly: false,
   correct: undefined,
   protectedPrefix: undefined,
@@ -115,77 +109,87 @@ const props = withDefaults(defineProps<Props>(), {
   infoTitle: undefined,
   infoDescription: undefined,
   highlightedVariables: () => [],
-})
+});
 
 /* 6. Emits */
-const emit = defineEmits(['update:code', 'change', 'isEdited'])
+const emit = defineEmits(["update:code", "change", "isEdited"]);
 
 /* 7. Template refs */
 
 /* 8. State (ref, reactive) */
-const initialCode = ref(props.code || '')
-let monacoEditorInstance: any = null
-let variableDecorations: any = null
-const highlightSubscriptions: { dispose: () => void }[] = []
-let isUndoing = false
+const initialCode = ref(props.code || "");
+let monacoEditorInstance: any = null;
+let variableDecorations: any = null;
+const highlightSubscriptions: { dispose: () => void }[] = [];
+let isUndoing = false;
 
 /* 9. Computed */
 const showCorrectBadge = computed(() => {
-  const vnodeProps = instance?.vnode.props ?? {}
+  const vnodeProps = instance?.vnode.props ?? {};
   const hasCorrectProp =
-    Object.prototype.hasOwnProperty.call(vnodeProps, 'correct') ||
-    Object.prototype.hasOwnProperty.call(vnodeProps, 'correct-value')
+    Object.prototype.hasOwnProperty.call(vnodeProps, "correct") ||
+    Object.prototype.hasOwnProperty.call(vnodeProps, "correct-value");
 
-  if (!hasCorrectProp || props.correct === undefined) return false
+  if (!hasCorrectProp || props.correct === undefined) return false;
 
-  if (!props.code || props.code.trim() === '') {
-    return false
+  if (!props.code || props.code.trim() === "") {
+    return false;
   }
 
-  return true
-})
+  return true;
+});
 
-const comparisonCode = computed(() => props.originalCode ?? initialCode.value)
-const isEdited = computed(() => (props.code || '') !== (comparisonCode.value || ''))
-const codeBlockName = computed(() => props.label || props.language)
-const codeBlockId = computed(() => `code-${slugifyCodeBlockName(codeBlockName.value)}`)
+const comparisonCode = computed(() => props.originalCode ?? initialCode.value);
+const isEdited = computed(
+  () => (props.code || "") !== (comparisonCode.value || ""),
+);
+const codeBlockName = computed(() => props.label || props.language);
+const codeBlockId = computed(
+  () => `code-${slugifyCodeBlockName(codeBlockName.value)}`,
+);
 
 const displayValue = computed(() => {
   if (props.protectedPrefix) {
-    return `${props.protectedPrefix.trimEnd()}\n${props.code}`
+    return `${props.protectedPrefix.trimEnd()}\n${props.code}`;
   }
 
-  return props.code
-})
+  return props.code;
+});
 
 const protectedLineCount = computed(() => {
-  if (!props.protectedPrefix) return 0
+  if (!props.protectedPrefix) return 0;
 
-  return props.protectedPrefix.trimEnd().split('\n').length
-})
+  return props.protectedPrefix.trimEnd().split("\n").length;
+});
 
 const transformedLanguage = computed(() => {
-  const lang = props.language.toLowerCase()
+  const lang = props.language.toLowerCase();
 
-  if (lang === 'js') return 'javascript'
-  if (lang === 'ts') return 'typescript'
-  if (lang === 'vue' || lang.endsWith('.vue')) return 'html'
+  if (lang === "js") return "javascript";
+  if (lang === "ts") return "typescript";
+  if (lang === "vue" || lang.endsWith(".vue")) return "html";
 
-  return lang
-})
+  return lang;
+});
 
 const getLanguageClass = computed(() => {
-  const lang = props.language.toLowerCase()
+  const lang = props.language.toLowerCase();
 
-  if (lang === 'vue' || lang.endsWith('.vue')) return 'html-label'
-  if (lang === 'js' || lang === 'javascript' || lang === 'ts' || lang === 'typescript') return 'js-label'
+  if (lang === "vue" || lang.endsWith(".vue")) return "html-label";
+  if (
+    lang === "js" ||
+    lang === "javascript" ||
+    lang === "ts" ||
+    lang === "typescript"
+  )
+    return "js-label";
 
-  return `${lang}-label`
-})
+  return `${lang}-label`;
+});
 
 const editorOptions = computed(() => ({
   minimap: { enabled: false },
-  wordWrap: 'on' as const,
+  wordWrap: "on" as const,
   automaticLayout: true,
   scrollBeyondLastLine: false,
   scrollbar: { alwaysConsumeMouseWheel: true },
@@ -196,182 +200,196 @@ const editorOptions = computed(() => ({
   padding: { top: 12, bottom: 12 },
   quickSuggestions: false,
   suggestOnTriggerCharacters: false,
-  acceptSuggestionOnEnter: 'off' as const,
-  tabCompletion: 'off' as const,
-  wordBasedSuggestions: 'off' as const,
+  acceptSuggestionOnEnter: "off" as const,
+  tabCompletion: "off" as const,
+  wordBasedSuggestions: "off" as const,
   parameterHints: { enabled: false },
   inlineSuggest: { enabled: false },
-}))
+}));
 
 /* 10. Watchers */
-watch(isEdited, (value) => emit('isEdited', value), { immediate: true })
-watch(() => props.highlightedVariables, updateVariableHighlights, { deep: true })
+watch(isEdited, (value) => emit("isEdited", value), { immediate: true });
+watch(() => props.highlightedVariables, updateVariableHighlights, {
+  deep: true,
+});
 
 /* 11. Methods */
 function updateVariableHighlights() {
-  const model = monacoEditorInstance?.getModel()
-  if (!model || !variableDecorations) return
+  const model = monacoEditorInstance?.getModel();
+  if (!model || !variableDecorations) return;
 
-  const wordSeparators = "~!@#%^&*()-=+[{]}\\|;:'\",.<>/? \t\r\n"
+  const wordSeparators = "~!@#%^&*()-=+[{]}\\|;:'\",.<>/? \t\r\n";
   const decorations = [...new Set(props.highlightedVariables)]
-    .filter(name => name.length > 0)
-    .flatMap(name => model.findMatches(name, false, false, true, wordSeparators, false)
-      .map((match: any) => ({
-        range: match.range,
-        options: { inlineClassName: 'available-variable-highlight' },
-      })))
-  variableDecorations.set(decorations)
+    .filter((name) => name.length > 0)
+    .flatMap((name) =>
+      model
+        .findMatches(name, false, false, true, wordSeparators, false)
+        .map((match: any) => ({
+          range: match.range,
+          options: { inlineClassName: "available-variable-highlight" },
+        })),
+    );
+  variableDecorations.set(decorations);
 }
 
 function onEditorWheel(event: WheelEvent) {
-  const editor = monacoEditorInstance
-  const layout = editor?.getLayoutInfo()
-  const canScrollVertically = layout && editor.getScrollHeight() > layout.height
-  const canScrollHorizontally = layout && editor.getScrollWidth() > layout.contentWidth
-  const canScroll = (event.deltaY !== 0 && canScrollVertically)
-    || (event.deltaX !== 0 && canScrollHorizontally)
+  const editor = monacoEditorInstance;
+  const layout = editor?.getLayoutInfo();
+  const canScrollVertically =
+    layout && editor.getScrollHeight() > layout.height;
+  const canScrollHorizontally =
+    layout && editor.getScrollWidth() > layout.contentWidth;
+  const canScroll =
+    (event.deltaY !== 0 && canScrollVertically) ||
+    (event.deltaX !== 0 && canScrollHorizontally);
 
   // Let Monaco consume the wheel whenever its content overflows, even without focus.
   if (!canScroll) {
-    event.stopPropagation()
+    event.stopPropagation();
   }
 }
 
 function onCodeChange(value: string | undefined) {
-  if (props.protectedPrefix !== undefined) return
+  if (props.protectedPrefix !== undefined) return;
 
-  const safeValue = value || ''
-  emit('update:code', safeValue)
-  emit('change', safeValue)
+  const safeValue = value || "";
+  emit("update:code", safeValue);
+  emit("change", safeValue);
 }
 
 function onEditorMount(editor: any, monaco: any) {
-  monacoEditorInstance = editor
-  setupProtectionListener(editor, monaco)
-  variableDecorations = editor.createDecorationsCollection()
+  monacoEditorInstance = editor;
+  setupProtectionListener(editor, monaco);
+  variableDecorations = editor.createDecorationsCollection();
   highlightSubscriptions.push(
     editor.onDidChangeModelContent(updateVariableHighlights),
     editor.onDidChangeModel(updateVariableHighlights),
-  )
-  updateVariableHighlights()
-  registerCodeBlockEditorForTests()
+  );
+  updateVariableHighlights();
+  registerCodeBlockEditorForTests();
 }
 
 function slugifyCodeBlockName(value: string): string {
   const slug = value
     .trim()
     .toLowerCase()
-    .replace(/\+/g, ' plus ')
-    .replace(/#/g, ' sharp ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/\+/g, " plus ")
+    .replace(/#/g, " sharp ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
-  return slug || 'block'
+  return slug || "block";
 }
 
 function getEditableEditorValue(): string {
-  const value = monacoEditorInstance?.getValue?.() ?? displayValue.value
-  if (!props.protectedPrefix) return value
+  const value = monacoEditorInstance?.getValue?.() ?? displayValue.value;
+  if (!props.protectedPrefix) return value;
 
-  const separator = `${props.protectedPrefix.trimEnd()}\n`
-  return value.startsWith(separator) ? value.substring(separator.length) : value
+  const separator = `${props.protectedPrefix.trimEnd()}\n`;
+  return value.startsWith(separator)
+    ? value.substring(separator.length)
+    : value;
 }
 
 function setEditableEditorValue(value: string) {
   const fullValue = props.protectedPrefix
     ? `${props.protectedPrefix.trimEnd()}\n${value}`
-    : value
+    : value;
 
-  monacoEditorInstance?.setValue?.(fullValue)
-  emit('update:code', value)
-  emit('change', value)
+  monacoEditorInstance?.setValue?.(fullValue);
+  emit("update:code", value);
+  emit("change", value);
 }
 
 function registerCodeBlockEditorForTests() {
-  if (typeof window === 'undefined' || !monacoEditorInstance) return
+  if (typeof window === "undefined" || !monacoEditorInstance) return;
 
   const win = window as typeof window & {
-    __codeBlockEditors?: Record<string, {
-      getValue: () => string
-      setValue: (value: string) => void
-    }>
-  }
+    __codeBlockEditors?: Record<
+      string,
+      {
+        getValue: () => string;
+        setValue: (value: string) => void;
+      }
+    >;
+  };
 
-  win.__codeBlockEditors ??= {}
+  win.__codeBlockEditors ??= {};
   win.__codeBlockEditors[codeBlockId.value] = {
     getValue: getEditableEditorValue,
     setValue: setEditableEditorValue,
-  }
+  };
 }
 
 function setupProtectionListener(editor: any, monaco: any) {
   editor.onDidChangeModelContent((event: any) => {
-    if (isUndoing || event.isFlush) return
+    if (isUndoing || event.isFlush) return;
 
-    const lineCount = protectedLineCount.value
+    const lineCount = protectedLineCount.value;
 
     if (lineCount === 0) {
-      const full = editor.getValue()
-      emit('update:code', full)
-      emit('change', full)
-      return
+      const full = editor.getValue();
+      emit("update:code", full);
+      emit("change", full);
+      return;
     }
 
-    const model = editor.getModel()
-    if (!model) return
+    const model = editor.getModel();
+    if (!model) return;
 
-    const totalLines = model.getLineCount()
-    const lastLine = Math.min(lineCount, totalLines)
-    const lastCol = model.getLineMaxColumn(lastLine)
-    const protectedRange = new monaco.Range(1, 1, lastLine, lastCol)
+    const totalLines = model.getLineCount();
+    const lastLine = Math.min(lineCount, totalLines);
+    const lastCol = model.getLineMaxColumn(lastLine);
+    const protectedRange = new monaco.Range(1, 1, lastLine, lastCol);
 
     for (const change of event.changes) {
       if (protectedRange.intersectRanges(change.range)) {
-        isUndoing = true
-        editor.trigger('protected', 'undo', null)
-        isUndoing = false
-        return
+        isUndoing = true;
+        editor.trigger("protected", "undo", null);
+        isUndoing = false;
+        return;
       }
     }
 
-    const full = editor.getValue()
-    const separator = `${props.protectedPrefix!.trimEnd()}\n`
+    const full = editor.getValue();
+    const separator = `${props.protectedPrefix!.trimEnd()}\n`;
     const editablePart = full.startsWith(separator)
       ? full.substring(separator.length)
-      : full
+      : full;
 
-    emit('update:code', editablePart)
-    emit('change', editablePart)
-  })
+    emit("update:code", editablePart);
+    emit("change", editablePart);
+  });
 }
 
 function formatCode() {
   if (monacoEditorInstance && monacoEditorInstance.getAction) {
-    const action = monacoEditorInstance.getAction('editor.action.formatDocument')
+    const action = monacoEditorInstance.getAction(
+      "editor.action.formatDocument",
+    );
     if (action) {
-      action.run()
+      action.run();
     }
   }
 }
 
 /* 12. Lifecycle */
 onBeforeUnmount(() => {
-  highlightSubscriptions.forEach(subscription => subscription.dispose())
-  variableDecorations?.clear()
-  if (typeof window === 'undefined') return
+  highlightSubscriptions.forEach((subscription) => subscription.dispose());
+  variableDecorations?.clear();
+  if (typeof window === "undefined") return;
 
   const win = window as typeof window & {
-    __codeBlockEditors?: Record<string, unknown>
-  }
+    __codeBlockEditors?: Record<string, unknown>;
+  };
 
-  delete win.__codeBlockEditors?.[codeBlockId.value]
-})
+  delete win.__codeBlockEditors?.[codeBlockId.value];
+});
 
 /* 13. defineExpose */
 defineExpose({
   formatCode,
-})
-
+});
 </script>
 
 <style scoped>
@@ -388,7 +406,9 @@ defineExpose({
   overflow: visible;
   border: 1px solid #d1d5db;
   background: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 

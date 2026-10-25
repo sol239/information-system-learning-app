@@ -37,6 +37,6 @@ export const sessionDeleteComponent = new Component({
   sql_click: {
     "smazat-turnus-ucastnici": `DELETE FROM turnusy_ucastnici WHERE id_turnusu = idTurnusu`,
     "smazat-turnus-vedouci": `DELETE FROM vedouci_turnusy WHERE id_turnusu = idTurnusu`,
-    "smazat-turnus": `DELETE FROM turnusy WHERE id_turnusu = idTurnusu`
-  }
+    "smazat-turnus": `DELETE FROM turnusy WHERE id_turnusu = idTurnusu`,
+  },
 });

@@ -68,7 +68,7 @@ export const statistikaJidelKomponenta = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-jidel": `SELECT COUNT(*) as pocet_jidel FROM jidla`
+    "statistika-jidel": `SELECT COUNT(*) as pocet_jidel FROM jidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });

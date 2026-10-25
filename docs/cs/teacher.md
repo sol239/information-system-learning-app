@@ -5,17 +5,24 @@ Tato příručka slouží k tomu, jak aplikaci používat, konfigurovat, spustit
 ## Obsah
 
 #### 1 Technické informace o aplikaci
+
 #### 2 Jak aplikaci spustit
+
 - 2.1 Lokální spuštění
 - 2.2 Online nasazení
+
 #### 3 Verze aplikace
+
 #### 4 Učitelská verze
+
 - 4.1 Nastavení
 - 4.2 První spuštění
 - 4.3 Přidání systému
 - 4.4 Orientace systému
 - 4.5 Možnosti učitelské verze
+
 #### 5 Tvorba úkolů (stránka návrháře `/designer`)
+
 - 5.1 Počet úrovní
 - 5.2 Tlačítka `Náhled studenta/editoru`, `Nový úkol` a `Možnosti`
 - 5.3 Úkoly
@@ -26,14 +33,21 @@ Tato příručka slouží k tomu, jak aplikaci používat, konfigurovat, spustit
 - 5.8 Sekce Aktivita
 - 5.9 Sekce Dokončení
 - 5.10 Zpětná vazba
+
 #### 6 Studentská verze
+
 - 6.1 Nastavení
 - 6.2 První spuštění
+
 #### 7 Úkoly
+
 - 7.1 Tvorba úkolů
 - 7.2 Jak úkoly fungují
+
 #### 8 Předpřipravený systém s úkoly
+
 #### 9 Konfigurace
+
 - 9.1 `NUXT_PUBLIC_APP_MODE`
 - 9.2 `NUXT_PUBLIC_HTML_AVAILABLE`
 - 9.3 `NUXT_PUBLIC_CSS_AVAILABLE`
@@ -42,20 +56,28 @@ Tato příručka slouží k tomu, jak aplikaci používat, konfigurovat, spustit
 - 9.6 `NUXT_PUBLIC_JS_CLICK_AVAILABLE`
 - 9.7 `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`
 - 9.8 `NUXT_APP_BASE_URL`
+
 #### 10 Struktura adresáře systému
+
 - 10.1 `config.json`
 - 10.2 `create_schema.sql`
+
 #### 11 Tvorba & úprava systémů
+
 - 11.1 Úprava
 - 11.2 Tvorba systému
+
 #### 12 Nahrání systému studentům
+
 #### 13 Zkušební verze
+
 #### 14 Kontakt
+
 #### 15 Odkazy
 
 ## 1 Technické informace o aplikaci
 
-Jedná se o webovou aplikaci postavenou na frameworku Nuxt.js, který je založen na JavaScriptu a běží v prohlížeči uživatele. Aplikace je navržena tak, aby byla snadno použitelná pro učitele i studenty, a umožňuje přizpůsobení obsahu a funkcí podle potřeb výuky. 
+Jedná se o webovou aplikaci postavenou na frameworku Nuxt.js, který je založen na JavaScriptu a běží v prohlížeči uživatele. Aplikace je navržena tak, aby byla snadno použitelná pro učitele i studenty, a umožňuje přizpůsobení obsahu a funkcí podle potřeb výuky.
 
 ## 2 Jak aplikaci spustit
 
@@ -81,6 +103,7 @@ git clone https://github.com/sol239/information-system-learning-app
 Alternativně můžete repozitář stáhnout jako ZIP soubor a rozbalit ho na výše uvedené adrese.
 
 #### Nainstalujte závislosti
+
 Přejděte do složky s projektem a nainstalujte potřebné knihovny:
 
 ```bash
@@ -92,12 +115,11 @@ npm install
 
 V souboru `.env` nastavte `NUXT_PUBLIC_APP_MODE` na `TEACHER` pokud chcete spustit učitelskou verzi aplikace, Jinak nastavte `STUDENT` pro studentskou verzi. Podrobněji jsou režimy aplikace popsané v části **Verze aplikace**.
 
-```env
+````env
 NUXT_PUBLIC_APP_MODE=TEACHER
 ```env
 NUXT_PUBLIC_APP_MODE=TEACHER
-```
-
+````
 
 #### Spusťte vývojový server
 
@@ -132,10 +154,9 @@ V obout případech je potřeba mít účet na GitHubu. Pokud nemáte účet na 
 
 3. Přejděte do nastavení `Settings` každého repozitáře, jděte do sekce `Pages` a v sekci `Source` zvolte `GitHub Actions`. Pokud to nenajdete, tak byste to měli mít na adrese: `https://github.com/<vase-github-uzivatelske-jmeno>/<nazev-repozitare>/settings/pages`
 
-
 4. Přejděte v nastavení repozitáře do sekce `Secrets and variables`, zvolte podsekci `Actions`, zvolte `Variables` místo `Secrets` a klikněte na `New repository variable`.
-    - Vytvořte proměnnou: `NUXT_PUBLIC_APP_MODE` s hodnotu `TEACHER` pro učitelskou verzi aplikace, anebo `STUDENT` pro studentskou verzi. 
-    - Vytvořte proměnnou: `NUXT_APP_BASE_URL` s hodnotou `/<nazev-repozitare>`, například `/information-system-learning-app-student`.
+   - Vytvořte proměnnou: `NUXT_PUBLIC_APP_MODE` s hodnotu `TEACHER` pro učitelskou verzi aplikace, anebo `STUDENT` pro studentskou verzi.
+   - Vytvořte proměnnou: `NUXT_APP_BASE_URL` s hodnotou `/<nazev-repozitare>`, například `/information-system-learning-app-student`.
 
 Například pro repozitář `information-system-learning-app-student` by to mělo vypadat takto:
 
@@ -171,9 +192,8 @@ git push student main
 3. Přejděte do nastavení `Settings` každého repozitáře, jděte do sekce `Pages` a v sekci `Source` zvolte `GitHub Actions`. Pokud to nenajdete, tak byste to měli mít na adrese: `https://github.com/<vase-github-uzivatelske-jmeno>/<nazev-repozitare>/settings/pages`
 
 4. Přejděte v nastavení repozitáře do sekce `Secrets and variables`, zvolte podsekci `Actions`, zvolte `Variables` místo `Secrets` a klikněte na `New repository variable`.
-    - Vytvořte proměnnou: `NUXT_PUBLIC_APP_MODE` s hodnotu `TEACHER` pro učitelskou verzi aplikace, anebo `STUDENT` pro studentskou verzi. 
-    - Vytvořte proměnnou: `NUXT_APP_BASE_URL` s hodnotou `/<nazev-repozitare>`, například `/information-system-learning-app`.
-
+   - Vytvořte proměnnou: `NUXT_PUBLIC_APP_MODE` s hodnotu `TEACHER` pro učitelskou verzi aplikace, anebo `STUDENT` pro studentskou verzi.
+   - Vytvořte proměnnou: `NUXT_APP_BASE_URL` s hodnotou `/<nazev-repozitare>`, například `/information-system-learning-app`.
 
 5. Naklonujte si repozitář výukové aplikace a přepněte se do něj:
 
@@ -221,7 +241,7 @@ V proměnných repozitáře GitHubu vytvote proměnnou `NUXT_PUBLIC_APP_MODE` s 
 
 ```env
 NUXT_PUBLIC_APP_MODE=TEACHER
-``` 
+```
 
 ### 4.2 První spuštění
 
@@ -233,7 +253,8 @@ Po kliknutí se vám otevře okno pro nahrání nového systému, buď můžete 
 
 ### 4.4 Orientace systému
 
-Po vstupu do systému uvidíte vaši, že vaše obrazovka je rozdělena na dvě části vertikální čárou. 
+Po vstupu do systému uvidíte vaši, že vaše obrazovka je rozdělena na dvě části vertikální čárou.
+
 - **Část vlevo**: reprezentuje samotný systém, se kterým budou studenti pracovat. Můžete zde vidět nahoře stránky, na které se dá vstupovat, a pod nimi se nachází různé komponenty.
 - **Část vpravo**: nahoře můžete vidět opět různé možnosti, které jsou popsané v části **Možnosti učitelské verze**. Pod nimi jsou úkoly, dostupné v daném systému. Můžete zde přidávat nové úkoly pomocí tlačítka `Vytvořit úkol`, a u každého úkolu se nachází tlačítko `Koše`, které vám umožní úkol smazat. Na každý úkol jde kliknout a tím jej vybrat. Poté co na něj kliknete, tak ho uvidítě v nabídce modře ohraničený a v systému vlevo uvidítě, tmavě červěně ohraničené komponenty, které jsou k úkolu přiřazené.
 
@@ -249,7 +270,8 @@ V právé části obrazovky se nachází několik možností - tlačítek, kter�
 
 ## 5 Tvorba úkolů (stránka návrháře `/designer`)
 
-V pravém horním rohu jsou tlačítka: 
+V pravém horním rohu jsou tlačítka:
+
 - `Stáhnout systém`: otevře okno, které vám umožní stáhnout systém ve formátu `.zip`, který můžete později nahrát jako nový systém, nebo ho použít v předpřipravených systémech.
 - `Zpět do systému`: přesměruje vás zpět do systému, kde jste byli předtím.
 
@@ -264,8 +286,8 @@ Níže uvidíte položky:
 - `Náhled studenta/editoru`: umožňuje vám přepnout mezi zobrazením úkolů tak, jak je vidí studenti, a zobrazením pro editaci úkolů.
 - `Nový úkol`: po kliknutí se vytvoří nový úkol, který se přidá do první úrovně.
 - `Možnosti`: otevře nabídku, která okbsahuje možnosti:
-    - `Přidat úkol z JSON`: umožňuje vám přidat úkol z JSON formátu.
-    - `Stáhnout úkol jako JSON`: umožňuje vám stáhnout úkol ve formátu JSON, který můžete později použít pro přidání úkolu z JSON.
+  - `Přidat úkol z JSON`: umožňuje vám přidat úkol z JSON formátu.
+  - `Stáhnout úkol jako JSON`: umožňuje vám stáhnout úkol ve formátu JSON, který můžete později použít pro přidání úkolu z JSON.
     Tyhle možnosti tu jsou hlavně pro případ, kdybyste chtěli si třeba stáhnout reprezentaci úkolu, tak abyste mohli říct nějakému nástroji umělé inteligence, aby vám ji upravil.
 
 ### 5.3 Úkoly
@@ -425,10 +447,6 @@ Konfigurace aplikace slouží k např. nastavení verze aplikace (učitelská vs
 
 Určuje, jestli se aplikace spustí v učitelském, nebo studentském režimu. Hodnota `TEACHER` zapne učitelskou verzi aplikace, ve které je možné vytvářet a upravovat systémy, úkoly a jejich obsah. Každá jiná hodnota, typicky `STUDENT`, učitelský režim vypne a aplikace se chová jako studentská verze určená pro řešení připravených úkolů.
 
-
-
-
-
 ### 9.2 `NUXT_PUBLIC_HTML_AVAILABLE`
 
 Zapíná nebo vypíná viditelnost editoru pro HTML část komponenty. Pokud je hodnota `true`, student nebo učitel vidí HTML sekci při opravě komponent. Pokud je hodnota `false`, HTML sekce se v editoru nezobrazí a uživatel ji nemůže upravovat.
@@ -469,12 +487,7 @@ Hlavní konfigurační soubor systému. Obsahuje základní informace o systému
 
 SQL soubor pro vytvoření výchozí databáze systému. Typicky obsahuje příkazy pro vytvoření tabulek, vložení počátečních dat a nastavení stavu, se kterým studenti začínají pracovat. Díky tomuto souboru může mít každý systém vlastní databázový model i vlastní ukázková data. Když se systém poprvé vkládá do aplikace, tak se spustí tento SQL skript pro nastavení databáze do výchozího stavu. (Aplikace používá databázi sql.js, což je databáze SQLite běžící v prohlížeči, takže tento SQL skript se spouští nad touto databází.)
 
-
-
-
-
 ## 11 Tvorba & úprava systémů
-
 
 ### 11.1 Úprava
 
@@ -490,9 +503,7 @@ Až budete mít systém připravený, můžete ho nahrát do aplikace, aby ho st
 
 ```json
 {
-  "systems": [
-    "skolni-tabor-palava"
-  ]
+  "systems": ["skolni-tabor-palava"]
 }
 ```
 
@@ -509,4 +520,3 @@ Pokud máte jakékoliv dotazy, nápady na vylepšení, nebo chcete sdílet své 
 ## 15 Odkazy
 
 1. https://www.cloudflare.com/learning/serverless/glossary/client-side-vs-server-side/
-

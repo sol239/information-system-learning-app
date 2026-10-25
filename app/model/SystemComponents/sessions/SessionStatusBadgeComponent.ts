@@ -53,6 +53,6 @@ if (aktualni_pocet >= celkova_kapacita) {
 
   sql: {
     "ziskat-kapacitu": `SELECT kapacita AS celkova_kapacita FROM turnusy WHERE id_turnusu = idTurnusu`,
-    "ziskat-obsazenost": `SELECT COUNT(*) AS aktualni_pocet FROM turnusy_ucastnici WHERE id_turnusu = idTurnusu`
-  }
+    "ziskat-obsazenost": `SELECT COUNT(*) AS aktualni_pocet FROM turnusy_ucastnici WHERE id_turnusu = idTurnusu`,
+  },
 });

@@ -1,12 +1,15 @@
 <template>
   <UModal :title="t('change_task_set')">
     <UButton color="neutral" variant="soft" size="xs">
-      {{ t('change_task_set') }}
+      {{ t("change_task_set") }}
     </UButton>
 
     <template #body>
       <div class="space-y-4">
-        <SystemZipUploadSection v-model="selectedFile" :system-preview="systemPreview" />
+        <SystemZipUploadSection
+          v-model="selectedFile"
+          :system-preview="systemPreview"
+        />
         <UDivider :label="t('or')" />
         <PreloadedSystemSuggestions
           :systems-to-preload="systemsToPreload"
@@ -29,20 +32,21 @@
       <UButton
         color="teacher"
         icon="i-lucide-chevron-right"
-        :disabled="(!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists"
+        :disabled="
+          (!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists
+        "
         :loading="loading"
         size="sm"
         @click="onUpload(close)"
       >
-        {{ t('change_task_set') }}
+        {{ t("change_task_set") }}
       </UButton>
       <UButton color="neutral" variant="outline" size="sm" @click="close">
-        {{ t('cancel') }}
+        {{ t("cancel") }}
       </UButton>
     </template>
   </UModal>
 </template>
-
 
 <script setup lang="ts">
 /* 1. Imports */
@@ -50,7 +54,7 @@
 /* 2. Stores */
 
 /* 3. Context hooks */
-const { t } = useI18n()
+const { t } = useI18n();
 
 /* 4. Constants (non-reactive) */
 
@@ -71,7 +75,7 @@ const {
   selectedPreloadedSystem,
   selectPreloadedSystem,
   onUpload,
-} = useSystemUploadModal()
+} = useSystemUploadModal();
 
 /* 9. Computed */
 
@@ -82,6 +86,5 @@ const {
 /* 12. Lifecycle */
 
 /* 13. defineExpose */
-defineExpose({
-})
+defineExpose({});
 </script>

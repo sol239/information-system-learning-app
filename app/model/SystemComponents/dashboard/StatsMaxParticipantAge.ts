@@ -48,7 +48,7 @@ export const statsMaxParticipantAgeComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-max-vek-ucastnika": `SELECT MAX(u.vek) AS max_vek_ucastnika FROM ucastnici u`
+    "statistika-max-vek-ucastnika": `SELECT MAX(u.vek) AS max_vek_ucastnika FROM ucastnici u`,
   },
-  sql_click: {}
+  sql_click: {},
 });

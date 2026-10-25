@@ -4,7 +4,8 @@ export const editVstupNazevJidlaKomponenta = new Component({
   id: "edit-vstup-nazev-jidla",
   name: "Vstup – Edit Název jídla",
   tags: ["jídla"],
-  description: "Pole pro úpravu názvu jídla. Vyžaduje generalVariable: idJidla.",
+  description:
+    "Pole pro úpravu názvu jídla. Vyžaduje generalVariable: idJidla.",
 
   html: `
 <div class="form-radek">
@@ -29,6 +30,6 @@ if (je_nazev_validni) {
     barva_ramecku = "#ff4f92";
 }`,
   sql: {
-    nacistNazevJidla: `SELECT jmeno AS edit_vstup_nazev_jidla FROM jidla WHERE id_jidla = idJidla`
+    nacistNazevJidla: `SELECT jmeno AS edit_vstup_nazev_jidla FROM jidla WHERE id_jidla = idJidla`,
   },
 });

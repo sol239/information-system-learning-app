@@ -48,7 +48,7 @@ export const seznamAlergenuJidlaKomponenta = new Component({
     "seznam-alergenu-jidla": `SELECT GROUP_CONCAT('<span class="pilulka-alergenu-jidla">' || a.jmeno || '</span>', '') AS pilulky_alergenu_jidla
 FROM alergeny a
 JOIN jidla_alergeny ja ON a.id_alergenu = ja.id_alergenu
-WHERE ja.id_jidla = idJidla`
+WHERE ja.id_jidla = idJidla`,
   },
-  sql_click: {}
+  sql_click: {},
 });

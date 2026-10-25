@@ -48,7 +48,7 @@ export const statsMaxParticipantsPerSessionComponent = new Component({
   js: ``,
   js_click: ``,
   sql: {
-    "statistika-max-ucastniku-turnusu": `SELECT MAX(pocet_zapsanych) as maximalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);`
+    "statistika-max-ucastniku-turnusu": `SELECT MAX(pocet_zapsanych) as maximalni_pocet_zapsanych FROM (SELECT COUNT(*) AS pocet_zapsanych FROM turnusy_ucastnici GROUP BY id_turnusu);`,
   },
-  sql_click: {}
+  sql_click: {},
 });

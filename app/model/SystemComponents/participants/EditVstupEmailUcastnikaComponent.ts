@@ -4,7 +4,8 @@ export const editVstupEmailUcastnikaKomponenta = new Component({
   id: "edit-vstup-email-ucastnika",
   name: "Vstup – Edit Email účastníka",
   tags: ["účastníci"],
-  description: "Pole pro úpravu emailu účastníka. Vyžaduje generalVariable: idUcastnika.",
+  description:
+    "Pole pro úpravu emailu účastníka. Vyžaduje generalVariable: idUcastnika.",
 
   html: `<div class="form-radek">
   <label>Email:</label>
@@ -29,6 +30,6 @@ if (je_validni_email) {
 }
 `,
   sql: {
-    nacistEmailUcastnika: `SELECT email AS edit_vstup_email_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`
+    nacistEmailUcastnika: `SELECT email AS edit_vstup_email_ucastnika FROM ucastnici WHERE id_ucastnika = idUcastnika`,
   },
 });
