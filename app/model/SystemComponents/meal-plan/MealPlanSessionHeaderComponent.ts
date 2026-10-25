@@ -23,8 +23,8 @@ export const jidelnicekHlavickaTurnusuKomponenta = new Component({
 }
 
 #jidelnicek-turnusu-popisek {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #111827;
 }
 `,

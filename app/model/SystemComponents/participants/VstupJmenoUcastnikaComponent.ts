@@ -15,7 +15,7 @@ export const vstupJmenoUcastnikaKomponenta = new Component({
 
   css: `
 .form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.form-radek label { font-size: 12px; font-weight: 600; color: #374151; }
+.form-radek label { font-size: 12px !important; font-weight: 500; color: #374151; }
 .form-radek input { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }
 `,
 

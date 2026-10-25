@@ -33,8 +33,8 @@ export const razeniVedoucichKomponenta = new Component({
 }
 
 #razeni-vedoucich label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12px !important;
+  font-weight: 500;
   color: #4c1d95;
   white-space: nowrap;
 }

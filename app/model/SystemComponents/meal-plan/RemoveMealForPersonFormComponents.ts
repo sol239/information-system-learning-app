@@ -11,8 +11,8 @@ const fieldCss = `
 
 .jidelnicek-odebrat-jidlo-pole label {
   color: #374151;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 12px !important;
+  font-weight: 500;
 }
 
 .jidelnicek-odebrat-jidlo-pole select {

@@ -25,8 +25,8 @@ export const jidelnicekRadekJidlaKomponenta = new Component({
 }
 
 #jidelnicek-jidlo-nazev {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: #111827;
 }
 `,

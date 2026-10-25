@@ -23,7 +23,7 @@ export const jidelnicekHlavickaDneKomponenta = new Component({
 }
 
 #jidelnicek-dne-datum {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
   color: #111827;
 }

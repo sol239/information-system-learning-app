@@ -7,9 +7,7 @@
     <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
       <div class="flex items-center gap-2 mb-4">
         <UIcon name="i-heroicons-user-plus" class="w-5 h-5 text-sky-600" />
-        <h2 class="text-base font-semibold text-gray-900">
-          Přidat jídlo osobě
-        </h2>
+        <h2 class="text-sm font-semibold text-gray-900">Přidat jídlo osobě</h2>
       </div>
 
       <div class="flex flex-row flex-wrap items-end gap-4">
@@ -28,9 +26,7 @@
     <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
       <div class="flex items-center gap-2 mb-4">
         <UIcon name="i-heroicons-trash" class="w-5 h-5 text-red-600" />
-        <h2 class="text-base font-semibold text-gray-900">
-          Odebrat jídlo osobě
-        </h2>
+        <h2 class="text-sm font-semibold text-gray-900">Odebrat jídlo osobě</h2>
       </div>
 
       <div class="flex flex-row flex-wrap items-end gap-4">
@@ -481,14 +477,21 @@ onMounted(() => {
   font-size: 12px;
 }
 
-.meal-book-page :deep(#jidelnicek-turnusu-popisek),
-.meal-book-page :deep(#jidelnicek-dne-datum),
+.meal-book-page :deep(#jidelnicek-turnusu-popisek) {
+  font-size: 14px;
+}
+
+.meal-book-page :deep(#jidelnicek-dne-datum) {
+  font-size: 12px;
+}
+
 .meal-book-page :deep(#jidelnicek-jidlo-nazev) {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .meal-book-page :deep(.component-html label) {
   font-size: 14px;
+  font-weight: 500;
 }
 
 .meal-book-page :deep(.component-html select) {

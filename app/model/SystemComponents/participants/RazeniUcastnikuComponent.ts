@@ -33,8 +33,8 @@ export const razeniUcastnikuKomponenta = new Component({
 }
 
 #razeni-ucastniku label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12px !important;
+  font-weight: 500;
   color: #0e7490;
   white-space: nowrap;
 }

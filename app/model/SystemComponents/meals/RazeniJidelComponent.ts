@@ -32,8 +32,8 @@ export const razeniJidelKomponenta = new Component({
 }
 
 #razeni-jidel label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12px !important;
+  font-weight: 500;
   color: #065f46;
   white-space: nowrap;
 }
