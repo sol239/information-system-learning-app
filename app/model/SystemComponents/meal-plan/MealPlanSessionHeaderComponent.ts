@@ -19,11 +19,11 @@ export const jidelnicekHlavickaTurnusuKomponenta = new Component({
 }
 
 #jidelnicek-turnusu-ikona {
-  font-size: 20px;
+  font-size: 12px;
 }
 
 #jidelnicek-turnusu-popisek {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #111827;
 }
@@ -47,7 +47,7 @@ export const jidelnicekDatumTurnusuKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 4px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #cffafe;
@@ -76,7 +76,7 @@ export const jidelnicekPocetJidelTurnusuKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 4px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #dcfce7;
@@ -105,7 +105,7 @@ export const jidelnicekPocetPorciTurnusuKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 4px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #ede9fe;

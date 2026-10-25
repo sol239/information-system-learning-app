@@ -39,8 +39,8 @@ export const statistikaJidelKomponenta = new Component({
 #statistika-jidel-ikona {
   color: #334155;
   flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
+  width: 25px;
+  height: 25px;
 }
 
 #statistika-jidel-ikona svg {

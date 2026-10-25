@@ -13,7 +13,7 @@ export const stitekTurnusuVedoucihoKomponenta = new Component({
   css: `
 #stitek-turnusu-vedouciho {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   white-space: pre-line;
 }

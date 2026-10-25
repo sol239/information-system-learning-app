@@ -7,13 +7,13 @@
       <div class="flex flex-wrap items-center gap-4 py-2">
         <!-- Left Section: Navigation Menu -->
         <nav
-          class="flex flex-wrap items-center gap-1 p-1 bg-gray-100/50 rounded-lg border border-gray-200/50"
+          class="flex flex-wrap items-center gap-1 p-1 bg-gray-100/50 rounded-lg border border-gray-200/50 lg:max-[1441px]:gap-1 lg:max-[1441px]:p-1"
         >
           <template v-for="item in localItems" :key="item.route">
             <NuxtLink
               v-if="isPageAvailable(item.route)"
               :to="item.to"
-              class="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all duration-200 group relative"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-md transition-none relative lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
               :class="[
                 $route.path === item.to
                   ? 'bg-white text-gray-900 shadow-sm ring-1 ring-gray-200/50'
@@ -22,24 +22,25 @@
             >
               <UIcon
                 :name="item.icon || 'i-lucide-file'"
-                class="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
+                class="w-5 h-5 lg:max-[1441px]:size-[18px]"
               />
-              <span class="text-sm font-medium">{{ item.label }}</span>
+              <span class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]">{{ item.label }}</span>
 
               <div
                 v-if="$route.path === item.to"
                 class="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary-500 rounded-full"
+                :style="item.activeColor ? { backgroundColor: item.activeColor } : undefined"
               />
             </NuxtLink>
 
             <UPopover v-else mode="hover" arrow>
               <button
                 type="button"
-                class="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-gray-400 opacity-70"
+                class="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-gray-400 opacity-70 lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
                 :aria-label="`${item.label}: ${t('task_page_unavailable_description')}`"
               >
-                <UIcon :name="item.icon || 'i-lucide-lock'" class="h-5 w-5" />
-                <span class="text-sm font-medium">{{ item.label }}</span>
+                <UIcon :name="item.icon || 'i-lucide-lock'" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
+                <span class="text-sm font-medium lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]">{{ item.label }}</span>
               </button>
               <template #content>
                 <div class="app-popover-content">
@@ -58,29 +59,29 @@
           </template>
         </nav>
 
-        <div class="right-actions ml-auto flex items-center">
+        <div class="ml-auto flex items-center gap-2 lg:max-[1441px]:gap-[7px]">
           <NuxtLink
             v-if="isPageAvailable(databasePageRoute)"
             id="go-to-database-button"
             :to="databaseTo"
-            class="flex items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium transition-all duration-200"
+            class="flex items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium transition-none lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
             :class="[
               $route.path === databaseTo
                 ? 'bg-white text-gray-900 shadow-sm ring-1 ring-gray-200/60'
                 : 'text-gray-600 hover:bg-white/70 hover:text-gray-900',
             ]"
           >
-            <UIcon name="i-heroicons-table-cells" class="h-5 w-5" />
+            <UIcon name="i-heroicons-table-cells" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
             <span>{{ t("database") }}</span>
           </NuxtLink>
 
           <UPopover v-else mode="hover" arrow>
             <button
               type="button"
-              class="flex cursor-not-allowed items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium text-gray-400 opacity-70"
+              class="flex cursor-not-allowed items-center gap-2 rounded-lg border border-gray-200/70 bg-gray-100/50 px-3 py-2 text-sm font-medium text-gray-400 opacity-70 lg:max-[1441px]:gap-[7px] lg:max-[1441px]:px-[11px] lg:max-[1441px]:py-[5px] lg:max-[1441px]:text-[13px] lg:max-[1441px]:leading-[18px]"
               :aria-label="`${t('database')}: ${t('task_page_unavailable_description')}`"
             >
-              <UIcon name="i-heroicons-table-cells" class="h-5 w-5" />
+              <UIcon name="i-heroicons-table-cells" class="h-5 w-5 lg:max-[1441px]:size-[18px]" />
               <span>{{ t("database") }}</span>
             </button>
             <template #content>
@@ -101,7 +102,7 @@
           <button
             color="primary"
             type="button"
-            class="mobile-tasks-nav-button"
+            class="inline-flex items-center justify-center rounded-lg border border-gray-300/70 bg-gray-100/50 px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 hover:bg-white/70 hover:text-gray-900 lg:hidden"
             @click="emit('open-tasks')"
           >
             {{ t("tasks") }}
@@ -117,6 +118,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { TaskHelper } from "~/core/systems/TaskHelper";
 import { isTaskDone } from "~/utils/taskLevels";
+import { SYSTEM_NAVBAR_PAGES } from "~/utils/systemPages";
 
 /* 2. Stores */
 const systemsStore = useSystemsStore();
@@ -209,6 +211,7 @@ const localItems = computed(() => {
     label: page.name,
     route: page.route,
     icon: page.icon,
+    activeColor: page.activeColor || SYSTEM_NAVBAR_PAGES.find((defaultPage) => defaultPage.route === page.route)?.activeColor,
     to: `/systems/${systemsStore.selectedSystemId}${page.route}`,
     data_target: page.route.replace(/^\//, "").replace(/\//g, "-"),
   }));
@@ -262,71 +265,3 @@ onMounted(() => {
   });
 });
 </script>
-
-<style scoped>
-.right-actions {
-  gap: 0.5rem;
-}
-
-.mobile-tasks-nav-button {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgb(209 213 219 / 0.7);
-  border-radius: 0.5rem;
-  background: rgb(243 244 246 / 0.5);
-  padding: 0.5rem 0.75rem;
-  color: #4b5563;
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25rem;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.mobile-tasks-nav-button:hover {
-  background: rgb(255 255 255 / 0.7);
-  color: #111827;
-}
-
-/* Hide button labels on mobile screens */
-@media (max-width: 639px) {
-  .mobile-hidden {
-    display: none;
-  }
-}
-
-@media (max-width: 1023px) {
-  .mobile-tasks-nav-button {
-    display: inline-flex;
-  }
-}
-
-@media (min-width: 1024px) and (max-width: 1440px) {
-  nav {
-    gap: 0.225rem;
-    padding: 0.225rem;
-  }
-
-  nav a,
-  nav button,
-  #go-to-database-button,
-  .mobile-tasks-nav-button {
-    gap: 0.45rem;
-    padding: 0.3375rem 0.675rem;
-    font-size: 0.7875rem;
-    line-height: 1.125rem;
-  }
-
-  nav svg,
-  #go-to-database-button svg,
-  .mobile-tasks-nav-button svg {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .right-actions {
-    gap: 0.45rem;
-  }
-}
-
-</style>

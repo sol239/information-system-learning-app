@@ -7,10 +7,10 @@ export const statsMaxParticipantsPerSessionComponent = new Component({
   description: `Zobrazuje maximální počet účastníků zapsaných v jednom turnusu.`,
   html: `
   <div id="statistika-max-ucastniku-turnusu-card">
-    <div id="statistika-max-ucastniku-turnusu-icon">#</div>
+    <div id="statistika-max-ucastniku-turnusu-icon">MAX</div>
     <div id="statistika-max-ucastniku-turnusu-content">
       <div id="statistika-max-ucastniku-turnusu-number">{{ maximalni_pocet_zapsanych }}</div>
-      <div id="statistika-max-ucastniku-turnusu-label">max. účastníků v turnusu</div>
+      <div id="statistika-max-ucastniku-turnusu-label">maximální počet účastníků v turnusu</div>
     </div>
   </div>
   `,
@@ -28,13 +28,13 @@ export const statsMaxParticipantsPerSessionComponent = new Component({
 }
 
 #statistika-max-ucastniku-turnusu-icon {
-  font-size: 21px;
+  font-size: 13px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-max-ucastniku-turnusu-number {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #111111;
 }

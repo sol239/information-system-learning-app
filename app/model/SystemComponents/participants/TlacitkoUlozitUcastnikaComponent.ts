@@ -11,7 +11,7 @@ export const tlacitkoUlozitUcastnikaKomponenta = new Component({
 `,
 
   css: `
-.btn-uspech { background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+.btn-uspech { background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .btn-uspech:disabled { background: #9ca3af; cursor: not-allowed; opacity: 0.65; }
 `,
 

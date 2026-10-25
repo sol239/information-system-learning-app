@@ -19,14 +19,14 @@ export const celkovyPocetJidelKomponenta = new Component({
   padding: 6px 16px;
   background: #18181b;
   border: 1px solid #3f3f46;
-  border-radius: 10px;
+  border-radius: 8px;
   color: #e4e4e7;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 #ikona-poctu-jidel {
-  font-size: 15px;
+  font-size: 12px;
 }
 
 #popisek-poctu-jidel {

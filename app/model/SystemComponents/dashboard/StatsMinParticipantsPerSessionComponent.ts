@@ -10,7 +10,7 @@ export const statsMinParticipantsPerSessionComponent = new Component({
     <div id="statistika-min-ucastniku-turnusu-icon">MIN</div>
     <div id="statistika-min-ucastniku-turnusu-content">
       <div id="statistika-min-ucastniku-turnusu-number">{{ minimalni_pocet_zapsanych }}</div>
-      <div id="statistika-min-ucastniku-turnusu-label">min. účastníků v turnusu</div>
+      <div id="statistika-min-ucastniku-turnusu-label">minimální počet účastníků v turnusu</div>
     </div>
   </div>
   `,
@@ -28,13 +28,13 @@ export const statsMinParticipantsPerSessionComponent = new Component({
 }
 
 #statistika-min-ucastniku-turnusu-icon {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-min-ucastniku-turnusu-number {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #111111;
 }

@@ -29,15 +29,15 @@ export const statistikaUcastnikuKomponenta = new Component({
 
 #statistika-ucastniku-ikona {
   flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  font-size: 24px;
-  line-height: 28px;
+  width: 25px;
+  height: 25px;
+  font-size: 22px;
+  line-height: 25px;
   text-align: center;
 }
 
 #statistika-ucastniku-pocet {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #111111;
 }

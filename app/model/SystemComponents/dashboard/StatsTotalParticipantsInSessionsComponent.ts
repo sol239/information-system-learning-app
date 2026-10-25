@@ -28,13 +28,13 @@ export const statsTotalParticipantsInSessionsComponent = new Component({
 }
 
 #statistika-celkem-ucasti-turnusu-icon {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-celkem-ucasti-turnusu-number {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #111111;
 }

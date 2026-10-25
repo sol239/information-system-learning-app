@@ -1,19 +1,57 @@
 <template>
-    <div class="p-6 flex flex-col gap-6 max-w-7xl mx-auto">
+    <div class="participants-page p-6 flex flex-col gap-6 max-w-7xl mx-auto text-xs">
 
         <!-- Page header -->
-        <h1 class="text-2xl font-semibold">{{ t('participants') }}</h1>
+        <div class="flex flex-wrap items-center gap-3">
+            <h1 class="system-page-heading" style="--system-heading-color: #22d3ee">{{ t('participants') }}</h1>
+            <!-- Add participant modal -->
+            <ModalContainer v-model:open="createModalOpen" title="Přidat účastníka" class="ml-auto w-fit">
+                <button type="button" class="participant-button participant-button--add">
+                    <UIcon name="i-heroicons-plus" class="size-4" aria-hidden="true" />
+                    Přidat účastníka
+                </button>
+
+                <template #header>
+                    <div class="participant-edit-header">
+                        <div class="flex-1">
+                            <h2 class="text-base font-semibold text-gray-900">Přidat účastníka</h2>
+                            <p class="mt-1 text-xs text-gray-500">Vyplňte údaje nového účastníka a vyberte jeho turnusy.</p>
+                        </div>
+                        <button type="button" class="participant-edit-close" :aria-label="t('close')"
+                            @click.stop="createModalOpen = false">
+                            <UIcon name="i-lucide-x" class="size-4" aria-hidden="true" />
+                        </button>
+                    </div>
+                </template>
+
+                <template #content>
+                    <div class="modal-container participant-form entity-modal-form">
+                        <ComponentWrapper :component="vstupJmenoComponent" />
+                        <ComponentWrapper :component="vstupEmailComponent" />
+                        <ComponentWrapper :component="vstupTelefonComponent" />
+                        <ComponentWrapper :component="vstupAdresaComponent" />
+                        <ComponentWrapper :component="vstupVekComponent" />
+                        <ComponentWrapper :component="vstupAlergenyComponent" />
+                        <ComponentWrapper :component="vstupTurnusyComponent" />
+                        <div class="entity-modal-actions">
+                            <button type="button" class="entity-modal-cancel" @click="createModalOpen = false">Zrušit</button>
+                            <ComponentWrapper :component="btnUlozitComponent" @action-completed="handleParticipantCreated" />
+                        </div>
+                    </div>
+                </template>
+            </ModalContainer>
+        </div>
 
         <!-- Toolbar -->
         <div class="flex flex-row flex-wrap items-center gap-3">
             <!-- Session filter dropdown -->
-            <USelect
-                v-model="selectedSessionId"
-                :items="sessionFilterItems"
-                value-key="value"
-                label-key="label"
-                class="w-40"
-            />
+            <div class="participant-select">
+                <select v-model="selectedSessionId" :aria-label="t('all_sessions')">
+                    <option v-for="item in sessionFilterItems" :key="item.value ?? 'all'" :value="item.value">
+                        {{ item.label }}
+                    </option>
+                </select>
+            </div>
 
             <!-- Capacity bar component -->
             <ComponentWrapper :component="capacityBarComponent" />
@@ -24,33 +62,13 @@
                 icon="i-heroicons-magnifying-glass"
                 placeholder="Jméno, email, telefon nebo adresa"
                 class="w-56"
+                :ui="{ base: 'h-[26px] text-xs' }"
             />
 
             <!-- Order select -->
             <ComponentWrapper :component="razeniComponent" />
 
-            <!-- Add participant modal -->
-            <ModalContainer v-model:open="createModalOpen" class="w-fit">
-                <UButton label="Přidat účastníka" color="primary" icon="i-heroicons-plus" size="sm" />
 
-                <template #content>
-                    <div class="modal-container">
-                        <ComponentWrapper :component="vstupJmenoComponent" />
-                        <ComponentWrapper :component="vstupEmailComponent" />
-                        <ComponentWrapper :component="vstupTelefonComponent" />
-                        <ComponentWrapper :component="vstupAdresaComponent" />
-                        <ComponentWrapper :component="vstupVekComponent" />
-                        <ComponentWrapper :component="vstupAlergenyComponent" />
-                        <ComponentWrapper :component="vstupTurnusyComponent" />
-                        <div class="flex gap-2">
-                            <UButton
-label="Zrušit" color="neutral" variant="solid" size="sm"
-                                @click="createModalOpen = false" />
-                            <ComponentWrapper :component="btnUlozitComponent" @action-completed="handleParticipantCreated" />
-                        </div>
-                    </div>
-                </template>
-            </ModalContainer>
         </div>
 
         <!-- Participants grid -->
@@ -58,7 +76,7 @@ label="Zrušit" color="neutral" variant="solid" size="sm"
             <div
                 v-for="participantId in filteredParticipantIds"
                 :key="participantId"
-                class="bg-white rounded-xl border-2 border-cyan-400 p-5 flex flex-col gap-4 hover:shadow-md transition-shadow"
+                class="bg-white rounded-xl border-2 border-cyan-400 p-5 flex flex-col gap-2 hover:shadow-md transition-shadow"
             >
                 <!-- Name + age + email + phone + address -->
                 <ComponentWrapper
@@ -77,11 +95,24 @@ label="Zrušit" color="neutral" variant="solid" size="sm"
 
                 <!-- Actions -->
                 <div class="flex gap-3 pt-1 border-t border-gray-100">
-                    <ModalContainer v-model:open="editModalOpen[participantId]" class="flex-1">
-                        <UButton label="Upravit" color="neutral" variant="subtle" size="sm" class="flex-1" />
+                    <ModalContainer v-model:open="editModalOpen[participantId]" title="Upravit účastníka" class="flex-1">
+                        <button type="button" class="participant-button participant-button--edit">Upravit účastníka</button>
+
+                        <template #header>
+                            <div class="participant-edit-header">
+                                <div class="flex-1">
+                                    <h2 class="text-base font-semibold text-gray-900">Upravit účastníka</h2>
+                                    <p class="mt-1 text-xs text-gray-500">Upravte údaje účastníka a jeho přiřazení k turnusům.</p>
+                                </div>
+                                <button type="button" class="participant-edit-close" :aria-label="t('close')"
+                                    @click.stop="editModalOpen[participantId] = false">
+                                    <UIcon name="i-lucide-x" class="size-4" aria-hidden="true" />
+                                </button>
+                            </div>
+                        </template>
 
                         <template #content>
-                            <div class="modal-container">
+                            <div class="modal-container participant-form entity-modal-form">
                                 <ComponentWrapper
                                     :component="withVars(editVstupJmenoComponent, [new Variable('idUcastnika', participantId)])" />
                                 <ComponentWrapper
@@ -96,10 +127,8 @@ label="Zrušit" color="neutral" variant="solid" size="sm"
                                     :component="withVars(editVstupAlergenyComponent, [new Variable('idUcastnika', participantId)])" />
                                 <ComponentWrapper
                                     :component="withVars(editVstupTurnusyComponent, [new Variable('idUcastnika', participantId)])" />
-                                <div class="flex gap-2">
-                                    <UButton
-label="Zrušit" color="neutral" variant="solid" size="sm"
-                                        @click="editModalOpen[participantId] = false" />
+                                <div class="entity-modal-actions entity-modal-actions--edit">
+                                    <button type="button" class="entity-modal-cancel" @click="editModalOpen[participantId] = false">Zrušit</button>
                                     <ComponentWrapper
                                         :component="withVars(editBtnUlozitComponent, [new Variable('idUcastnika', participantId)])"
                                         @action-completed="handleParticipantUpdated(participantId)" />
@@ -119,7 +148,7 @@ label="Zrušit" color="neutral" variant="solid" size="sm"
         <!-- Empty state -->
         <div v-if="filteredParticipantIds.length === 0 && isDbReady" class="text-center py-12">
             <UIcon name="i-heroicons-users" class="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ t('no_participants') }}</h3>
+            <h3 class="text-xs font-semibold text-gray-900 mb-2">{{ t('no_participants') }}</h3>
             <p class="text-gray-500">{{ t('no_participants_description') }}</p>
         </div>
     </div>
@@ -338,11 +367,155 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.participants-page :deep(#kontaktni-udaje-oddeleni) {
+    border-top-color: #9ca3af;
+}
+
+.participants-page :deep(.component-html :where(*):not(#jmeno-ucastnika)),
+.participants-page :deep(button),
+.participants-page :deep(input),
+.participants-page :deep(select),
+.participant-form :deep(.component-html *),
+.participant-form :deep(button),
+.participant-form :deep(input),
+.participant-form :deep(select),
+.participant-form :deep(label) {
+    font-size: 12px;
+}
+
+.participant-select,
+.participants-page :deep(#razeni-ucastniku) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 26px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border: 1px solid #0e7490;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.participant-select select {
+    border: 0;
+    background: transparent;
+    color: #111827;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.participant-select:focus-within {
+    outline: 2px solid #0e7490;
+    outline-offset: 2px;
+}
+
+.participant-button,
+.participants-page :deep(#smazat-ucastnika-tlacitko) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 26px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.participant-button--add {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.participant-button--add:hover {
+    background: #dcfce7;
+}
+
+.participant-button--edit {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.participant-button--edit:hover {
+    background: #dbeafe;
+}
+
+.participant-button--edit,
+.participants-page :deep(#smazat-ucastnika-tlacitko) {
+    height: auto;
+    min-height: 26px;
+    padding: 6px 14px;
+    line-height: 1.4;
+    white-space: normal;
+    text-align: center;
+}
+
+.participants-page :deep(#smazat-ucastnika-tlacitko) {
+    border-color: #ef4444;
+}
+
+.participants-page :deep(#smazat-ucastnika-tlacitko:hover) {
+    background: #fee2e2;
+}
+
+.participants-page :deep(#vek-ucastnika-stitek),
+.participants-page :deep(.stitek-alergenu-ucastnika),
+.participants-page :deep(#widget-kapacity-ucastniku) {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 26px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.participant-edit-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.participant-edit-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.participant-edit-close:hover {
+    background: #f1f5f9;
+}
+
 .modal-container {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
     box-sizing: border-box;
+}
+
+.participants-page :deep(#vek-ucastnika-stitek),
+.participants-page :deep(.stitek-alergenu-ucastnika),
+.participants-page :deep(#widget-kapacity-ucastniku),
+.participants-page :deep(button),
+.participant-form :deep(button) {
+    border-radius: 8px;
 }
 </style>

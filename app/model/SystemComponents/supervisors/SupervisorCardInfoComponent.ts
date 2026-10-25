@@ -23,9 +23,12 @@ export const kartaVedoucihoKomponenta = new Component({
     <span id="adresa-vedouciho-ikona">📍</span>
     <span id="adresa-vedouciho">{{ adresa }}</span>
   </div>
+  <hr id="kontaktni-udaje-oddeleni">
 </div>
 `,
   css: `
+#kontaktni-udaje-oddeleni { width: 100%; margin: 2px 0 0; border: 0; border-top: 1px solid #9ca3af; }
+
 #karta-vedouciho {
   display: flex;
   flex-direction: column;
@@ -41,7 +44,7 @@ export const kartaVedoucihoKomponenta = new Component({
 }
 
 #jmeno-vedouciho {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: #111827;
   line-height: 1.3;
@@ -51,7 +54,7 @@ export const kartaVedoucihoKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 3px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #ede9fe;
@@ -64,12 +67,12 @@ export const kartaVedoucihoKomponenta = new Component({
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   color: #374151;
 }
 
 #email-vedouciho-ikona, #telefon-vedouciho-ikona, #adresa-vedouciho-ikona {
-  font-size: 14px;
+  font-size: 12px;
   color: #6b7280;
   flex-shrink: 0;
 }

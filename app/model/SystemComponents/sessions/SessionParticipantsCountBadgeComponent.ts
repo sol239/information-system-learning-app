@@ -16,14 +16,14 @@ export const sessionParticipantsCountBadgeComponent = new Component({
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   border: 1px solid #2252d9;
   background: #dbeafe;
 }
 
 #text-stitku-ucastniku {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   color: #2252d9;
   line-height: 1;
 }

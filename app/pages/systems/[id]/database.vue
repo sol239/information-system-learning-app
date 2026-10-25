@@ -1,5 +1,28 @@
 <template>
     <div class="p-6">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 class="system-page-heading" style="--system-heading-color: var(--ui-color-orange-500)">
+            {{ t('database') }}
+        </h1>
+                    <div v-if="isDbReady" class="ml-auto flex justify-end">
+                        <UPopover mode="hover" arrow>
+                            <UButton
+id="reset-database-button" icon="i-heroicons-circle-stack" color="orange" variant="soft"
+                                size="sm" :loading="isResettingDatabase" @click="handleResetDatabase">
+                                {{ t('reset_database') }}
+                            </UButton>
+                            <template #content>
+                                <div class="app-popover-content">
+                                    <UIcon name="i-heroicons-circle-stack" class="app-popover-icon" />
+                                    <div class="app-popover-text">
+                                        <strong class="app-popover-title">{{ t('reset_database_popover_title') }}</strong>
+                                        <span class="app-popover-description">{{ t('reset_database_popover_description') }}</span>
+                                    </div>
+                                </div>
+                            </template>
+                        </UPopover>
+                    </div>
+        </div>
         <div v-if="!isDbReady" class="flex items-center gap-2 mb-6">
             <UButton
 v-if="!isDbReady" icon="i-heroicons-shield-check" color="sky" variant="soft"
@@ -27,24 +50,7 @@ icon="i-heroicons-chevron-right" variant="soft" color="neutral" size="sm"
                             :disabled="tablePage >= tableTotalPages" @click="tablePage++" />
                         <span class="text-xs text-gray-400 whitespace-nowrap">{{ tableRowCount }} {{ t('rows') }}</span>
                     </div>
-                    <div class="ml-auto flex justify-end">
-                        <UPopover mode="hover" arrow>
-                            <UButton
-id="reset-database-button" icon="i-heroicons-circle-stack" color="orange" variant="soft"
-                                size="sm" :loading="isResettingDatabase" @click="handleResetDatabase">
-                                {{ t('reset_database') }}
-                            </UButton>
-                            <template #content>
-                                <div class="app-popover-content">
-                                    <UIcon name="i-heroicons-circle-stack" class="app-popover-icon" />
-                                    <div class="app-popover-text">
-                                        <strong class="app-popover-title">{{ t('reset_database_popover_title') }}</strong>
-                                        <span class="app-popover-description">{{ t('reset_database_popover_description') }}</span>
-                                    </div>
-                                </div>
-                            </template>
-                        </UPopover>
-                    </div>
+
                 </div>
 
                 <aside class="h-[70vh] w-full overflow-hidden rounded-lg border border-gray-200 bg-white">

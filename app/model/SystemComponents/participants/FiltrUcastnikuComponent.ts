@@ -32,7 +32,7 @@ export const filtrUcastnikuKomponenta = new Component({
 
 #filtr-ucastniku-ikona {
   color: #0e7490;
-  font-size: 18px;
+  font-size: 12px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -44,7 +44,7 @@ export const filtrUcastnikuKomponenta = new Component({
   outline: none;
   background: transparent;
   color: #111827;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 #system-filtr_ucastniku::placeholder {

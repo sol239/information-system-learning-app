@@ -19,13 +19,13 @@ export const jidelnicekRadekJidlaKomponenta = new Component({
 }
 
 #jidelnicek-jidlo-ikona {
-  font-size: 20px;
+  font-size: 12px;
   padding-top: 2px;
   flex-shrink: 0;
 }
 
 #jidelnicek-jidlo-nazev {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #111827;
 }
@@ -57,8 +57,8 @@ export const jidelnicekAlergenyJidlaKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 2px 10px;
-  border-radius: 9999px;
-  font-size: 11px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 600;
   background-color: #fce7f3;
   border: 1px solid #fbcfe8;
@@ -87,7 +87,7 @@ export const jidelnicekDobaPodavaniJidlaKomponenta = new Component({
   align-items: center;
   padding: 5px 16px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   background-color: #eab308;
   color: #ffffff;

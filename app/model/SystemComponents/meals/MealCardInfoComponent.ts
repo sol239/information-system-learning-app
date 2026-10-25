@@ -21,7 +21,7 @@ export const kartaJidlaKomponenta = new Component({
 }
 
 #nazev-jidla {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: #111827;
   line-height: 1.3;
@@ -31,7 +31,7 @@ export const kartaJidlaKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 4px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #d1fae5;

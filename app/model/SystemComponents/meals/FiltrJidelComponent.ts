@@ -32,7 +32,7 @@ export const filtrJidelKomponenta = new Component({
 
 #filtr-jidel-ikona {
   color: #065f46;
-  font-size: 18px;
+  font-size: 12px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -44,7 +44,7 @@ export const filtrJidelKomponenta = new Component({
   outline: none;
   background: transparent;
   color: #111827;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 #system-filtr_jidel::placeholder {

@@ -16,14 +16,14 @@ export const sessionSupervisorsCountBadgeComponent = new Component({
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   border: 1px solid #b79dff;
   background: #f6f2ff;
 }
 
 #text-stitku-vedoucich {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   color: #b79dff;
   line-height: 1;
 }

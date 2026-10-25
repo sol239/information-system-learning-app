@@ -11,7 +11,7 @@ export const stitekAlergenuVedoucihoKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 4px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   border: 1px solid transparent;

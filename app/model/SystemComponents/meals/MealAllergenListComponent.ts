@@ -20,7 +20,7 @@ export const seznamAlergenuJidlaKomponenta = new Component({
 }
 
 #popisek-alergenu-jidla {
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
 }
 
@@ -34,7 +34,7 @@ export const seznamAlergenuJidlaKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 3px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #fce7f3;

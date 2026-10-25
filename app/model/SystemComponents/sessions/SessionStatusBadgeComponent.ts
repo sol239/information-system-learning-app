@@ -23,9 +23,12 @@ export const sessionStatusBadgeComponent = new Component({
 
 .stitek-stavu-turnusu {
   display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 26px;
   padding: 4px 14px;
-  border-radius: 9999px;
-  font-size: 11px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   border: 1px solid;

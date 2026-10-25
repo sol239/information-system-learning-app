@@ -1,44 +1,45 @@
 <template>
-  <div class="p-6 flex flex-col gap-6 max-w-7xl mx-auto">
+  <div
+    class="supervisors-page p-6 flex flex-col gap-6 max-w-7xl mx-auto text-xs"
+  >
     <!-- Page header -->
-    <h1 class="text-2xl font-semibold">{{ t("supervisors") }}</h1>
+    <div class="flex flex-wrap items-center gap-3">
+      <h1 class="system-page-heading" style="--system-heading-color: #a78bfa">
+        {{ t("supervisors") }}
+      </h1>
+      <ModalContainer
+        v-model:open="createModalOpen"
+        title="Přidat vedoucího"
+        class="ml-auto w-fit"
+      >
+        <button type="button" class="supervisor-button supervisor-button--add">
+          <UIcon name="i-heroicons-plus" class="size-4" aria-hidden="true" />
+          Přidat vedoucího
+        </button>
 
-    <!-- Toolbar -->
-    <div class="flex flex-row flex-wrap items-center gap-3">
-      <!-- Session filter dropdown -->
-      <USelect
-        v-model="selectedSessionId"
-        :items="sessionFilterItems"
-        value-key="value"
-        label-key="label"
-        class="w-40"
-      />
-
-      <!-- Total count widget -->
-      <ComponentWrapper :component="countBarComponent" />
-
-      <!-- Name/email filter -->
-      <UInput
-        v-model="filterText"
-        icon="i-heroicons-magnifying-glass"
-        placeholder="Jméno, email, telefon nebo adresa"
-        class="w-56"
-      />
-
-      <!-- Order select -->
-      <ComponentWrapper :component="orderComponent" />
-
-      <!-- Add supervisor modal -->
-      <ModalContainer v-model:open="createModalOpen" class="w-fit">
-        <UButton
-          label="Přidat vedoucího"
-          color="primary"
-          icon="i-heroicons-plus"
-          size="sm"
-        />
+        <template #header>
+          <div class="supervisor-edit-header">
+            <div class="flex-1">
+              <h2 class="text-base font-semibold text-gray-900">
+                Přidat vedoucího
+              </h2>
+              <p class="mt-1 text-xs text-gray-500">
+                Vyplňte údaje nového vedoucího a vyberte jeho turnusy.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="supervisor-edit-close"
+              :aria-label="t('close')"
+              @click.stop="createModalOpen = false"
+            >
+              <UIcon name="i-lucide-x" class="size-4" aria-hidden="true" />
+            </button>
+          </div>
+        </template>
 
         <template #content>
-          <div class="modal-container">
+          <div class="modal-container supervisor-form entity-modal-form">
             <ComponentWrapper :component="vstupJmenoComponent" />
             <ComponentWrapper :component="vstupEmailComponent" />
             <ComponentWrapper :component="vstupTelefonComponent" />
@@ -46,14 +47,14 @@
             <ComponentWrapper :component="vstupVekComponent" />
             <ComponentWrapper :component="vstupAlergenyComponent" />
             <ComponentWrapper :component="vstupTurnusyComponent" />
-            <div class="flex gap-2">
-              <UButton
-                label="Zrušit"
-                color="neutral"
-                variant="solid"
-                size="sm"
+            <div class="entity-modal-actions">
+              <button
+                type="button"
+                class="entity-modal-cancel"
                 @click="createModalOpen = false"
-              />
+              >
+                Zrušit
+              </button>
               <ComponentWrapper
                 :component="btnUlozitComponent"
                 @action-completed="handleSupervisorCreated"
@@ -64,47 +65,110 @@
       </ModalContainer>
     </div>
 
+    <!-- Toolbar -->
+    <div class="flex flex-row flex-wrap items-center gap-3">
+      <!-- Session filter dropdown -->
+      <div class="supervisor-select">
+        <select v-model="selectedSessionId" :aria-label="t('all_sessions')">
+          <option
+            v-for="item in sessionFilterItems"
+            :key="item.value ?? 'all'"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Total count widget -->
+      <ComponentWrapper :component="countBarComponent" />
+
+      <!-- Name/email filter -->
+      <UInput
+        v-model="filterText"
+        icon="i-heroicons-magnifying-glass"
+        placeholder="Jméno, email, telefon nebo adresa"
+        class="w-56"
+        :ui="{ base: 'h-[26px] text-xs' }"
+      />
+
+      <!-- Order select -->
+      <ComponentWrapper :component="orderComponent" />
+
+      <!-- Add supervisor modal -->
+    </div>
+
     <!-- Supervisors grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       <div
         v-for="supervisorId in filteredSupervisorIds"
         :key="supervisorId"
-        class="bg-white rounded-xl border-2 border-violet-400 p-5 flex flex-col gap-4 hover:shadow-md transition-shadow"
+        class="bg-white rounded-xl border-2 border-violet-400 p-5 flex flex-col gap-2 hover:shadow-md transition-shadow"
       >
         <!-- Name + age + email + phone + address -->
         <ComponentWrapper
           :component="
-            withVars(cardInfoComponent, [new Variable('idVedouciho', supervisorId)])
+            withVars(cardInfoComponent, [
+              new Variable('idVedouciho', supervisorId),
+            ])
           "
         />
 
         <!-- Session line -->
         <ComponentWrapper
           :component="
-            withVars(sessionBadgeComponent, [new Variable('idVedouciho', supervisorId)])
+            withVars(sessionBadgeComponent, [
+              new Variable('idVedouciho', supervisorId),
+            ])
           "
         />
 
         <!-- Allergen badge -->
         <ComponentWrapper
           :component="
-            withVars(allergenBadgeComponent, [new Variable('idVedouciho', supervisorId)])
+            withVars(allergenBadgeComponent, [
+              new Variable('idVedouciho', supervisorId),
+            ])
           "
         />
 
         <!-- Actions -->
         <div class="flex gap-3 pt-1 border-t border-gray-100">
-          <ModalContainer v-model:open="editModalOpen[supervisorId]" class="flex-1">
-            <UButton
-              label="Upravit"
-              color="neutral"
-              variant="subtle"
-              size="sm"
-              class="flex-1"
-            />
+          <ModalContainer
+            v-model:open="editModalOpen[supervisorId]"
+            title="Upravit vedoucího"
+            class="flex-1"
+          >
+            <button
+              type="button"
+              class="supervisor-button supervisor-button--edit"
+            >
+              Upravit vedoucího
+            </button>
+
+            <template #header>
+              <div class="supervisor-edit-header">
+                <div class="flex-1">
+                  <h2 class="text-base font-semibold text-gray-900">
+                    Upravit vedoucího
+                  </h2>
+                  <p class="mt-1 text-xs text-gray-500">
+                    Upravte údaje vedoucího a jeho přiřazení k turnusům.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="supervisor-edit-close"
+                  :aria-label="t('close')"
+                  @click.stop="editModalOpen[supervisorId] = false"
+                >
+                  <UIcon name="i-lucide-x" class="size-4" aria-hidden="true" />
+                </button>
+              </div>
+            </template>
 
             <template #content>
-              <div class="modal-container">
+              <div class="modal-container supervisor-form entity-modal-form">
                 <ComponentWrapper
                   :component="
                     withVars(editVstupJmenoComponent, [
@@ -154,14 +218,14 @@
                     ])
                   "
                 />
-                <div class="flex gap-2">
-                  <UButton
-                    label="Zrušit"
-                    color="neutral"
-                    variant="solid"
-                    size="sm"
+                <div class="entity-modal-actions entity-modal-actions--edit">
+                  <button
+                    type="button"
+                    class="entity-modal-cancel"
                     @click="editModalOpen[supervisorId] = false"
-                  />
+                  >
+                    Zrušit
+                  </button>
                   <ComponentWrapper
                     :component="
                       withVars(editBtnUlozitComponent, [
@@ -178,7 +242,9 @@
           <div class="flex-1" @click="reloadAfterDelete">
             <ComponentWrapper
               :component="
-                withVars(smazatComponent, [new Variable('idVedouciho', supervisorId)])
+                withVars(smazatComponent, [
+                  new Variable('idVedouciho', supervisorId),
+                ])
               "
             />
           </div>
@@ -187,12 +253,17 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="filteredSupervisorIds.length === 0 && isDbReady" class="text-center py-12">
+    <div
+      v-if="filteredSupervisorIds.length === 0 && isDbReady"
+      class="text-center py-12"
+    >
       <UIcon
         name="i-heroicons-academic-cap"
         class="w-16 h-16 mx-auto mb-4 text-gray-400"
       />
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ t("no_supervisors") }}</h3>
+      <h3 class="text-xs font-semibold text-gray-900 mb-2">
+        {{ t("no_supervisors") }}
+      </h3>
       <p class="text-gray-500">{{ t("no_supervisors_description") }}</p>
     </div>
   </div>
@@ -474,11 +545,157 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.modal-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem;
-  box-sizing: border-box;
+.supervisors-page :deep(#kontaktni-udaje-oddeleni) {
+    border-top-color: #9ca3af;
 }
+
+.supervisors-page :deep(.component-html :where(*):not(#jmeno-vedouciho)),
+.supervisors-page :deep(button),
+.supervisors-page :deep(input),
+.supervisors-page :deep(select),
+.supervisor-form :deep(.component-html *),
+.supervisor-form :deep(button),
+.supervisor-form :deep(input),
+.supervisor-form :deep(select),
+.supervisor-form :deep(label) {
+    font-size: 12px;
+}
+
+.supervisor-select,
+.supervisors-page :deep(#razeni-vedoucich) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 26px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border: 1px solid #7c3aed;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.supervisor-select select {
+    border: 0;
+    background: transparent;
+    color: #111827;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.supervisor-select:focus-within {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+}
+
+.supervisor-button,
+.supervisors-page :deep(#smazat-vedouciho-tlacitko) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 26px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.supervisor-button--add {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.supervisor-button--add:hover {
+    background: #dcfce7;
+}
+
+.supervisor-button--edit {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.supervisor-button--edit:hover {
+    background: #dbeafe;
+}
+
+.supervisor-button--edit,
+.supervisors-page :deep(#smazat-vedouciho-tlacitko) {
+    height: auto;
+    min-height: 26px;
+    padding: 6px 14px;
+    line-height: 1.4;
+    white-space: normal;
+    text-align: center;
+}
+
+.supervisors-page :deep(#smazat-vedouciho-tlacitko) {
+    border-color: #ef4444;
+}
+
+.supervisors-page :deep(#smazat-vedouciho-tlacitko:hover) {
+    background: #fee2e2;
+}
+
+.supervisors-page :deep(#vek-vedouciho-stitek),
+.supervisors-page :deep(.stitek-alergenu-vedouciho),
+.supervisors-page :deep(#widget-poctu-vedoucich) {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 26px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.supervisor-edit-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.supervisor-edit-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.supervisor-edit-close:hover {
+    background: #f1f5f9;
+}
+
+.modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.supervisors-page :deep(#vek-vedouciho-stitek),
+.supervisors-page :deep(.stitek-alergenu-vedouciho),
+.supervisors-page :deep(#widget-poctu-vedoucich),
+.supervisors-page :deep(button),
+.supervisor-form :deep(button) {
+    border-radius: 8px;
+}
+
+.supervisors-page :deep(#jmeno-vedouciho) { font-size: 16px; }
 </style>

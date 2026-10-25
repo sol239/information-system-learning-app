@@ -26,7 +26,7 @@ export const jidelnicekLideJidlaKomponenta = new Component({
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #374151;
 }
@@ -46,7 +46,7 @@ export const jidelnicekLideJidlaKomponenta = new Component({
   gap: 12px;
   padding: 10px 14px;
   background: #f8fafc;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .avatar-ucastnika-jidelnicku {
@@ -64,7 +64,7 @@ export const jidelnicekLideJidlaKomponenta = new Component({
 }
 
 .jmeno-ucastnika-jidelnicku {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #1d4ed8;
 }
@@ -113,7 +113,7 @@ export const jidelnicekVedouciJidlaKomponenta = new Component({
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #374151;
 }
@@ -133,7 +133,7 @@ export const jidelnicekVedouciJidlaKomponenta = new Component({
   gap: 12px;
   padding: 10px 14px;
   background: #f8fafc;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .avatar-vedouciho-jidelnicku {
@@ -151,7 +151,7 @@ export const jidelnicekVedouciJidlaKomponenta = new Component({
 }
 
 .jmeno-vedouciho-jidelnicku {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #7c3aed;
 }

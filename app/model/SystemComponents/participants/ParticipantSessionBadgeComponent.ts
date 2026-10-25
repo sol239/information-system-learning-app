@@ -13,7 +13,7 @@ export const stitekTurnusuUcastnikaKomponenta = new Component({
   css: `
 #stitek-turnusu-ucastnika {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   padding: 0;
   white-space: pre-line;

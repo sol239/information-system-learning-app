@@ -18,11 +18,11 @@ export const smazatVedoucihoKomponenta = new Component({
   align-items: center;
   justify-content: center;
   padding: 8px 14px;
-  border-radius: 9999px;
+  border-radius: 8px;
   border: 1px solid #ef4444;
   background: #fef2f2;
   color: #dc2626;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;

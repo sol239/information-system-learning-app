@@ -14,11 +14,13 @@ export const pocetDniTurnusuKomponenta = new Component({
 .pocet-dni-turnusu-stitek {
   display: inline-flex;
   align-items: center;
+  box-sizing: border-box;
+  height: 26px;
   gap: 6px;
   padding: 6px 16px;
   background: #16a34a;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: #ffffff;
 }

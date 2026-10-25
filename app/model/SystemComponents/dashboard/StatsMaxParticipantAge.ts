@@ -10,7 +10,7 @@ export const statsMaxParticipantAgeComponent = new Component({
     <div id="statistika-max-vek-ucastnika-icon">MAX</div>
     <div id="statistika-max-vek-ucastnika-content">
       <div id="statistika-max-vek-ucastnika-number">{{ max_vek_ucastnika }}</div>
-      <div id="statistika-max-vek-ucastnika-label">max. věk</div>
+      <div id="statistika-max-vek-ucastnika-label">maximální věk účastníka</div>
     </div>
   </div>
   `,
@@ -28,13 +28,13 @@ export const statsMaxParticipantAgeComponent = new Component({
 }
 
 #statistika-max-vek-ucastnika-icon {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #111111;
 }
 
 #statistika-max-vek-ucastnika-number {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #111111;
 }

@@ -22,14 +22,16 @@ export const razeniJidelKomponenta = new Component({
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  height: 26px;
+  box-sizing: border-box;
+  padding: 0 12px;
   border: 1px solid #065f46;
   border-radius: 8px;
   background-color: #ffffff;
 }
 
 #razeni-jidel label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #065f46;
   white-space: nowrap;
@@ -41,7 +43,7 @@ export const razeniJidelKomponenta = new Component({
   outline: none;
   background: transparent;
   color: #111827;
-  font-size: 14px;
+  font-size: 12px;
 }
 `,
 

@@ -19,11 +19,11 @@ export const jidelnicekHlavickaDneKomponenta = new Component({
 }
 
 #jidelnicek-dne-ikona {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 #jidelnicek-dne-datum {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
@@ -49,7 +49,7 @@ export const jidelnicekPocetJidelDneKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 3px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #dcfce7;
@@ -78,7 +78,7 @@ export const jidelnicekPocetPorciDneKomponenta = new Component({
   display: inline-flex;
   align-items: center;
   padding: 3px 12px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   background-color: #ede9fe;

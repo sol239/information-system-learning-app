@@ -47,7 +47,7 @@ export const sessionSupervisorsListComponent = new Component({
 
 .jmeno-vedouciho-turnusu {
   color: #1f2937;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 `,

@@ -1,12 +1,12 @@
 ﻿<template>
-    <div class="p-6 flex flex-col gap-5 max-w-7xl mx-auto">
+    <div class="meal-book-page p-6 flex flex-col gap-5 max-w-7xl mx-auto text-xs">
 
-        <h1 class="text-2xl font-semibold">{{ t('meal_plan') }}</h1>
+        <h1 class="system-page-heading" style="--system-heading-color: #6b7280">{{ t('meal_plan') }}</h1>
 
         <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div class="flex items-center gap-2 mb-4">
                 <UIcon name="i-heroicons-user-plus" class="w-5 h-5 text-sky-600" />
-                <h2 class="text-lg font-semibold text-gray-900">Přidat jídlo osobě</h2>
+                <h2 class="text-base font-semibold text-gray-900">Přidat jídlo osobě</h2>
             </div>
 
             <div class="flex flex-row flex-wrap items-end gap-4">
@@ -25,7 +25,7 @@
         <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div class="flex items-center gap-2 mb-4">
                 <UIcon name="i-heroicons-trash" class="w-5 h-5 text-red-600" />
-                <h2 class="text-lg font-semibold text-gray-900">Odebrat jídlo osobě</h2>
+                <h2 class="text-base font-semibold text-gray-900">Odebrat jídlo osobě</h2>
             </div>
 
             <div class="flex flex-row flex-wrap items-end gap-4">
@@ -152,7 +152,7 @@ v-if="isMealExpanded(mealId, date)"
         <!-- Empty state -->
         <div v-if="sessionIds.length === 0 && isDbReady" class="text-center py-12">
             <UIcon name="i-heroicons-book-open" class="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ t('no_meal_plan') }}</h3>
+            <h3 class="text-base font-semibold text-gray-900 mb-2">{{ t('no_meal_plan') }}</h3>
         </div>
     </div>
 </template>
@@ -313,4 +313,83 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.meal-book-page :deep(.component-html :where(*):not(#jidelnicek-turnusu-popisek, #jidelnicek-dne-datum, #jidelnicek-jidlo-nazev, label)) {
+    font-size: 12px;
+}
+
+.meal-book-page :deep(#jidelnicek-turnusu-popisek),
+.meal-book-page :deep(#jidelnicek-dne-datum),
+.meal-book-page :deep(#jidelnicek-jidlo-nazev) {
+    font-size: 16px;
+}
+
+.meal-book-page :deep(.component-html label) {
+    font-size: 14px;
+}
+
+.meal-book-page :deep(.component-html select) {
+    box-sizing: border-box;
+    height: 26px;
+    min-height: 26px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.meal-book-page :deep(#jidelnicek-turnusu-datum-stitek),
+.meal-book-page :deep(#jidelnicek-turnusu-jidla-stitek),
+.meal-book-page :deep(#jidelnicek-turnusu-porci-stitek),
+.meal-book-page :deep(#jidelnicek-dne-jidla-stitek),
+.meal-book-page :deep(#jidelnicek-dne-porci-stitek),
+.meal-book-page :deep(#jidelnicek-jidlo-doba-stitek),
+.meal-book-page :deep(.pilulka-alergenu-jidelnicku) {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 26px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 8px;
+}
+
+.meal-book-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe),
+.meal-book-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 26px;
+    padding: 6px 14px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.meal-book-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe) {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.meal-book-page :deep(#jidelnicek-tlacitko-pridat-jidlo-osobe:hover:not(:disabled)) {
+    background: #dcfce7;
+}
+
+.meal-book-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe) {
+    border-color: #ef4444;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.meal-book-page :deep(#jidelnicek-tlacitko-odebrat-jidlo-osobe:hover:not(:disabled)) {
+    background: #fee2e2;
+}
+
+.meal-book-page :deep(.component-html button:disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 </style>

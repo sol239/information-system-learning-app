@@ -18,9 +18,9 @@ export const vstupTurnusyVedoucihoKomponenta = new Component({
 
   css: `
 .form-radek { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.form-radek label { font-size: 13px; font-weight: 600; color: #374151; }
+.form-radek label { font-size: 14px; font-weight: 600; color: #374151; }
 .vyber-checkboxu { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; min-width: 280px; max-height: 150px; overflow-y: auto; background: #ffffff; }
-.volba-radek { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 4px; font-size: 14px; font-weight: 400; cursor: pointer; }
+.volba-radek { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 4px; font-size: 12px; font-weight: 400; cursor: pointer; }
 .volba-radek:hover { background: #f3f4f6; }
 .volba-radek input { width: 16px; height: 16px; }
 `,

@@ -29,7 +29,7 @@ export const kapacitaTurnusuKomponenta = new Component({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 12px;
   color: #374151;
 }
 

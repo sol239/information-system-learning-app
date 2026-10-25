@@ -11,19 +11,21 @@ const fieldCss = `
 
 .jidelnicek-pridat-jidlo-pole label {
   color: #374151;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .jidelnicek-pridat-jidlo-pole select {
   width: 100%;
-  min-height: 38px;
+  min-height: 26px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #ffffff;
   color: #111827;
-  font-size: 14px;
-  padding: 8px 10px;
+  font-size: 12px;
+  padding: 0 10px;
+  height: 26px;
+  box-sizing: border-box;
 }
 
 .jidelnicek-pridat-jidlo-pole select:focus {
@@ -328,20 +330,22 @@ export const jidelnicekTlacitkoPridatJidloOsobeKomponenta = new Component({
 `,
   css: `
 #jidelnicek-tlacitko-pridat-jidlo-osobe {
-  min-width: 180px;
-  min-height: 38px;
-  border: none;
-  border-radius: 6px;
-  background: #0284c7;
-  color: #ffffff;
+  min-width: 0;
+  min-height: 26px;
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #15803d;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 8px 14px;
+  padding: 6px 14px;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
 #jidelnicek-tlacitko-pridat-jidlo-osobe:hover {
-  background: #0369a1;
+  background: #dcfce7;
 }
 
 #jidelnicek-tlacitko-pridat-jidlo-osobe:disabled {

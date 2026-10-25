@@ -25,9 +25,9 @@ export const hlavniKartaSystemuKomponenta = new Component({
 #hlavni-karta-systemu {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 8px;
   background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(14,165,233,0.04) 50%, rgba(56,189,248,0.08) 100%);
-  padding: 48px;
+  padding: 24px 48px 24px 24px;
   width: 800px;
   border: 1px solid rgba(99,102,241,0.2);
   box-shadow: 0 20px 40px rgba(99,102,241,0.06);
@@ -66,7 +66,7 @@ export const hlavniKartaSystemuKomponenta = new Component({
   background-color: rgba(99,102,241,0.12);
   color: #6366f1;
   border-radius: 9999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -74,7 +74,7 @@ export const hlavniKartaSystemuKomponenta = new Component({
 }
 
 #nazev-systemu {
-  font-size: 36px;
+  font-size: 29px;
   font-weight: 900;
   color: #111827;
   margin: 0 0 16px 0;
@@ -83,12 +83,12 @@ export const hlavniKartaSystemuKomponenta = new Component({
 }
 
 #popis-systemu {
-  font-size: 17px;
+  font-size: 15px;
   color: #4b5563;
   max-width: 700px;
   line-height: 1.7;
   font-weight: 500;
-  margin: 0 0 32px 0;
+  margin: 0;
 }
 
 #meta-systemu {

@@ -14,12 +14,14 @@ export const datumTurnusuKomponenta = new Component({
 .datum-turnusu-stitek {
   display: inline-flex;
   align-items: center;
+  box-sizing: border-box;
+  height: 26px;
   gap: 6px;
   padding: 6px 14px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   color: #475569;
 }
 `,

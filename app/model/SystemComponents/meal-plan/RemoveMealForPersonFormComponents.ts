@@ -11,19 +11,21 @@ const fieldCss = `
 
 .jidelnicek-odebrat-jidlo-pole label {
   color: #374151;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .jidelnicek-odebrat-jidlo-pole select {
   width: 100%;
-  min-height: 38px;
+  min-height: 26px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #ffffff;
   color: #111827;
-  font-size: 14px;
-  padding: 8px 10px;
+  font-size: 12px;
+  padding: 0 10px;
+  height: 26px;
+  box-sizing: border-box;
 }
 
 .jidelnicek-odebrat-jidlo-pole select:focus {
@@ -335,20 +337,22 @@ export const jidelnicekTlacitkoOdebratJidloOsobeKomponenta = new Component({
 `,
   css: `
 #jidelnicek-tlacitko-odebrat-jidlo-osobe {
-  min-width: 180px;
-  min-height: 38px;
-  border: none;
-  border-radius: 6px;
-  background: #dc2626;
-  color: #ffffff;
+  min-width: 0;
+  min-height: 26px;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 8px 14px;
+  padding: 6px 14px;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
 #jidelnicek-tlacitko-odebrat-jidlo-osobe:hover {
-  background: #b91c1c;
+  background: #fee2e2;
 }
 
 #jidelnicek-tlacitko-odebrat-jidlo-osobe:disabled {
