@@ -110,16 +110,17 @@ Student pracuje pouze s připravenými úkoly a stránkami, které jsou pro aktu
 
 Konfigurace je načítána v `nuxt.config.ts` přes runtime config.
 
-| Proměnná                          | Výchozí hodnota                    | Význam                                                                               |
-| --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |
-| `NUXT_PUBLIC_APP_MODE`            | prázdná hodnota                    | `TEACHER` zapne učitelský režim. Jiná hodnota spouští studentský pohled.             |
-| `NUXT_PUBLIC_HTML_AVAILABLE`      | `true`                             | Zobrazí editor HTML.                                                                 |
-| `NUXT_PUBLIC_CSS_AVAILABLE`       | `true`                             | Zobrazí editor CSS.                                                                  |
-| `NUXT_PUBLIC_JS_AVAILABLE`        | `true`                             | Zobrazí editor JS.                                                                   |
-| `NUXT_PUBLIC_SQL_AVAILABLE`       | `true`                             | Zobrazí editor SQL.                                                                  |
-| `NUXT_PUBLIC_JS_CLICK_AVAILABLE`  | `false`                            | Povolí editor JS akcí po kliknutí.                                                   |
-| `NUXT_PUBLIC_SQL_CLICK_AVAILABLE` | `true`                             | Povolí editor SQL akcí po kliknutí.                                                  |
-| `NUXT_APP_BASE_URL`               | `/information-system-learning-app` | Base URL pro lokální běh a statické nasazení, typicky název GitHub Pages repozitáře. |
+| Proměnná                             | Výchozí hodnota                    | Význam                                                                               |
+| ------------------------------------ | ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `NUXT_PUBLIC_APP_MODE`               | prázdná hodnota                    | `TEACHER` zapne učitelský režim. Jiná hodnota spouští studentský pohled.             |
+| `NUXT_PUBLIC_BYPASS_PAGE_VISIBILITY` | `false`                            | `true` zpřístupní všechny stránky bez ohledu na omezení úkolů.                       |
+| `NUXT_PUBLIC_HTML_AVAILABLE`         | `true`                             | Zobrazí editor HTML.                                                                 |
+| `NUXT_PUBLIC_CSS_AVAILABLE`          | `true`                             | Zobrazí editor CSS.                                                                  |
+| `NUXT_PUBLIC_JS_AVAILABLE`           | `true`                             | Zobrazí editor JS.                                                                   |
+| `NUXT_PUBLIC_SQL_AVAILABLE`          | `true`                             | Zobrazí editor SQL.                                                                  |
+| `NUXT_PUBLIC_JS_CLICK_AVAILABLE`     | `false`                            | Povolí editor JS akcí po kliknutí.                                                   |
+| `NUXT_PUBLIC_SQL_CLICK_AVAILABLE`    | `true`                             | Povolí editor SQL akcí po kliknutí.                                                  |
+| `NUXT_APP_BASE_URL`                  | `/information-system-learning-app` | Base URL pro lokální běh a statické nasazení, typicky název GitHub Pages repozitáře. |
 
 ## Struktura projektu
 

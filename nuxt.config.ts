@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     public: {
       formatCodeOnSystemLoad: false, // Formats and saves component code when loading or restoring a system.
       appMode: "student", // Sets the application mode ( teacher | student)
+      bypassPageVisibility: false, // Allows access to all system pages regardless of task restrictions.
       htmlAvailable: "true", // Enables HTML code editing.
       cssAvailable: "true", // Enables CSS code editing.
       jsAvailable: "true", // Enables JavaScript code editing.

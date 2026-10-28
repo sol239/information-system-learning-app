@@ -18,7 +18,9 @@ export const useGlobalSettingsStore = defineStore(
     );
     const teacherMode: Ref<boolean> = ref(teacherModeEnv.value);
     const teacherHighlightEnabled: Ref<boolean> = ref(true);
-    const bypassPageVisibility: Ref<boolean> = ref(true);
+    const bypassPageVisibility: Ref<boolean> = ref(
+      String(runtimeConfig.public.bypassPageVisibility).toLowerCase() === "true",
+    );
     const selectedComponents: Ref<Set<string>> = ref(new Set());
     const selectedTaskId: Ref<string | null> = ref(null);
     const errorComponentIds: Ref<string[]> = ref([]);
