@@ -10,6 +10,7 @@ it("shows Jídelníček in navigation, route and database tables", () => {
       win.__informationSystemTestApi!.setBypassPageVisibility(true);
       win.__informationSystemTestApi!.setTeacherMode(false);
     });
+  cy.contains("button", "Prohlédnout si systém", { timeout: 10000 }).click();
   cy.contains("h1", "Jídelníček").should("be.visible");
   cy.contains("nav a", "Jídelníček").should(
     "have.attr",

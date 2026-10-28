@@ -10,7 +10,6 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { onMounted } from "vue";
-import { AppLoader } from "~/core/AppLoader";
 import { TaskHelper } from "~/core/systems/TaskHelper";
 
 defineOptions({
@@ -41,7 +40,6 @@ defineOptions({
 onMounted(async () => {
   const globalSettings = useGlobalSettingsStore();
   if (!globalSettings.teacherMode && useRoute().path === "/") {
-    await new AppLoader().loadApp();
     const system = useSystemsStore().getPrimarySystem();
     if (system) {
       globalSettings.studentWelcomeModalOpen =
