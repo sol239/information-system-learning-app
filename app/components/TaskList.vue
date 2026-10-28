@@ -65,12 +65,7 @@
     </div>
 
     <div v-else class="flex flex-col p-4 gap-2">
-      <div class="flex items-center justify-between gap-2">
-        <h2 class="text-sm font-semibold text-gray-900">
-          {{ t("tasks") }}
-        </h2>
-        <SelectSystemModal v-if="globalSettings.teacherMode" />
-      </div>
+      <SelectSystemModal v-if="globalSettings.teacherMode" />
 
       <button
         v-if="globalSettings.teacherMode"
@@ -103,7 +98,7 @@
           class="flex items-center py-3 first:pt-1"
         >
           <span
-            class="pr-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            class="pr-3 text-[0.8125rem] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
           >
             {{ t("task_level") }} {{ task.level }}
           </span>
@@ -134,7 +129,7 @@
               <div class="flex items-start justify-between gap-2">
                 <div class="flex min-w-0 flex-col gap-1">
                   <span
-                    class="font-medium text-sm text-gray-900 leading-snug"
+                    class="font-medium text-[0.8125rem] text-gray-900 leading-snug"
                     >{{ taskDisplayTitle(task, index) }}</span
                   >
                 </div>
@@ -192,7 +187,7 @@
         >
           <div class="flex items-start justify-between gap-2">
             <div class="flex min-w-0 flex-col gap-1">
-              <span class="font-medium text-sm text-gray-900 leading-snug">{{
+              <span class="font-medium text-[0.8125rem] text-gray-900 leading-snug">{{
                 taskDisplayTitle(task, index)
               }}</span>
             </div>

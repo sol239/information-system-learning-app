@@ -4,7 +4,7 @@
       <!-- Title & points -->
       <div class="flex flex-col gap-2">
         <div class="flex flex-wrap items-center gap-2">
-          <UBadge color="green" variant="subtle" size="md">
+          <UBadge color="green" variant="subtle" size="md" class="text-xs">
             {{ props.task.pointsReward }} {{ t("task_pts") }}
           </UBadge>
           <UBadge
@@ -12,14 +12,15 @@
             color="red"
             variant="subtle"
             size="md"
+            class="text-xs"
           >
             -{{ props.task.failPenalty }} {{ t("task_penalty") }}
           </UBadge>
         </div>
-        <h2 class="text-1xl font-bold text-gray-900 w-full">
+        <h2 class="text-sm font-bold text-gray-900 w-full">
           {{ props.title ?? props.task.title }}
         </h2>
-        <p v-if="props.task.description" class="text-base text-gray-600 w-full">
+        <p v-if="props.task.description" class="text-xs text-gray-600 w-full">
           {{ props.task.description }}
         </p>
       </div>
@@ -33,7 +34,7 @@
             >
               {{ t("task_activity") }}
             </p>
-            <h3 class="text-base font-semibold text-gray-900">
+            <h3 class="text-sm font-semibold text-gray-900">
               {{ activityLabel }}
             </h3>
           </div>
@@ -42,7 +43,7 @@
             :color="props.task.activity?.isCompleted ? 'green' : 'neutral'"
             variant="subtle"
             size="md"
-            class="flex items-center gap-1.5"
+            class="text-xs flex items-center gap-1.5"
           >
             <div
               class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
@@ -62,7 +63,7 @@
           </UBadge>
         </div>
 
-        <p v-if="activityDescription" class="text-sm text-gray-700">
+        <p v-if="activityDescription" class="text-xs text-gray-700">
           {{ activityDescription }}
         </p>
 
@@ -102,7 +103,7 @@
                 class="text-white w-3 h-3"
               />
             </div>
-            <span class="text-sm text-gray-800">{{ option.text }}</span>
+            <span class="text-xs text-gray-800">{{ option.text }}</span>
           </div>
         </div>
 
@@ -112,7 +113,7 @@
           class="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2"
         >
           <UIcon name="i-lucide-info" class="mt-0.5 shrink-0 text-blue-500" />
-          <p class="text-sm text-blue-700">
+          <p class="text-xs text-blue-700">
             {{ t("task_substitute_notice") }}
           </p>
         </div>
@@ -131,6 +132,7 @@
             color="sky"
             variant="subtle"
             size="md"
+            class="text-xs"
           >
             {{ name }}
           </UBadge>
@@ -145,6 +147,7 @@
             :disabled="isReadonly || props.task.activity?.isCompleted === true"
             size="sm"
             @click="evaluateActivity"
+            class="text-xs"
           >
             {{ t("evaluate") }}
           </UButton>
@@ -153,7 +156,7 @@
             color="green"
             variant="subtle"
             size="lg"
-            class="flex items-center gap-1"
+            class="text-xs flex items-center gap-1"
           >
             <UIcon name="i-lucide-circle-check" class="w-4 h-4" />
             {{ t("correct_answer") }}
@@ -163,7 +166,7 @@
             color="red"
             variant="subtle"
             size="lg"
-            class="flex items-center gap-1"
+            class="text-xs flex items-center gap-1"
           >
             <UIcon name="i-lucide-circle-x" class="w-4 h-4" />
             {{ t("incorrect_answer") }}
@@ -194,7 +197,7 @@
                 >
                   {{ t("task_finish") }}
                 </p>
-                <h3 class="text-base font-semibold text-gray-900">
+                <h3 class="text-sm font-semibold text-gray-900">
                   {{ finishLabel }}
                 </h3>
               </div>
@@ -202,7 +205,7 @@
                 :color="props.task.finish?.isComplete ? 'green' : 'neutral'"
                 variant="subtle"
                 size="md"
-                class="flex items-center gap-1.5"
+                class="text-xs flex items-center gap-1.5"
               >
                 <div
                   class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
@@ -224,7 +227,7 @@
 
             <p
               v-if="props.task.finish?.description"
-              class="text-sm text-gray-700"
+              class="text-xs text-gray-700"
             >
               {{ props.task.finish.description }}
             </p>
@@ -266,7 +269,7 @@
                     class="text-white w-3 h-3"
                   />
                 </div>
-                <span class="text-sm text-gray-800">{{ option.text }}</span>
+                <span class="text-xs text-gray-800">{{ option.text }}</span>
               </div>
             </div>
 
@@ -277,7 +280,7 @@
               :disabled="
                 isReadonly || props.task.finish?.isComplete || isFinishLocked
               "
-              class="w-full"
+              class="text-xs w-full"
             />
 
             <div v-if="canEvaluateFinish" class="flex items-center gap-3 mt-2">
@@ -293,6 +296,7 @@
                 "
                 size="sm"
                 @click="evaluateFinish"
+                class="text-xs"
               >
                 {{ t("evaluate") }}
               </UButton>
@@ -301,7 +305,7 @@
                 color="green"
                 variant="subtle"
                 size="lg"
-                class="flex items-center gap-1"
+                class="text-xs flex items-center gap-1"
               >
                 <UIcon name="i-lucide-circle-check" class="w-4 h-4" />
                 {{ t("correct_answer") }}
@@ -311,7 +315,7 @@
                 color="red"
                 variant="subtle"
                 size="lg"
-                class="flex items-center gap-1"
+                class="text-xs flex items-center gap-1"
               >
                 <UIcon name="i-lucide-circle-x" class="w-4 h-4" />
                 {{ t("incorrect_answer") }}
@@ -350,7 +354,7 @@
             >
               {{ t("task_finish") }}
             </p>
-            <h3 class="text-base font-semibold text-gray-900">
+            <h3 class="text-sm font-semibold text-gray-900">
               {{ finishLabel }}
             </h3>
           </div>
@@ -358,7 +362,7 @@
             :color="props.task.finish?.isComplete ? 'green' : 'neutral'"
             variant="subtle"
             size="md"
-            class="flex items-center gap-1.5"
+            class="text-xs flex items-center gap-1.5"
           >
             <div
               class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
@@ -378,7 +382,7 @@
           </UBadge>
         </div>
 
-        <p v-if="props.task.finish?.description" class="text-sm text-gray-700">
+        <p v-if="props.task.finish?.description" class="text-xs text-gray-700">
           {{ props.task.finish.description }}
         </p>
 
@@ -419,7 +423,7 @@
                 class="text-white w-3 h-3"
               />
             </div>
-            <span class="text-sm text-gray-800">{{ option.text }}</span>
+            <span class="text-xs text-gray-800">{{ option.text }}</span>
           </div>
         </div>
 
@@ -430,7 +434,7 @@
           :disabled="
             isReadonly || props.task.finish?.isComplete || isFinishLocked
           "
-          class="w-full"
+          class="text-xs w-full"
         />
 
         <div v-if="canEvaluateFinish" class="flex items-center gap-3 mt-2">
@@ -446,6 +450,7 @@
             "
             size="sm"
             @click="evaluateFinish"
+            class="text-xs"
           >
             {{ t("evaluate") }}
           </UButton>
@@ -454,7 +459,7 @@
             color="green"
             variant="subtle"
             size="lg"
-            class="flex items-center gap-1"
+            class="text-xs flex items-center gap-1"
           >
             <UIcon name="i-lucide-circle-check" class="w-4 h-4" />
             {{ t("correct_answer") }}
@@ -464,7 +469,7 @@
             color="red"
             variant="subtle"
             size="lg"
-            class="flex items-center gap-1"
+            class="text-xs flex items-center gap-1"
           >
             <UIcon name="i-lucide-circle-x" class="w-4 h-4" />
             {{ t("incorrect_answer") }}
@@ -477,7 +482,7 @@
         v-if="props.task.completed && props.task.feedback"
         class="rounded-xl border border-amber-200 bg-amber-50 p-4"
       >
-        <p class="text-sm text-amber-800">{{ props.task.feedback }}</p>
+        <p class="text-xs text-amber-800">{{ props.task.feedback }}</p>
       </div>
     </div>
   </UCard>

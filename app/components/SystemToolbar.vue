@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4"
+    class="system-toolbar flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4"
   >
     <UButton
       v-if="globalSettings.teacherMode"
@@ -92,6 +92,7 @@
           }}
         </span>
       </UButton>
+      <!--
       <UButton
         id="reset-components-toolbar-button"
         :label="t('reset_components')"
@@ -101,6 +102,7 @@
         icon="i-heroicons-squares-2x2"
         @click="resetComponents"
       />
+      -->
     </div>
 
     <UButton
@@ -536,6 +538,15 @@ defineExpose({});
 </script>
 
 <style scoped>
+.system-toolbar {
+  background: radial-gradient(
+    circle at top left,
+    #bdddf7,
+    #dceffc 50%,
+    #f5edac 100%
+  );
+}
+
 @media (max-width: 639px) {
   .mobile-hidden {
     display: none;
