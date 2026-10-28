@@ -1147,14 +1147,15 @@ const pasteComponentJsonText = ref("");
 
 const pasteComponentError = ref("");
 
-const taskForm = reactive<TaskDetailForm>(createDefaultForm());
-
-/* 9. Computed */
 const codeEditEnvironment = computed(() =>
   codeEditEnvironmentFromRuntimeConfig(
     runtimeConfig.public as Record<string, unknown>,
   ),
 );
+
+const taskForm = reactive<TaskDetailForm>(createDefaultForm());
+
+/* 9. Computed */
 
 const databasePageRoute = computed(() =>
   String(runtimeConfig.public.databasePageRoute),
