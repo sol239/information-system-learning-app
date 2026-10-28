@@ -15,7 +15,7 @@
       </template>
 
       <template #body>
-        <div class="space-y-4">
+        <div class="space-y-2">
           <p class="text-sm leading-6 text-gray-600">
             {{ t("student_welcome_sidebar_description_before_count") }}
             <strong class="font-semibold text-gray-900">
@@ -27,6 +27,22 @@
             </strong>
             {{ t("student_welcome_sidebar_description_after_points_word") }}
           </p>
+          <SelectSystemModal>
+            <UButton
+              block
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-layers-3"
+              trailing-icon="i-lucide-chevron-down"
+              :aria-label="t('change_task_set')"
+              size="sm"
+            >
+              {{
+                systemsStore.selectedSystem?.taskSet.name ||
+                t("change_task_set")
+              }}
+            </UButton>
+          </SelectSystemModal>
         </div>
       </template>
 
@@ -60,7 +76,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 /* 2. Stores */
 const globalSettings = useGlobalSettingsStore();
@@ -72,6 +88,7 @@ const { t } = useI18n();
 /* 4. Constants (non-reactive) */
 const modalUi = {
   content: "sm:max-w-md",
+  body: "pb-2 sm:pb-3",
 };
 
 /* 5. Props */
@@ -96,6 +113,23 @@ const welcomeModalOpen = computed({
 });
 
 /* 10. Watchers */
+watch(
+  () => {
+    const system = systemsStore.selectedSystem;
+    return Boolean(
+      system &&
+      !globalSettings.teacherMode &&
+      !system.startedTasks &&
+      !system.exploringSystem,
+    );
+  },
+  (shouldOpen) => {
+    if (import.meta.client) {
+      globalSettings.studentWelcomeModalOpen = shouldOpen;
+    }
+  },
+  { immediate: true },
+);
 
 /* 11. Methods */
 async function closeWelcomeModal() {

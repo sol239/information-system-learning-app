@@ -84,6 +84,7 @@ it("task", function () {
 
   cy.get("#task-1 div.items-start", { timeout: 30000 }).should("be.visible");
   setTeacherMode(false);
+  cy.get("#enter-system-button", { timeout: 10000 }).click();
   cy.get("#task-1 div.items-start", { timeout: 30000 }).click();
   // The task title '1. Nejstarší účastník' is visible.
   cy.get("h2.font-bold").should("contain.text", "1. Nejstarší účastník");

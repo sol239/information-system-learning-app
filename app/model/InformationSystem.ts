@@ -435,10 +435,15 @@ export class InformationSystem {
       }
 
       const configData = JSON.parse(configContent);
-      const taskSetContent = systemFiles.find((file) =>
-        InformationSystem.systemFilePath(file).endsWith("tasks.json"),
-      )?.content;
-      const taskSetData = taskSetContent ? JSON.parse(taskSetContent) : null;
+      const taskSetDocuments = systemFiles
+        .filter(
+          (file) => file.name.endsWith(".json") && file.name !== "config.json",
+        )
+        .map((file) => JSON.parse(file.content))
+        .filter(
+          (data) => Array.isArray(data?.tasks) || Array.isArray(data?.taskSets),
+        );
+      const taskSetData = taskSetDocuments[0] ?? null;
       const databasePageRoute = InformationSystem.getDatabasePageRoute();
       const pages: Page[] = (configData.pages || [])
         .map((page: Page) => ({
@@ -467,14 +472,11 @@ export class InformationSystem {
         database = DatabaseWrapper.fromInstance(dbResult.data);
       }
 
-      const taskSetSources = Array.isArray(taskSetData?.taskSets)
-        ? taskSetData.taskSets
-        : [
-            taskSetData ?? {
-              tasks: configData.tasks,
-              levelCount: configData.levelCount,
-            },
-          ];
+      const taskSetSources = taskSetDocuments.length
+        ? taskSetDocuments.flatMap((data) =>
+            Array.isArray(data.taskSets) ? data.taskSets : [data],
+          )
+        : [{ tasks: configData.tasks, levelCount: configData.levelCount }];
       const taskSets = taskSetSources.map((source: any, index: number) => {
         const tasks = (Array.isArray(source?.tasks) ? source.tasks : []).map(
           (task: any) => resetTaskProgress(Task.fromJSON(task)),

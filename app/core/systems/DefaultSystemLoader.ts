@@ -17,7 +17,7 @@ export class DefaultSystemLoader implements ISystemLoader {
   ) as Record<string, RawModuleLoader>;
 
   private readonly taskModules = import.meta.glob(
-    "~/model/SystemComponents/**/tasks.json",
+    "~/model/SystemComponents/**/*.json",
     {
       query: "?raw",
       import: "default",
@@ -54,7 +54,7 @@ export class DefaultSystemLoader implements ISystemLoader {
       systemId,
       "config.json",
     );
-    const tasksEntry = this.findEntry(this.taskModules, systemId, "tasks.json");
+    const taskEntries = await this.getTaskEntries(systemId);
     const sqlEntry = this.findEntry(
       this.sqlModules,
       systemId,
@@ -70,11 +70,11 @@ export class DefaultSystemLoader implements ISystemLoader {
       },
     ];
 
-    if (tasksEntry) {
+    for (const entry of taskEntries) {
       files.push({
-        name: "tasks.json",
-        path: tasksEntry.path,
-        content: await tasksEntry.loader(),
+        name: entry.path.split("/").pop()!,
+        path: entry.path,
+        content: entry.content,
       });
     }
 
@@ -90,33 +90,48 @@ export class DefaultSystemLoader implements ISystemLoader {
   }
 
   public async loadTaskSet(systemId: string): Promise<TaskSet | null> {
-    const tasksEntry = this.findEntry(
-      this.taskModules,
-      systemId,
-      "tasks.json",
-      false,
-    );
-    if (!tasksEntry) {
-      return null;
-    }
-
-    return TaskSet.fromJSON(
-      JSON.parse(await tasksEntry.loader()),
-      `${systemId}_tasks`,
-    );
+    return (await this.loadTaskSets([systemId]))[0] ?? null;
   }
 
   public async loadTaskSets(systemIds: string[]): Promise<TaskSet[]> {
     const taskSets: TaskSet[] = [];
-
     for (const systemId of systemIds) {
-      const taskSet = await this.loadTaskSet(systemId);
-      if (taskSet) {
-        taskSets.push(taskSet);
+      for (const entry of await this.getTaskEntries(systemId)) {
+        const data = JSON.parse(entry.content);
+        const sources = Array.isArray(data.taskSets) ? data.taskSets : [data];
+        for (const source of sources) {
+          const taskSet = TaskSet.fromJSON(source, `${systemId}_tasks`);
+          if (taskSet.systemId && taskSet.systemId !== systemId) {
+            throw new Error("Task set system_id does not match system id");
+          }
+          taskSet.systemId = systemId;
+          taskSets.push(taskSet);
+        }
       }
     }
-
     return taskSets;
+  }
+
+  private async getTaskEntries(
+    systemId: string,
+  ): Promise<{ path: string; content: string }[]> {
+    const entries: { path: string; content: string }[] = [];
+    for (const [path, loader] of Object.entries(this.taskModules).sort(
+      ([a], [b]) => a.localeCompare(b),
+    )) {
+      const normalizedPath = path.replace(/\\/g, "/");
+      if (
+        !normalizedPath.includes(`/${systemId}/`) ||
+        normalizedPath.endsWith("/config.json")
+      )
+        continue;
+      const content = await loader();
+      const data = JSON.parse(content);
+      if (Array.isArray(data?.tasks) || Array.isArray(data?.taskSets)) {
+        entries.push({ path, content });
+      }
+    }
+    return entries;
   }
 
   private findEntry(

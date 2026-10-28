@@ -60,6 +60,7 @@ it("reset database", function () {
   cy.get("#smazat-ucastnika-tlacitko", { timeout: 30000 }).should("be.visible");
 
   applyTestSettings();
+  cy.contains("button", "Prohlédnout si systém", { timeout: 10000 }).click();
 
   expectParticipantCount(30);
 
@@ -68,7 +69,6 @@ it("reset database", function () {
 
   cy.visit(databaseUrl);
   applyTestSettings();
-  cy.contains("button", "Prohlédnout si systém", { timeout: 10000 }).click();
   cy.get("#reset-database-button", { timeout: 10000 }).should("be.visible");
   cy.get("#reset-database-button").click();
 

@@ -18,6 +18,7 @@ it("reset system", function () {
   cy.get("#task-1 div.items-start", { timeout: 30000 }).should("be.visible");
 
   setTeacherMode(false);
+  cy.get("#enter-system-button", { timeout: 10000 }).click();
 
   cy.get("#task-1 div.items-start", { timeout: 30000 })
     .should("be.visible")

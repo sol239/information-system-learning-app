@@ -25,6 +25,28 @@ function configFile(value: unknown) {
 }
 
 describe("InformationSystem.loadSystem", () => {
+  it("loads separately named task sets from the system directory", async () => {
+    const result = await InformationSystem.loadSystem([
+      configFile(config),
+      ...["basic", "advanced"].map((id) => ({
+        name: `${id}.json`,
+        path: `system/${id}.json`,
+        content: JSON.stringify({
+          id,
+          system_id: "2",
+          name: id,
+          tasks: [{ id: `${id}-task` }],
+        }),
+      })),
+    ]);
+    expect(result.result, result.message).toBe(OperationResultType.SUCCESS);
+    expect(result.data!.taskSets.map((set) => set.id)).toEqual([
+      "basic",
+      "advanced",
+    ]);
+    expect(result.data!.tasks.map((task) => task.id)).toEqual(["basic-task"]);
+  });
+
   it("loads metadata, pages, and legacy config tasks", async () => {
     const result = await InformationSystem.loadSystem([configFile(config)]);
     expect(result.result, result.message).toBe(OperationResultType.SUCCESS);

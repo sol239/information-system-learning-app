@@ -75,6 +75,7 @@ it("reset components", function () {
     "be.visible",
   );
   applyTestSettings();
+  cy.contains("button", "Prohlédnout si systém", { timeout: 10000 }).click();
   cy.get("#statistika-ucastniku-pocet").should("contain.text", "30");
   cy.get("#toggle-edits-button", { timeout: 30000 })
     .should("be.visible")

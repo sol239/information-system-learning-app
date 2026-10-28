@@ -1,22 +1,24 @@
 <template>
   <UModal v-model:open="modalOpen" :title="t('change_task_set')">
-    <button
-      type="button"
-      class="flex w-full items-center gap-[0.675rem] rounded-lg border border-indigo-200 bg-white/80 p-[0.675rem] text-left text-gray-700 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
-    >
-      <span
-        class="flex h-[1.8rem] w-[1.8rem] shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600"
+    <slot>
+      <button
+        type="button"
+        class="flex w-full items-center gap-[0.675rem] rounded-lg border border-indigo-200 bg-white/80 p-[0.675rem] text-left text-gray-700 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
       >
-        <UIcon name="i-lucide-layers-3" class="h-[0.95rem] w-[0.95rem]" />
-      </span>
-      <span class="min-w-0 text-[0.8125rem] font-medium leading-snug">{{
-        t("change_task_set")
-      }}</span>
-      <UIcon
-        name="i-lucide-chevron-down"
-        class="ml-auto size-4 shrink-0 text-gray-500"
-      />
-    </button>
+        <span
+          class="flex h-[1.8rem] w-[1.8rem] shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600"
+        >
+          <UIcon name="i-lucide-layers-3" class="h-[0.95rem] w-[0.95rem]" />
+        </span>
+        <span class="min-w-0 text-[0.8125rem] font-medium leading-snug">{{
+          t("change_task_set")
+        }}</span>
+        <UIcon
+          name="i-lucide-chevron-down"
+          class="ml-auto size-4 shrink-0 text-gray-500"
+        />
+      </button>
+    </slot>
 
     <template #body>
       <div v-if="system?.taskSets.length" class="space-y-2">
