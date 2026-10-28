@@ -10,6 +10,8 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { onMounted } from "vue";
+import { AppLoader } from "~/core/AppLoader";
+import { TaskHelper } from "~/core/systems/TaskHelper";
 
 defineOptions({
   name: "CatchAllRedirectPage",
@@ -37,8 +39,24 @@ defineOptions({
 
 /* 12. Lifecycle */
 onMounted(async () => {
+  const globalSettings = useGlobalSettingsStore();
+  if (!globalSettings.teacherMode && useRoute().path === "/") {
+    await new AppLoader().loadApp();
+    const system = useSystemsStore().getPrimarySystem();
+    if (system) {
+      globalSettings.studentWelcomeModalOpen =
+        !system.startedTasks && !system.exploringSystem;
+      const firstPage = TaskHelper.getVisiblePages(
+        system.availableTasks() ?? [],
+      )[0]?.route ?? "";
+      await navigateTo(`/systems/${system.id}${firstPage}`, { replace: true });
+    }
+    return;
+  }
   await navigateTo("/systems", { replace: true });
 });
 
 /* 13. defineExpose */
 </script>
+
+<style scoped></style>

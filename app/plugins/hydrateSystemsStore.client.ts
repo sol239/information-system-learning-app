@@ -15,6 +15,11 @@ export default defineNuxtPlugin(async () => {
 
   if (primarySystem) {
     await SystemHelper.prepareSystem(primarySystem.id);
+    const globalSettings = useGlobalSettingsStore();
+    globalSettings.studentWelcomeModalOpen =
+      !globalSettings.teacherMode &&
+      !primarySystem.startedTasks &&
+      !primarySystem.exploringSystem;
   } else {
     console.log(
       "No primary system found. Please ensure that at least one system is loaded.",
