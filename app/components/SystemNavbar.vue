@@ -138,29 +138,45 @@
 <script setup lang="ts">
 /* 1. Imports */
 import { computed, onMounted, onUnmounted, ref } from "vue";
+
 import { TaskHelper } from "~/core/systems/TaskHelper";
+
 import { isTaskDone } from "~/utils/taskLevels";
+
 import { SYSTEM_NAVBAR_PAGES } from "~/utils/systemPages";
 
 /* 2. Stores */
 const systemsStore = useSystemsStore();
+
 const globalSettingsStore = useGlobalSettingsStore();
+
+/* 3. Context hooks */
 const runtimeConfig = useRuntimeConfig();
+
+const { t, locale } = useI18n();
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
 const emit = defineEmits<{
   "open-tasks": [];
 }>();
 
-/* 3. Context hooks */
-const { t, locale } = useI18n();
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const tasksPopoverOpen = ref(false);
+
+/* 9. Computed */
 const databasePageRoute = computed(() =>
   String(runtimeConfig.public.databasePageRoute),
 );
+
 const databaseTo = computed(
   () => `/systems/${systemsStore.selectedSystemId}${databasePageRoute.value}`,
 );
-
-/* 8. Local state (ref, reactive) */
-const tasksPopoverOpen = ref(false);
 
 const selectedTask = computed(() => {
   const selectedTaskId = globalSettingsStore.selectedTaskId;
@@ -249,6 +265,9 @@ const localItems = computed(() => {
   }));
 });
 
+/* 10. Watchers */
+
+/* 11. Methods */
 function isPageAvailable(pageRoute: string): boolean {
   const system = systemsStore.selectedSystem;
   const isDatabasePage = pageRoute === databasePageRoute.value;
@@ -276,7 +295,7 @@ function isPageAvailable(pageRoute: string): boolean {
   return availableTaskPages.value.some((page) => page.route === pageRoute);
 }
 
-/* 10. Watchers */
+/* 12. Lifecycle */
 onMounted(() => {
   // TODO:
   const handleKeydown = (event: KeyboardEvent) => {
@@ -298,4 +317,8 @@ onMounted(() => {
     document.removeEventListener("keydown", handleKeydown);
   });
 });
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

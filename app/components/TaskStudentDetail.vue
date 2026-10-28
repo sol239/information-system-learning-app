@@ -489,40 +489,193 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 /* eslint-disable @typescript-eslint/no-explicit-any, vue/no-mutating-props */
 import { computed, ref, watch } from "vue";
+
 import type {
   ComponentContainsConstraint,
   ComponentDomSnapshot,
 } from "~/model/Task/Activity/ComponentContainsCheck";
+
 import { ActivityType } from "~/model/Task/Activity/ActivityType";
+
 import { FinishType } from "~/model/Task/Finish/FinishType";
+
 import type { Task } from "~/model/Task/Task";
+
 import type { SelectActivity } from "~/model/Task/Activity/SelectActivity";
+
 import type { SelectOptionsActivity } from "~/model/Task/Activity/SelectOptionsActivity";
+
 import type { Option } from "~/model/Task/Option";
+
 import { TaskStatus } from "~/model/Task/TaskStatus";
+
 import { advanceCurrentLevel } from "~/utils/taskLevels";
 
-const { t } = useI18n();
+/* 2. Stores */
 const highlightStore = useHighlightStore();
+
 const systemsStore = useSystemsStore();
+
 const globalSettings = useGlobalSettingsStore();
+
+/* 3. Context hooks */
+const { t } = useI18n();
+
 const { systemInputVariables } = useSystemInputVariables();
 
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
 const props = defineProps<{
   task: Task | null;
   title?: string;
   readonly?: boolean;
 }>();
-const isReadonly = computed(() => props.readonly === true);
 
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
 const selectedActivityOptionIndices = ref<number[]>([]);
+
 const selectedFinishOptionIndices = ref<number[]>([]);
+
 const typeCorrectAnswer = ref("");
+
 const activityEvaluationResult = ref<boolean | null>(null);
+
 const finishEvaluationResult = ref<boolean | null>(null);
 
+/* 9. Computed */
+const isReadonly = computed(() => props.readonly === true);
+
+const selectedComponentNames = computed(() => {
+  if (props.task?.activityType !== ActivityType.SELECT) return [];
+  const components = systemsStore.selectedSystem?.actualComponents ?? [];
+  return Array.from(highlightStore.selectedHighlightedComponentsIds).map(
+    (id) => components.find((c) => c.id === id)?.name ?? id,
+  );
+});
+
+const activityLabel = computed(() => {
+  const label = props.task?.activity?.label;
+  if (label) return label;
+  switch (props.task?.activityType) {
+    case ActivityType.REPAIR:
+      return t("task_activity_repair");
+    case ActivityType.SELECT:
+      return t("task_activity_select");
+    case ActivityType.SELECT_OPTIONS:
+      return t("task_activity_select_options");
+    default:
+      return t("task_activity");
+  }
+});
+
+const activityDescription = computed(
+  () => props.task?.activity?.description ?? "",
+);
+
+const activityOptions = computed<Option[]>(() => {
+  return getTaskActivityOptions();
+});
+
+const canEvaluateActivity = computed(() => {
+  if (!props.task) {
+    return false;
+  }
+
+  if (
+    props.task.activityType === ActivityType.SELECT ||
+    props.task.activityType === ActivityType.SELECT_OPTIONS
+  ) {
+    return true;
+  }
+
+  return (
+    props.task.activityType === ActivityType.REPAIR &&
+    Boolean(
+      (props.task.activity as { checkRepair?: boolean } | undefined)
+        ?.checkRepair,
+    )
+  );
+});
+
+const isFinishUnlocked = computed(() => {
+  if (!props.task) {
+    return false;
+  }
+
+  if (props.task.finish?.isComplete || props.task.completed) {
+    return true;
+  }
+
+  const isUncheckedRepair =
+    props.task.activityType === ActivityType.REPAIR &&
+    !(props.task.activity as { checkRepair?: boolean } | undefined)
+      ?.checkRepair;
+
+  if (isUncheckedRepair) {
+    return true;
+  }
+
+  return Boolean(props.task.activity?.isCompleted);
+});
+
+const isFinishLocked = computed(() => !isFinishUnlocked.value);
+
+const isTaskFinished = computed(() =>
+  Boolean(
+    props.task?.finish?.isComplete ||
+    props.task?.completed ||
+    props.task?.status === TaskStatus.COMPLETED,
+  ),
+);
+
+const shouldShowFinishLockPopover = computed(
+  () =>
+    !globalSettings.teacherMode &&
+    !isReadonly.value &&
+    isFinishLocked.value &&
+    !isTaskFinished.value,
+);
+
+const canEvaluateFinish = computed(
+  () =>
+    props.task?.finishType === FinishType.IMMEDIATE ||
+    props.task?.finishType === FinishType.AFTER_DATABASE_UPDATE ||
+    props.task?.finishType === FinishType.SELECT_OPTIONS ||
+    props.task?.finishType === FinishType.TYPE_CORRECT ||
+    props.task?.finishType === FinishType.VARIABLE_CONSTRAINT,
+);
+
+const finishLabel = computed(() => {
+  if (props.task?.finish?.label) return props.task.finish.label;
+  switch (props.task?.finishType) {
+    case FinishType.IMMEDIATE:
+      return t("task_finish_immediate");
+    case FinishType.AFTER_DATABASE_UPDATE:
+      return t("task_finish_after_db");
+    case FinishType.SELECT_OPTIONS:
+      return t("task_finish_select_options");
+    case FinishType.TYPE_CORRECT:
+      return t("task_finish_type_correct");
+    case FinishType.VARIABLE_CONSTRAINT:
+      return t("task_finish_variable_constraint");
+    default:
+      return t("task_finish");
+  }
+});
+
+const finishOptions = computed<Option[]>(() => {
+  return getTaskFinishOptions();
+});
+
+/* 10. Watchers */
 watch(
   () => props.task?.id,
   () => {
@@ -582,6 +735,7 @@ watch(
   { immediate: true },
 );
 
+/* 11. Methods */
 function toggleActivityOption(index: number) {
   if (isReadonly.value) return;
 
@@ -925,125 +1079,9 @@ function normalizeDomText(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
-const selectedComponentNames = computed(() => {
-  if (props.task?.activityType !== ActivityType.SELECT) return [];
-  const components = systemsStore.selectedSystem?.actualComponents ?? [];
-  return Array.from(highlightStore.selectedHighlightedComponentsIds).map(
-    (id) => components.find((c) => c.id === id)?.name ?? id,
-  );
-});
+/* 12. Lifecycle */
 
-const activityLabel = computed(() => {
-  const label = props.task?.activity?.label;
-  if (label) return label;
-  switch (props.task?.activityType) {
-    case ActivityType.REPAIR:
-      return t("task_activity_repair");
-    case ActivityType.SELECT:
-      return t("task_activity_select");
-    case ActivityType.SELECT_OPTIONS:
-      return t("task_activity_select_options");
-    default:
-      return t("task_activity");
-  }
-});
-
-const activityDescription = computed(
-  () => props.task?.activity?.description ?? "",
-);
-
-const activityOptions = computed<Option[]>(() => {
-  return getTaskActivityOptions();
-});
-
-const canEvaluateActivity = computed(() => {
-  if (!props.task) {
-    return false;
-  }
-
-  if (
-    props.task.activityType === ActivityType.SELECT ||
-    props.task.activityType === ActivityType.SELECT_OPTIONS
-  ) {
-    return true;
-  }
-
-  return (
-    props.task.activityType === ActivityType.REPAIR &&
-    Boolean(
-      (props.task.activity as { checkRepair?: boolean } | undefined)
-        ?.checkRepair,
-    )
-  );
-});
-
-const isFinishUnlocked = computed(() => {
-  if (!props.task) {
-    return false;
-  }
-
-  if (props.task.finish?.isComplete || props.task.completed) {
-    return true;
-  }
-
-  const isUncheckedRepair =
-    props.task.activityType === ActivityType.REPAIR &&
-    !(props.task.activity as { checkRepair?: boolean } | undefined)
-      ?.checkRepair;
-
-  if (isUncheckedRepair) {
-    return true;
-  }
-
-  return Boolean(props.task.activity?.isCompleted);
-});
-
-const isFinishLocked = computed(() => !isFinishUnlocked.value);
-
-const isTaskFinished = computed(() =>
-  Boolean(
-    props.task?.finish?.isComplete ||
-    props.task?.completed ||
-    props.task?.status === TaskStatus.COMPLETED,
-  ),
-);
-
-const shouldShowFinishLockPopover = computed(
-  () =>
-    !globalSettings.teacherMode &&
-    !isReadonly.value &&
-    isFinishLocked.value &&
-    !isTaskFinished.value,
-);
-
-const canEvaluateFinish = computed(
-  () =>
-    props.task?.finishType === FinishType.IMMEDIATE ||
-    props.task?.finishType === FinishType.AFTER_DATABASE_UPDATE ||
-    props.task?.finishType === FinishType.SELECT_OPTIONS ||
-    props.task?.finishType === FinishType.TYPE_CORRECT ||
-    props.task?.finishType === FinishType.VARIABLE_CONSTRAINT,
-);
-
-const finishLabel = computed(() => {
-  if (props.task?.finish?.label) return props.task.finish.label;
-  switch (props.task?.finishType) {
-    case FinishType.IMMEDIATE:
-      return t("task_finish_immediate");
-    case FinishType.AFTER_DATABASE_UPDATE:
-      return t("task_finish_after_db");
-    case FinishType.SELECT_OPTIONS:
-      return t("task_finish_select_options");
-    case FinishType.TYPE_CORRECT:
-      return t("task_finish_type_correct");
-    case FinishType.VARIABLE_CONSTRAINT:
-      return t("task_finish_variable_constraint");
-    default:
-      return t("task_finish");
-  }
-});
-
-const finishOptions = computed<Option[]>(() => {
-  return getTaskFinishOptions();
-});
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

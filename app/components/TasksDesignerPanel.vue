@@ -258,34 +258,78 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+
 import type { InformationSystem } from "~/model/InformationSystem";
+
 import { Task } from "~/model/Task/Task";
+
 import { useSystemsStore } from "~/stores/systemsStore";
 
-const showImportModal = ref(false);
-const importJsonText = ref("");
-const importError = ref("");
-const importFile = ref<File | null>(null);
-const showImportAllModal = ref(false);
-const importAllJsonText = ref("");
-const importAllError = ref("");
-const importAllFile = ref<File | null>(null);
-const previewStudentView = ref(false);
-const optionsOpen = ref(false);
+/* 2. Stores */
+const systemsStore = useSystemsStore();
+
+const globalSettings = useGlobalSettingsStore();
+
+/* 3. Context hooks */
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 const tooltipUi = {
   content: "z-[10050]",
 };
 
-function readFileAsText(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file);
-  });
-}
+let persistSystemTimeout: ReturnType<typeof setTimeout> | null = null;
 
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const showImportModal = ref(false);
+
+const importJsonText = ref("");
+
+const importError = ref("");
+
+const importFile = ref<File | null>(null);
+
+const showImportAllModal = ref(false);
+
+const importAllJsonText = ref("");
+
+const importAllError = ref("");
+
+const importAllFile = ref<File | null>(null);
+
+const previewStudentView = ref(false);
+
+const optionsOpen = ref(false);
+
+const selectedTask = ref<Task | null>(null);
+
+const systemLevelCount = ref(1);
+
+/* 9. Computed */
+const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? []);
+
+const sortedTasks = computed(() =>
+  [...tasks.value].sort(
+    (a, b) => normalizeTaskLevel(a.level) - normalizeTaskLevel(b.level),
+  ),
+);
+
+const minimumLevelCount = computed(() =>
+  tasks.value.reduce(
+    (maxLevel, task) => Math.max(maxLevel, normalizeTaskLevel(task.level)),
+    1,
+  ),
+);
+
+/* 10. Watchers */
 watch(importFile, async (file) => {
   if (!file) return;
   importJsonText.value = await readFileAsText(file);
@@ -295,25 +339,6 @@ watch(importAllFile, async (file) => {
   if (!file) return;
   importAllJsonText.value = await readFileAsText(file);
 });
-
-const { t } = useI18n();
-const systemsStore = useSystemsStore();
-const globalSettings = useGlobalSettingsStore();
-const selectedTask = ref<Task | null>(null);
-const systemLevelCount = ref(1);
-const tasks = computed(() => systemsStore.selectedSystem?.tasks ?? []);
-const sortedTasks = computed(() =>
-  [...tasks.value].sort(
-    (a, b) => normalizeTaskLevel(a.level) - normalizeTaskLevel(b.level),
-  ),
-);
-const minimumLevelCount = computed(() =>
-  tasks.value.reduce(
-    (maxLevel, task) => Math.max(maxLevel, normalizeTaskLevel(task.level)),
-    1,
-  ),
-);
-let persistSystemTimeout: ReturnType<typeof setTimeout> | null = null;
 
 watch(selectedTask, (task) => {
   globalSettings.selectedTaskId = task?.id ?? null;
@@ -345,6 +370,16 @@ watch(minimumLevelCount, (minimum) => {
 watch(systemLevelCount, (levelCount) => {
   handleLevelCountUpdate(levelCount);
 });
+
+/* 11. Methods */
+function readFileAsText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(file);
+  });
+}
 
 const importFromJson = async () => {
   importError.value = "";
@@ -543,6 +578,7 @@ function normalizeTaskLevel(value: unknown): number {
   return Number.isFinite(parsed) ? Math.max(1, Math.floor(parsed)) : 1;
 }
 
+/* 12. Lifecycle */
 onBeforeUnmount(() => {
   const system = systemsStore.selectedSystem;
   if (!system || !persistSystemTimeout) {
@@ -554,4 +590,8 @@ onBeforeUnmount(() => {
   refreshDefaultTasks(system);
   void systemsStore.updateSystem(system);
 });
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

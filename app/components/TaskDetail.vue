@@ -972,26 +972,38 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 /* 1. Imports */
+/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from "vue";
+
 import EditComponentBody from "~/components/EditComponentBody.vue";
+
 import { Component as SystemComponent } from "~/model/Component";
+
 import type { ComponentVariables } from "~/model/ComponentVariables";
+
 import type { Page } from "~/model/Page";
+
 import type {
   ComponentContainsConstraint,
   ComponentContainsOperator,
 } from "~/model/Task/Activity/ComponentContainsCheck";
+
 import { ActivityType } from "~/model/Task/Activity/ActivityType";
+
 import { FinishType } from "~/model/Task/Finish/FinishType";
+
 import type {
   VariableConstraint,
   VariableConstraintOperator,
   VariableConstraintScope,
 } from "~/model/Task/Finish/VariableConstraintFinish";
+
 import { Task } from "~/model/Task/Task";
+
 import { useSystemsStore } from "~/stores/systemsStore";
+
 import {
   CODE_EDIT_PERMISSION_KEYS,
   CODE_EDIT_PERMISSION_LABELS,
@@ -1000,15 +1012,19 @@ import {
   type CodeEditPermissionKey,
   type CodeEditPermissions,
 } from "~/utils/codeEditPermissions";
+
 import { inconsistentVisiblePageLevels } from "~/utils/taskLevels";
 
 /* 2. Stores */
 const globalSettings = useGlobalSettingsStore();
+
 const systemsStore = useSystemsStore();
 
 /* 3. Context hooks */
 const runtimeConfig = useRuntimeConfig();
+
 const { t } = useI18n();
+
 const toast = useToast();
 
 /* 4. Constants (non-reactive) */
@@ -1081,14 +1097,31 @@ type ComponentContainsComponentOption = {
   value: string;
 };
 
+defineModel<string>({ default: "" });
+
+let taskUpdateTimeout: ReturnType<typeof setTimeout> | null = null;
+
+let queuedTaskUpdate: Task | null = null;
+
+let isSyncingTaskForm = false;
+
+const variableConstraintOperatorOptions: Array<{
+  label: VariableConstraintOperator;
+  value: VariableConstraintOperator;
+}> = [
+  { label: "<", value: "<" },
+  { label: ">", value: ">" },
+  { label: ">=", value: ">=" },
+  { label: "<=", value: "<=" },
+  { label: "==", value: "==" },
+];
+
 /* 5. Props */
 const props = defineProps<{
   selectedTask: Task | null;
 }>();
 
 /* 6. Emits */
-defineModel<string>({ default: "" });
-
 const emit = defineEmits<{
   (e: "submit" | "evaluate"): void;
   (e: "update:selectedTask", value: Task): void;
@@ -1101,26 +1134,32 @@ const editComponentBodyRef = ref<InstanceType<typeof EditComponentBody> | null>(
 
 /* 8. State (ref, reactive) */
 const systemLevelCount = ref(1);
+
 const editingComponentId = ref<string | null>(null);
+
 const isEditingComponentValid = ref(true);
+
 const editingComponent = ref<SystemComponent | null>(null);
+
 const showPasteComponentModal = ref(false);
+
 const pasteComponentJsonText = ref("");
+
 const pasteComponentError = ref("");
+
+const taskForm = reactive<TaskDetailForm>(createDefaultForm());
+
+/* 9. Computed */
 const codeEditEnvironment = computed(() =>
   codeEditEnvironmentFromRuntimeConfig(
     runtimeConfig.public as Record<string, unknown>,
   ),
 );
-const taskForm = reactive<TaskDetailForm>(createDefaultForm());
-let taskUpdateTimeout: ReturnType<typeof setTimeout> | null = null;
-let queuedTaskUpdate: Task | null = null;
-let isSyncingTaskForm = false;
 
-/* 9. Computed */
 const databasePageRoute = computed(() =>
   String(runtimeConfig.public.databasePageRoute),
 );
+
 const codeEditPermissionOptions = computed(() =>
   CODE_EDIT_PERMISSION_KEYS.map((key) => ({
     key,
@@ -1129,6 +1168,7 @@ const codeEditPermissionOptions = computed(() =>
     enabled: taskForm.codeEditPermissions[key],
   })),
 );
+
 const selectedTaskFromSettings = computed<Task | null>(() => {
   if (!globalSettings.selectedTaskId) {
     return null;
@@ -1140,12 +1180,14 @@ const selectedTaskFromSettings = computed<Task | null>(() => {
     ) ?? props.selectedTask
   );
 });
+
 const selectedComponentIds = computed(
   () =>
     selectedTaskFromSettings.value?.errorComponents?.map(
       (component) => component.id,
     ) ?? [],
 );
+
 const selectedComponents = computed(
   () =>
     selectedTaskFromSettings.value?.errorComponents?.map((component) => ({
@@ -1153,6 +1195,7 @@ const selectedComponents = computed(
       name: component.name || component.id,
     })) ?? [],
 );
+
 const systemPages = computed(() => {
   const system = systemsStore.selectedSystem;
   return system
@@ -1161,19 +1204,23 @@ const systemPages = computed(() => {
         .filter((page) => page.route !== databasePageRoute.value)
     : [];
 });
+
 const systemTasks = computed(() => systemsStore.selectedSystem?.tasks ?? []);
+
 const inconsistentLevelVisiblePages = computed(() => {
   const system = systemsStore.selectedSystem;
   return system
     ? inconsistentVisiblePageLevels(system.tasks, system.visiblePages())
     : [];
 });
+
 const visiblePagesMismatchDescription = computed(() => {
   const levels = inconsistentLevelVisiblePages.value.join(", ");
   return levels
     ? `${t("task_level_visible_pages_mismatch_description")} ${t("task_levels")}: ${levels}`
     : t("task_level_visible_pages_mismatch_description");
 });
+
 const levelOptions = computed(() =>
   Array.from(
     { length: normalizeLevelCount(systemLevelCount.value) },
@@ -1186,12 +1233,15 @@ const levelOptions = computed(() =>
     },
   ),
 );
+
 const tasksInSelectedLevel = computed(() =>
   systemTasks.value.filter((task) => task.level === taskForm.level),
 );
+
 const taskSelectedComponents = computed(
   () => selectedTaskFromSettings.value?.errorComponents ?? [],
 );
+
 const availableFinishComponents = computed(() => {
   const uniqueComponents = new Map<string, { id: string; name: string }>();
   const allComponents = taskSelectedComponents.value;
@@ -1205,16 +1255,7 @@ const availableFinishComponents = computed(() => {
 
   return Array.from(uniqueComponents.values());
 });
-const variableConstraintOperatorOptions: Array<{
-  label: VariableConstraintOperator;
-  value: VariableConstraintOperator;
-}> = [
-  { label: "<", value: "<" },
-  { label: ">", value: ">" },
-  { label: ">=", value: ">=" },
-  { label: "<=", value: "<=" },
-  { label: "==", value: "==" },
-];
+
 const componentContainsOperatorOptions = computed<
   Array<{ label: string; value: ComponentContainsOperator }>
 >(() => [
@@ -1224,6 +1265,7 @@ const componentContainsOperatorOptions = computed<
     value: "not-contains",
   },
 ]);
+
 const componentContainsComponentOptions = computed<
   ComponentContainsComponentOption[]
 >(() =>
@@ -1232,6 +1274,7 @@ const componentContainsComponentOptions = computed<
     value: component.id,
   })),
 );
+
 const variableConstraintOptions = computed<VariableConstraintOption[]>(() => {
   void t("task_variable_group_general");
   const seen = new Set<string>();
@@ -1302,102 +1345,16 @@ const activityTypeOptions = computed(() => [
     value: ActivityType.SELECT_OPTIONS,
   },
 ]);
+
 const isRepairActivity = computed(
   () => taskForm.activityType === ActivityType.REPAIR,
 );
+
 const substituteAfterActivityHint = computed(() =>
   isRepairActivity.value
     ? `${t("task_substitute_after_activity_hint")} ${t("task_substitute_after_activity_repair_disabled_hint")}`
     : t("task_substitute_after_activity_hint"),
 );
-
-/* 11. Methods */
-function handlePasteComponent() {
-  pasteComponentError.value = "";
-  try {
-    const data = JSON.parse(pasteComponentJsonText.value);
-    const newComponents = Array.isArray(data) ? data : [data];
-
-    for (const c of newComponents) {
-      if (!c || !c.id) {
-        throw new Error(t("task_invalid_component_json"));
-      }
-    }
-    const validComponents = newComponents.map((c) =>
-      SystemComponent.fromJSON(c),
-    );
-
-    const selectedTask = selectedTaskFromSettings.value;
-    if (selectedTask) {
-      const updatedErrorComponents = [...(selectedTask.errorComponents || [])];
-      const updatedActivityComponents = [
-        ...((selectedTask.activity?.activityComponents ??
-          selectedTask.errorComponents) ||
-          []),
-      ];
-
-      for (const comp of validComponents) {
-        if (
-          !updatedErrorComponents.some((existing) => existing.id === comp.id)
-        ) {
-          updatedErrorComponents.push(comp);
-        }
-        if (
-          !updatedActivityComponents.some((existing) => existing.id === comp.id)
-        ) {
-          updatedActivityComponents.push(comp);
-        }
-      }
-
-      emit("update:selectedTask", {
-        ...selectedTask,
-        errorComponents: updatedErrorComponents,
-        activity: {
-          ...(selectedTask.activity ?? {}),
-          activityComponents: updatedActivityComponents,
-        },
-      });
-    }
-
-    showPasteComponentModal.value = false;
-    pasteComponentJsonText.value = "";
-  } catch (err: any) {
-    pasteComponentError.value = err.message || t("task_invalid_component_json");
-  }
-}
-
-function createDefaultForm(): TaskDetailForm {
-  return {
-    id: "",
-    title: "",
-    description: "",
-    finishDescription: "",
-    finishType: FinishType.IMMEDIATE,
-    finishLabel: "",
-    level: 1,
-    feedback: "",
-    pointsReward: 0,
-    failPenalty: 1,
-    canExecuteQuery: false,
-    activityType: ActivityType.REPAIR,
-    activityLabel: "",
-    activityDescription: "",
-    activityCheckRepair: false,
-    activityRepairChecks: [],
-    activityOptions: [],
-    finishOptions: [],
-    finishCorrectAnswer: "",
-    finishCheckQuery: "",
-    finishVariableConstraints: [],
-    substituteAfterActivity: false,
-    databaseAllowed: true,
-    visiblePages: [],
-    codeEditPermissions: effectiveCodeEditPermissions(
-      undefined,
-      codeEditEnvironment.value,
-    ),
-  };
-}
 
 /* 10. Watchers */
 watch(
@@ -1528,6 +1485,129 @@ watch(
   { deep: true },
 );
 
+watch(selectedComponentIds, (componentIds) => {
+  if (
+    editingComponentId.value &&
+    !componentIds.includes(editingComponentId.value)
+  ) {
+    stopEditingComponent();
+  }
+});
+
+watch(
+  () => taskForm.finishType,
+  (newType) => {
+    if (newType === FinishType.IMMEDIATE && !taskForm.finishDescription) {
+      taskForm.finishDescription = t(
+        "task_finish_immediate_default_description",
+      );
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => taskForm.activityType,
+  (activityType) => {
+    if (activityType === ActivityType.REPAIR) {
+      taskForm.substituteAfterActivity = false;
+      return;
+    }
+
+    taskForm.activityCheckRepair = false;
+    taskForm.activityRepairChecks = [];
+  },
+  { immediate: true },
+);
+
+/* 11. Methods */
+function handlePasteComponent() {
+  pasteComponentError.value = "";
+  try {
+    const data = JSON.parse(pasteComponentJsonText.value);
+    const newComponents = Array.isArray(data) ? data : [data];
+
+    for (const c of newComponents) {
+      if (!c || !c.id) {
+        throw new Error(t("task_invalid_component_json"));
+      }
+    }
+    const validComponents = newComponents.map((c) =>
+      SystemComponent.fromJSON(c),
+    );
+
+    const selectedTask = selectedTaskFromSettings.value;
+    if (selectedTask) {
+      const updatedErrorComponents = [...(selectedTask.errorComponents || [])];
+      const updatedActivityComponents = [
+        ...((selectedTask.activity?.activityComponents ??
+          selectedTask.errorComponents) ||
+          []),
+      ];
+
+      for (const comp of validComponents) {
+        if (
+          !updatedErrorComponents.some((existing) => existing.id === comp.id)
+        ) {
+          updatedErrorComponents.push(comp);
+        }
+        if (
+          !updatedActivityComponents.some((existing) => existing.id === comp.id)
+        ) {
+          updatedActivityComponents.push(comp);
+        }
+      }
+
+      emit("update:selectedTask", {
+        ...selectedTask,
+        errorComponents: updatedErrorComponents,
+        activity: {
+          ...(selectedTask.activity ?? {}),
+          activityComponents: updatedActivityComponents,
+        },
+      });
+    }
+
+    showPasteComponentModal.value = false;
+    pasteComponentJsonText.value = "";
+  } catch (err: any) {
+    pasteComponentError.value = err.message || t("task_invalid_component_json");
+  }
+}
+
+function createDefaultForm(): TaskDetailForm {
+  return {
+    id: "",
+    title: "",
+    description: "",
+    finishDescription: "",
+    finishType: FinishType.IMMEDIATE,
+    finishLabel: "",
+    level: 1,
+    feedback: "",
+    pointsReward: 0,
+    failPenalty: 1,
+    canExecuteQuery: false,
+    activityType: ActivityType.REPAIR,
+    activityLabel: "",
+    activityDescription: "",
+    activityCheckRepair: false,
+    activityRepairChecks: [],
+    activityOptions: [],
+    finishOptions: [],
+    finishCorrectAnswer: "",
+    finishCheckQuery: "",
+    finishVariableConstraints: [],
+    substituteAfterActivity: false,
+    databaseAllowed: true,
+    visiblePages: [],
+    codeEditPermissions: effectiveCodeEditPermissions(
+      undefined,
+      codeEditEnvironment.value,
+    ),
+  };
+}
+
 function buildTaskUpdate(selectedTask: Task): Task {
   const finish = Task.createFinish(
     taskForm.finishType,
@@ -1636,45 +1716,6 @@ function flushQueuedTaskUpdate() {
   emit("update:selectedTask", queuedTaskUpdate);
   queuedTaskUpdate = null;
 }
-
-onBeforeUnmount(() => {
-  flushQueuedTaskUpdate();
-});
-
-watch(selectedComponentIds, (componentIds) => {
-  if (
-    editingComponentId.value &&
-    !componentIds.includes(editingComponentId.value)
-  ) {
-    stopEditingComponent();
-  }
-});
-
-watch(
-  () => taskForm.finishType,
-  (newType) => {
-    if (newType === FinishType.IMMEDIATE && !taskForm.finishDescription) {
-      taskForm.finishDescription = t(
-        "task_finish_immediate_default_description",
-      );
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => taskForm.activityType,
-  (activityType) => {
-    if (activityType === ActivityType.REPAIR) {
-      taskForm.substituteAfterActivity = false;
-      return;
-    }
-
-    taskForm.activityCheckRepair = false;
-    taskForm.activityRepairChecks = [];
-  },
-  { immediate: true },
-);
 
 function exportSelectedComponent(componentId: string) {
   const selectedTask = selectedTaskFromSettings.value;
@@ -2089,4 +2130,13 @@ function toTaskPage(page: Page): Page {
 function createOptionId(): string {
   return crypto.randomUUID();
 }
+
+/* 12. Lifecycle */
+onBeforeUnmount(() => {
+  flushQueuedTaskUpdate();
+});
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

@@ -108,3 +108,5 @@ async function save(close: () => void) {
 /* 13. defineExpose */
 defineExpose({});
 </script>
+
+<style scoped></style>

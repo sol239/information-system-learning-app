@@ -36,3 +36,5 @@ colorMode.value = "light";
 
 /* 13. defineExpose */
 </script>
+
+<style scoped></style>

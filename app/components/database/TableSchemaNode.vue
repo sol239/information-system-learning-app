@@ -41,8 +41,16 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { Handle, Position } from "@vue-flow/core";
 
+/* 2. Stores */
+
+/* 3. Context hooks */
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
 const props = defineProps<{
   data: {
     name: string;
@@ -59,14 +67,28 @@ const props = defineProps<{
   };
 }>();
 
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const foreignKeyColumns = computed(
   () =>
     new Set(props.data.foreignKeys.map((foreignKey) => foreignKey.fromColumn)),
 );
 
+/* 10. Watchers */
+
+/* 11. Methods */
 function columnHandleId(type: "source" | "target", columnName: string): string {
   return `${type}:${columnName}`;
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

@@ -76,3 +76,5 @@ const emit = defineEmits<{
 /* 13. defineExpose */
 defineExpose({});
 </script>
+
+<style scoped></style>

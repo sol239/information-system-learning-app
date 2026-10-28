@@ -249,15 +249,125 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { ref, computed, watch, onMounted, reactive } from "vue";
+
 import { useI18n } from "vue-i18n";
+
 import ComponentWrapper from "~/components/ComponentWrapper.vue";
+
 import { ComponentVariables, Variable } from "~/model/ComponentVariables";
 
+/* 2. Stores */
+const { systemsStore } = useSyncSystemId();
+
+/* 3. Context hooks */
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 defineOptions({
   name: "SystemSessionsPage",
 });
 
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const sessionIds = ref<number[]>([]);
+
+const createModalOpen = ref(false);
+
+const editModalOpen = reactive<Record<number, boolean>>({});
+
+/* 9. Computed */
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
+
+// Per-card components â€“ each instance receives sessionId via generalVariables
+const statusBadgeComponent = computed(() =>
+  systemsStore.getComponentById("stitek-stavu-turnusu"),
+);
+
+const dateRangeComponent = computed(() =>
+  systemsStore.getComponentById("datum-turnusu"),
+);
+
+const daysComponent = computed(() =>
+  systemsStore.getComponentById("pocet-dni-turnusu"),
+);
+
+const capacityBarComponent = computed(() =>
+  systemsStore.getComponentById("kapacita-turnusu"),
+);
+
+const participantsCountBadgeComponent = computed(() =>
+  systemsStore.getComponentById("stitek-poctu-ucastniku-turnusu"),
+);
+
+const participantsListComponent = computed(() =>
+  systemsStore.getComponentById("seznam-ucastniku-turnusu"),
+);
+
+const supervisorsCountBadgeComponent = computed(() =>
+  systemsStore.getComponentById("stitek-poctu-vedoucich-turnusu"),
+);
+
+const supervisorsListComponent = computed(() =>
+  systemsStore.getComponentById("seznam-vedoucich-turnusu"),
+);
+
+const deleteSessionComponent = computed(() =>
+  systemsStore.getComponentById("smazat-turnus"),
+);
+
+const dateFromInputComponent = computed(() =>
+  systemsStore.getComponentById("vstup-datum-od"),
+);
+
+const dateToInputComponent = computed(() =>
+  systemsStore.getComponentById("vstup-datum-do"),
+);
+
+const capacityInputComponent = computed(() =>
+  systemsStore.getComponentById("vstup-kapacita"),
+);
+
+const saveButtonComponent = computed(() =>
+  systemsStore.getComponentById("btn-ulozit"),
+);
+
+const editDateFromInputComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-datum-od"),
+);
+
+const editDateToInputComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-datum-do"),
+);
+
+const editCapacityInputComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-kapacita"),
+);
+
+const editSaveButtonComponent = computed(() =>
+  systemsStore.getComponentById("edit-btn-ulozit"),
+);
+
+/* 10. Watchers */
+watch(
+  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
+  (newDb) => {
+    if (newDb) {
+      loadSessions();
+    }
+  },
+  { immediate: true },
+);
+
+/* 11. Methods */
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function withVars(comp: any, vars: Variable[]) {
   if (!comp) return undefined;
@@ -267,71 +377,8 @@ function withVars(comp: any, vars: Variable[]) {
   return clone;
 }
 
-const { t } = useI18n();
-const { systemsStore } = useSyncSystemId();
-
-const sessionIds = ref<number[]>([]);
-const createModalOpen = ref(false);
-const editModalOpen = reactive<Record<number, boolean>>({});
-const isDbReady = computed(
-  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
-);
-
-// Per-card components â€“ each instance receives sessionId via generalVariables
-const statusBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-stavu-turnusu"),
-);
-const dateRangeComponent = computed(() =>
-  systemsStore.getComponentById("datum-turnusu"),
-);
-const daysComponent = computed(() =>
-  systemsStore.getComponentById("pocet-dni-turnusu"),
-);
-const capacityBarComponent = computed(() =>
-  systemsStore.getComponentById("kapacita-turnusu"),
-);
-const participantsCountBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-poctu-ucastniku-turnusu"),
-);
-const participantsListComponent = computed(() =>
-  systemsStore.getComponentById("seznam-ucastniku-turnusu"),
-);
-const supervisorsCountBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-poctu-vedoucich-turnusu"),
-);
-const supervisorsListComponent = computed(() =>
-  systemsStore.getComponentById("seznam-vedoucich-turnusu"),
-);
-const deleteSessionComponent = computed(() =>
-  systemsStore.getComponentById("smazat-turnus"),
-);
-const dateFromInputComponent = computed(() =>
-  systemsStore.getComponentById("vstup-datum-od"),
-);
-const dateToInputComponent = computed(() =>
-  systemsStore.getComponentById("vstup-datum-do"),
-);
-const capacityInputComponent = computed(() =>
-  systemsStore.getComponentById("vstup-kapacita"),
-);
-const saveButtonComponent = computed(() =>
-  systemsStore.getComponentById("btn-ulozit"),
-);
-const editDateFromInputComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-datum-od"),
-);
-const editDateToInputComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-datum-do"),
-);
-const editCapacityInputComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-kapacita"),
-);
-const editSaveButtonComponent = computed(() =>
-  systemsStore.getComponentById("edit-btn-ulozit"),
-);
-
 // Fetch session IDs
-const loadSessions = async () => {
+async function loadSessions() {
   const db = systemsStore.selectedSystem?.database;
   if (!db) return;
 
@@ -345,7 +392,7 @@ const loadSessions = async () => {
   } catch (e) {
     console.error("Failed to load sessions:", e);
   }
-};
+}
 
 const reloadSessionsAfterDelete = () => {
   window.setTimeout(() => {
@@ -367,21 +414,14 @@ const handleSessionUpdated = (sessionId: number) => {
   }, 50);
 };
 
-watch(
-  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
-  (newDb) => {
-    if (newDb) {
-      loadSessions();
-    }
-  },
-  { immediate: true },
-);
-
+/* 12. Lifecycle */
 onMounted(() => {
   if (systemsStore.selectedSystem?.database?.sqlJsDatabase) {
     loadSessions();
   }
 });
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

@@ -272,110 +272,31 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { ref, computed, watch, onMounted, reactive } from "vue";
+
 import { useI18n } from "vue-i18n";
+
 import ComponentWrapper from "~/components/ComponentWrapper.vue";
+
 import ModalContainer from "~/components/ModalContainer.vue";
+
 import { ComponentVariables, Variable } from "~/model/ComponentVariables";
+
 import { useSystemInputVariables } from "~/composables/useSystemInputVariables";
 
+/* 2. Stores */
+const { systemsStore } = useSyncSystemId();
+
+/* 3. Context hooks */
+const { systemInputVariables } = useSystemInputVariables();
+
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 defineOptions({
   name: "SystemParticipantsPage",
 });
-
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-function withVars(comp: any, vars: Variable[]) {
-  if (!comp) return undefined;
-  const clone = Object.create(comp);
-  clone.variables = new ComponentVariables();
-  clone.variables.generalVariables = vars;
-  return clone;
-}
-
-const { systemInputVariables } = useSystemInputVariables();
-const { t } = useI18n();
-const { systemsStore } = useSyncSystemId();
-
-const isDbReady = computed(
-  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
-);
-
-const createModalOpen = ref(false);
-const editModalOpen = reactive<Record<number, boolean>>({});
-
-// Display components
-const cardInfoComponent = computed(() =>
-  systemsStore.getComponentById("karta-ucastnika"),
-);
-const sessionBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-turnusu-ucastnika"),
-);
-const allergenBadgeComponent = computed(() =>
-  systemsStore.getComponentById("stitek-alergenu-ucastnika"),
-);
-const capacityBarComponent = computed(() =>
-  systemsStore.getComponentById("celkova-kapacita-ucastniku"),
-);
-const razeniComponent = computed(() =>
-  systemsStore.getComponentById("razeni-ucastniku"),
-);
-
-// Create components
-const vstupJmenoComponent = computed(() =>
-  systemsStore.getComponentById("vstup-jmeno-ucastnika"),
-);
-const vstupEmailComponent = computed(() =>
-  systemsStore.getComponentById("vstup-email-ucastnika"),
-);
-const vstupTelefonComponent = computed(() =>
-  systemsStore.getComponentById("vstup-telefon-ucastnika"),
-);
-const vstupAdresaComponent = computed(() =>
-  systemsStore.getComponentById("vstup-adresa-ucastnika"),
-);
-const vstupVekComponent = computed(() =>
-  systemsStore.getComponentById("vstup-vek-ucastnika"),
-);
-const vstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("vstup-alergeny-ucastnika"),
-);
-const vstupTurnusyComponent = computed(() =>
-  systemsStore.getComponentById("vstup-turnusy-ucastnika"),
-);
-const btnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("btn-ulozit-ucastnika"),
-);
-
-// Edit components
-const editVstupJmenoComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-jmeno-ucastnika"),
-);
-const editVstupEmailComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-email-ucastnika"),
-);
-const editVstupTelefonComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-telefon-ucastnika"),
-);
-const editVstupAdresaComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-adresa-ucastnika"),
-);
-const editVstupVekComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-vek-ucastnika"),
-);
-const editVstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-alergeny-ucastnika"),
-);
-const editVstupTurnusyComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-turnusy-ucastnika"),
-);
-const editBtnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("edit-btn-ulozit-ucastnika"),
-);
-
-// Delete component
-const smazatComponent = computed(() =>
-  systemsStore.getComponentById("smazat-ucastnika"),
-);
 
 // Participant data
 interface ParticipantRow {
@@ -388,17 +309,128 @@ interface ParticipantRow {
   age: number;
   allergenCount: number;
 }
-const participants = ref<ParticipantRow[]>([]);
-
-// Filters
-const filterText = ref("");
-const selectedSessionId = ref<number | null>(null);
 
 interface SessionItem {
   label: string;
   value: number | null;
 }
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const createModalOpen = ref(false);
+
+const editModalOpen = reactive<Record<number, boolean>>({});
+
+const participants = ref<ParticipantRow[]>([]);
+
+// Filters
+const filterText = ref("");
+
+const selectedSessionId = ref<number | null>(null);
+
 const sessions = ref<{ id: number; label: string }[]>([]);
+
+/* 9. Computed */
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
+
+// Display components
+const cardInfoComponent = computed(() =>
+  systemsStore.getComponentById("karta-ucastnika"),
+);
+
+const sessionBadgeComponent = computed(() =>
+  systemsStore.getComponentById("stitek-turnusu-ucastnika"),
+);
+
+const allergenBadgeComponent = computed(() =>
+  systemsStore.getComponentById("stitek-alergenu-ucastnika"),
+);
+
+const capacityBarComponent = computed(() =>
+  systemsStore.getComponentById("celkova-kapacita-ucastniku"),
+);
+
+const razeniComponent = computed(() =>
+  systemsStore.getComponentById("razeni-ucastniku"),
+);
+
+// Create components
+const vstupJmenoComponent = computed(() =>
+  systemsStore.getComponentById("vstup-jmeno-ucastnika"),
+);
+
+const vstupEmailComponent = computed(() =>
+  systemsStore.getComponentById("vstup-email-ucastnika"),
+);
+
+const vstupTelefonComponent = computed(() =>
+  systemsStore.getComponentById("vstup-telefon-ucastnika"),
+);
+
+const vstupAdresaComponent = computed(() =>
+  systemsStore.getComponentById("vstup-adresa-ucastnika"),
+);
+
+const vstupVekComponent = computed(() =>
+  systemsStore.getComponentById("vstup-vek-ucastnika"),
+);
+
+const vstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("vstup-alergeny-ucastnika"),
+);
+
+const vstupTurnusyComponent = computed(() =>
+  systemsStore.getComponentById("vstup-turnusy-ucastnika"),
+);
+
+const btnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("btn-ulozit-ucastnika"),
+);
+
+// Edit components
+const editVstupJmenoComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-jmeno-ucastnika"),
+);
+
+const editVstupEmailComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-email-ucastnika"),
+);
+
+const editVstupTelefonComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-telefon-ucastnika"),
+);
+
+const editVstupAdresaComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-adresa-ucastnika"),
+);
+
+const editVstupVekComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-vek-ucastnika"),
+);
+
+const editVstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-alergeny-ucastnika"),
+);
+
+const editVstupTurnusyComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-turnusy-ucastnika"),
+);
+
+const editBtnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("edit-btn-ulozit-ucastnika"),
+);
+
+// Delete component
+const smazatComponent = computed(() =>
+  systemsStore.getComponentById("smazat-ucastnika"),
+);
 
 const sessionFilterItems = computed<SessionItem[]>(() => [
   { label: t("all_sessions"), value: null },
@@ -480,7 +512,26 @@ const filteredParticipantIds = computed(() => {
   return uniqueParticipants.map((participant) => participant.id);
 });
 
-const loadData = async () => {
+/* 10. Watchers */
+watch(
+  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
+  (db) => {
+    if (db) loadData();
+  },
+  { immediate: true },
+);
+
+/* 11. Methods */
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+function withVars(comp: any, vars: Variable[]) {
+  if (!comp) return undefined;
+  const clone = Object.create(comp);
+  clone.variables = new ComponentVariables();
+  clone.variables.generalVariables = vars;
+  return clone;
+}
+
+async function loadData() {
   const db = systemsStore.selectedSystem?.database;
   if (!db) return;
 
@@ -531,7 +582,7 @@ const loadData = async () => {
   } catch (e) {
     console.error("Failed to load participants:", e);
   }
-};
+}
 
 const reloadAfterDelete = () => {
   window.setTimeout(() => {
@@ -553,17 +604,12 @@ const handleParticipantUpdated = (participantId: number) => {
   }, 50);
 };
 
-watch(
-  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
-  (db) => {
-    if (db) loadData();
-  },
-  { immediate: true },
-);
-
+/* 12. Lifecycle */
 onMounted(() => {
   if (systemsStore.selectedSystem?.database?.sqlJsDatabase) loadData();
 });
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

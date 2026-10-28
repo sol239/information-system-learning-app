@@ -1,9 +1,14 @@
 <template>
   <div
-    class="system-toolbar flex min-h-[57px] flex-wrap items-center justify-end gap-2 overflow-x-auto border-b border-gray-200 py-2 pr-4"
+    :class="[
+      'system-toolbar flex gap-2',
+      compact
+        ? 'flex-col items-center py-2'
+        : 'min-h-[57px] flex-wrap items-center justify-end overflow-x-auto border-b border-gray-200 py-2 pr-4',
+    ]"
   >
     <UButton
-      v-if="globalSettings.teacherMode"
+      v-if="globalSettings.teacherMode && !compact"
       :icon="
         globalSettings.teacherHighlightEnabled
           ? 'i-lucide-eye'
@@ -19,7 +24,7 @@
     />
 
     <UButton
-      v-if="globalSettings.teacherMode"
+      v-if="globalSettings.teacherMode && !compact"
       icon="i-lucide-pencil-ruler"
       color="teacher"
       variant="subtle"
@@ -29,7 +34,7 @@
       <span class="mobile-hidden">{{ t("designer") }}</span>
     </UButton>
 
-    <UPopover>
+    <UPopover v-if="!compact">
       <template #content>
         <div
           class="p-3 bg-white border border-gray-200 rounded-xl shadow-xl min-w-[240px] space-y-2"
@@ -82,9 +87,20 @@
         color="yellow"
         :variant="highlightStore.isEditModeActive ? 'solid' : 'subtle'"
         size="sm"
+        :class="compact ? 'compact-icon-button' : undefined"
+        :aria-label="
+          highlightStore.isEditModeActive ? t('disable_edit') : t('enable_edit')
+        "
+        :title="
+          compact
+            ? highlightStore.isEditModeActive
+              ? t('disable_edit')
+              : t('enable_edit')
+            : undefined
+        "
         @click="highlightStore.toggleEditMode"
       >
-        <span class="mobile-hidden">
+        <span v-if="!compact" class="mobile-hidden">
           {{
             highlightStore.isEditModeActive
               ? t("disable_edit")
@@ -108,16 +124,19 @@
     <UButton
       v-if="!globalSettings.teacherMode"
       id="reset-system-button"
-      :label="t('reset_system')"
+      :label="compact ? undefined : t('reset_system')"
+      :aria-label="t('reset_system')"
+      :title="compact ? t('reset_system') : undefined"
       size="sm"
       color="green"
       variant="subtle"
       icon="i-lucide-refresh-cw"
+      :class="compact ? 'compact-icon-button' : undefined"
       @click="openResetSystemModal"
     />
 
     <UButton
-      v-if="globalSettings.teacherModeEnv"
+      v-if="globalSettings.teacherModeEnv && !compact"
       :icon="
         globalSettings.teacherMode
           ? 'i-lucide-graduation-cap'
@@ -296,6 +315,7 @@ const versionSwitchModalUi = {
 };
 
 /* 5. Props */
+defineProps<{ compact?: boolean }>();
 
 /* 6. Emits */
 
@@ -545,6 +565,16 @@ defineExpose({});
     #dceffc 50%,
     #f5edac 100%
   );
+}
+
+.system-toolbar :deep(.compact-icon-button) {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  padding: 0 !important;
+  flex: none;
+  justify-content: center;
 }
 
 @media (max-width: 639px) {

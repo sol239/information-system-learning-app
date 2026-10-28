@@ -155,3 +155,5 @@ onMounted(async () => {
 
 /* 13. defineExpose */
 </script>
+
+<style scoped></style>

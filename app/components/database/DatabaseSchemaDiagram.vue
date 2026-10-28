@@ -47,18 +47,34 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Database } from "sql.js";
+
 import { VueFlow } from "@vue-flow/core";
+
 import type { VueFlowStore } from "@vue-flow/core";
+
 import { Background } from "@vue-flow/background";
+
 import { Controls } from "@vue-flow/controls";
+
 import TableSchemaNode from "./TableSchemaNode.vue";
+
 import TableRelationshipEdge from "./TableRelationshipEdge.vue";
+
 import "@vue-flow/core/dist/style.css";
+
 import "@vue-flow/core/dist/theme-default.css";
+
 import "@vue-flow/controls/dist/style.css";
 
+/* 2. Stores */
+
+/* 3. Context hooks */
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 type SchemaColumn = {
   cid: number;
   name: string;
@@ -80,25 +96,40 @@ type SchemaTable = {
   foreignKeys: SchemaForeignKey[];
 };
 
+const nodeTypes = {
+  "table-node": markRaw(TableSchemaNode),
+};
+
+const edgeTypes = {
+  "table-relationship": markRaw(TableRelationshipEdge),
+};
+
+/* 5. Props */
 const props = defineProps<{
   database: Database | null | undefined;
   schemaVersion?: number;
 }>();
 
-const { t } = useI18n();
-const schema = ref<SchemaTable[]>([]);
-const schemaError = ref("");
-const nodes = ref<any[]>([]);
-const edges = ref<any[]>([]);
-const focusedTable = ref<string | null>(null);
-const flowStore = shallowRef<VueFlowStore | null>(null);
-const nodeTypes = {
-  "table-node": markRaw(TableSchemaNode),
-};
-const edgeTypes = {
-  "table-relationship": markRaw(TableRelationshipEdge),
-};
+/* 6. Emits */
 
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const schema = ref<SchemaTable[]>([]);
+
+const schemaError = ref("");
+
+const nodes = ref<any[]>([]);
+
+const edges = ref<any[]>([]);
+
+const focusedTable = ref<string | null>(null);
+
+const flowStore = shallowRef<VueFlowStore | null>(null);
+
+/* 9. Computed */
+
+/* 10. Watchers */
 watch(
   () => [props.database, props.schemaVersion] as const,
   () => {
@@ -107,6 +138,7 @@ watch(
   { immediate: true },
 );
 
+/* 11. Methods */
 function loadSchema() {
   schemaError.value = "";
   schema.value = [];
@@ -565,6 +597,10 @@ function relationshipColor(value: string): string {
 
   return colors[Math.abs(hash) % colors.length];
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

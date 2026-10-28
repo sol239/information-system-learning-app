@@ -220,82 +220,31 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { ref, computed, watch, onMounted, reactive } from "vue";
+
 import { useI18n } from "vue-i18n";
+
 import ComponentWrapper from "~/components/ComponentWrapper.vue";
+
 import ModalContainer from "~/components/ModalContainer.vue";
+
 import { ComponentVariables, Variable } from "~/model/ComponentVariables";
+
 import { useSystemInputVariables } from "~/composables/useSystemInputVariables";
 
+/* 2. Stores */
+const { systemsStore } = useSyncSystemId();
+
+/* 3. Context hooks */
+const { systemInputVariables } = useSystemInputVariables();
+
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 defineOptions({
   name: "SystemMealsPage",
 });
-
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-function withVars(comp: any, vars: Variable[]) {
-  if (!comp) return undefined;
-  const clone = Object.create(comp);
-  clone.variables = new ComponentVariables();
-  clone.variables.generalVariables = vars;
-  return clone;
-}
-
-const { systemInputVariables } = useSystemInputVariables();
-const { t } = useI18n();
-const { systemsStore } = useSyncSystemId();
-
-const isDbReady = computed(
-  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
-);
-const createModalOpen = ref(false);
-const editModalOpen = reactive<Record<number, boolean>>({});
-
-// Display components
-const cardInfoComponent = computed(() =>
-  systemsStore.getComponentById("karta-jidla"),
-);
-const allergenListComponent = computed(() =>
-  systemsStore.getComponentById("seznam-alergenu-jidla"),
-);
-const countBarComponent = computed(() =>
-  systemsStore.getComponentById("celkovy-pocet-jidel"),
-);
-const razeniComponent = computed(() =>
-  systemsStore.getComponentById("razeni-jidel"),
-);
-
-// Create components
-const vstupNazevComponent = computed(() =>
-  systemsStore.getComponentById("vstup-nazev-jidla"),
-);
-const vstupDobaComponent = computed(() =>
-  systemsStore.getComponentById("vstup-doba-podavani"),
-);
-const vstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("vstup-alergeny-jidla"),
-);
-const btnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("btn-ulozit-jidlo"),
-);
-
-// Edit components
-const editVstupNazevComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-nazev-jidla"),
-);
-const editVstupDobaComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-doba-podavani"),
-);
-const editVstupAlergenyComponent = computed(() =>
-  systemsStore.getComponentById("edit-vstup-alergeny-jidla"),
-);
-const editBtnUlozitComponent = computed(() =>
-  systemsStore.getComponentById("edit-btn-ulozit-jidlo"),
-);
-
-// Delete component
-const smazatComponent = computed(() =>
-  systemsStore.getComponentById("smazat-jidlo"),
-);
 
 // Meal data
 interface MealRow {
@@ -304,11 +253,85 @@ interface MealRow {
   name: string;
   allergenCount: number;
 }
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const createModalOpen = ref(false);
+
+const editModalOpen = reactive<Record<number, boolean>>({});
+
 const meals = ref<MealRow[]>([]);
 
 // Filter
 const filterText = ref("");
+
 const selectedTime = ref<string | null>(null);
+
+/* 9. Computed */
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
+
+// Display components
+const cardInfoComponent = computed(() =>
+  systemsStore.getComponentById("karta-jidla"),
+);
+
+const allergenListComponent = computed(() =>
+  systemsStore.getComponentById("seznam-alergenu-jidla"),
+);
+
+const countBarComponent = computed(() =>
+  systemsStore.getComponentById("celkovy-pocet-jidel"),
+);
+
+const razeniComponent = computed(() =>
+  systemsStore.getComponentById("razeni-jidel"),
+);
+
+// Create components
+const vstupNazevComponent = computed(() =>
+  systemsStore.getComponentById("vstup-nazev-jidla"),
+);
+
+const vstupDobaComponent = computed(() =>
+  systemsStore.getComponentById("vstup-doba-podavani"),
+);
+
+const vstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("vstup-alergeny-jidla"),
+);
+
+const btnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("btn-ulozit-jidlo"),
+);
+
+// Edit components
+const editVstupNazevComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-nazev-jidla"),
+);
+
+const editVstupDobaComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-doba-podavani"),
+);
+
+const editVstupAlergenyComponent = computed(() =>
+  systemsStore.getComponentById("edit-vstup-alergeny-jidla"),
+);
+
+const editBtnUlozitComponent = computed(() =>
+  systemsStore.getComponentById("edit-btn-ulozit-jidlo"),
+);
+
+// Delete component
+const smazatComponent = computed(() =>
+  systemsStore.getComponentById("smazat-jidlo"),
+);
 
 const timeFilterItems = computed(() => [
   { label: t("all_meals"), value: null },
@@ -374,7 +397,26 @@ const filteredMealIds = computed(() => {
   return uniqueMeals.map((m) => m.id);
 });
 
-const loadData = async () => {
+/* 10. Watchers */
+watch(
+  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
+  (db) => {
+    if (db) loadData();
+  },
+  { immediate: true },
+);
+
+/* 11. Methods */
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+function withVars(comp: any, vars: Variable[]) {
+  if (!comp) return undefined;
+  const clone = Object.create(comp);
+  clone.variables = new ComponentVariables();
+  clone.variables.generalVariables = vars;
+  return clone;
+}
+
+async function loadData() {
   const db = systemsStore.selectedSystem?.database;
   if (!db) return;
 
@@ -404,7 +446,7 @@ const loadData = async () => {
   } catch (e) {
     console.error("Failed to load meals:", e);
   }
-};
+}
 
 const reloadAfterDelete = () => {
   window.setTimeout(() => {
@@ -426,17 +468,12 @@ const handleMealUpdated = (mealId: number) => {
   }, 50);
 };
 
-watch(
-  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
-  (db) => {
-    if (db) loadData();
-  },
-  { immediate: true },
-);
-
+/* 12. Lifecycle */
 onMounted(() => {
   if (systemsStore.selectedSystem?.database?.sqlJsDatabase) loadData();
 });
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

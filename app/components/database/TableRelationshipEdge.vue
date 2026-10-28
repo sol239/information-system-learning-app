@@ -21,8 +21,16 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { BaseEdge, Position, getSmoothStepPath } from "@vue-flow/core";
 
+/* 2. Stores */
+
+/* 3. Context hooks */
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
 const props = withDefaults(
   defineProps<{
     id: string;
@@ -47,7 +55,15 @@ const props = withDefaults(
   },
 );
 
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const edgeColor = computed(() => String(props.style.stroke ?? "#1f2937"));
+
 const pathResult = computed(() =>
   getSmoothStepPath({
     sourceX: props.sourceX,
@@ -59,7 +75,20 @@ const pathResult = computed(() =>
     borderRadius: 0,
   }),
 );
+
 const path = computed(() => pathResult.value[0]);
+
 const labelX = computed(() => pathResult.value[1]);
+
 const labelY = computed(() => pathResult.value[2]);
+
+/* 10. Watchers */
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

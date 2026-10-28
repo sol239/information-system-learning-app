@@ -61,27 +61,46 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Operation } from "~/utils/Operation/Operation";
+
 import { OperationResultType } from "~/utils/Operation/OperationResultType";
+
 import { DatabaseHandler } from "~/utils/DatabaseHandler";
+
 import type { ColumnType } from "~/utils/ColumnType";
+
 import { useSystemsStore } from "~/stores/systemsStore";
 
+/* 2. Stores */
+const systemsStore = useSystemsStore();
+
+/* 3. Context hooks */
+
+/* 4. Constants (non-reactive) */
 const PAGE_SIZE = 10;
 
+/* 5. Props */
 const props = defineProps<{
   queryResult: Operation<any> | null;
   page: number;
   tableName?: string;
 }>();
 
+/* 6. Emits */
 const emit = defineEmits<{
   "update:page": [page: number];
   "update:totalPages": [total: number];
   "update:rowCount": [count: number];
 }>();
 
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const columnTypes = ref<Record<string, ColumnType>>({});
+
+/* 9. Computed */
 const allColumns = computed<string[]>(() => {
   if (
     !props.queryResult ||
@@ -92,6 +111,8 @@ const allColumns = computed<string[]>(() => {
   // sql.js minifies 'columns' to 'lc' in the bundled build
   return row0?.columns ?? (row0 as any)?.lc ?? [];
 });
+
+const columns = allColumns;
 
 const allRows = computed<(string | number | null)[][]>(() => {
   if (
@@ -106,13 +127,6 @@ const totalPages = computed(() =>
   Math.max(1, Math.ceil(allRows.value.length / PAGE_SIZE)),
 );
 
-watch(totalPages, (val) => emit("update:totalPages", val), { immediate: true });
-watch(allRows, (val) => emit("update:rowCount", val.length), {
-  immediate: true,
-});
-
-const columns = allColumns;
-
 const rows = computed(() => {
   const start = (props.page - 1) * PAGE_SIZE;
   return allRows.value.slice(start, start + PAGE_SIZE);
@@ -125,8 +139,12 @@ const error = computed<string | null>(() => {
   return null;
 });
 
-const systemsStore = useSystemsStore();
-const columnTypes = ref<Record<string, ColumnType>>({});
+/* 10. Watchers */
+watch(totalPages, (val) => emit("update:totalPages", val), { immediate: true });
+
+watch(allRows, (val) => emit("update:rowCount", val.length), {
+  immediate: true,
+});
 
 watch(
   () => props.tableName,
@@ -145,4 +163,12 @@ watch(
   },
   { immediate: true },
 );
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>

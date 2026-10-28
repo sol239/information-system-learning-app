@@ -528,3 +528,5 @@ async function loadDatabaseInfo() {
 
 /* 13. defineExpose */
 </script>
+
+<style scoped></style>

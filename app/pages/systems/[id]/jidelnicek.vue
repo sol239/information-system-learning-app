@@ -242,15 +242,150 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { ref, computed, watch, onMounted } from "vue";
+
 import { useI18n } from "vue-i18n";
+
 import ComponentWrapper from "~/components/ComponentWrapper.vue";
+
 import { ComponentVariables, Variable } from "~/model/ComponentVariables";
 
+/* 2. Stores */
+const { systemsStore } = useSyncSystemId();
+
+/* 3. Context hooks */
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
 defineOptions({
   name: "SystemMealBookPage",
 });
 
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+// State
+const sessionIds = ref<number[]>([]);
+
+const expandedSessions = ref<number[]>([]);
+
+const sessionDays = ref<Record<number, string[]>>({});
+
+const expandedDayKeys = ref<string[]>([]);
+
+const dayMeals = ref<Record<string, number[]>>({});
+
+const expandedMealKeys = ref<string[]>([]);
+
+/* 9. Computed */
+const isDbReady = computed(
+  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
+);
+
+// Components
+const sessionHeaderComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-hlavicka-turnusu"),
+);
+
+const sessionDateComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-datum-turnusu"),
+);
+
+const sessionMealCountComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-pocet-jidel-turnusu"),
+);
+
+const sessionPortionCountComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-pocet-porci-turnusu"),
+);
+
+const dayHeaderComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-hlavicka-dne"),
+);
+
+const dayMealCountComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-pocet-jidel-dne"),
+);
+
+const dayPortionCountComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-pocet-porci-dne"),
+);
+
+const mealRowComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-radek-jidla"),
+);
+
+const mealAllergensComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-alergeny-jidla"),
+);
+
+const mealServingTimeComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-doba-podavani-jidla"),
+);
+
+const mealPeopleComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-lide-jidla"),
+);
+
+const mealSupervisorsComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vedouci-jidla"),
+);
+
+const addMealSessionComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-turnus-jidlo-osobe"),
+);
+
+const addMealPersonComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-osoba-jidlo-osobe"),
+);
+
+const addMealDateComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-datum-jidlo-osobe"),
+);
+
+const addMealMealComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-jidlo-jidlo-osobe"),
+);
+
+const addMealSubmitComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-tlacitko-pridat-jidlo-osobe"),
+);
+
+const removeMealSessionComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-turnus-odebrat-jidlo-osobe"),
+);
+
+const removeMealPersonComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-osoba-odebrat-jidlo-osobe"),
+);
+
+const removeMealDateComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-datum-odebrat-jidlo-osobe"),
+);
+
+const removeMealMealComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-vstup-jidlo-odebrat-jidlo-osobe"),
+);
+
+const removeMealSubmitComponent = computed(() =>
+  systemsStore.getComponentById("jidelnicek-tlacitko-odebrat-jidlo-osobe"),
+);
+
+/* 10. Watchers */
+watch(
+  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
+  (db) => {
+    if (db) loadSessions();
+  },
+  { immediate: true },
+);
+
+/* 11. Methods */
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function withVars(comp: any, vars: Variable[]) {
   if (!comp) return undefined;
@@ -260,96 +395,17 @@ function withVars(comp: any, vars: Variable[]) {
   return clone;
 }
 
-const { t } = useI18n();
-const { systemsStore } = useSyncSystemId();
-
-const isDbReady = computed(
-  () => !!systemsStore.selectedSystem?.database?.sqlJsDatabase,
-);
-
-// Components
-const sessionHeaderComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-hlavicka-turnusu"),
-);
-const sessionDateComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-datum-turnusu"),
-);
-const sessionMealCountComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-pocet-jidel-turnusu"),
-);
-const sessionPortionCountComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-pocet-porci-turnusu"),
-);
-const dayHeaderComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-hlavicka-dne"),
-);
-const dayMealCountComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-pocet-jidel-dne"),
-);
-const dayPortionCountComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-pocet-porci-dne"),
-);
-const mealRowComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-radek-jidla"),
-);
-const mealAllergensComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-alergeny-jidla"),
-);
-const mealServingTimeComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-doba-podavani-jidla"),
-);
-const mealPeopleComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-lide-jidla"),
-);
-const mealSupervisorsComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vedouci-jidla"),
-);
-const addMealSessionComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-turnus-jidlo-osobe"),
-);
-const addMealPersonComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-osoba-jidlo-osobe"),
-);
-const addMealDateComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-datum-jidlo-osobe"),
-);
-const addMealMealComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-jidlo-jidlo-osobe"),
-);
-const addMealSubmitComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-tlacitko-pridat-jidlo-osobe"),
-);
-const removeMealSessionComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-turnus-odebrat-jidlo-osobe"),
-);
-const removeMealPersonComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-osoba-odebrat-jidlo-osobe"),
-);
-const removeMealDateComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-datum-odebrat-jidlo-osobe"),
-);
-const removeMealMealComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-vstup-jidlo-odebrat-jidlo-osobe"),
-);
-const removeMealSubmitComponent = computed(() =>
-  systemsStore.getComponentById("jidelnicek-tlacitko-odebrat-jidlo-osobe"),
-);
-
-// State
-const sessionIds = ref<number[]>([]);
-const expandedSessions = ref<number[]>([]);
-const sessionDays = ref<Record<number, string[]>>({});
-const expandedDayKeys = ref<string[]>([]);
-const dayMeals = ref<Record<string, number[]>>({});
-const expandedMealKeys = ref<string[]>([]);
-
 // Helpers
 const isSessionExpanded = (id: number) => expandedSessions.value.includes(id);
+
 const isDayExpanded = (sId: number, date: string) =>
   expandedDayKeys.value.includes(`${sId}|${date}`);
+
 const isMealExpanded = (mId: number, date: string) =>
   expandedMealKeys.value.includes(`${mId}|${date}`);
+
 const getSessionDays = (sId: number) => sessionDays.value[sId] ?? [];
+
 const getDayMeals = (sId: number, date: string) =>
   dayMeals.value[`${sId}|${date}`] ?? [];
 
@@ -383,7 +439,7 @@ const toggleMeal = (mId: number, date: string) => {
 };
 
 // Data loading
-const loadSessions = async () => {
+async function loadSessions() {
   const db = systemsStore.selectedSystem?.database;
   if (!db) return;
   try {
@@ -396,7 +452,7 @@ const loadSessions = async () => {
   } catch (e) {
     console.error("Failed to load sessions:", e);
   }
-};
+}
 
 const loadDays = async (sId: number) => {
   const db = systemsStore.selectedSystem?.database;
@@ -450,17 +506,12 @@ const reloadMealPlan = async () => {
   }
 };
 
-watch(
-  () => systemsStore.selectedSystem?.database?.sqlJsDatabase,
-  (db) => {
-    if (db) loadSessions();
-  },
-  { immediate: true },
-);
-
+/* 12. Lifecycle */
 onMounted(() => {
   if (systemsStore.selectedSystem?.database?.sqlJsDatabase) loadSessions();
 });
+
+/* 13. defineExpose */
 </script>
 
 <style scoped>

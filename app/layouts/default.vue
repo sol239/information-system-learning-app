@@ -24,6 +24,9 @@ const { t } = useI18n();
 
 /* 8. State (ref, reactive) */
 const mobileTasksOpen = ref(false);
+const desktopTasksCollapsed = ref(false);
+const systemNavbarContainer = ref<HTMLElement | null>(null);
+const systemNavbarHeight = ref<number | null>(null);
 
 /* 9. Computed */
 const atSystemPage = computed(() => {
@@ -43,6 +46,22 @@ const mistakesCount = computed(
 );
 
 /* 10. Watchers */
+watch(
+  systemNavbarContainer,
+  (element, _previous, onCleanup) => {
+    if (!element) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry)
+        systemNavbarHeight.value =
+          entry.borderBoxSize[0]?.blockSize ??
+          element.getBoundingClientRect().height;
+    });
+    observer.observe(element);
+    onCleanup(() => observer.disconnect());
+  },
+  { flush: "post" },
+);
 
 /* 11. Methods */
 
@@ -57,13 +76,12 @@ const mistakesCount = computed(
       <div
         :class="[
           'system-column flex min-h-0 w-full min-w-0 flex-col',
-          isFullscreenSystemPage ? '' : 'lg:w-[65%]',
+          isFullscreenSystemPage || desktopTasksCollapsed ? '' : 'lg:w-[65%]',
         ]"
       >
-        <SystemNavbar
-          v-if="!isFullscreenSystemPage"
-          @open-tasks="mobileTasksOpen = true"
-        />
+        <div v-if="!isFullscreenSystemPage" ref="systemNavbarContainer">
+          <SystemNavbar @open-tasks="mobileTasksOpen = true" />
+        </div>
         <div class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <slot />
@@ -73,13 +91,59 @@ const mistakesCount = computed(
 
       <aside
         v-if="!isFullscreenSystemPage"
-        class="tasks-column hidden min-h-0 w-[35%] shrink-0 flex-col border-l border-gray-300 lg:flex"
+        :class="[
+          'tasks-column hidden min-h-0 shrink-0 flex-col border-l border-gray-300 lg:flex',
+          desktopTasksCollapsed ? 'tasks-column-collapsed w-12' : 'w-[35%]',
+        ]"
       >
-        <div>
-          <SystemToolbar />
+        <div
+          class="desktop-tasks-header flex items-center"
+          :style="
+            systemNavbarHeight
+              ? { height: `${systemNavbarHeight}px` }
+              : undefined
+          "
+        >
+          <UButton
+            :icon="
+              desktopTasksCollapsed
+                ? 'i-lucide-panel-right-open'
+                : 'i-lucide-panel-right-close'
+            "
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            class="m-1.5 shrink-0 !size-9 !min-w-9 !p-0 justify-center !bg-transparent hover:!bg-white/20"
+            :aria-label="
+              t(
+                desktopTasksCollapsed
+                  ? 'expand_tasks_sidebar'
+                  : 'collapse_tasks_sidebar',
+              )
+            "
+            :title="
+              t(
+                desktopTasksCollapsed
+                  ? 'expand_tasks_sidebar'
+                  : 'collapse_tasks_sidebar',
+              )
+            "
+            :aria-expanded="!desktopTasksCollapsed"
+            @click="desktopTasksCollapsed = !desktopTasksCollapsed"
+          />
+          <div v-if="!desktopTasksCollapsed" class="h-full min-w-0 flex-1">
+            <SystemToolbar />
+          </div>
         </div>
+        <SystemToolbar
+          v-if="desktopTasksCollapsed && !globalSettings.teacherMode"
+          compact
+        />
 
-        <div class="flex flex-row mt-4 items-center justify-between px-4">
+        <div
+          v-if="!desktopTasksCollapsed"
+          class="flex flex-row mt-4 items-center justify-between px-4"
+        >
           <div>
             <h2 class="text-1xl font-bold">{{ t("tasks") }}</h2>
           </div>
@@ -108,7 +172,7 @@ const mistakesCount = computed(
             </template>
           </UPopover>
         </div>
-        <div class="min-h-0 flex-1">
+        <div v-if="!desktopTasksCollapsed" class="min-h-0 flex-1">
           <UScrollArea class="h-full">
             <TaskList />
           </UScrollArea>
@@ -193,6 +257,22 @@ const mistakesCount = computed(
 </template>
 
 <style scoped>
+.desktop-tasks-header {
+  background: radial-gradient(
+    circle at top left,
+    #bdddf7,
+    #dceffc 50%,
+    #f5edac 100%
+  );
+}
+
+.desktop-tasks-header :deep(.system-toolbar) {
+  background: transparent;
+  height: 100%;
+  min-height: 0;
+  flex-wrap: nowrap;
+}
+
 .tasks-column {
   background: radial-gradient(
     circle at top left,
@@ -200,5 +280,19 @@ const mistakesCount = computed(
     #eef8ff 50%,
     #fff8c7 100%
   );
+}
+
+.tasks-column-collapsed {
+  background: radial-gradient(
+    circle at top left,
+    #bdddf7,
+    #dceffc 50%,
+    #f5edac 100%
+  );
+}
+
+.tasks-column-collapsed .desktop-tasks-header,
+.tasks-column-collapsed :deep(.system-toolbar) {
+  background: transparent;
 }
 </style>
