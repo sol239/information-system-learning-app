@@ -46,9 +46,9 @@ onMounted(async () => {
     if (system) {
       globalSettings.studentWelcomeModalOpen =
         !system.startedTasks && !system.exploringSystem;
-      const firstPage = TaskHelper.getVisiblePages(
-        system.availableTasks() ?? [],
-      )[0]?.route ?? "";
+      const firstPage =
+        TaskHelper.getVisiblePages(system.availableTasks() ?? [])[0]?.route ??
+        "";
       await navigateTo(`/systems/${system.id}${firstPage}`, { replace: true });
     }
     return;
