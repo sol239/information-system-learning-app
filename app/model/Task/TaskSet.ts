@@ -2,6 +2,7 @@ import { Task } from "./Task";
 
 export class TaskSet {
   public id: string;
+  public systemId: string;
   public name: string;
   public description: string;
   public levelCount: number;
@@ -9,18 +10,21 @@ export class TaskSet {
 
   constructor({
     id,
+    systemId = "",
     name,
     description = "",
     levelCount = 1,
     tasks = [],
   }: {
     id: string;
+    systemId?: string;
     name: string;
     description?: string;
     levelCount?: number;
     tasks?: Task[];
   }) {
     this.id = id;
+    this.systemId = systemId;
     this.name = name;
     this.description = description;
     this.levelCount = Math.max(1, Number(levelCount || 1));
@@ -38,6 +42,7 @@ export class TaskSet {
 
     return new TaskSet({
       id: String(raw.id ?? fallbackId),
+      systemId: String(raw.system_id ?? raw.systemId ?? ""),
       name: String(raw.name ?? "Default tasks"),
       description: String(raw.description ?? ""),
       levelCount: Number(

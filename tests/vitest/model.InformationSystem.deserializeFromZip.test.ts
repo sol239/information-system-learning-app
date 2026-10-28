@@ -9,6 +9,8 @@ vi.mock("~/stores/componentStore", () => ({
 }));
 
 const { InformationSystem } = await import("../../app/model/InformationSystem");
+const { TaskSet } = await import("../../app/model/Task/TaskSet");
+const { SystemZipExporter } = await import("../../app/utils/SystemZipExporter");
 
 async function createSystemZip(
   config: Record<string, unknown>,
@@ -19,6 +21,38 @@ async function createSystemZip(
 }
 
 describe("InformationSystem.deserializeFromZip", () => {
+  it("round trips multiple task sets and their selection", async () => {
+    const system = new InformationSystem({
+      id: "demo",
+      name: "Demo",
+      language: "cs",
+      description: "",
+      taskSets: [
+        new TaskSet({ id: "first", systemId: "demo", name: "First" }),
+        new TaskSet({ id: "second", systemId: "demo", name: "Second" }),
+      ],
+      selectedTaskSetId: "second",
+    });
+    const zip = await SystemZipExporter.export(system);
+    const archive = await JSZip.loadAsync(await zip.arrayBuffer());
+    const exported = JSON.parse(
+      await archive.file("tasks.json")!.async("text"),
+    );
+    expect(
+      exported.taskSets.map((set: { system_id: string }) => set.system_id),
+    ).toEqual(["demo", "demo"]);
+    const result = await InformationSystem.deserializeFromZip(
+      await zip.arrayBuffer(),
+    );
+    expect(result.result, result.message).toBe(OperationResultType.SUCCESS);
+    expect(result.data?.taskSets.map((set) => set.id)).toEqual([
+      "first",
+      "second",
+    ]);
+    expect(result.data?.selectedTaskSetId).toBe("second");
+    expect(result.data?.taskSet.systemId).toBe("demo");
+  });
+
   it("returns a successful operation with the deserialized information system", async () => {
     const zipData = await createSystemZip({
       id: "demo-system",

@@ -27,6 +27,9 @@ type StoredInformationSystem = {
   defaultTasks: unknown[];
   taskSet?: unknown;
   defaultTaskSet?: unknown;
+  taskSets?: unknown[];
+  defaultTaskSets?: unknown[];
+  selectedTaskSetId?: string;
   actualComponents: unknown[];
   defaultComponents: unknown[];
   databaseBinary: Uint8Array | null;
@@ -188,6 +191,9 @@ export class IndexedDBStorage implements IStorage {
       defaultTasks: this.toPlainData(system.defaultTasks),
       taskSet: this.toPlainData(system.taskSet),
       defaultTaskSet: this.toPlainData(system.defaultTaskSet),
+      taskSets: this.toPlainData(system.taskSets),
+      defaultTaskSets: this.toPlainData(system.defaultTaskSets),
+      selectedTaskSetId: system.selectedTaskSetId,
       actualComponents: this.toPlainData(system.actualComponents),
       defaultComponents: this.toPlainData(system.defaultComponents),
       databaseBinary: this.getDatabaseBinary(system),
@@ -237,6 +243,17 @@ export class IndexedDBStorage implements IStorage {
         `${record.id}_tasks`,
         record.levelCount,
       ),
+      taskSets: Array.isArray(record.taskSets)
+        ? record.taskSets.map((set, index) =>
+            this.toTaskSet(set, [], `${record.id}_tasks_${index}`),
+          )
+        : undefined,
+      defaultTaskSets: Array.isArray(record.defaultTaskSets)
+        ? record.defaultTaskSets.map((set, index) =>
+            this.toTaskSet(set, [], `${record.id}_tasks_${index}`),
+          )
+        : undefined,
+      selectedTaskSetId: record.selectedTaskSetId,
       actualComponents: (record.actualComponents ?? []).map((component) =>
         Component.fromJSON(component),
       ),

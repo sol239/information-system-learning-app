@@ -354,6 +354,14 @@ watch(
 );
 
 watch(
+  () => systemsStore.selectedSystem?.selectedTaskSetId,
+  () => {
+    selectedTask.value = null;
+    globalSettings.selectedTaskId = null;
+  },
+);
+
+watch(
   () => systemsStore.selectedSystem?.levelCount,
   (levelCount) => {
     systemLevelCount.value = normalizeLevelCount(levelCount);
@@ -565,6 +573,11 @@ async function persistSystemNow(system: InformationSystem) {
   await systemsStore.updateSystem(system);
 }
 
+async function flushPendingChanges() {
+  const system = systemsStore.selectedSystem;
+  if (system && persistSystemTimeout) await persistSystemNow(system);
+}
+
 function normalizeLevelCount(value: unknown): number {
   const parsed = Number(value);
   const normalized = Number.isFinite(parsed)
@@ -592,6 +605,7 @@ onBeforeUnmount(() => {
 });
 
 /* 13. defineExpose */
+defineExpose({ flushPendingChanges });
 </script>
 
 <style scoped></style>

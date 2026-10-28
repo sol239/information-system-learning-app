@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Component } from "../../../app/model/Component";
 import { Score } from "../../../app/model/Score";
 import { Task } from "../../../app/model/Task/Task";
+import { TaskSet } from "../../../app/model/Task/TaskSet";
 import { OperationResultType } from "../../../app/utils/Operation/OperationResultType";
 
 type StoredRecord = {
@@ -98,6 +99,33 @@ beforeEach(() => {
 });
 
 describe("IndexedDBStorage integration flow", () => {
+  it("persists every task set and the selected ID", async () => {
+    const system = new InformationSystem({
+      id: "multi",
+      name: "Multi",
+      language: "cs",
+      description: "",
+      taskSets: [
+        new TaskSet({ id: "first", systemId: "multi", name: "First" }),
+        new TaskSet({ id: "second", systemId: "multi", name: "Second" }),
+      ],
+      selectedTaskSetId: "second",
+    });
+    const storage = new IndexedDBStorage();
+    expect((await storage.saveSystem(system)).result).toBe(
+      OperationResultType.SUCCESS,
+    );
+    const loaded = (await storage.getSystem("multi")).data!;
+    expect(loaded.taskSets.map((set) => set.id)).toEqual(["first", "second"]);
+    expect(loaded.defaultTaskSets.map((set) => set.id)).toEqual([
+      "first",
+      "second",
+    ]);
+    expect(loaded.selectedTaskSetId).toBe("second");
+    expect(loaded.taskSet.name).toBe("Second");
+    expect(loaded.taskSet.systemId).toBe("multi");
+  });
+
   it("saves, loads, updates, and deletes an explicitly created information system", async () => {
     const informationSystem = new InformationSystem({
       id: "2",

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <p class="mb-2 font-medium">{{ t("upload_tasks_json") }}</p>
     <UFileUpload
       v-model="selectedFile"
       accept=".json,application/json"

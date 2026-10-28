@@ -22,7 +22,7 @@ export class SystemZipExporter {
     zip.file("config.json", JSON.stringify(config, null, 2));
     zip.file(
       "tasks.json",
-      JSON.stringify(SystemZipExporter.createTaskSet(system), null, 2),
+      JSON.stringify(SystemZipExporter.createTaskSets(system), null, 2),
     );
 
     const createSchemaSql = SystemZipExporter.createSchemaSql(system);
@@ -67,16 +67,20 @@ export class SystemZipExporter {
     };
   }
 
-  private static createTaskSet(system: InformationSystem) {
-    return {
-      id: system.taskSet?.id ?? `${system.id}_tasks`,
-      name: system.taskSet?.name ?? `${system.name} tasks`,
-      description: system.taskSet?.description ?? "",
-      levelCount: system.taskSet?.levelCount ?? system.levelCount,
-      tasks: SystemZipExporter.toPlainJson(system.tasks ?? []).map(
+  private static createTaskSets(system: InformationSystem) {
+    const sets = system.taskSets.map((taskSet) => ({
+      id: taskSet.id,
+      system_id: taskSet.systemId,
+      name: taskSet.name,
+      description: taskSet.description,
+      levelCount: taskSet.levelCount,
+      tasks: SystemZipExporter.toPlainJson(taskSet.tasks).map(
         resetTaskProgressJson,
       ),
-    };
+    }));
+    return sets.length === 1
+      ? sets[0]
+      : { taskSets: sets, selectedTaskSetId: system.selectedTaskSetId };
   }
 
   private static serializePage(page: ExportablePage): ExportablePage {

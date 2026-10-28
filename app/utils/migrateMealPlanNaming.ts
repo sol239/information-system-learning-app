@@ -53,8 +53,8 @@ export async function migrateMealPlanNaming(
     system.pages,
     system.actualComponents,
     system.defaultComponents,
-    system.taskSet,
-    system.defaultTaskSet,
+    system.taskSets,
+    system.defaultTaskSets,
     system.configData,
   ]) {
     renameMetadata(value);

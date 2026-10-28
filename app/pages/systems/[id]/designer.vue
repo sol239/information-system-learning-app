@@ -11,6 +11,17 @@
         </div>
 
         <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
+          <USelect
+            v-if="taskSetOptions.length > 0"
+            :model-value="selectedTaskSetId"
+            :items="taskSetOptions"
+            value-key="value"
+            label-key="label"
+            :aria-label="t('change_task_set')"
+            :disabled="taskSetSwitching"
+            class="min-w-48"
+            @update:model-value="changeTaskSet"
+          />
           <UModal
             v-model:open="downloadModalOpen"
             :title="t('download_task_set')"
@@ -69,8 +80,12 @@
         </div>
       </div>
 
+      <p v-if="taskSetSwitchError" class="mb-4 text-sm text-red-600">
+        {{ taskSetSwitchError }}
+      </p>
+
       <div class="mt-10 border-t border-gray-200 pt-8">
-        <TasksDesignerPanel />
+        <TasksDesignerPanel ref="tasksDesignerPanel" />
       </div>
     </div>
   </div>
@@ -82,6 +97,7 @@ import { computed, ref } from "vue";
 import TasksDesignerPanel from "~/components/TasksDesignerPanel.vue";
 import { useSystemsStore } from "~/stores/systemsStore";
 import { resetTaskProgressJson } from "~/utils/taskProgress";
+import { OperationResultType } from "~/utils/Operation/OperationResultType";
 
 defineOptions({
   name: "SystemDesignerPage",
@@ -112,6 +128,11 @@ const { route, systemId } = useSyncSystemId();
 const downloadModalOpen = ref(false);
 const downloadLoading = ref(false);
 const downloadError = ref("");
+const taskSetSwitching = ref(false);
+const taskSetSwitchError = ref("");
+const tasksDesignerPanel = ref<InstanceType<typeof TasksDesignerPanel> | null>(
+  null,
+);
 
 /* 9. Computed */
 const firstSystemRoute = computed(() => {
@@ -128,11 +149,42 @@ const backToRoute = computed(() => {
     : firstSystemRoute.value;
 });
 
+const taskSetOptions = computed(() =>
+  (systemsStore.selectedSystem?.taskSets ?? []).map((set) => ({
+    label: set.name,
+    value: set.id,
+  })),
+);
+const selectedTaskSetId = computed(
+  () => systemsStore.selectedSystem?.selectedTaskSetId ?? "",
+);
+
 /* 10. Watchers */
 
 /* 11. Methods */
 function goBackToSystem() {
   router.push(backToRoute.value);
+}
+
+async function changeTaskSet(id: string) {
+  const system = systemsStore.selectedSystem;
+  if (!system || id === system.selectedTaskSetId || taskSetSwitching.value)
+    return;
+  taskSetSwitching.value = true;
+  taskSetSwitchError.value = "";
+  try {
+    await tasksDesignerPanel.value?.flushPendingChanges();
+    if (!system.selectTaskSet(id)) return;
+    const result = await systemsStore.updateSystem(system);
+    if (result.result !== OperationResultType.SUCCESS) {
+      taskSetSwitchError.value = result.message;
+    }
+  } catch (error) {
+    taskSetSwitchError.value =
+      error instanceof Error ? error.message : String(error);
+  } finally {
+    taskSetSwitching.value = false;
+  }
 }
 
 async function downloadTaskSet() {
@@ -169,6 +221,7 @@ function createTaskSetExport() {
   const system = systemsStore.selectedSystem!;
   return {
     id: system.taskSet.id,
+    system_id: system.taskSet.systemId,
     name: system.taskSet.name,
     description: system.taskSet.description,
     levelCount: system.taskSet.levelCount,

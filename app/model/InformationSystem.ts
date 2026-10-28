@@ -37,15 +37,9 @@ export class InformationSystem {
    */
   public description: string;
 
-  /**
-   * The currently selected task set for this system.
-   */
-  public taskSet: TaskSet;
-
-  /**
-   * The default task set for this system. Used to reset student progress.
-   */
-  public defaultTaskSet: TaskSet;
+  public taskSets: TaskSet[];
+  public defaultTaskSets: TaskSet[];
+  public selectedTaskSetId: string;
 
   /**
    * The pages defined for the information system (routing, metadata).
@@ -116,6 +110,9 @@ export class InformationSystem {
     defaultTasks,
     taskSet,
     defaultTaskSet,
+    taskSets,
+    defaultTaskSets,
+    selectedTaskSetId,
     pages = [],
     databaseAllowed = true,
     actualComponents = [],
@@ -140,6 +137,9 @@ export class InformationSystem {
     defaultTasks?: Task[];
     taskSet?: TaskSet;
     defaultTaskSet?: TaskSet;
+    taskSets?: TaskSet[];
+    defaultTaskSets?: TaskSet[];
+    selectedTaskSetId?: string;
     pages?: Page[];
     databaseAllowed?: boolean;
     actualComponents?: Component[];
@@ -160,7 +160,7 @@ export class InformationSystem {
     this.name = name;
     this.language = language;
     this.description = description;
-    this.taskSet =
+    const initialTaskSet =
       taskSet ??
       new TaskSet({
         id: `${id}_tasks`,
@@ -168,18 +168,35 @@ export class InformationSystem {
         description: "",
         tasks,
       });
-    this.defaultTaskSet =
+    const initialDefaultTaskSet =
       defaultTaskSet ??
       new TaskSet({
-        id: this.taskSet.id,
-        name: this.taskSet.name,
-        description: this.taskSet.description,
+        id: initialTaskSet.id,
+        name: initialTaskSet.name,
+        description: initialTaskSet.description,
         tasks:
           defaultTasks ??
-          JSON.parse(JSON.stringify(this.taskSet.tasks)).map((t: any) =>
+          JSON.parse(JSON.stringify(initialTaskSet.tasks)).map((t: any) =>
             Task.fromJSON(t),
           ),
       });
+    if (!defaultTaskSet)
+      initialDefaultTaskSet.levelCount = initialTaskSet.levelCount;
+    this.taskSets = taskSets?.length ? taskSets : [initialTaskSet];
+    for (const set of this.taskSets) set.systemId ||= id;
+    this.selectedTaskSetId = this.taskSets.some(
+      (set) => set.id === selectedTaskSetId,
+    )
+      ? selectedTaskSetId!
+      : this.taskSets[0]!.id;
+    this.defaultTaskSets = defaultTaskSets?.length
+      ? defaultTaskSets
+      : this.taskSets.map((set) =>
+          set.id === initialDefaultTaskSet.id
+            ? initialDefaultTaskSet
+            : set.clone(),
+        );
+    for (const set of this.defaultTaskSets) set.systemId ||= id;
     this.pages = pages;
     this.databaseAllowed = databaseAllowed;
     this.actualComponents = actualComponents;
@@ -196,8 +213,38 @@ export class InformationSystem {
     this.startedTasks = Boolean(startedTasks);
     this.exploringSystem = Boolean(exploringSystem);
     this.currentLevel = Number(currentLevel ?? currentRound ?? 1);
-    this.taskSet.levelCount = Number(levelCount ?? this.taskSet.levelCount);
-    this.defaultTaskSet.levelCount = this.taskSet.levelCount;
+    if (levelCount != null) this.levelCount = Number(levelCount);
+  }
+
+  public get taskSet(): TaskSet {
+    return (
+      this.taskSets.find((set) => set.id === this.selectedTaskSetId) ??
+      this.taskSets[0]!
+    );
+  }
+
+  public set taskSet(taskSet: TaskSet) {
+    const index = this.taskSets.findIndex(
+      (set) => set.id === this.selectedTaskSetId,
+    );
+    if (index < 0) this.taskSets.push(taskSet);
+    else this.taskSets[index] = taskSet;
+    this.selectedTaskSetId = taskSet.id;
+  }
+
+  public get defaultTaskSet(): TaskSet {
+    return (
+      this.defaultTaskSets.find((set) => set.id === this.selectedTaskSetId) ??
+      this.taskSet.clone()
+    );
+  }
+
+  public set defaultTaskSet(taskSet: TaskSet) {
+    const index = this.defaultTaskSets.findIndex(
+      (set) => set.id === this.selectedTaskSetId,
+    );
+    if (index < 0) this.defaultTaskSets.push(taskSet);
+    else this.defaultTaskSets[index] = taskSet;
   }
 
   public get mistakesCount(): number {
@@ -247,13 +294,48 @@ export class InformationSystem {
   }
 
   public replaceTaskSet(taskSet: TaskSet): void {
+    if (taskSet.systemId !== this.id) {
+      throw new Error(
+        `Task set belongs to system ${taskSet.systemId}, expected ${this.id}`,
+      );
+    }
+    const previousId = this.selectedTaskSetId;
     this.taskSet = taskSet;
-    this.defaultTaskSet = taskSet.clone();
+    this.defaultTaskSets = this.defaultTaskSets.filter(
+      (set) => set.id !== previousId && set.id !== taskSet.id,
+    );
+    this.defaultTaskSets.push(taskSet.clone());
     this.score = new Score();
     this.mistakes = [];
     this.startedTasks = false;
     this.exploringSystem = false;
     this.currentLevel = 1;
+  }
+
+  public addTaskSet(taskSet: TaskSet): void {
+    if (taskSet.systemId !== this.id) {
+      throw new Error(
+        `Task set belongs to system ${taskSet.systemId}, expected ${this.id}`,
+      );
+    }
+    if (this.taskSets.some((set) => set.id === taskSet.id)) {
+      throw new Error(`Task set ${taskSet.id} already exists`);
+    }
+    this.taskSets.push(taskSet);
+    this.defaultTaskSets.push(taskSet.clone());
+    this.selectTaskSet(taskSet.id);
+  }
+
+  public selectTaskSet(id: string): boolean {
+    if (!this.taskSets.some((set) => set.id === id)) return false;
+    if (this.selectedTaskSetId === id) return true;
+    this.selectedTaskSetId = id;
+    this.score = new Score();
+    this.mistakes = [];
+    this.startedTasks = false;
+    this.exploringSystem = false;
+    this.currentLevel = 1;
+    return true;
   }
 
   public databaseVisiblePage(name = "Database"): Page {
@@ -385,27 +467,52 @@ export class InformationSystem {
         database = DatabaseWrapper.fromInstance(dbResult.data);
       }
 
-      const tasks = ((taskSetData?.tasks ?? configData.tasks) || []).map(
-        (task: any) => resetTaskProgress(Task.fromJSON(task)),
-      );
-      const taskSet = new TaskSet({
-        id: String(taskSetData?.id ?? `${configData.id}_tasks`),
-        name: String(taskSetData?.name ?? `${configData.name} tasks`),
-        description: String(taskSetData?.description ?? ""),
-        levelCount: Number(
-          taskSetData?.levelCount ??
-            configData.levelCount ??
-            InformationSystem.resolveLevelCount(tasks),
-        ),
-        tasks,
+      const taskSetSources = Array.isArray(taskSetData?.taskSets)
+        ? taskSetData.taskSets
+        : [
+            taskSetData ?? {
+              tasks: configData.tasks,
+              levelCount: configData.levelCount,
+            },
+          ];
+      const taskSets = taskSetSources.map((source: any, index: number) => {
+        const tasks = (Array.isArray(source?.tasks) ? source.tasks : []).map(
+          (task: any) => resetTaskProgress(Task.fromJSON(task)),
+        );
+        return new TaskSet({
+          id: String(
+            source?.id ??
+              (taskSetSources.length === 1
+                ? `${configData.id}_tasks`
+                : `${configData.id}_tasks_${index}`),
+          ),
+          name: String(source?.name ?? `${configData.name} tasks`),
+          systemId: String(
+            source?.system_id ?? source?.systemId ?? configData.id,
+          ),
+          description: String(source?.description ?? ""),
+          levelCount: Number(
+            source?.levelCount ?? InformationSystem.resolveLevelCount(tasks),
+          ),
+          tasks,
+        });
       });
+      if (
+        taskSets.some((set: TaskSet) => set.systemId !== String(configData.id))
+      ) {
+        throw new Error("Task set system_id does not match system id");
+      }
+      const selectedTaskSetId = String(
+        taskSetData?.selectedTaskSetId ?? taskSets[0]?.id ?? "",
+      );
 
       const system = new InformationSystem({
         id: String(configData.id),
         name: configData.name,
         language: configData.language,
         description: configData.description,
-        taskSet,
+        taskSets,
+        selectedTaskSetId,
         pages,
         databaseAllowed,
         database,
@@ -414,7 +521,6 @@ export class InformationSystem {
         startedTasks: Boolean(configData.startedTasks),
         exploringSystem: Boolean(configData.exploringSystem),
         currentLevel: 1,
-        levelCount: taskSet.levelCount,
         createSchemaSql: sqlFile?.content,
         configData,
       });

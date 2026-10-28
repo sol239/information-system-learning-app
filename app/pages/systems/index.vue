@@ -19,10 +19,6 @@
               >
                 {{ t("manage_your_systems_description") }}
               </p>
-
-              <div class="flex flex-wrap gap-4 lg:justify-end">
-                <UploadSystemModal v-if="globalSettingsStore.teacherMode" />
-              </div>
             </div>
           </div>
         </div>
@@ -36,29 +32,22 @@
           class="shadow-lg bg-gradient-to-br from-teacher-50/50 to-white border-none ring-1 ring-teacher-100 hover:ring-teacher-300 transition-all duration-300"
         >
           <div class="space-y-4">
-            <!-- System Header with Icon, Title, and Delete Button -->
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <div>
-                  <h3 class="system-name text-lg font-semibold text-gray-900">
-                    {{ system.name }}
-                  </h3>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <EditSystemModal
-                  v-if="globalSettingsStore.teacherMode"
-                  :system="system"
-                />
-                <UButton
-                  v-if="globalSettingsStore.teacherMode"
-                  icon="i-lucide-trash-2"
-                  color="red"
-                  variant="ghost"
-                  size="sm"
-                  @click="deleteSystem(system.id)"
-                />
-              </div>
+            <!-- System Header -->
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <h3 class="system-name text-lg font-semibold text-gray-900">
+                {{ system.name }}
+              </h3>
+              <UBadge
+                variant="subtle"
+                :color="system.taskSets.length > 0 ? 'teacher' : 'neutral'"
+                class="shrink-0"
+              >
+                {{
+                  system.taskSets.length > 0
+                    ? t("task_set_count", { count: system.taskSets.length })
+                    : t("no_task_sets_in_system")
+                }}
+              </UBadge>
             </div>
 
             <!-- Description -->
@@ -77,6 +66,10 @@
               >
                 {{ t("enter_system") }}
               </UButton>
+              <UploadSystemModal
+                v-if="globalSettingsStore.teacherMode"
+                :system-id="system.id"
+              />
             </div>
           </div>
         </UCard>
@@ -88,7 +81,6 @@
 <script setup lang="ts">
 /* 1. Imports */
 import UploadSystemModal from "~/components/UploadSystemModal.vue";
-import EditSystemModal from "~/components/EditSystemModal.vue";
 import { AppLoader } from "~/core/AppLoader";
 import { SystemHelper } from "~/core/systems/SystemHelper";
 import { TaskHelper } from "~/core/systems/TaskHelper";
@@ -141,11 +133,6 @@ async function pushFirstAvailablePage() {
   }
 
   await navigateTo(`/systems/${systemId}${firstPage}`);
-}
-
-async function deleteSystem(id: string) {
-  globalSettingsStore.markPreloadedSystemAsDeleted(id);
-  await systemsStore.deleteSystemById(id);
 }
 
 /* 12. Lifecycle */

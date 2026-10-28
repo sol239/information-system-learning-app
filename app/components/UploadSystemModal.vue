@@ -1,5 +1,5 @@
 <template>
-  <UModal :title="t('upload_task_set')">
+  <UModal v-model:open="modalOpen" :title="t('upload_task_set')">
     <UButton
       class="add-new-system-button"
       icon="i-lucide-plus-circle"
@@ -23,11 +23,11 @@
           @select="selectPreloadedSystem"
         />
         <UAlert
-          v-if="systemAlreadyExists"
+          v-if="uploadError || systemAlreadyExists"
           variant="subtle"
-          color="red"
+          color="rose"
           icon="i-lucide-alert-triangle"
-          :title="t('system_already_exists')"
+          :title="uploadError || t('task_set_already_exists')"
           class="mt-3"
         />
       </div>
@@ -38,7 +38,9 @@
         color="teacher"
         icon="i-lucide-chevron-right"
         :disabled="
-          (!selectedFile && !selectedPreloadedSystem) || systemAlreadyExists
+          (!selectedFile && !selectedPreloadedSystem) ||
+          systemAlreadyExists ||
+          !!uploadError
         "
         :loading="loading"
         size="sm"
@@ -55,6 +57,7 @@
 
 <script setup lang="ts">
 /* 1. Imports */
+import { ref, watch } from "vue";
 
 /* 2. Stores */
 
@@ -62,17 +65,20 @@
 const { t } = useI18n();
 
 /* 4. Constants (non-reactive) */
+const props = defineProps<{ systemId: string }>();
 const {
   selectedFile,
   loading,
   loadingPreloaded,
   systemPreview,
   systemAlreadyExists,
+  uploadError,
   systemsToPreload,
   selectedPreloadedSystem,
   selectPreloadedSystem,
+  resetSelection,
   onUpload,
-} = useSystemUploadModal();
+} = useSystemUploadModal(props.systemId);
 
 /* 5. Props */
 
@@ -81,10 +87,14 @@ const {
 /* 7. Template refs */
 
 /* 8. State (ref, reactive) */
+const modalOpen = ref(false);
 
 /* 9. Computed */
 
 /* 10. Watchers */
+watch(modalOpen, (open) => {
+  if (!open) resetSelection();
+});
 
 /* 11. Methods */
 

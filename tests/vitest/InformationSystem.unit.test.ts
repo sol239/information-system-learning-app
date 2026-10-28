@@ -5,6 +5,7 @@ vi.mock("~/stores/componentStore", () => ({
   useComponentStore: () => ({ defaultComponents: [] }),
 }));
 const { InformationSystem } = await import("../../app/model/InformationSystem");
+const { TaskSet } = await import("../../app/model/Task/TaskSet");
 
 const config = {
   id: 2,
@@ -79,6 +80,83 @@ describe("InformationSystem.loadSystem", () => {
     ]);
     expect(result.result).toBe(OperationResultType.SUCCESS);
     expect(result.data!.tasks).toEqual([]);
+  });
+
+  it("loads multiple task sets and uses the selected set", async () => {
+    const result = await InformationSystem.loadSystem([
+      configFile(config),
+      {
+        name: "tasks.json",
+        path: "system/tasks.json",
+        content: JSON.stringify({
+          taskSets: [
+            { id: "basic", name: "Basic", tasks: [{ id: "basic-task" }] },
+            {
+              id: "advanced",
+              name: "Advanced",
+              tasks: [{ id: "advanced-task" }],
+            },
+          ],
+          selectedTaskSetId: "advanced",
+        }),
+      },
+    ]);
+    expect(result.result, result.message).toBe(OperationResultType.SUCCESS);
+    const system = result.data!;
+    expect(system.taskSets.map((set) => set.id)).toEqual(["basic", "advanced"]);
+    expect(system.selectedTaskSetId).toBe("advanced");
+    expect(system.tasks.map((task) => task.id)).toEqual(["advanced-task"]);
+    expect(system.selectTaskSet("basic")).toBe(true);
+    expect(system.tasks.map((task) => task.id)).toEqual(["basic-task"]);
+    expect(system.selectTaskSet("missing")).toBe(false);
+    expect(system.selectedTaskSetId).toBe("basic");
+  });
+
+  it("adds only task sets referencing the same system", () => {
+    const system = new InformationSystem({
+      id: "camp",
+      name: "Camp",
+      language: "cs",
+      description: "",
+    });
+    const added = new TaskSet({ id: "extra", systemId: "camp", name: "Extra" });
+    system.addTaskSet(added);
+    expect(system.taskSets.map((set) => set.id)).toEqual([
+      "camp_tasks",
+      "extra",
+    ]);
+    expect(system.selectedTaskSetId).toBe("extra");
+    expect(system.defaultTaskSets.map((set) => set.id)).toEqual([
+      "camp_tasks",
+      "extra",
+    ]);
+    expect(() => system.addTaskSet(added)).toThrow("already exists");
+    expect(() =>
+      system.addTaskSet(
+        new TaskSet({
+          id: "foreign",
+          systemId: "other",
+          name: "Foreign",
+        }),
+      ),
+    ).toThrow("belongs to system");
+    expect(system.taskSets).toHaveLength(2);
+  });
+
+  it("rejects a tasks.json referencing another system", async () => {
+    const result = await InformationSystem.loadSystem([
+      configFile(config),
+      {
+        name: "tasks.json",
+        path: "system/tasks.json",
+        content: JSON.stringify({
+          id: "foreign",
+          system_id: "other",
+          tasks: [],
+        }),
+      },
+    ]);
+    expect(result.result).toBe(OperationResultType.ERROR);
   });
 
   it.each([

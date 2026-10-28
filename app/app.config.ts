@@ -4,6 +4,7 @@ export default defineAppConfig({
       teacher: "indigo",
       student: "teal",
       red: "red",
+      rose: "rose",
       yellow: "yellow",
       lime: "lime",
       green: "green",

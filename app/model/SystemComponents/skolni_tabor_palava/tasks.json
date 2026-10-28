@@ -1,7 +1,8 @@
 {
-  "id": "skolni_tabor_palava_default_tasks",
-  "name": "Školní tábor Pálava - úkoly",
-  "description": "Školní tábor v Pálavě, zaměřený na výuku a zábavu pro děti.",
+  "id": "skolni_tabor_palava_zakladni_ukoly",
+  "system_id": "skolni_tabor_palava",
+  "name": "Základní sada úkolů",
+  "description": "Základní sada úkolů pro informační systém Školní Tábor Pálav",
   "levelCount": 6,
   "tasks": [
     {

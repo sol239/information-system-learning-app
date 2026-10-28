@@ -29,7 +29,12 @@
         @keydown.enter="emit('select', system)"
         @keydown.space.prevent="emit('select', system)"
       >
-        <p class="font-semibold text-sm">{{ system.name }}</p>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="font-semibold text-sm">{{ system.name }}</p>
+          <UBadge color="teacher" variant="subtle" class="shrink-0">
+            {{ t("task_count", { count: system.tasks.length }) }}
+          </UBadge>
+        </div>
         <p class="text-xs text-gray-500 line-clamp-1">
           {{ system.description }}
         </p>
