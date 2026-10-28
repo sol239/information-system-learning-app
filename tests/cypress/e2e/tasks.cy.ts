@@ -88,7 +88,7 @@ it("task", function () {
   // The task title '1. Nejstarší účastník' is visible.
   cy.get("h2.font-bold").should("contain.text", "1. Nejstarší účastník");
   // The task description is visible.
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "V tomto úkolu bude vaším cílem správně určit věk nejstaršího účastníka. Zjistěte, která komponenta zobrazuje věk nejstaršího účastníka a zkontrolujte, jestli správně zobrazuje daný údaj. Správnou hodnotu můžete ověřit v databázi. Poté vyberte správné možnosti níže.",
   );
@@ -199,7 +199,7 @@ it("task", function () {
     "2. Nalezení chybné komponenty",
   );
   // The task description has been updated for the second task.
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.",
   );
@@ -361,7 +361,7 @@ it("task", function () {
   // The task title is now '3. Alergeny účastníka'.
   cy.get("h2.font-bold").should("contain.text", "3. Alergeny účastníka");
   // The task description has been updated for the third task.
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "Denisa Kolmanová je alergická na sezam a mléko, ale v systému je uvedeno pouze, že je alergická na mléko. Upravte záznam účastníka, aby měl oba alergeny, a zjistěte, v čem je problém.",
   );
@@ -514,7 +514,7 @@ it("task", function () {
   // The task title is now '7. Naplnění turnusu'.
   cy.get("h2.font-bold").should("contain.text", "7. Naplnění turnusu");
   // The task description has been updated for the seventh task.
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "Zjistěte stav zaplnění turnusu č. 1. Turnus je skoro plný (tj. štítek SKORO PLNO), pokud má zaplnění větší nebo rovno 80% kapacity. Funguje komponenta pro stav turnusu správně? Pokud ne, bude ji potřeba opravit.",
   );

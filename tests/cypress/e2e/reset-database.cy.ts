@@ -68,9 +68,13 @@ it("reset database", function () {
 
   cy.visit(databaseUrl);
   applyTestSettings();
-  cy.get("#reset-database-button", { timeout: 10000 })
-    .should("be.visible")
-    .click();
+  cy.get("#reset-database-button", { timeout: 10000 }).should("be.visible");
+  cy.get("body").then(($body) => {
+    if ($body.find("#enter-system-button:visible").length) {
+      cy.contains("button", "Prohlédnout si systém").click();
+    }
+  });
+  cy.get("#reset-database-button").click();
 
   expectParticipantCount(30);
 });

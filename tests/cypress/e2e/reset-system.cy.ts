@@ -24,7 +24,7 @@ it("reset system", function () {
     .click();
 
   cy.get("h2.font-bold").should("contain.text", "1. Nejstarší účastník");
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "V tomto úkolu bude vaším cílem správně určit věk nejstaršího účastníka. Zjistěte, která komponenta zobrazuje věk nejstaršího účastníka a zkontrolujte, jestli správně zobrazuje daný údaj. Správnou hodnotu můžete ověřit v databázi. Poté vyberte správné možnosti níže.",
   );
@@ -113,7 +113,7 @@ it("reset system", function () {
     "contain.text",
     "2. Nalezení chybné komponenty",
   );
-  cy.get("p.text-base").should(
+  cy.get('[data-testid="task-description"]').should(
     "contain.text",
     "Na stránce Nástěnka jsou 4 komponenty, které zobrazují celkové počty účastníků, turnusů, vedoucích a jídel v turnusu. Zkontrolujte, která komponenta špatně zobrazuje daný údaj, a vyberte ji. Správnou hodnotu můžete ověřit v databázi anebo v SQL dotazu komponenty.",
   );

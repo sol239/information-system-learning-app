@@ -20,7 +20,11 @@
         <h2 class="text-sm font-bold text-gray-900 w-full">
           {{ props.title ?? props.task.title }}
         </h2>
-        <p v-if="props.task.description" class="text-xs text-gray-600 w-full">
+        <p
+          v-if="props.task.description"
+          data-testid="task-description"
+          class="text-xs text-gray-600 w-full"
+        >
           {{ props.task.description }}
         </p>
       </div>
