@@ -146,8 +146,8 @@
             icon="i-lucide-check-circle"
             :disabled="isReadonly || props.task.activity?.isCompleted === true"
             size="sm"
-            @click="evaluateActivity"
             class="text-xs"
+            @click="evaluateActivity"
           >
             {{ t("evaluate") }}
           </UButton>
@@ -295,8 +295,8 @@
                   isFinishLocked
                 "
                 size="sm"
-                @click="evaluateFinish"
                 class="text-xs"
+                @click="evaluateFinish"
               >
                 {{ t("evaluate") }}
               </UButton>
@@ -449,8 +449,8 @@
               isFinishLocked
             "
             size="sm"
-            @click="evaluateFinish"
             class="text-xs"
+            @click="evaluateFinish"
           >
             {{ t("evaluate") }}
           </UButton>
