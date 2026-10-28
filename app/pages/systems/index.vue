@@ -81,7 +81,6 @@
 <script setup lang="ts">
 /* 1. Imports */
 import UploadSystemModal from "~/components/UploadSystemModal.vue";
-import { AppLoader } from "~/core/AppLoader";
 import { SystemHelper } from "~/core/systems/SystemHelper";
 import { TaskHelper } from "~/core/systems/TaskHelper";
 import { useGlobalSettingsStore } from "~/stores/globalSettingsStore";
@@ -136,9 +135,6 @@ async function pushFirstAvailablePage() {
 }
 
 /* 12. Lifecycle */
-onMounted(async () => {
-  await new AppLoader().loadApp();
-});
 
 /* 13. defineExpose */
 </script>
