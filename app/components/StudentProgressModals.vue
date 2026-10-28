@@ -23,7 +23,7 @@
             </strong>
             {{ t("student_welcome_sidebar_description_between_tasks_points") }}
             <strong class="font-semibold text-gray-900">
-              {{ totalTaskPoints }} {{ t("student_welcome_points_word") }}
+              {{ totalTaskPoints }} {{ t("student_welcome_points_word") }}.
             </strong>
             {{ t("student_welcome_sidebar_description_after_points_word") }}
           </p>
@@ -129,3 +129,5 @@ async function startTasksFromModal() {
 /* 13. defineExpose */
 defineExpose({});
 </script>
+
+<style scoped></style>

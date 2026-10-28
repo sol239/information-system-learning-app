@@ -43,7 +43,7 @@
                   t("student_welcome_sidebar_description_between_tasks_points")
                 }}
                 <strong class="font-semibold text-gray-900">
-                  {{ totalTaskPoints }} {{ t("student_welcome_points_word") }}
+                  {{ totalTaskPoints }} {{ t("student_welcome_points_word") }}.
                 </strong>
                 {{ t("student_welcome_sidebar_description_after_points_word") }}
               </p>
@@ -243,17 +243,36 @@
 </template>
 
 <script setup lang="ts">
+/* 1. Imports */
 import { computed } from "vue";
+
 import { useSystemsStore } from "~/stores/systemsStore";
+
 import { Task } from "~/model/Task/Task";
+
 import { inconsistentVisiblePageLevels, isTaskDone } from "~/utils/taskLevels";
 
+/* 2. Stores */
+const systemsStore = useSystemsStore();
+
+const globalSettings = useGlobalSettingsStore();
+
+/* 3. Context hooks */
 const { t } = useI18n();
 
-const systemsStore = useSystemsStore();
-const globalSettings = useGlobalSettingsStore();
 const route = useRoute();
 
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+
+/* 9. Computed */
 const selectedTask = computed(() => {
   if (globalSettings.teacherMode) return null;
 
@@ -269,10 +288,13 @@ const selectedTask = computed(() => {
 const currentLevel = computed(
   () => systemsStore.selectedSystem?.currentLevel ?? 1,
 );
+
 const taskCount = computed(() => tasks.value.length);
+
 const totalTaskPoints = computed(() =>
   tasks.value.reduce((sum, task) => sum + Number(task.pointsReward ?? 0), 0),
 );
+
 const showStudentIntro = computed(
   () =>
     !globalSettings.teacherMode &&
@@ -291,6 +313,7 @@ const tasks = computed(() =>
     })
     .map(({ task }) => task),
 );
+
 const selectedTaskTitle = computed(() => {
   const task = selectedTask.value;
   if (!task) return undefined;
@@ -298,7 +321,9 @@ const selectedTaskTitle = computed(() => {
   const index = tasks.value.findIndex((item) => item.id === task.id);
   return taskDisplayTitle(task, index);
 });
+
 const showTaskCompletion = computed(() => !globalSettings.teacherMode);
+
 const levelsWithVisiblePagesConflict = computed(() => {
   const system = systemsStore.selectedSystem;
   if (!system) {
@@ -310,6 +335,9 @@ const levelsWithVisiblePagesConflict = computed(() => {
   );
 });
 
+/* 10. Watchers */
+
+/* 11. Methods */
 function normalizeTaskLevel(level: unknown): number {
   const parsed = Number(level);
   return Number.isFinite(parsed) ? parsed : 1;
@@ -415,4 +443,10 @@ function isTaskLocked(task: Task): boolean {
     !globalSettings.teacherMode && task.isTaskLevelLocked(currentLevel.value)
   );
 }
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
 </script>
+
+<style scoped></style>
