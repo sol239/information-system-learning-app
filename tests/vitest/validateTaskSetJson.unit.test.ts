@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import taskSet from "../../app/model/SystemComponents/skolni_tabor_palava/tasks.json";
+import taskSet from "../../app/model/SystemComponents/skolni_tabor_palava/skolni_tabor_palava_zakladni_ukoly.json";
 import { validateTaskSetJson } from "../../app/core/validation/validateTaskSetJson";
 
 describe("validateTaskSetJson", () => {
