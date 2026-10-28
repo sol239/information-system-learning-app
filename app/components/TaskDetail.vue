@@ -1,8 +1,6 @@
 <template>
   <div v-if="props.selectedTask" class="space-y-6 pt-2">
-    <div
-      class="grid gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] xl:items-start"
-    >
+    <div class="grid gap-4 lg:grid-cols-2 lg:items-start">
       <div class="space-y-4 rounded-xl border border-gray-200 p-4">
         <div
           class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
@@ -41,7 +39,34 @@
           />
         </UFormField>
 
-        <UFormField :label="t('task_visible_pages')">
+        <UFormField>
+          <template #label>
+            <span class="inline-flex items-center gap-1.5">
+              {{ t("task_visible_pages") }}
+              <UPopover mode="hover" arrow>
+                <button
+                  type="button"
+                  class="inline-flex h-4 w-4 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-teacher-600 focus:outline-none"
+                  :aria-label="t('task_visible_pages_info')"
+                >
+                  <UIcon name="i-lucide-info" class="h-4 w-4" />
+                </button>
+                <template #content>
+                  <div class="app-popover-content">
+                    <UIcon name="i-lucide-info" class="app-popover-icon" />
+                    <div class="app-popover-text">
+                      <strong class="app-popover-title">{{
+                        t("task_visible_pages")
+                      }}</strong>
+                      <span class="app-popover-description">{{
+                        t("task_visible_pages_info")
+                      }}</span>
+                    </div>
+                  </div>
+                </template>
+              </UPopover>
+            </span>
+          </template>
           <UAlert
             v-if="inconsistentLevelVisiblePages.length"
             color="red"
@@ -76,7 +101,7 @@
           <UCheckbox
             v-if="systemsStore.selectedSystem?.databaseAllowed !== false"
             v-model="taskForm.databaseAllowed"
-            :label="t('database')"
+            :label="t('task_database_visibility')"
             class="mt-3"
           />
         </UFormField>
@@ -140,95 +165,97 @@
         </UFormField>
       </div>
 
-      <div class="space-y-4 rounded-xl border border-gray-200 p-4">
-        <span class="text-sm font-semibold text-gray-900 md:col-span-2">
-          {{ t("task_level") }}
-        </span>
+      <div class="space-y-4">
+        <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+          <span class="text-sm font-semibold text-gray-900 md:col-span-2">
+            {{ t("task_level") }}
+          </span>
 
-        <div class="grid gap-3">
-          <UFormField>
-            <template #label>
-              <span>{{ t("task_level") }}</span>
-              <span class="ml-1 font-normal text-gray-500">
-                ({{ t("task_level_info") }})
+          <div class="grid gap-3">
+            <UFormField>
+              <template #label>
+                <span>{{ t("task_level") }}</span>
+                <span class="ml-1 font-normal text-gray-500">
+                  ({{ t("task_level_info") }})
+                </span>
+              </template>
+              <USelect
+                v-model="taskForm.level"
+                :items="levelOptions"
+                value-key="value"
+                label-key="label"
+                class="w-full"
+              />
+            </UFormField>
+
+            <div class="space-y-2">
+              <span class="text-sm font-medium text-gray-700">
+                {{ t("task_level_tasks") }}
               </span>
-            </template>
-            <USelect
-              v-model="taskForm.level"
-              :items="levelOptions"
-              value-key="value"
-              label-key="label"
-              class="w-full"
-            />
-          </UFormField>
-
-          <div class="space-y-2">
-            <span class="text-sm font-medium text-gray-700">
-              {{ t("task_level_tasks") }}
-            </span>
-            <div
-              class="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-2"
-            >
               <div
-                v-for="task in tasksInSelectedLevel"
-                :key="task.id"
-                class="rounded-md border border-gray-200 px-3 py-2 text-sm"
-                :class="
-                  task.id === taskForm.id
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'bg-white text-gray-700'
-                "
+                class="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-2"
               >
-                <span class="font-medium">{{
-                  task.title || t("task_untitled")
-                }}</span>
+                <div
+                  v-for="task in tasksInSelectedLevel"
+                  :key="task.id"
+                  class="rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  :class="
+                    task.id === taskForm.id
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'bg-white text-gray-700'
+                  "
+                >
+                  <span class="font-medium">{{
+                    task.title || t("task_untitled")
+                  }}</span>
+                </div>
+                <p
+                  v-if="!tasksInSelectedLevel.length"
+                  class="px-2 py-3 text-sm text-gray-500"
+                >
+                  {{ t("task_level_no_tasks") }}
+                </p>
               </div>
-              <p
-                v-if="!tasksInSelectedLevel.length"
-                class="px-2 py-3 text-sm text-gray-500"
-              >
-                {{ t("task_level_no_tasks") }}
-              </p>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="space-y-4 rounded-xl border border-gray-200 p-4">
-        <span class="text-sm font-semibold text-gray-900 md:col-span-2">
-          {{ t("task_scoring_label") }}
-        </span>
+        <div class="space-y-4 rounded-xl border border-gray-200 p-4">
+          <span class="text-sm font-semibold text-gray-900 md:col-span-2">
+            {{ t("task_scoring_label") }}
+          </span>
 
-        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-          <UFormField>
-            <template #label>
-              <span>{{ t("task_points_reward") }}</span>
-              <span class="ml-1 font-normal text-gray-500">
-                ({{ t("task_points_reward_info") }})
-              </span>
-            </template>
-            <UInput
-              v-model.number="taskForm.pointsReward"
-              type="number"
-              min="0"
-              class="w-[8rem] max-w-full"
-            />
-          </UFormField>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <UFormField>
+              <template #label>
+                <span>{{ t("task_points_reward") }}</span>
+                <span class="ml-1 font-normal text-gray-500">
+                  ({{ t("task_points_reward_info") }})
+                </span>
+              </template>
+              <UInput
+                v-model.number="taskForm.pointsReward"
+                type="number"
+                min="0"
+                class="w-[8rem] max-w-full"
+              />
+            </UFormField>
 
-          <UFormField>
-            <template #label>
-              <span>{{ t("task_fail_penalty") }}</span>
-              <span class="ml-1 font-normal text-gray-500">
-                ({{ t("task_fail_penalty_info") }})
-              </span>
-            </template>
-            <UInput
-              v-model.number="taskForm.failPenalty"
-              type="number"
-              min="0"
-              class="w-[8rem] max-w-full"
-            />
-          </UFormField>
+            <UFormField>
+              <template #label>
+                <span>{{ t("task_fail_penalty") }}</span>
+                <span class="ml-1 font-normal text-gray-500">
+                  ({{ t("task_fail_penalty_info") }})
+                </span>
+              </template>
+              <UInput
+                v-model.number="taskForm.failPenalty"
+                type="number"
+                min="0"
+                class="w-[8rem] max-w-full"
+              />
+            </UFormField>
+          </div>
         </div>
       </div>
     </div>
@@ -345,19 +372,8 @@
         <p v-if="!selectedComponents.length" class="text-sm text-gray-500 mr-2">
           {{ t("task_no_components") }}
         </p>
-        <UBadge
-          as="button"
-          color="neutral"
-          variant="outline"
-          class="flex items-center gap-1 font-mono cursor-pointer border-dashed hover:bg-gray-50"
-          @click="showPasteComponentModal = true"
-        >
-          <UIcon name="i-lucide-plus" class="w-3 h-3" />
-          {{ t("task_add_component_json") }}
-        </UBadge>
       </div>
     </UFormField>
-
     <div
       v-if="editingComponent"
       class="space-y-4 rounded-xl border border-gray-200 p-4"

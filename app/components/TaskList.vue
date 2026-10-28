@@ -78,7 +78,7 @@
         >
           <UIcon name="i-lucide-plus" class="h-[0.9rem] w-[0.9rem]" />
         </span>
-        <span class="min-w-0 font-medium text-sm">{{
+        <span class="min-w-0 text-[0.8125rem] font-medium leading-snug">{{
           t("task_create_task")
         }}</span>
       </button>

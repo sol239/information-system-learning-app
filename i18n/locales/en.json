@@ -3,6 +3,7 @@
   "variable_name_copied": "Variable name copied",
   "variable_copy_failed": "Failed to copy variable",
   "home": "Home",
+  "highlight_components": "Highlight components",
   "systems": "Systems",
   "settings": "Settings",
   "appearance_settings": "Appearance Settings",
@@ -14,6 +15,8 @@
   "dashboard": "Dashboard",
   "tables": "Tables",
   "tasks": "Tasks",
+  "teacher_help": "Help",
+  "teacher_help_title": "Teacher page help",
   "collapse_tasks_sidebar": "Collapse tasks sidebar",
   "expand_tasks_sidebar": "Expand tasks sidebar",
   "tasks_description": "Manage and create tasks for your information system.",
@@ -416,6 +419,8 @@
   "task_description_label": "Description",
   "task_description_placeholder": "Task description",
   "task_visible_pages": "Visible Pages",
+  "task_database_visibility": "Show database",
+  "task_visible_pages_info": "Pages the student can access while completing this task. Tasks at the same level must have identical visible pages.",
   "task_no_pages": "No pages available.",
   "task_page_unavailable_title": "Page unavailable",
   "task_page_unavailable_description": "The page is not available during this task.",
@@ -581,10 +586,11 @@
   "task_set_system_mismatch": "This task set belongs to system “{actual}”, not “{expected}”.",
   "task_set_system_not_found": "System “{systemId}” was not found.",
   "change_task_set": "Change task set",
+  "selected_task_set": "Selected task set",
   "upload_task_set": "Upload task set",
   "upload_task_set_zip": "Upload task set .zip",
   "upload_tasks_json": "Upload tasks.json",
   "upload_task_set_json": "Upload a task set in JSON format",
   "download_task_set": "Download task set",
-  "download_task_set_description": "Downloads the current task set as a standalone tasks.json file."
+  "download_task_set_description": "Downloads the current task set as a standalone tasks.json file. You can then upload it from the systems/ page or place it in the information system directory (app/model/SystemComponents/skolni_tabor_palava) for automatic loading in both student and teacher versions."
 }

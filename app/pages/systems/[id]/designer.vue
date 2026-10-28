@@ -1,27 +1,43 @@
 <template>
   <div class="min-h-screen bg-white">
-    <div class="mx-auto w-full max-w-none p-6">
-      <div class="mb-6 mt-5 flex items-center justify-between gap-4">
+    <header class="border-b border-gray-200 bg-white">
+      <div
+        class="flex min-h-[57px] flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6"
+      >
         <div class="min-w-0">
           <h1
-            class="flex items-center gap-3 text-2xl font-bold tracking-tight text-teacher-600 sm:text-4xl"
+            class="flex items-center gap-2 text-[1.05rem] font-bold tracking-tight text-gray-900 sm:text-[1.575rem]"
           >
+            <UIcon
+              name="i-lucide-pencil-ruler"
+              class="size-5 shrink-0 sm:size-6"
+            />
             <span>{{ t("task_designer") }}</span>
           </h1>
         </div>
 
-        <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <USelect
+        <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+          <div
             v-if="taskSetOptions.length > 0"
-            :model-value="selectedTaskSetId"
-            :items="taskSetOptions"
-            value-key="value"
-            label-key="label"
-            :aria-label="t('change_task_set')"
-            :disabled="taskSetSwitching"
-            class="min-w-48"
-            @update:model-value="changeTaskSet"
-          />
+            class="flex flex-wrap items-center gap-2"
+          >
+            <label
+              for="designer-task-set"
+              class="text-sm font-medium text-gray-700"
+            >
+              {{ t("selected_task_set") }}
+            </label>
+            <USelect
+              id="designer-task-set"
+              :model-value="selectedTaskSetId"
+              :items="taskSetOptions"
+              value-key="value"
+              label-key="label"
+              :disabled="taskSetSwitching"
+              class="min-w-48"
+              @update:model-value="changeTaskSet"
+            />
+          </div>
           <UModal
             v-model:open="downloadModalOpen"
             :title="t('download_task_set')"
@@ -37,7 +53,11 @@
 
             <template #body>
               <p class="text-sm text-gray-600">
-                {{ t("download_task_set_description") }}
+                {{
+                  t("download_task_set_description", {
+                    filename: downloadTaskSetFileName,
+                  })
+                }}
               </p>
               <p v-if="downloadError" class="mt-3 text-sm text-red-500">
                 {{ downloadError }}
@@ -79,15 +99,17 @@
           </UButton>
         </div>
       </div>
+    </header>
 
+    <main class="mx-auto w-full max-w-none p-4 sm:p-6">
       <p v-if="taskSetSwitchError" class="mb-4 text-sm text-red-600">
         {{ taskSetSwitchError }}
       </p>
 
-      <div class="mt-10 border-t border-gray-200 pt-8">
+      <div>
         <TasksDesignerPanel ref="tasksDesignerPanel" />
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -113,7 +135,7 @@ definePageMeta({
 });
 
 const router = useRouter();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { route, systemId } = useSyncSystemId();
 
 /* 4. Constants (non-reactive) */
@@ -158,6 +180,11 @@ const taskSetOptions = computed(() =>
 const selectedTaskSetId = computed(
   () => systemsStore.selectedSystem?.selectedTaskSetId ?? "",
 );
+const downloadTaskSetFileName = computed(() =>
+  locale.value === "cs"
+    ? `tasks_${systemsStore.selectedSystem?.taskSet.id ?? "sada_ukolu"}.json`
+    : "tasks.json",
+);
 
 /* 10. Watchers */
 
@@ -188,7 +215,8 @@ async function changeTaskSet(id: string) {
 }
 
 async function downloadTaskSet() {
-  if (!systemsStore.selectedSystem) {
+  const system = systemsStore.selectedSystem;
+  if (!system) {
     downloadError.value = t("download_system_missing");
     return;
   }
@@ -203,7 +231,7 @@ async function downloadTaskSet() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "tasks.json";
+    link.download = downloadTaskSetFileName.value;
     document.body.appendChild(link);
     link.click();
     link.remove();

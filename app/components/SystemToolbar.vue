@@ -7,28 +7,36 @@
         : 'min-h-[57px] flex-wrap items-center justify-end overflow-x-auto border-b border-gray-200 py-2 pr-4',
     ]"
   >
-    <UButton
+    <UTooltip
       v-if="globalSettings.teacherMode && !compact"
-      :icon="
-        globalSettings.teacherHighlightEnabled
-          ? 'i-lucide-eye'
-          : 'i-lucide-eye-off'
-      "
-      :color="globalSettings.teacherHighlightEnabled ? 'sky' : 'neutral'"
-      :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'"
-      size="sm"
-      @click="
-        globalSettings.teacherHighlightEnabled =
-          !globalSettings.teacherHighlightEnabled
-      "
-    />
+      :text="t('highlight_components')"
+    >
+      <UButton
+        :icon="
+          globalSettings.teacherHighlightEnabled
+            ? 'i-lucide-eye'
+            : 'i-lucide-eye-off'
+        "
+        :color="globalSettings.teacherHighlightEnabled ? 'sky' : 'neutral'"
+        :variant="globalSettings.teacherHighlightEnabled ? 'soft' : 'ghost'"
+        size="sm"
+        class="compact-icon-button teacher-toolbar-button"
+        :aria-label="t('highlight_components')"
+        :aria-pressed="globalSettings.teacherHighlightEnabled"
+        @click="
+          globalSettings.teacherHighlightEnabled =
+            !globalSettings.teacherHighlightEnabled
+        "
+      />
+    </UTooltip>
 
     <UButton
       v-if="globalSettings.teacherMode && !compact"
       icon="i-lucide-pencil-ruler"
       color="teacher"
-      variant="subtle"
+      variant="solid"
       size="sm"
+      class="teacher-toolbar-button"
       @click="openTaskDesigner"
     >
       <span class="mobile-hidden">{{ t("designer") }}</span>
@@ -143,12 +151,26 @@
           : 'i-lucide-pencil-ruler'
       "
       color="teacher"
-      variant="subtle"
+      variant="solid"
       size="sm"
+      class="teacher-toolbar-button"
       @click="versionSwitchModalOpen = true"
     >
       <span class="mobile-hidden">{{ t("change_version") }}</span>
     </UButton>
+
+    <UTooltip v-if="globalSettings.teacherMode && !compact" :text="t('home')">
+      <UButton
+        color="teacher"
+        variant="solid"
+        size="sm"
+        class="compact-icon-button teacher-toolbar-button"
+        :aria-label="t('home')"
+        @click="navigateTo('/systems')"
+      >
+        <UIcon name="i-lucide-house" class="size-4" />
+      </UButton>
+    </UTooltip>
 
     <UModal
       v-model:open="resetSystemModalOpen"
@@ -265,13 +287,15 @@
             {{ t("cancel") }}
           </UButton>
           <UButton
-            color="teacher"
+            color="neutral"
+            variant="solid"
             :icon="
               globalSettings.teacherMode
                 ? 'i-lucide-graduation-cap'
                 : 'i-lucide-pencil-ruler'
             "
             size="sm"
+            class="version-switch-confirm-button"
             @click="changeVersion"
           >
             {{
@@ -575,6 +599,24 @@ defineExpose({});
   padding: 0 !important;
   flex: none;
   justify-content: center;
+}
+
+.system-toolbar :deep(.teacher-toolbar-button) {
+  background-color: #fff !important;
+  color: #111 !important;
+}
+
+.system-toolbar :deep(.teacher-toolbar-button:hover) {
+  background-color: #f3f4f6 !important;
+}
+
+.system-toolbar :deep(.version-switch-confirm-button) {
+  background-color: #111 !important;
+  color: #fff !important;
+}
+
+.system-toolbar :deep(.version-switch-confirm-button:hover) {
+  background-color: #303030 !important;
 }
 
 @media (max-width: 639px) {

@@ -24,6 +24,7 @@ const { t } = useI18n();
 
 /* 8. State (ref, reactive) */
 const mobileTasksOpen = ref(false);
+const teacherHelpModalOpen = ref(false);
 const desktopTasksCollapsed = ref(false);
 const systemNavbarContainer = ref<HTMLElement | null>(null);
 const systemNavbarHeight = ref<number | null>(null);
@@ -72,6 +73,10 @@ watch(
 
 <template>
   <div>
+    <UModal
+      v-model:open="teacherHelpModalOpen"
+      :title="t('teacher_help_title')"
+    />
     <div v-if="atSystemPage" class="flex h-screen overflow-hidden">
       <div
         :class="[
@@ -113,7 +118,7 @@ watch(
             color="neutral"
             variant="ghost"
             size="sm"
-            class="m-1.5 shrink-0 !size-9 !min-w-9 !p-0 justify-center !bg-transparent hover:!bg-white/20"
+            class="m-1.5 shrink-0 !size-7 !min-w-7 !p-0 justify-center !bg-transparent hover:!bg-white/20"
             :aria-label="
               t(
                 desktopTasksCollapsed
@@ -145,32 +150,44 @@ watch(
           class="flex flex-row mt-4 items-center justify-between px-4"
         >
           <div>
-            <h2 class="text-1xl font-bold">{{ t("tasks") }}</h2>
+            <h2 class="text-1xl font-bold text-gray-900">{{ t("tasks") }}</h2>
           </div>
-          <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
-            <span>
-              <UBadge
-                color="red"
-                variant="subtle"
-                size="lg"
-                icon="i-lucide-list-todo"
-              >
-                {{ t("score") }}: {{ scoreValue }}
-              </UBadge>
-            </span>
+          <div class="flex items-center gap-2">
+            <UButton
+              v-if="globalSettings.teacherMode"
+              color="neutral"
+              variant="outline"
+              size="sm"
+              icon="i-lucide-circle-help"
+              @click="teacherHelpModalOpen = true"
+            >
+              {{ t("teacher_help") }}
+            </UButton>
+            <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
+              <span>
+                <UBadge
+                  color="red"
+                  variant="subtle"
+                  size="lg"
+                  icon="i-lucide-list-todo"
+                >
+                  {{ t("score") }}: {{ scoreValue }}
+                </UBadge>
+              </span>
 
-            <template #content>
-              <div class="app-popover-content">
-                <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
-                <div class="app-popover-text">
-                  <strong class="app-popover-title">{{ t("score") }}</strong>
-                  <span class="app-popover-description">{{
-                    t("score_mistakes_count", { count: mistakesCount })
-                  }}</span>
+              <template #content>
+                <div class="app-popover-content">
+                  <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
+                  <div class="app-popover-text">
+                    <strong class="app-popover-title">{{ t("score") }}</strong>
+                    <span class="app-popover-description">{{
+                      t("score_mistakes_count", { count: mistakesCount })
+                    }}</span>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </UPopover>
+              </template>
+            </UPopover>
+          </div>
         </div>
         <div v-if="!desktopTasksCollapsed" class="min-h-0 flex-1">
           <UScrollArea class="h-full">
@@ -207,34 +224,51 @@ watch(
 
             <div class="mt-4 flex items-center justify-between px-1">
               <div>
-                <h2 class="text-2xl font-bold">{{ t("tasks") }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900">
+                  {{ t("tasks") }}
+                </h2>
               </div>
-              <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
-                <span>
-                  <UBadge
-                    color="red"
-                    variant="subtle"
-                    size="lg"
-                    icon="i-lucide-list-todo"
-                  >
-                    {{ t("score") }}: {{ scoreValue }}
-                  </UBadge>
-                </span>
+              <div class="flex items-center gap-2">
+                <UButton
+                  v-if="globalSettings.teacherMode"
+                  color="neutral"
+                  variant="outline"
+                  size="sm"
+                  icon="i-lucide-circle-help"
+                  @click="teacherHelpModalOpen = true"
+                >
+                  {{ t("teacher_help") }}
+                </UButton>
+                <UPopover v-if="!globalSettings.teacherMode" mode="hover" arrow>
+                  <span>
+                    <UBadge
+                      color="red"
+                      variant="subtle"
+                      size="lg"
+                      icon="i-lucide-list-todo"
+                    >
+                      {{ t("score") }}: {{ scoreValue }}
+                    </UBadge>
+                  </span>
 
-                <template #content>
-                  <div class="app-popover-content">
-                    <UIcon name="i-lucide-list-todo" class="app-popover-icon" />
-                    <div class="app-popover-text">
-                      <strong class="app-popover-title">{{
-                        t("score")
-                      }}</strong>
-                      <span class="app-popover-description">{{
-                        t("score_mistakes_count", { count: mistakesCount })
-                      }}</span>
+                  <template #content>
+                    <div class="app-popover-content">
+                      <UIcon
+                        name="i-lucide-list-todo"
+                        class="app-popover-icon"
+                      />
+                      <div class="app-popover-text">
+                        <strong class="app-popover-title">{{
+                          t("score")
+                        }}</strong>
+                        <span class="app-popover-description">{{
+                          t("score_mistakes_count", { count: mistakesCount })
+                        }}</span>
+                      </div>
                     </div>
-                  </div>
-                </template>
-              </UPopover>
+                  </template>
+                </UPopover>
+              </div>
             </div>
             <div class="min-h-0 flex-1">
               <UScrollArea class="h-full">
