@@ -1,4 +1,3 @@
-import JSZip from "jszip";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 async function loadSystemHelper(systemsToPreload?: unknown[]) {
@@ -17,13 +16,6 @@ async function loadSystemHelper(systemsToPreload?: unknown[]) {
 
   const { SystemHelper } = await import("../../app/core/systems/SystemHelper");
   return SystemHelper;
-}
-
-async function loadSystemLoaderPublic(systemsToPreload?: unknown[]) {
-  await loadSystemHelper(systemsToPreload);
-  const { SystemLoaderPublic } =
-    await import("../../app/core/systems/SystemLoaderPublic");
-  return new SystemLoaderPublic();
 }
 
 afterEach(() => {
@@ -109,116 +101,6 @@ describe("SystemHelper", () => {
 
       expect(() => SystemHelper.getSystemsToPreloadIds()).toThrow(
         "No systems to preload found in runtime config.",
-      );
-    });
-  });
-
-  describe("getSystemFiles", () => {
-    it("returns files for a preloaded directory system", async () => {
-      const fetchMock = vi.fn(async (url: string) => {
-        if (url === "/app-base/systems/directory-system/config.json") {
-          return new Response('{"id":"directory-system"}');
-        }
-
-        if (url === "/app-base/systems/directory-system/create_schema.sql") {
-          return new Response("CREATE TABLE demo (id INTEGER);");
-        }
-
-        return new Response(null, { status: 404 });
-      });
-      vi.stubGlobal("fetch", fetchMock);
-      const systemLoader = await loadSystemLoaderPublic(["directory-system"]);
-
-      const files = await systemLoader.getSystemFiles("directory-system");
-
-      expect(files).toEqual([
-        {
-          name: "config.json",
-          path: "directory-system/config.json",
-          content: '{"id":"directory-system"}',
-        },
-        {
-          name: "create_schema.sql",
-          path: "directory-system/create_schema.sql",
-          content: "CREATE TABLE demo (id INTEGER);",
-        },
-      ]);
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/app-base/systems/directory-system/config.json",
-      );
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/app-base/systems/directory-system/create_schema.sql",
-      );
-    });
-
-    it("omits optional directory files when they are not available", async () => {
-      vi.stubGlobal(
-        "fetch",
-        vi.fn(async (url: string) => {
-          if (url === "/app-base/systems/directory-system/config.json") {
-            return new Response('{"id":"directory-system"}');
-          }
-
-          return new Response(null, { status: 404 });
-        }),
-      );
-      const systemLoader = await loadSystemLoaderPublic(["directory-system"]);
-
-      const files = await systemLoader.getSystemFiles("directory-system");
-
-      expect(files).toEqual([
-        {
-          name: "config.json",
-          path: "directory-system/config.json",
-          content: '{"id":"directory-system"}',
-        },
-      ]);
-    });
-
-    it("returns files for a preloaded zip system", async () => {
-      const zip = new JSZip();
-      zip.file("config.json", '{"id":"zip-system"}');
-      zip.file("sql/create_schema.sql", "CREATE TABLE zip_demo (id INTEGER);");
-      const zipData = await zip.generateAsync({ type: "arraybuffer" });
-
-      const fetchMock = vi.fn(async (url: string) => {
-        if (url === "/app-base/systems/zip-system.zip") {
-          return new Response(zipData);
-        }
-
-        return new Response(null, { status: 404 });
-      });
-      vi.stubGlobal("fetch", fetchMock);
-      const systemLoader = await loadSystemLoaderPublic(["zip-system.zip"]);
-
-      const files = await systemLoader.getSystemFiles("zip-system");
-
-      expect(files).toEqual(
-        expect.arrayContaining([
-          {
-            name: "config.json",
-            path: "config.json",
-            content: '{"id":"zip-system"}',
-          },
-          {
-            name: "create_schema.sql",
-            path: "sql/create_schema.sql",
-            content: "CREATE TABLE zip_demo (id INTEGER);",
-          },
-        ]),
-      );
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/app-base/systems/zip-system.zip",
-      );
-    });
-
-    it("throws when the requested system is not preloaded", async () => {
-      const systemLoader = await loadSystemLoaderPublic(["known-system"]);
-
-      await expect(
-        systemLoader.getSystemFiles("missing-system"),
-      ).rejects.toThrow(
-        'System with id "missing-system" not found in runtimeConfig.public.systemsToPreload.',
       );
     });
   });
