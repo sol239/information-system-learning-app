@@ -1,76 +1,3 @@
-<script setup lang="ts">
-/* 1. Imports */
-import SystemToolbar from "~/components/SystemToolbar.vue";
-
-defineOptions({
-  name: "DefaultLayout",
-});
-
-/* 2. Stores */
-const globalSettings = useGlobalSettingsStore();
-const systemsStore = useSystemsStore();
-
-/* 3. Context hooks */
-const route = useRoute();
-const { t } = useI18n();
-
-/* 4. Constants (non-reactive) */
-
-/* 5. Props */
-
-/* 6. Emits */
-
-/* 7. Template refs */
-
-/* 8. State (ref, reactive) */
-const mobileTasksOpen = ref(false);
-const teacherHelpModalOpen = ref(false);
-const desktopTasksCollapsed = ref(false);
-const systemNavbarContainer = ref<HTMLElement | null>(null);
-const systemNavbarHeight = ref<number | null>(null);
-
-/* 9. Computed */
-const atSystemPage = computed(() => {
-  const [, systemsPath, systemId] = route.path.split("/");
-
-  return systemsPath === "systems" && Boolean(systemId);
-});
-
-const isFullscreenSystemPage = computed(
-  () => route.meta.fullscreenSystemPage === true,
-);
-const scoreValue = computed(
-  () => systemsStore.selectedSystem?.score.score ?? 0,
-);
-const mistakesCount = computed(
-  () => systemsStore.selectedSystem?.mistakesCount ?? 0,
-);
-
-/* 10. Watchers */
-watch(
-  systemNavbarContainer,
-  (element, _previous, onCleanup) => {
-    if (!element) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry)
-        systemNavbarHeight.value =
-          entry.borderBoxSize[0]?.blockSize ??
-          element.getBoundingClientRect().height;
-    });
-    observer.observe(element);
-    onCleanup(() => observer.disconnect());
-  },
-  { flush: "post" },
-);
-
-/* 11. Methods */
-
-/* 12. Lifecycle */
-
-/* 13. defineExpose */
-</script>
-
 <template>
   <div>
     <UModal
@@ -289,6 +216,79 @@ watch(
     <StudentProgressModals v-if="atSystemPage && !isFullscreenSystemPage" />
   </div>
 </template>
+
+<script setup lang="ts">
+/* 1. Imports */
+import SystemToolbar from "~/components/SystemToolbar.vue";
+
+defineOptions({
+  name: "DefaultLayout",
+});
+
+/* 2. Stores */
+const globalSettings = useGlobalSettingsStore();
+const systemsStore = useSystemsStore();
+
+/* 3. Context hooks */
+const route = useRoute();
+const { t } = useI18n();
+
+/* 4. Constants (non-reactive) */
+
+/* 5. Props */
+
+/* 6. Emits */
+
+/* 7. Template refs */
+
+/* 8. State (ref, reactive) */
+const mobileTasksOpen = ref(false);
+const teacherHelpModalOpen = ref(false);
+const desktopTasksCollapsed = ref(false);
+const systemNavbarContainer = ref<HTMLElement | null>(null);
+const systemNavbarHeight = ref<number | null>(null);
+
+/* 9. Computed */
+const atSystemPage = computed(() => {
+  const [, systemsPath, systemId] = route.path.split("/");
+
+  return systemsPath === "systems" && Boolean(systemId);
+});
+
+const isFullscreenSystemPage = computed(
+  () => route.meta.fullscreenSystemPage === true,
+);
+const scoreValue = computed(
+  () => systemsStore.selectedSystem?.score.score ?? 0,
+);
+const mistakesCount = computed(
+  () => systemsStore.selectedSystem?.mistakesCount ?? 0,
+);
+
+/* 10. Watchers */
+watch(
+  systemNavbarContainer,
+  (element, _previous, onCleanup) => {
+    if (!element) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry)
+        systemNavbarHeight.value =
+          entry.borderBoxSize[0]?.blockSize ??
+          element.getBoundingClientRect().height;
+    });
+    observer.observe(element);
+    onCleanup(() => observer.disconnect());
+  },
+  { flush: "post" },
+);
+
+/* 11. Methods */
+
+/* 12. Lifecycle */
+
+/* 13. defineExpose */
+</script>
 
 <style scoped>
 .desktop-tasks-header {
